@@ -3,6 +3,8 @@ import Home from "./pages/home/Home";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import React from "react";
 import Login from "./pages/login/Login";
+import Forgot from "./pages/forgot/Forgot";
+import Building from "./pages/building/Building";
 
 function App() {
   return (
@@ -11,7 +13,10 @@ function App() {
         <Routes>
           <Route path="/">
             <Route index element={<Home />} />
+
             <Route path="login" element={<Login />} />
+            <Route path="forgot" element={<Forgot />} />
+            <Route path="building" element={<Building />} />
           </Route>
         </Routes>
       </BrowserRouter>
