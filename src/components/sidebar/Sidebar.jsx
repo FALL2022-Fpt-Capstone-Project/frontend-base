@@ -99,7 +99,7 @@ const Sidebar = () => {
         <Menu.Item key="9">
           <LogoutOutlined />
           <span>Đăng xuất</span>
-          <Link to="/" />
+          <Link to="/login" />
         </Menu.Item>
       </Menu>
     </div>
