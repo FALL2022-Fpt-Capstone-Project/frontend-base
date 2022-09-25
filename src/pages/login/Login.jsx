@@ -2,21 +2,37 @@ import React, { useState } from "react";
 import { Button, Checkbox, Form, Input } from "antd";
 import "antd/dist/antd.min.css";
 import "./login.scss";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [user_name, setUser_name] = useState("");
   const [password, setPassword] = useState("");
   const handleLogin = async () => {
-    let result = await fetch("https://rms-staging-env.herokuapp.com/api/auth/signin", {
-      method: "post",
-      body: JSON.stringify({ user_name, password }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    result = await result.json();
-    console.warn(result);
+    let result = await fetch(
+      "https://rms-cors-proxy.herokuapp.com/https://rms-staging-env.herokuapp.com/api/auth/signin",
+      {
+        mode: "cors",
+        method: "post",
+        body: JSON.stringify({ user_name, password }),
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((result) => {
+        console.log(result);
+        if (result.status.message === "OK") {
+          console.log("OK");
+          navigate("/building");
+        } else {
+          alert("Please check your login information.");
+        }
+      });
   };
+
   console.log(user_name);
 
   return (

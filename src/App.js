@@ -1,5 +1,5 @@
 import "antd/dist/antd.min.css";
-import Home from "./pages/home/Home";
+// import Home from "./pages/home/Home";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import React from "react";
 import Login from "./pages/login/Login";
@@ -12,9 +12,9 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/">
-            <Route index element={<Home />} />
+            {/* <Route index element={<Home />} /> */}
 
-            <Route path="login" element={<Login />} />
+            <Route index element={<Login />} />
             <Route path="forgot" element={<Forgot />} />
             <Route path="building" element={<Building />} />
           </Route>
