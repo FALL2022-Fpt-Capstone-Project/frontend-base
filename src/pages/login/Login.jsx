@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Checkbox, Form, Input } from "antd";
+import { Button, Checkbox, Form, Input, notification } from "antd";
 import "antd/dist/antd.min.css";
 import "./login.scss";
 import { useNavigate } from "react-router-dom";
@@ -28,7 +28,13 @@ const Login = () => {
           console.log("OK");
           navigate("/building");
         } else {
-          alert("Please check your login information.");
+          notification.error({
+            message: "Đăng nhập thất bại",
+            description: "Vui lòng kiểm tra lại username hoặc mật khẩu.",
+            onClick: () => {
+              console.log("Notification Clicked!");
+            },
+          });
         }
       });
   };
@@ -46,8 +52,8 @@ const Login = () => {
         </div>
         <Form name="login-form" initialValues={{ remember: true }} onFinish={handleLogin}>
           <p className="form-title">Đăng nhập</p>
-          <Form.Item name="phone" rules={[{ required: true, message: "Vui lòng nhập số điện thoại!" }]}>
-            <Input placeholder="Số điện thoại" onChange={(e) => setUser_name(e.target.value)} value={user_name} />
+          <Form.Item name="username" rules={[{ required: true, message: "Vui lòng nhập username!" }]}>
+            <Input placeholder="Username" onChange={(e) => setUser_name(e.target.value)} value={user_name} />
           </Form.Item>
 
           <Form.Item name="password" rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}>
