@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Layout } from "antd";
+import "./home.scss";
 import Sidebar from "../../components/sidebar/Sidebar";
 const { Content, Sider, Header } = Layout;
 
