@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import { Button, Checkbox, Form, Input, notification } from "antd";
@@ -79,7 +80,9 @@ const Login = () => {
         <Form name="login-form" initialValues={{ remember: true }} autoComplete="off" onFinish={handleSubmit}>
           <p className="form-title">Đăng nhập</p>
           <Form.Item name="username" rules={[{ required: true, message: "Vui lòng nhập username!" }]}>
+
             <Input placeholder="Username" onChange={(e) => setUser(e.target.value)} value={user_name} />
+
           </Form.Item>
 
           <Form.Item name="password" rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}>
