@@ -54,9 +54,7 @@ const Building = () => {
                 padding: 24,
                 minHeight: 360,
               }}
-            >
-              Bill is a cat.
-            </div>
+            ></div>
           </Content>
         </Layout>
       </Layout>

@@ -42,10 +42,6 @@ const Sidebar = () => {
             <span>Quản lý chung cư</span>
             <Link to="/building" />
           </Menu.Item>
-          <Menu.Item key="3">
-            <span>Quản lý phòng</span>
-            <Link to="/" />
-          </Menu.Item>
           <Menu.Item key="4">
             <span>Quản lý trang thiết bị</span>
             <Link to="/" />
@@ -99,7 +95,7 @@ const Sidebar = () => {
         <Menu.Item key="9">
           <LogoutOutlined />
           <span>Đăng xuất</span>
-          <Link to="/" />
+          <Link to="/login" />
         </Menu.Item>
       </Menu>
     </div>
