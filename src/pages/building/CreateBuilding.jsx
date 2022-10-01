@@ -25,8 +25,9 @@ const CreateBuilding = () => {
 
   const [province, setProvince] = useState([]);
   const [provincecode, setProvinceCode] = useState("");
-  const [district, setDistrict] = useState([]);
+  const [district, setDistrict] = useState(null);
   const [districtCode, setDistrictCode] = useState("");
+  const [ward, setWard] = useState(null);
 
   useEffect(() => {
     const getProvince = async () => {
@@ -34,7 +35,6 @@ const CreateBuilding = () => {
       const getPro = await res.json();
       setProvince(await getPro);
     };
-
     getProvince();
   }, []);
 
@@ -42,18 +42,31 @@ const CreateBuilding = () => {
     const getProvinceCode = value;
     setProvinceCode(getProvinceCode);
   };
-
+  // console.log(provincecode);
   useEffect(() => {
     const getDistrict = async () => {
       const rest = await fetch(`https://provinces.open-api.vn/api/p/${provincecode}?depth=2`);
       const getDis = await rest.json();
+      setDistrict(null);
       setDistrict(await getDis);
-      console.log(getDis);
     };
-
     getDistrict();
   }, [provincecode]);
-
+  // console.log(district);
+  // console.log(district.districts);
+  const handleDistrict = (value) => {
+    const getDistrictCode = value;
+    setDistrictCode(getDistrictCode);
+    // console.log(getProvinceCode);
+  };
+  useEffect(() => {
+    const getWard = async () => {
+      const rest = await fetch(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`);
+      const getWard = await rest.json();
+      setWard(await getWard);
+    };
+    getWard();
+  }, [districtCode]);
   return (
     <Form {...formItemLayout} form={form} name="createBuilding" id="createBuilding" scrollToFirstError>
       <Form.Item
@@ -120,30 +133,11 @@ const CreateBuilding = () => {
           }}
         />
       </Form.Item>
-      <Form.Item
-        name="price"
-        label="Tiền thuê chung cư"
-        rules={[
-          {
-            required: true,
-            message: "Vui lòng nhập số tiền thuê chung cư!",
-          },
-        ]}
-      >
-        <InputNumber
-          style={{
-            width: "100%",
-          }}
-        />
-      </Form.Item>
 
       <Form.Item
         name="city"
         label="Thành phố"
         rules={[
-          {
-            message: "Vui lòng chọn Thành phố!",
-          },
           {
             required: true,
             message: "Vui lòng chọn Thành phố!",
@@ -151,8 +145,8 @@ const CreateBuilding = () => {
         ]}
       >
         <Select placeholder="Chọn Thành phố" onChange={handleProvince}>
-          {province.map((provinceget) => (
-            <Option key={provinceget.code} value={provinceget.code}>
+          {province.map((provinceget, idx) => (
+            <Option key={idx} value={provinceget.code}>
               {provinceget.name}
             </Option>
           ))}
@@ -163,21 +157,24 @@ const CreateBuilding = () => {
         label="Quận/Huyện"
         rules={[
           {
-            message: "Vui lòng chọn Quận/Huyện!",
-          },
-          {
             required: true,
             message: "Vui lòng chọn Quận/Huyện!",
           },
         ]}
       >
-        <Select placeholder="Chọn Quận/Huyện">
-          {province.map((provinceget) => (
-            <Option key={provinceget.code} value={provinceget.code}>
-              {provinceget.districts.name}
-            </Option>
-          ))}
-        </Select>
+        {district != null ? (
+          <Select placeholder="Chọn Quận/Huyện" onChange={handleDistrict}>
+            {district.districts?.map((districtget, idx) => (
+              <Option key={idx} value={districtget.code}>
+                {districtget.name}
+              </Option>
+            ))}
+          </Select>
+        ) : (
+          <Select placeholder="Chọn Quận/Huyện">
+            <Option value={""}></Option>
+          </Select>
+        )}
       </Form.Item>
 
       <Form.Item
@@ -185,19 +182,24 @@ const CreateBuilding = () => {
         label="Phường/Xã"
         rules={[
           {
-            message: "Vui lòng chọn Phường/Xã!",
-          },
-          {
             required: true,
             message: "Vui lòng chọn Phường/Xã!",
           },
         ]}
       >
-        <Select placeholder="Chọn Phường/Xã">
-          <Option value="male">Male</Option>
-          <Option value="female">Female</Option>
-          <Option value="other">Other</Option>
-        </Select>
+        {ward != null ? (
+          <Select placeholder="Chọn Quận/Huyện">
+            {ward.wards?.map((wardget) => (
+              <Option key={wardget.code} value={wardget.code}>
+                {wardget.name}
+              </Option>
+            ))}
+          </Select>
+        ) : (
+          <Select placeholder="Chọn Phường/Xã">
+            <Option value={""}></Option>
+          </Select>
+        )}
       </Form.Item>
 
       <Form.Item
