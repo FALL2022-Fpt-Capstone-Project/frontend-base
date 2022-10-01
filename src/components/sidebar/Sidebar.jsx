@@ -28,7 +28,7 @@ const Sidebar = () => {
         <Menu.Item key="1">
           <DashboardOutlined />
           <span>Trang chủ</span>
-          <Link to="/" />
+          <Link to="/home" />
         </Menu.Item>
         <Menu.SubMenu
           title={

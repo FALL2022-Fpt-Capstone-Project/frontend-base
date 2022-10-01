@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Layout } from "antd";
 import "./home.scss";
 import Sidebar from "../../components/sidebar/Sidebar";
+import "./home.scss";
 const { Content, Sider, Header } = Layout;
 
 const Home = () => {
