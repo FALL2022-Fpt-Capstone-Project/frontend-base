@@ -1,12 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { Layout } from "antd";
-import "./home.scss";
-import Sidebar from "../../components/sidebar/Sidebar";
+import { useNavigate } from "react-router-dom";
+import { Button, Layout } from "antd";
+import Sidebar from "./sidebar/Sidebar";
+
 const { Content, Sider, Header } = Layout;
 
-const Home = () => {
+const Unauthorized = () => {
+  const navigate = useNavigate();
+
+  const goBack = () => navigate(-1);
+
   return (
-    <div className="home">
+    <div className="unauthorized">
       <Layout
         style={{
           minHeight: "100vh",
@@ -18,19 +22,22 @@ const Home = () => {
         </Sider>
         <Layout className="site-layout">
           {/* <Header
-            className="layout-header"
-            style={{
-              margin: "0 16px",
-            }}
-          >
-            <p className="header-title">Quản lý chung cư</p>
-          </Header> */}
+          className="layout-header"
+          style={{
+            margin: "0 16px",
+          }}
+        >
+          <p className="header-title">Quản lý chung cư</p>
+        </Header> */}
           <Content
             style={{
               margin: "10px 16px",
             }}
           >
-            Hello
+            <h1>Không có quyền truy cập</h1>
+            <Button onClick={goBack} type="primary">
+              Quay lại
+            </Button>
             <div
               className="site-layout-background"
               style={{
@@ -45,4 +52,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Unauthorized;
