@@ -88,8 +88,12 @@ const Sidebar = () => {
           }
         >
           <Menu.Item key="8">
-            <span>Quản lý chung cư</span>
-            <Link to="/" />
+            <span>Quản lý hợp đồng chung cư</span>
+            <Link to="/contract-apartment" />
+          </Menu.Item>
+          <Menu.Item key="8">
+            <span>Quản lý hợp đồng khách thuê</span>
+            <Link to="/contract-renter" />
           </Menu.Item>
         </Menu.SubMenu>
         <Menu.Item key="9">
