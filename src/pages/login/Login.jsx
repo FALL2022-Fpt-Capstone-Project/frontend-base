@@ -1,40 +1,73 @@
-import React, { useState } from "react";
-import { Button, Checkbox, Form, Input } from "antd";
+
+import React, { useEffect, useState } from "react";
+import useAuth from "../../hooks/useAuth";
+import { Button, Checkbox, Form, Input, notification } from "antd";
 import "antd/dist/antd.min.css";
 import "./login.scss";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+
+import axios from "../../api/axios";
+const LOGIN_URL = "/signin";
 
 const Login = () => {
+  const { setAuth } = useAuth();
+
   const navigate = useNavigate();
-  const [user_name, setUser_name] = useState("");
-  const [password, setPassword] = useState("");
-  const handleLogin = async () => {
-    let result = await fetch(
-      "https://rms-cors-proxy.herokuapp.com/https://rms-staging-env.herokuapp.com/api/auth/signin",
-      {
-        mode: "cors",
-        method: "post",
-        body: JSON.stringify({ user_name, password }),
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/home";
+
+  // console.log(location);
+
+  const [user_name, setUser] = useState("");
+  const [password, setPwd] = useState("");
+  const [errMsg, setErrMsg] = useState("");
+
+  // useEffect(() => {
+  //   userRef.current.focus();
+  // }, []);
+
+  useEffect(() => {
+    setErrMsg("");
+  }, [user_name, password]);
+
+  const handleSubmit = async (e) => {
+    // e.preventDefault();
+
+    try {
+      const response = await axios.post(LOGIN_URL, JSON.stringify({ user_name, password }), {
         headers: {
           "Content-Type": "application/json",
           "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "DELETE, POST, GET, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
         },
-      }
-    )
-      .then((response) => response.json())
-      .then((result) => {
-        console.log(result);
-        if (result.status.message === "OK") {
-          console.log("OK");
-          navigate("/building");
-        } else {
-          alert("Please check your login information.");
-        }
       });
+      console.log(JSON.stringify(response?.data));
+      console.log(JSON.stringify(response?.status.code));
+      //console.log(JSON.stringify(response));
+      const accessToken = response?.data?.body.token;
+      const roles = response?.data?.body.role;
+      setAuth({ user_name, password, roles, accessToken });
+      setUser("");
+      setPwd("");
+      navigate(from, { replace: true });
+    } catch (err) {
+      if (err.response?.status === 500) {
+        notification.error({
+          message: "Đăng nhập thất bại",
+          description: "Vui lòng kiểm tra lại thông tin đăng nhập.",
+          duration: 3,
+        });
+      } else if (err.response?.status === 401) {
+        notification.error({
+          message: "Đăng nhập thất bại",
+          description: "Vui lòng kiểm tra lại thông tin đăng nhập.",
+          duration: 3,
+        });
+      }
+      // errRef.current.focus();
+    }
   };
-
-  console.log(user_name);
-
   return (
     <div className="login-page">
       <div className="login-box">
@@ -44,14 +77,16 @@ const Login = () => {
             alt="Login"
           />
         </div>
-        <Form name="login-form" initialValues={{ remember: true }} onFinish={handleLogin}>
+        <Form name="login-form" initialValues={{ remember: true }} autoComplete="off" onFinish={handleSubmit}>
           <p className="form-title">Đăng nhập</p>
-          <Form.Item name="phone" rules={[{ required: true, message: "Vui lòng nhập số điện thoại!" }]}>
-            <Input placeholder="Số điện thoại" onChange={(e) => setUser_name(e.target.value)} value={user_name} />
+          <Form.Item name="username" rules={[{ required: true, message: "Vui lòng nhập username!" }]}>
+
+            <Input placeholder="Username" onChange={(e) => setUser(e.target.value)} value={user_name} />
+
           </Form.Item>
 
           <Form.Item name="password" rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}>
-            <Input.Password placeholder="Mật khẩu" onChange={(e) => setPassword(e.target.value)} value={password} />
+            <Input.Password placeholder="Mật khẩu" onChange={(e) => setPwd(e.target.value)} value={password} />
           </Form.Item>
 
           <Form.Item>

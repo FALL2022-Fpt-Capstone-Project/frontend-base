@@ -1,5 +1,5 @@
 import { Form, Input, InputNumber, Select } from "antd";
-import React from "react";
+import React, { useEffect, useState } from "react";
 const { Option } = Select;
 const formItemLayout = {
   labelCol: {
@@ -22,6 +22,37 @@ const formItemLayout = {
 
 const CreateBuilding = () => {
   const [form] = Form.useForm();
+
+  const [province, setProvince] = useState([]);
+  const [provincecode, setProvinceCode] = useState("");
+  const [district, setDistrict] = useState([]);
+  const [districtCode, setDistrictCode] = useState("");
+
+  useEffect(() => {
+    const getProvince = async () => {
+      const res = await fetch("https://provinces.open-api.vn/api/p?depth=2");
+      const getPro = await res.json();
+      setProvince(await getPro);
+    };
+
+    getProvince();
+  }, []);
+
+  const handleProvince = (value) => {
+    const getProvinceCode = value;
+    setProvinceCode(getProvinceCode);
+  };
+
+  useEffect(() => {
+    const getDistrict = async () => {
+      const rest = await fetch(`https://provinces.open-api.vn/api/p/${provincecode}?depth=2`);
+      const getDis = await rest.json();
+      setDistrict(await getDis);
+      console.log(getDis);
+    };
+
+    getDistrict();
+  }, [provincecode]);
 
   return (
     <Form {...formItemLayout} form={form} name="createBuilding" id="createBuilding" scrollToFirstError>
@@ -119,10 +150,12 @@ const CreateBuilding = () => {
           },
         ]}
       >
-        <Select placeholder="Chọn Thành phố">
-          <Option value="male">Male</Option>
-          <Option value="female">Female</Option>
-          <Option value="other">Other</Option>
+        <Select placeholder="Chọn Thành phố" onChange={handleProvince}>
+          {province.map((provinceget) => (
+            <Option key={provinceget.code} value={provinceget.code}>
+              {provinceget.name}
+            </Option>
+          ))}
         </Select>
       </Form.Item>
       <Form.Item
@@ -139,9 +172,11 @@ const CreateBuilding = () => {
         ]}
       >
         <Select placeholder="Chọn Quận/Huyện">
-          <Option value="male">Male</Option>
-          <Option value="female">Female</Option>
-          <Option value="other">Other</Option>
+          {province.map((provinceget) => (
+            <Option key={provinceget.code} value={provinceget.code}>
+              {provinceget.districts.name}
+            </Option>
+          ))}
         </Select>
       </Form.Item>
 
