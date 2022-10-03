@@ -6,11 +6,9 @@ import {
     InputNumber,
     Select,
     Switch,
-    Tag,
-    Anchor,
-    Alert,
+    Tag
 } from "antd";
-import { EditOutlined, DeleteOutlined, UserOutlined } from "@ant-design/icons";
+import { EditOutlined, DeleteOutlined, UserOutlined, PlusOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import moment from 'moment';
 import EditRoom from "./EditRoom";
@@ -26,6 +24,19 @@ function room(props) {
     const [editRenter, setEditRenter] = useState(null);
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [searched, setSearched] = useState("");
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [form] = Form.useForm();
+
+    const validateRequired = (e) => {
+        console.log(e);
+        if (e.roomCode !== null && e.owner !== null && e.building !== null
+            && e.floor !== null && e.numberOfRenter !== null && e.square !== null
+            && e.contractExpirationDate !== null && e.dateOfHire !== null) {
+            console.log('in');
+            resetEditing();
+        }
+
+    }
     const renter = [];
     // const renter = [{
     //     index: 1,
@@ -117,8 +128,8 @@ function room(props) {
                 dateOfHire: null,
                 contractExpirationDate: null,
                 price: `${i + 1}000000`,
-                deposit: 0,
-                debit: 0,
+                deposit: `0`,
+                debit: `0`,
                 status: false
             });
         }
@@ -188,7 +199,7 @@ function room(props) {
             }
         },
         {
-            title: 'Giá nợ',
+            title: 'Tiền nợ',
             dataIndex: 'debit',
             key: 'index',
             sorter: (record1, record2) => {
@@ -284,11 +295,23 @@ function room(props) {
     const onEdit = (record) => {
         setisEdit(true);
         setEditRenter({ ...record });
+        form.setFieldsValue({
+            roomCode: record.roomCode,
+            owner: record.owner,
+            building: record.building,
+            floor: record.floor,
+            numberOfRenter: record.numberOfRenter,
+            square: record.square,
+            dateOfHire: record.dateOfHire !== null ? moment(record.dateOfHire, dateFormatList) : '',
+            contractExpirationDate: record.contractExpirationDate !== null ? moment(record.contractExpirationDate, dateFormatList) : '',
+            status: record.status
+        });
     }
     const resetEditing = () => {
         setisEdit(false);
         setEditRenter(null);
     }
+
     const onAdd = (record) => {
         setisAdd(true);
     }
@@ -312,11 +335,11 @@ function room(props) {
     const buidlingFilter = mapped.filter((type, index) => mapped.indexOf(type) === index);
     const dateFormatList = ['DD/MM/YYYY', 'YYYY/MM/DD'];
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    // const [toggle, setToggle] = useState(false);
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const mappedRoom = dataSource.map((obj, index) => obj.roomCode);
-    const roomFilter = mappedRoom.filter((type, index) => mappedRoom.indexOf(type) === index);
-    console.log(new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(2000000));
+    const mappedFloor = dataSource.map((obj, index) => obj.floor);
+    const floorFilter = mappedFloor.filter((type, index) => mappedFloor.indexOf(type) === index);
+    const onFinish = (e) => {
+        console.log(e);
+    }
     return (
         <div className="building">
             <Layout
@@ -362,7 +385,7 @@ function room(props) {
                             <Button type="primary" size="default" style={{ float: "right", width: 150 }}
                                 onClick={() => {
                                     onAdd()
-                                }}>
+                                }} icon={<PlusOutlined />}>
                                 Thêm phòng
                             </Button>
                             <Table
@@ -380,7 +403,42 @@ function room(props) {
                                 }}
                                 width={700}
                             >
-
+                                <Form
+                                    labelCol={{ span: 5 }}
+                                    wrapperCol={{ span: 15 }}
+                                    layout="horizontal"
+                                    initialValues={{ size: componentSize }}
+                                    onValuesChange={onFormLayoutChange}
+                                    size={"default"}
+                                    width={700}
+                                >
+                                    <Form.Item label="Tên phòng">
+                                        <Input />
+                                    </Form.Item>
+                                    <Form.Item label="Danh sách phòng">
+                                        <Select>
+                                            <Select.Option value="demo">Tầng</Select.Option>
+                                        </Select>
+                                    </Form.Item>
+                                    <Form.Item label="Giá phòng">
+                                        <Input />
+                                    </Form.Item>
+                                    <Form.Item label="Diện tích">
+                                        <Input />
+                                    </Form.Item>
+                                    <Form.Item label="DatePicker">
+                                        <DatePicker />
+                                    </Form.Item>
+                                    <Form.Item label="InputNumber">
+                                        <InputNumber />
+                                    </Form.Item>
+                                    <Form.Item label="Switch" valuePropName="checked">
+                                        <Switch />
+                                    </Form.Item>
+                                    <Form.Item label="Button">
+                                        <Button>Button</Button>
+                                    </Form.Item>
+                                </Form>
                             </Modal>
                             <Modal
                                 title="Sửa thông tin phòng"
@@ -388,7 +446,7 @@ function room(props) {
                                 onCancel={() => {
                                     resetEditing()
                                 }}
-                                onOk={() => {
+                                onOk={(e) => {
                                     setDataSource((pre) => {
                                         return pre.map(renter => {
                                             if (renter.index === editRenter.index) {
@@ -398,11 +456,13 @@ function room(props) {
                                             }
                                         });
                                     });
-                                    resetEditing()
+                                    if (e.owner !== null) {
+                                        resetEditing()
+                                    }
                                 }}
                                 width={700}
                                 footer={[
-                                    <Button htmlType="submit" form="createBuilding" type="primary" onClick={() => {
+                                    <Button htmlType="submit" form="editRoom" type="primary" onClick={(e) => {
                                         setDataSource((pre) => {
                                             return pre.map(renter => {
                                                 if (renter.index === editRenter.index) {
@@ -412,7 +472,7 @@ function room(props) {
                                                 }
                                             });
                                         });
-                                        resetEditing()
+                                        validateRequired(editRenter);
                                     }}>
                                         Lưu
                                     </Button>,
@@ -454,6 +514,8 @@ function room(props) {
                                     })
                                 }}></Input> */}
                                 <Form
+                                    onFinish={onFinish}
+                                    form={form}
                                     labelCol={{
                                         span: 6,
                                     }}
@@ -467,14 +529,15 @@ function room(props) {
                                     onValuesChange={onFormLayoutChange}
                                     size={componentSize}
                                     width={1000}
+                                    id="editRoom"
                                 >
-                                    <Form.Item label="Phòng" rules={[
+                                    <Form.Item label="Phòng" name="roomCode" rules={[
                                         {
                                             required: true,
                                             message: "Vui lòng nhập phòng",
                                         },
                                     ]}>
-                                        <Select
+                                        {/* <Select
                                             showSearch
                                             placeholder="Chọn phòng"
                                             optionFilterProp="children"
@@ -486,13 +549,18 @@ function room(props) {
                                             onSearch={onSearch}
                                             filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
                                             value={editRenter?.roomCode}
-                                        >
-                                            {roomFilter.map((obj, index) => {
+                                        > */}
+                                        {/* {roomFilter.map((obj, index) => {
                                                 return <Select.Option key={index} value={obj}>{obj}</Select.Option>
-                                            })}
-                                        </Select>
+                                            })} */}
+                                        <Input value={editRenter?.roomCode} onChange={(e) => {
+                                            setEditRenter(pre => {
+                                                return { ...pre, roomCode: e.target.value }
+                                            })
+                                        }} />
+                                        {/* </Select> */}
                                     </Form.Item>
-                                    <Form.Item label="Tên chủ hộ" rules={[
+                                    <Form.Item label="Tên chủ hộ" name="owner" rules={[
                                         {
                                             required: true,
                                             message: "Vui lòng nhập tên chủ hộ",
@@ -507,7 +575,7 @@ function room(props) {
                                             })
                                         }} />
                                     </Form.Item>
-                                    <Form.Item label="Tòa" rules={[
+                                    <Form.Item label="Tòa" name="building" rules={[
                                         {
                                             required: true,
                                             message: "Vui lòng nhập tòa nhà",
@@ -525,19 +593,43 @@ function room(props) {
                                             })}
                                         </Select>
                                     </Form.Item>
-                                    <Form.Item label="Số lượng người" rules={[
+                                    <Form.Item label="Tầng" name="floor" rules={[
+                                        {
+                                            required: true,
+                                            message: "Vui lòng nhập tầng",
+                                        },
+                                    ]}>
+                                        <Select
+                                            showSearch
+                                            placeholder="Chọn tầng"
+                                            optionFilterProp="children"
+                                            onChange={(e) => {
+                                                setEditRenter(pre => {
+                                                    return { ...pre, floor: e }
+                                                })
+                                            }}
+                                            onSearch={onSearch}
+                                            filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
+                                            value={editRenter?.floor}
+                                        >
+                                            {floorFilter.map((obj, index) => {
+                                                return <Select.Option key={index} value={obj}>{obj}</Select.Option>
+                                            })}
+                                        </Select>
+                                    </Form.Item>
+                                    <Form.Item label="Số lượng người" name="numberOfRenter" rules={[
                                         {
                                             required: true,
                                             message: "Vui lòng nhập số lượng người",
                                         },
                                     ]}>
-                                        <InputNumber onChange={(e) => {
+                                        <InputNumber min={1} onChange={(e) => {
                                             setEditRenter(pre => {
                                                 return { ...pre, numberOfRenter: e }
                                             })
                                         }} value={editRenter?.numberOfRenter} />
                                     </Form.Item>
-                                    <Form.Item label="Diện tích" rules={[
+                                    <Form.Item label="Diện tích" name="square" rules={[
                                         {
                                             required: true,
                                             message: "Vui lòng nhập diện tích",
@@ -552,7 +644,7 @@ function room(props) {
                                             })
                                         }} />
                                     </Form.Item>
-                                    <Form.Item label="Ngày thuê" rules={[
+                                    <Form.Item label="Ngày thuê" name="dateOfHire" rules={[
                                         {
                                             required: true,
                                             message: "Vui lòng nhập ngày thuê",
@@ -568,7 +660,7 @@ function room(props) {
                                             }}
                                         />
                                     </Form.Item>
-                                    <Form.Item label="Ngày hết hạn hợp đồng" rules={[
+                                    <Form.Item label="Ngày hết hạn hợp đồng" name="contractExpirationDate" rules={[
                                         {
                                             required: true,
                                             message: "Vui lòng nhập ngày hết hạn hợp đồng",
@@ -584,8 +676,14 @@ function room(props) {
                                             }}
                                         />
                                     </Form.Item>
-                                    <Form.Item label="Tình trạng" valuePropName="checked">
-                                        <Switch checked={editRenter?.status}
+                                    <Form.Item label="Tình trạng" name="status" valuePropName="checked" rules={[
+                                        {
+                                            required: true,
+                                            message: "Vui lòng nhập ngày hết hạn hợp đồng",
+                                        },
+                                    ]}>
+                                        <Switch
+                                            checked={editRenter?.status}
                                             onChange={(e) => {
                                                 setEditRenter(pre => {
                                                     return { ...pre, status: e }
