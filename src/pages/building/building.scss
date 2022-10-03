@@ -19,5 +19,14 @@
         font-weight: bold;
       }
     }
+    .layout-content {
+      display: flex;
+      flex-direction: column;
+
+      .button-add {
+        float: right;
+        margin: 10px;
+      }
+    }
   }
 }

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import { Button, Checkbox, Form, Input, notification } from "antd";
@@ -7,7 +6,7 @@ import "./login.scss";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import axios from "../../api/axios";
-const LOGIN_URL = "/signin";
+const LOGIN_URL = "auth/signin";
 
 const Login = () => {
   const { setAuth } = useAuth();
@@ -47,6 +46,7 @@ const Login = () => {
       //console.log(JSON.stringify(response));
       const accessToken = response?.data?.body.token;
       const roles = response?.data?.body.role;
+      window.localStorage.setItem("Cookie", `${accessToken}`);
       setAuth({ user_name, password, roles, accessToken });
       setUser("");
       setPwd("");
@@ -80,9 +80,7 @@ const Login = () => {
         <Form name="login-form" initialValues={{ remember: true }} autoComplete="off" onFinish={handleSubmit}>
           <p className="form-title">Đăng nhập</p>
           <Form.Item name="username" rules={[{ required: true, message: "Vui lòng nhập username!" }]}>
-
             <Input placeholder="Username" onChange={(e) => setUser(e.target.value)} value={user_name} />
-
           </Form.Item>
 
           <Form.Item name="password" rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}>

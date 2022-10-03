@@ -4,6 +4,7 @@ import "./building.scss";
 import { PlusOutlined } from "@ant-design/icons";
 import { Button, Layout, Modal } from "antd";
 import CreateBuilding from "./CreateBuilding";
+import ListBuilding from "./ListBuilding";
 const { Content, Sider, Header } = Layout;
 const Building = () => {
   const [open, setOpen] = useState(false);
@@ -39,22 +40,27 @@ const Building = () => {
             }}
           >
             <p className="header-title">Quản lý chung cư</p>
-            <Button type="primary" icon={<PlusOutlined />} size="middle" onClick={showModal}>
-              Thêm chung cư
-            </Button>
           </Header>
           <Content
+            className="layout-content"
             style={{
-              margin: "10px 16px",
+              margin: "10px 10px",
             }}
           >
+            <div>
+              <Button type="primary" icon={<PlusOutlined />} size="middle" onClick={showModal} className="button-add">
+                Thêm chung cư
+              </Button>
+            </div>
             <div
               className="site-layout-background"
               style={{
                 padding: 24,
                 minHeight: 360,
               }}
-            ></div>
+            >
+              <ListBuilding />
+            </div>
           </Content>
         </Layout>
       </Layout>
@@ -64,6 +70,7 @@ const Building = () => {
         title="Thêm chung cư"
         onOk={handleOk}
         onCancel={handleCancel}
+        destroyOnClose={true}
         width={700}
         footer={[
           <Button htmlType="submit" form="createBuilding" type="primary" onClick={handleOk}>
