@@ -1,6 +1,10 @@
-import { Form, Input, InputNumber, Select } from "antd";
+import { Form, Input, InputNumber } from "antd";
 import React, { useEffect, useState } from "react";
-const { Option } = Select;
+import Select from "react-select";
+import axios from "../../api/axios";
+import useLocationForm from "./useLocationForm";
+
+const ADD_EMPLOYEE_URL = "manager/add-building";
 const formItemLayout = {
   labelCol: {
     xs: {
@@ -22,55 +26,76 @@ const formItemLayout = {
 
 const CreateBuilding = () => {
   const [form] = Form.useForm();
+  const { state, onCitySelect, onDistrictSelect, onWardSelect } = useLocationForm(false);
 
-  const [province, setProvince] = useState([]);
-  const [provincecode, setProvinceCode] = useState("");
-  const [district, setDistrict] = useState(null);
-  const [districtCode, setDistrictCode] = useState("");
-  const [ward, setWard] = useState(null);
+  const { cityOptions, districtOptions, wardOptions, selectedCity, selectedDistrict, selectedWard } = state;
 
-  useEffect(() => {
-    const getProvince = async () => {
-      const res = await fetch("https://provinces.open-api.vn/api/p?depth=2");
-      const getPro = await res.json();
-      setProvince(await getPro);
-    };
-    getProvince();
-  }, []);
+  // console.log(cityOptions);
 
-  const handleProvince = (value) => {
-    const getProvinceCode = value;
-    setProvinceCode(getProvinceCode);
-  };
-  // console.log(provincecode);
-  useEffect(() => {
-    const getDistrict = async () => {
-      const rest = await fetch(`https://provinces.open-api.vn/api/p/${provincecode}?depth=2`);
-      const getDis = await rest.json();
-      setDistrict(null);
-      setDistrict(await getDis);
-    };
-    getDistrict();
-  }, [provincecode]);
-  // console.log(district);
-  // console.log(district.districts);
-  const handleDistrict = (value) => {
-    const getDistrictCode = value;
-    setDistrictCode(getDistrictCode);
-    // console.log(getProvinceCode);
+  const [building_name, setBuildingName] = useState("");
+  const [building_total_floor, setBuildingFloor] = useState("");
+  const [building_total_room, setBuildingRoom] = useState("");
+  const [building_address_city, setBuildingCty] = useState("");
+  const [building_address_district, setBuildingDistrict] = useState("");
+  const [building_address_wards, setBuildingWard] = useState("");
+  const [building_address_more_detail, setBuildingAddress] = useState("");
+
+  // console.log(selectedCity?.label);
+
+  const Address = () => {
+    setBuildingCty(selectedCity?.label);
+    setBuildingDistrict(selectedDistrict?.label);
+    setBuildingWard(selectedWard?.label);
+    // address();
   };
   useEffect(() => {
-    const getWard = async () => {
-      const rest = await fetch(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`);
-      const getWard = await rest.json();
-      setWard(await getWard);
+    Address();
+  });
+  const handleCreateBuilding = async (value) => {
+    let cookie = localStorage.getItem("Cookie");
+    // console.log(cookie);
+
+    const building = {
+      building_name,
+      building_total_room,
+      building_total_floor,
+      building_address_city,
+      building_address_district,
+      building_address_wards,
+      building_address_more_detail,
     };
-    getWard();
-  }, [districtCode]);
+    const response = await axios
+      .post(ADD_EMPLOYEE_URL, building, {
+        headers: {
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${cookie}`,
+        },
+        // withCredentials: true,
+      })
+      .then((res) => console.log(res))
+      .catch((e) => console.log(e.request));
+    console.log(JSON.stringify(response?.data));
+    // console.log(value);
+  };
+
+  const changeRoom = (value) => {
+    setBuildingRoom(value);
+  };
+  const changeFloor = (value) => {
+    setBuildingFloor(value);
+  };
   return (
-    <Form {...formItemLayout} form={form} name="createBuilding" id="createBuilding" scrollToFirstError>
+    <Form
+      {...formItemLayout}
+      form={form}
+      name="createBuilding"
+      id="createBuilding"
+      scrollToFirstError
+      onFinish={handleCreateBuilding}
+    >
       <Form.Item
-        name="name"
+        name="building_name"
         label="Tên chung cư"
         rules={[
           {
@@ -82,11 +107,11 @@ const CreateBuilding = () => {
           },
         ]}
       >
-        <Input />
+        <Input onChange={(e) => setBuildingName(e.target.value)} />
       </Form.Item>
 
       <Form.Item
-        name="floor"
+        name="building_total_floor"
         label="Số tầng"
         rules={[
           {
@@ -99,10 +124,11 @@ const CreateBuilding = () => {
           style={{
             width: "100%",
           }}
+          onChange={changeFloor}
         />
       </Form.Item>
       <Form.Item
-        name="room"
+        name="building_total_room"
         label="Số phòng"
         rules={[
           {
@@ -115,27 +141,12 @@ const CreateBuilding = () => {
           style={{
             width: "100%",
           }}
-        />
-      </Form.Item>
-      <Form.Item
-        name="renter"
-        label="Số người trong một phòng"
-        rules={[
-          {
-            required: true,
-            message: "Vui lòng nhập số người trong một phòng!",
-          },
-        ]}
-      >
-        <InputNumber
-          style={{
-            width: "100%",
-          }}
+          onChange={changeRoom}
         />
       </Form.Item>
 
       <Form.Item
-        name="city"
+        name="building_address_city"
         label="Thành phố"
         rules={[
           {
@@ -144,16 +155,18 @@ const CreateBuilding = () => {
           },
         ]}
       >
-        <Select placeholder="Chọn Thành phố" onChange={handleProvince}>
-          {province.map((provinceget, idx) => (
-            <Option key={idx} value={provinceget.code}>
-              {provinceget.name}
-            </Option>
-          ))}
-        </Select>
+        <Select
+          name="cityId"
+          key={`cityId_${selectedCity?.value}`}
+          isDisabled={cityOptions.length === 0}
+          options={cityOptions}
+          onChange={(option) => onCitySelect(option)}
+          placeholder="Tỉnh/Thành"
+          defaultValue={selectedCity}
+        />
       </Form.Item>
       <Form.Item
-        name="district"
+        name="building_address_district"
         label="Quận/Huyện"
         rules={[
           {
@@ -162,23 +175,19 @@ const CreateBuilding = () => {
           },
         ]}
       >
-        {district != null ? (
-          <Select placeholder="Chọn Quận/Huyện" onChange={handleDistrict}>
-            {district.districts?.map((districtget, idx) => (
-              <Option key={idx} value={districtget.code}>
-                {districtget.name}
-              </Option>
-            ))}
-          </Select>
-        ) : (
-          <Select placeholder="Chọn Quận/Huyện">
-            <Option value={""}></Option>
-          </Select>
-        )}
+        <Select
+          name="districtId"
+          key={`districtId_${selectedDistrict?.value}`}
+          isDisabled={districtOptions.length === 0}
+          options={districtOptions}
+          onChange={(option) => onDistrictSelect(option)}
+          placeholder="Quận/Huyện"
+          defaultValue={selectedDistrict}
+        />
       </Form.Item>
 
       <Form.Item
-        name="ward"
+        name="building_address_wards"
         label="Phường/Xã"
         rules={[
           {
@@ -187,23 +196,19 @@ const CreateBuilding = () => {
           },
         ]}
       >
-        {ward != null ? (
-          <Select placeholder="Chọn Quận/Huyện">
-            {ward.wards?.map((wardget) => (
-              <Option key={wardget.code} value={wardget.code}>
-                {wardget.name}
-              </Option>
-            ))}
-          </Select>
-        ) : (
-          <Select placeholder="Chọn Phường/Xã">
-            <Option value={""}></Option>
-          </Select>
-        )}
+        <Select
+          name="wardId"
+          key={`wardId_${selectedWard?.value}`}
+          isDisabled={wardOptions.length === 0}
+          options={wardOptions}
+          placeholder="Phường/Xã"
+          onChange={(option) => onWardSelect(option)}
+          defaultValue={selectedWard}
+        />
       </Form.Item>
 
       <Form.Item
-        name="detail"
+        name="building_address_more_detail"
         label="Địa chỉ chi tiết"
         rules={[
           {
@@ -215,7 +220,7 @@ const CreateBuilding = () => {
           },
         ]}
       >
-        <Input />
+        <Input onChange={(e) => setBuildingAddress(e.target.value)} />
       </Form.Item>
     </Form>
   );
