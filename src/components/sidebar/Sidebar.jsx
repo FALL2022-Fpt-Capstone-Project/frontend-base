@@ -42,6 +42,10 @@ const Sidebar = () => {
             <span>Quản lý chung cư</span>
             <Link to="/building" />
           </Menu.Item>
+          <Menu.Item key="3">
+            <span>Quản lý phòng</span>
+            <Link to="/room" />
+          </Menu.Item>
           <Menu.Item key="4">
             <span>Quản lý trang thiết bị</span>
             <Link to="/" />
@@ -55,15 +59,15 @@ const Sidebar = () => {
             </>
           }
         >
-          <Menu.Item key="5">
+          {/* <Menu.Item key="5">
             <span>Quản lý chung cư</span>
             <Link to="/" />
-          </Menu.Item>
+          </Menu.Item> */}
         </Menu.SubMenu>
         <Menu.Item key="6">
           <MailOutlined />
           <span>Email/SMS</span>
-          <Link to="/" />
+          {/* <Link to="/" /> */}
         </Menu.Item>
 
         <Menu.SubMenu
@@ -74,10 +78,10 @@ const Sidebar = () => {
             </>
           }
         >
-          <Menu.Item key="7">
+          {/* <Menu.Item key="7">
             <span>Quản lý chung cư</span>
             <Link to="/" />
-          </Menu.Item>
+          </Menu.Item> */}
         </Menu.SubMenu>
         <Menu.SubMenu
           title={
@@ -91,15 +95,15 @@ const Sidebar = () => {
             <span>Quản lý hợp đồng chung cư</span>
             <Link to="/contract-apartment" />
           </Menu.Item>
-          <Menu.Item key="8">
+          <Menu.Item key="9">
             <span>Quản lý hợp đồng khách thuê</span>
             <Link to="/contract-renter" />
           </Menu.Item>
         </Menu.SubMenu>
-        <Menu.Item key="9">
+        <Menu.Item key="10">
           <LogoutOutlined />
           <span>Đăng xuất</span>
-          <Link to="/" />
+          <Link to="/login" />
         </Menu.Item>
       </Menu>
     </div>

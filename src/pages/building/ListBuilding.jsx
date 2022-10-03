@@ -8,13 +8,15 @@ const LIST_EMPLOYEE_URL = "manager/get-list-building";
 const ListBuilding = () => {
   const [dataSource, setDataSource] = useState([]);
   const [textSearch, setTextSearch] = useState("");
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     getAllEmployees();
   }, []);
 
   const getAllEmployees = async () => {
     let cookie = localStorage.getItem("Cookie");
-
+    setLoading(true);
     const response = await axios
       .get(LIST_EMPLOYEE_URL, {
         headers: {
@@ -31,6 +33,7 @@ const ListBuilding = () => {
       .catch((error) => {
         console.log(error);
       });
+    setLoading(false);
   };
 
   return (
@@ -58,12 +61,21 @@ const ListBuilding = () => {
             },
           },
           {
+            title: "Tổng số tầng",
+            dataIndex: "building_total_floor",
+          },
+          {
             title: "Tổng số phòng",
             dataIndex: "building_total_rooms",
           },
+
           {
-            title: "Tổng số tầng",
-            dataIndex: "building_total_floor",
+            title: "Tổng số phòng trống",
+            // dataIndex: "building_total_floor",
+          },
+          {
+            title: "Tổng số số người",
+            // dataIndex: "building_total_floor",
           },
           {
             title: "Địa chỉ",
@@ -84,6 +96,7 @@ const ListBuilding = () => {
           },
         ]}
         pagination={{ pageSize: 5 }}
+        loading={loading}
       />
     </div>
   );

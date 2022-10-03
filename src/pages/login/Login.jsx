@@ -19,15 +19,10 @@ const Login = () => {
 
   const [user_name, setUser] = useState("");
   const [password, setPwd] = useState("");
-  const [errMsg, setErrMsg] = useState("");
 
   // useEffect(() => {
   //   userRef.current.focus();
   // }, []);
-
-  useEffect(() => {
-    setErrMsg("");
-  }, [user_name, password]);
 
   const handleSubmit = async (e) => {
     // e.preventDefault();
