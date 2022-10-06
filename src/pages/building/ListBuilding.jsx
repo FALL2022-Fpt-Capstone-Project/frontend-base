@@ -79,7 +79,7 @@ const ListBuilding = () => {
           },
           {
             title: "Địa chỉ",
-            dataIndex: "building_address_more_detail",
+            dataIndex: "address_more_detail",
           },
           {
             title: "Thao tác",
