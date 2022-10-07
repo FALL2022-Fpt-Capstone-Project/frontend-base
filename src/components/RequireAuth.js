@@ -6,13 +6,9 @@ const RequireAuth = ({ allowedRoles }) => {
   const location = useLocation();
   console.log(auth);
 
-  return auth?.roles?.find((role) => allowedRoles?.includes(role)) ? (
-    <Outlet />
-  ) : auth?.accessToken ? (
-    <Navigate to="/unauthorized" state={{ from: location }} replace />
-  ) : (
-    <Navigate to="/login" state={{ from: location }} replace />
-  );
+  let role = localStorage.getItem("Role");
+
+  return allowedRoles?.includes(role) ? <Outlet /> : <Navigate to="/unauthorized" state={{ from: location }} replace />;
 };
 
 export default RequireAuth;

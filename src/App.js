@@ -8,8 +8,8 @@ import Room from "./pages/room/Room";
 import ContractApartment from "./pages/contract/Contract";
 import ContractRenter from "./pages/contract/ContractRenter";
 import Unauthorized from "./components/Unautharized";
-import Layout from "./components/Layout";
 import RequireAuth from "./components/RequireAuth";
+import Admin from "./pages/admin/Admin";
 
 const ROLES = {
   User: "ROLE_USER",
@@ -39,6 +39,9 @@ const App = () => {
         </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
           <Route path="contract-renter" element={<ContractRenter />} />
+        </Route>
+        <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
+          <Route path="manage-admin" element={<Admin />} />
         </Route>
       </Routes>
       {/* <AuthVerify logOut={logOut}/> */}

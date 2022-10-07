@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import { Button, Checkbox, Form, Input, notification } from "antd";
 import "antd/dist/antd.min.css";
@@ -42,6 +42,7 @@ const Login = () => {
       const accessToken = response?.data?.body.token;
       const roles = response?.data?.body.role;
       window.localStorage.setItem("Cookie", `${accessToken}`);
+      window.localStorage.setItem("Role", `${roles}`);
       setAuth({ user_name, password, roles, accessToken });
       setUser("");
       setPwd("");
