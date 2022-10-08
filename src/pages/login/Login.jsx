@@ -42,6 +42,7 @@ const Login = () => {
       const accessToken = response?.data?.body.token;
       const roles = response?.data?.body.role;
       window.localStorage.setItem("Cookie", `${accessToken}`);
+      window.localStorage.setItem("Role", `${roles}`);
       setAuth({ user_name, password, roles, accessToken });
       setUser("");
       setPwd("");
