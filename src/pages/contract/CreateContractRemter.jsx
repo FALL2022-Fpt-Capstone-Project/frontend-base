@@ -3,7 +3,10 @@ import Sidebar from "../../components/sidebar/Sidebar";
 import "./contract.scss";
 import axios from "axios";
 import { EditOutlined, DeleteOutlined, UploadOutlined } from '@ant-design/icons';
-import { Button, Layout, Modal, Form, Table, Space, Input, Select, Tabs, Row, Col, Radio, DatePicker, Upload, Tag } from "antd";
+import {
+    Button, Layout, Modal, Form, Table, Space, Input, Select, Tabs, Row, Col,
+    Radio, DatePicker, Upload, Tag, message, Spin
+} from "antd";
 import TextArea from "antd/lib/input/TextArea";
 const { Content, Sider, Header } = Layout;
 const { Option } = Select;
@@ -18,7 +21,8 @@ const CreateContractRenter = () => {
     const [form] = Form.useForm();
 
     const onFinish = (e) => {
-        console.log(e);
+        message.success('Thêm mới hợp đồng thành công');
+        console.log(JSON.stringify(e));
     }
     const onFormLayoutChange = ({ size }) => {
         setComponentSize(size);
@@ -155,10 +159,12 @@ const CreateContractRenter = () => {
         setisAdd(false);
     }
     const onOk = () => {
-        console.log(dataOldUser.name);
+        console.log(dataOldUser.phoneNumber);
         form.setFieldsValue({
-            contractName: dataOldUser.name,
-            renterName: dataOldUser.name
+            renterName: dataOldUser.name,
+            phoneNumber: dataOldUser.phoneNumber,
+            email: dataOldUser.email,
+            identityCard: dataOldUser.identityCard
         });
         setisAdd(false);
     }
@@ -193,7 +199,7 @@ const CreateContractRenter = () => {
                         >
                             <div className="" style={{ overflow: "auto" }}>
                                 <Button htmlType="submit" style={{ float: "right" }} type="primary" form="create-contract">Lưu</Button>
-                                <Button type="primary" style={{ marginRight: 5, float: "right" }}>Quay lại</Button>
+                                <Button href="/contract-renter" type="primary" style={{ marginRight: 5, float: "right" }}>Quay lại</Button>
                             </div>
                             <Form
                                 onFinish={onFinish}
@@ -218,15 +224,16 @@ const CreateContractRenter = () => {
                                         <Row>
                                             <Col span={12}>
                                                 <p><b>Các thông tin về khách và tiền cọc: </b></p>
-                                                <Form.Item className="form-item" name="contractName">
-                                                    <span><b>Tên hợp đồng: </b></span>
+                                                <Form.Item className="form-item" name="contractName"
+                                                    labelCol={{ span: 24 }} label={<span><b>Tên hợp đồng: </b></span>}
+                                                    rules={[
+                                                        {
+                                                            required: true,
+                                                            message: "Vui lòng nhập tên hợp đồng",
+                                                        }
+                                                    ]}>
                                                     <Input
-                                                        value={dataOldUser?.name} placeholder="Tên hợp đồng"
-                                                        onChange={(e) => {
-                                                            setDataOldUser(pre => {
-                                                                return { ...pre, contractName: e.target.value }
-                                                            })
-                                                        }}>
+                                                        placeholder="Tên hợp đồng">
                                                     </Input>
                                                 </Form.Item>
                                                 <Form.Item className="form-item" name="renterName" rules={[
@@ -234,69 +241,122 @@ const CreateContractRenter = () => {
                                                         required: true,
                                                         message: "Vui lòng nhập tên khách thuê",
                                                     }
-                                                ]}>
-                                                    <span><b>Tên khách thuê: </b></span>
+                                                ]} labelCol={{ span: 24 }} label={<span><b>Tên khách thuê: </b></span>}>
+                                                    {/* <span><b>Tên khách thuê: </b></span> */}
                                                     <Input
-                                                        value={editContract?.name}
                                                         placeholder="Tên khách thuê" onChange={(e) => {
-                                                            setEditContract(pre => {
-                                                                return { ...pre, renterName: e.target.value }
+                                                            setDataOldUser(pre => {
+                                                                return { ...pre, name: e.target.value }
                                                             })
                                                         }}>
                                                     </Input>
                                                 </Form.Item>
-                                                <Form.Item className="form-item" name="sex">
+                                                <Form.Item className="form-item" name="sex"
+                                                    rules={[
+                                                        {
+                                                            required: true,
+                                                            message: "Vui lòng chọn giới tính",
+                                                        }
+                                                    ]}>
                                                     <Radio.Group>
                                                         <Radio value={1}>Nam</Radio>
                                                         <Radio value={2}>Nữ</Radio>
                                                     </Radio.Group>
                                                 </Form.Item>
-                                                <Form.Item className="form-item" name="oldCustomer">
-                                                    <Button type="primary" size="default"
-                                                        onClick={() => {
-                                                            onAdd()
-                                                        }}>Khách cũ</Button>
-                                                </Form.Item>
-                                                <Form.Item className="form-item" name="phoneNumber">
-                                                    <span><b>Số điện thoại: </b></span>
+                                                {/* <Form.Item className="form-item" name="oldCustomer"> */}
+                                                <Button type="primary" size="default"
+                                                    onClick={() => {
+                                                        onAdd()
+                                                    }}>Khách cũ</Button>
+                                                {/* </Form.Item> */}
+                                                <Form.Item className="form-item" name="phoneNumber"
+                                                    labelCol={{ span: 24 }} label={<span><b>Số điện thoại: </b></span>}
+                                                    rules={[
+                                                        {
+                                                            required: true,
+                                                            message: "Vui lòng nhập số điện thoại",
+                                                        }
+                                                    ]}>
                                                     <Input
-                                                        placeholder="Số điện thoại">
+                                                        placeholder="Số điện thoại" onChange={(e) => {
+                                                            setDataOldUser(pre => {
+                                                                return { ...pre, phoneNumber: e.target.value }
+                                                            })
+                                                        }}>
                                                     </Input>
                                                 </Form.Item>
-                                                <Form.Item className="form-item" name="email">
-                                                    <span><b>Email: </b></span>
+                                                <Form.Item className="form-item" name="email" labelCol={{ span: 24 }}
+                                                    label={<span><b>Email: </b></span>}
+                                                    rules={[
+                                                        {
+                                                            required: true,
+                                                            message: "Vui lòng nhập email",
+                                                        }
+                                                    ]}>
                                                     <Input
-                                                        placeholder="Email">
+                                                        placeholder="Email" onChange={(e) => {
+                                                            setDataOldUser(pre => {
+                                                                return { ...pre, email: e.target.value }
+                                                            })
+                                                        }}>
                                                     </Input>
                                                 </Form.Item>
-                                                <Form.Item className="form-item" name="identityCard">
-                                                    <span><b>CCCD/CMND: </b></span>
+                                                <Form.Item className="form-item" name="identityCard"
+                                                    labelCol={{ span: 24 }} label={<span><b>CCCD/CMND: </b></span>}
+                                                    rules={[
+                                                        {
+                                                            required: true,
+                                                            message: "Vui lòng nhập CCCD/CMND",
+                                                        }
+                                                    ]}>
                                                     <Input
-                                                        placeholder="CCCD/CMND" >
+                                                        placeholder="CCCD/CMND" onChange={(e) => {
+                                                            setDataOldUser(pre => {
+                                                                return { ...pre, identityCard: e.target.value }
+                                                            })
+                                                        }}>
                                                     </Input>
                                                 </Form.Item>
                                                 <Row>
                                                     <Col span={9}>
-                                                        <span><b>Tầng: </b></span>
-                                                        <Form.Item className="form-item" name="floor">
+                                                        <Form.Item className="form-item" name="floor"
+                                                            labelCol={{ span: 24 }} label={<span><b>Tầng: </b></span>}
+                                                            rules={[
+                                                                {
+                                                                    required: true,
+                                                                    message: "Vui lòng chọn tầng",
+                                                                }
+                                                            ]}>
                                                             <Select placeholder="Chọn tầng">
-                                                                <Option value="">Tầng 1</Option>
-                                                                <Option value="">Tầng 2</Option>
+                                                                <Option value="1">Tầng 1</Option>
+                                                                <Option value="2">Tầng 2</Option>
                                                             </Select>
                                                         </Form.Item>
                                                     </Col>
                                                     <Col span={9}>
-                                                        <span><b>Phòng: </b></span>
-                                                        <Form.Item className="form-item" name="room">
+                                                        <Form.Item className="form-item" name="room"
+                                                            labelCol={{ span: 24 }} label={<span><b>Phòng: </b></span>}
+                                                            rules={[
+                                                                {
+                                                                    required: true,
+                                                                    message: "Vui lòng chọn phòng",
+                                                                }
+                                                            ]}>
                                                             <Select placeholder="Chọn phòng">
-                                                                <Option value="">201C</Option>
-                                                                <Option value="">203C</Option>
+                                                                <Option value="201c">201C</Option>
+                                                                <Option value="203c">203C</Option>
                                                             </Select>
                                                         </Form.Item>
                                                     </Col>
                                                 </Row>
-                                                <Form.Item className="form-item" name="contractTerm">
-                                                    <span><b>Thời hạn hợp đồng: </b></span>
+                                                <Form.Item className="form-item" name="contractTerm"
+                                                    labelCol={{ span: 24 }} label={<span><b>Thời hạn hợp đồng: </b></span>}
+                                                    rules={[
+                                                        {
+                                                            required: true,
+                                                            message: "Vui lòng chọn thời hạn hợp đồng",
+                                                        }
+                                                    ]}>
                                                     <Select placeholder="Thời hạn hợp đồng">
                                                         <Option value="6">6 tháng</Option>
                                                         <Option value="1">1 năm</Option>
@@ -304,46 +364,82 @@ const CreateContractRenter = () => {
                                                 </Form.Item>
                                                 <Row>
                                                     <Col span={9}>
-                                                        <span><b>Ngày vào ở: </b></span>
-                                                        <Form.Item className="form-item" name="startDate">
+                                                        <Form.Item className="form-item" name="startDate"
+                                                            labelCol={{ span: 24 }} label={<span><b>Ngày vào ở: </b></span>}
+                                                            rules={[
+                                                                {
+                                                                    required: true,
+                                                                    message: "Vui lòng chọn ngày vào ở",
+                                                                }
+                                                            ]}>
                                                             <DatePicker placeholder="Ngày vào ở" />
                                                         </Form.Item>
                                                     </Col>
                                                     <Col span={9}>
-                                                        <span><b>Ngày kết thúc: </b></span>
-                                                        <Form.Item className="form-item" name="endDate">
+                                                        <Form.Item className="form-item" name="endDate"
+                                                            labelCol={{ span: 24 }} label={<span><b>Ngày kết thúc: </b></span>}
+                                                            rules={[
+                                                                {
+                                                                    required: true,
+                                                                    message: "Vui lòng chọn ngày kết khúc",
+                                                                }
+                                                            ]}>
                                                             <DatePicker placeholder="Ngày kết thúc" />
                                                         </Form.Item>
                                                     </Col>
                                                 </Row>
-                                                <Form.Item className="form-item" name="note">
-                                                    <span><b>Ghi chú: </b></span>
-                                                    <TextArea rows={4} placeholder="Ghi chú" />
+                                                <Form.Item className="form-item" name="note"
+                                                    labelCol={{ span: 24 }} label={<span><b>Ghi chú: </b></span>}>
+                                                    <TextArea rows={4} placeholder="Ghi chú" value={""} />
                                                 </Form.Item>
                                             </Col>
                                             <Col span={12}>
                                                 <p><b>Thông tin giá trị hợp đồng: </b></p>
-                                                <Form.Item className="form-item" name="roomPrice">
-                                                    <span><b>Giá phòng: </b></span>
+                                                <Form.Item className="form-item" name="roomPrice"
+                                                    labelCol={{ span: 24 }} label={<span><b>Giá phòng: </b></span>}
+                                                    rules={[
+                                                        {
+                                                            required: true,
+                                                            message: "Vui lòng nhập giá phòng",
+                                                        }
+                                                    ]}>
                                                     <Input
                                                         placeholder="Giá phòng">
                                                     </Input>
                                                 </Form.Item>
-                                                <Form.Item className="form-item" name="depositAmount">
-                                                    <span><b>Số tiền cọc: </b></span>
+                                                <Form.Item className="form-item" name="depositAmount"
+                                                    labelCol={{ span: 24 }} label={<span><b>Số tiền cọc: </b></span>}
+                                                    rules={[
+                                                        {
+                                                            required: true,
+                                                            message: "Vui lòng nhập tiền cọc",
+                                                        }
+                                                    ]}>
                                                     <Input
                                                         placeholder="Số tiền cọc">
                                                     </Input>
                                                 </Form.Item>
-                                                <Form.Item className="form-item" name="billCycle">
-                                                    <span><b>Chu kỳ tính tiền: </b></span>
+                                                <Form.Item className="form-item" name="billCycle"
+                                                    labelCol={{ span: 24 }} label={<span><b>Chu kỳ tính tiền: </b></span>}
+                                                    rules={[
+                                                        {
+                                                            required: true,
+                                                            message: "Vui lòng nhập chu kỳ tính tiền",
+                                                        }
+                                                    ]}>
                                                     <Select placeholder="Chu kỳ tính tiền" style={{ width: "100%" }}>
                                                         <Option value="1">1 tháng</Option>
                                                         <Option value="2">2 tháng</Option>
                                                     </Select>
                                                 </Form.Item>
-                                                <Form.Item className="form-item" name="paymentCycle">
-                                                    <span><b>Chu kỳ thanh toán: </b></span>
+                                                <Form.Item className="form-item" name="paymentCycle"
+                                                    labelCol={{ span: 24 }} label={<span><b>Chu kỳ thanh toán: </b></span>}
+                                                    rules={[
+                                                        {
+                                                            required: true,
+                                                            message: "Vui lòng nhập chu kỳ thanh toán",
+                                                        }
+                                                    ]}>
                                                     <Select placeholder="Kỳ thanh toán" style={{ width: "100%" }}>
                                                         <Option value="15">kỳ 15</Option>
                                                         <Option value="30">kỳ 30</Option>
@@ -351,9 +447,17 @@ const CreateContractRenter = () => {
                                                 </Form.Item>
                                                 <p><i>Tập tin và hình ảnh upload thả vào đây</i></p>
                                                 <Form.Item className="form-item" name="file">
-                                                    <Upload>
+                                                    <Upload.Dragger multiple listType='picture' showUploadList={{ showRemoveIcon: true }}
+                                                        accept=".png,jpeg,.doc"
+                                                        beforeUpload={(file) => {
+                                                            return false;
+                                                        }}
+                                                        iconRender={() => {
+                                                            return <Spin></Spin>
+                                                        }}
+                                                        action={"http://localhost:3000/contract-renter/create"}>
                                                         <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                                                    </Upload>
+                                                    </Upload.Dragger>
                                                 </Form.Item>
                                             </Col>
                                         </Row>
@@ -437,7 +541,7 @@ const CreateContractRenter = () => {
                                             rowSelection={{
                                                 type: 'radio',
                                                 onSelect: (record) => {
-                                                    setDataOldUser({...record});
+                                                    setDataOldUser({ ...record });
                                                 }
                                             }}
                                         />

@@ -11,7 +11,6 @@ import {
 import { EditOutlined, DeleteOutlined, UserOutlined, PlusOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import moment from 'moment';
-import EditRoom from "./EditRoom";
 import { Link } from "react-router-dom";
 const { Content, Sider, Header } = Layout;
 
@@ -558,6 +557,7 @@ function room(props) {
                                             })} */}
                                         <Input value={editRenter?.roomCode} onChange={(e) => {
                                             setEditRenter(pre => {
+                                                console.log({ ...pre, roomCode: e.target.value });
                                                 return { ...pre, roomCode: e.target.value }
                                             })
                                         }} />
