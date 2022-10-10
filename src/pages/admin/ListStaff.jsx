@@ -154,7 +154,7 @@ const ListStaff = () => {
               if (record.role[0] === "ROLE_ADMIN") {
                 role = <p>Admin</p>;
               } else {
-                role = <p>User</p>;
+                role = <p>Staff</p>;
               }
               return <>{role}</>;
             },
@@ -249,7 +249,7 @@ const ListStaff = () => {
           onChange={roleChange}
         >
           <Option value="Admin">Admin</Option>
-          <Option value="User">User</Option>
+          <Option value="Staff">Staff</Option>
         </Select>
       </Modal>
     </div>
