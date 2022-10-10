@@ -2,23 +2,21 @@ import React, { useEffect, useState } from "react";
 import { Input, Table } from "antd";
 
 import axios from "../../api/axios";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 const { Search } = Input;
-const LIST_CONTRACT_URL = "manager/contract/get-contract/1";
-const ListContractRenter = () => {
+const LIST_CONTRACT_EXPIRED_URL = "manager/contract/get-contract/1?filter=expired";
+const ListContractExpired = () => {
   const [dataSource, setDataSource] = useState([]);
   const [textSearch, setTextSearch] = useState("");
   const [loading, setLoading] = useState(false);
-
   useEffect(() => {
-    getAllContract();
+    getAllContractExpired();
   }, []);
 
-  const getAllContract = async () => {
+  const getAllContractExpired = async () => {
     let cookie = localStorage.getItem("Cookie");
     setLoading(true);
     const response = await axios
-      .get(LIST_CONTRACT_URL, {
+      .get(LIST_CONTRACT_EXPIRED_URL, {
         headers: {
           "Content-Type": "application/json",
           // "Access-Control-Allow-Origin": "*",
@@ -128,4 +126,4 @@ const ListContractRenter = () => {
   );
 };
 
-export default ListContractRenter;
+export default ListContractExpired;

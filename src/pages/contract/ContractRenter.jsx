@@ -4,6 +4,9 @@ import "./contract.scss";
 import { PlusOutlined, PieChartOutlined } from "@ant-design/icons";
 import { Button, Layout, Card, Modal } from "antd";
 import ListContractRenter from "./ListContractRenter";
+import ListContractExpired from "./ListContractExpired";
+import ListContractRenterAlmostExpired from "./ListContractRenterAlmostExpired";
+import ListContractRenterLatest from "./ListContractRenterLatest";
 const { Content, Sider, Header } = Layout;
 const ContractRenter = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -69,7 +72,7 @@ const ContractRenter = () => {
                       marginRight: 20,
                     }}
                   >
-                    <p>100 hợp đồng</p>
+                    {/* <p>100 hợp đồng</p> */}
                     <Button type="primary" onClick={showModalNew}>
                       Xem chi tiết
                     </Button>
@@ -81,7 +84,7 @@ const ContractRenter = () => {
                       marginRight: 20,
                     }}
                   >
-                    <p>100 hợp đồng</p>
+                    {/* <p>100 hợp đồng</p> */}
                     <Button type="primary" onClick={showModalEnd}>
                       Xem chi tiết
                     </Button>
@@ -92,7 +95,7 @@ const ContractRenter = () => {
                       width: 300,
                     }}
                   >
-                    <p>100 hợp đồng</p>
+                    {/* <p>100 hợp đồng</p> */}
                     <Button type="primary" onClick={showModalOld}>
                       Xem chi tiết
                     </Button>
@@ -119,7 +122,7 @@ const ContractRenter = () => {
             onOk={() => setIsModalNewOpen(false)}
             onCancel={() => setIsModalNewOpen(false)}
           >
-            <ListContractRenter />
+            <ListContractRenterLatest />
           </Modal>
           <Modal
             title="Số lượng hợp đồng sắp hết hạn"
@@ -129,7 +132,7 @@ const ContractRenter = () => {
             onOk={() => setIsModalOldOpen(false)}
             onCancel={() => setIsModalOldOpen(false)}
           >
-            <ListContractRenter />
+            <ListContractRenterAlmostExpired />
           </Modal>
           <Modal
             title="Số lượng hợp đồng đã kết thúc"
@@ -139,7 +142,7 @@ const ContractRenter = () => {
             onOk={() => setIsModalEndOpen(false)}
             onCancel={() => setIsModalEndOpen(false)}
           >
-            <ListContractRenter />
+            <ListContractExpired />
           </Modal>
         </Layout>
       </Layout>
