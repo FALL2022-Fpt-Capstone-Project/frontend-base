@@ -2,11 +2,24 @@ import React, { useState } from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import "./contract.scss";
 import { PlusOutlined, PieChartOutlined } from "@ant-design/icons";
-import { Button, Layout, Card } from "antd";
+import { Button, Layout, Card, Modal } from "antd";
 import ListContractRenter from "./ListContractRenter";
 const { Content, Sider, Header } = Layout;
 const ContractRenter = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isModalNewOpen, setIsModalNewOpen] = useState(false);
+  const [isModalOldOpen, setIsModalOldOpen] = useState(false);
+  const [isModalEndOpen, setIsModalEndOpen] = useState(false);
+  const showModalNew = () => {
+    setIsModalNewOpen(true);
+  };
+  const showModalOld = () => {
+    setIsModalOldOpen(true);
+  };
+  const showModalEnd = () => {
+    setIsModalEndOpen(true);
+  };
+
   return (
     <div className="contract">
       <Layout
@@ -57,7 +70,21 @@ const ContractRenter = () => {
                     }}
                   >
                     <p>100 hợp đồng</p>
-                    <Button type="link">Xem chi tiết</Button>
+                    <Button type="primary" onClick={showModalNew}>
+                      Xem chi tiết
+                    </Button>
+                  </Card>
+                  <Card
+                    title="Số lượng hợp đồng đã kết thúc"
+                    style={{
+                      width: 300,
+                      marginRight: 20,
+                    }}
+                  >
+                    <p>100 hợp đồng</p>
+                    <Button type="primary" onClick={showModalEnd}>
+                      Xem chi tiết
+                    </Button>
                   </Card>
                   <Card
                     title="Số lượng hợp đồng sắp hết hạn"
@@ -66,7 +93,9 @@ const ContractRenter = () => {
                     }}
                   >
                     <p>100 hợp đồng</p>
-                    <Button type="link">Xem chi tiết</Button>
+                    <Button type="primary" onClick={showModalOld}>
+                      Xem chi tiết
+                    </Button>
                   </Card>
                 </div>
                 <p className="card-info">Thông tin hiển thị dữ liệu 3 tháng gần nhất</p>
@@ -82,6 +111,36 @@ const ContractRenter = () => {
               <ListContractRenter />
             </div>
           </Content>
+          <Modal
+            title="Số lượng hợp đồng mới được mở"
+            // style={{ maxwidth: 900 }}
+            width={1200}
+            visible={isModalNewOpen}
+            onOk={() => setIsModalNewOpen(false)}
+            onCancel={() => setIsModalNewOpen(false)}
+          >
+            <ListContractRenter />
+          </Modal>
+          <Modal
+            title="Số lượng hợp đồng sắp hết hạn"
+            // style={{ maxwidth: 900 }}
+            width={1200}
+            visible={isModalOldOpen}
+            onOk={() => setIsModalOldOpen(false)}
+            onCancel={() => setIsModalOldOpen(false)}
+          >
+            <ListContractRenter />
+          </Modal>
+          <Modal
+            title="Số lượng hợp đồng đã kết thúc"
+            // style={{ maxwidth: 900 }}
+            width={1200}
+            visible={isModalEndOpen}
+            onOk={() => setIsModalEndOpen(false)}
+            onCancel={() => setIsModalEndOpen(false)}
+          >
+            <ListContractRenter />
+          </Modal>
         </Layout>
       </Layout>
     </div>
