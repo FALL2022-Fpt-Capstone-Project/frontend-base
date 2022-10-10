@@ -557,7 +557,6 @@ function room(props) {
                                             })} */}
                                         <Input value={editRenter?.roomCode} onChange={(e) => {
                                             setEditRenter(pre => {
-                                                console.log({ ...pre, roomCode: e.target.value });
                                                 return { ...pre, roomCode: e.target.value }
                                             })
                                         }} />
