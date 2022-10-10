@@ -10,24 +10,34 @@ const ListStaff = () => {
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingStaff, setEditingStaff] = useState(null);
-  const [dataSource, setDataSource] = useState([
-    {
-      key: "1",
-      id: "1",
-      staff_name: "Hải Phương",
-      user_name: "phuongnh",
-      phone_number: "09865612",
-      role: "Admin",
-    },
-    {
-      key: "2",
-      id: "2",
-      staff_name: "Đức Pháp",
-      user_name: "phapnd",
-      phone_number: "09865612",
-      role: "Admin",
-    },
-  ]);
+  const [dataSource, setDataSource] = useState([]);
+  const LIST_EMPLOYEE_URL = "manager/user/list-assistant-account";
+  const UPDATE_EMPLOYEE_URL = "manager/user/update-role-account";
+
+  useEffect(() => {
+    getAllEmployees();
+  }, []);
+  const getAllEmployees = async () => {
+    let cookie = localStorage.getItem("Cookie");
+    setLoading(true);
+    const response = await axios
+      .get(LIST_EMPLOYEE_URL, {
+        headers: {
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${cookie}`,
+        },
+        // withCredentials: true,
+      })
+      .then((res) => {
+        setDataSource(res.data.body);
+        console.log(res);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    setLoading(false);
+  };
 
   const onEditStudent = (record) => {
     setIsEditing(true);
@@ -42,6 +52,44 @@ const ListStaff = () => {
       return { ...pre, role: value };
     });
   };
+
+  // const updateEmployee = async () => {
+  //   let cookie = localStorage.getItem("Cookie");
+  //   setLoading(true);
+  //   const response = await axios
+  //     .put(UPDATE_EMPLOYEE_URL, editingStaff, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         // "Access-Control-Allow-Origin": "*",
+  //         Authorization: `Bearer ${cookie}`,
+  //       },
+  //       // withCredentials: true,
+  //     })
+  //     .then((res) => {
+  //       setDataSource(res.data.body);
+  //       console.log(res);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  //   setLoading(false);
+  // };
+
+  const onDeleteStudent = (record) => {
+    Modal.confirm({
+      title: "Bạn có muốn xoá nhân viên này không?",
+      okText: "Có",
+      cancelText: "Không",
+      okType: "danger",
+      onOk: () => {
+        setDataSource((pre) => {
+          return pre.filter((employee) => employee.user_name !== record.user_name);
+        });
+      },
+    });
+  };
+
+  // console.log(editingStaff);
 
   return (
     <div className="list-staff">
@@ -63,11 +111,14 @@ const ListStaff = () => {
         columns={[
           {
             title: "Tên nhân viên",
-            dataIndex: "staff_name",
+            dataIndex: "full_name",
             filteredValue: [textSearch],
             onFilter: (value, record) => {
               // console.log(record);
-              return record.staff_name.includes(value);
+              return (
+                String(record.full_name).toLowerCase()?.includes(value.toLowerCase()) ||
+                String(record.user_name).toLowerCase()?.includes(value.toLowerCase())
+              );
             },
           },
           {
@@ -78,15 +129,37 @@ const ListStaff = () => {
             title: "Số điện thoại",
             dataIndex: "phone_number",
           },
-
+          {
+            title: "Địa chỉ",
+            dataIndex: "address_more_detail",
+          },
+          {
+            title: "Giới tính",
+            dataIndex: "gender",
+            render: (_, record) => {
+              let gender;
+              if (record.gender === "Male") {
+                gender = <p>Nam</p>;
+              } else {
+                gender = <p>Nữ</p>;
+              }
+              return <>{gender}</>;
+            },
+          },
           {
             title: "Vai trò",
             dataIndex: "role",
+            render: (_, record) => {
+              let role;
+              if (record.role[0] === "ROLE_ADMIN") {
+                role = <p>Admin</p>;
+              } else {
+                role = <p>User</p>;
+              }
+              return <>{role}</>;
+            },
           },
-          // {
-          //   title: "Tổng số số người",
-          //   // dataIndex: "building_total_floor",
-          // },
+
           {
             title: "Thao tác",
             dataIndex: "action",
@@ -99,7 +172,12 @@ const ListStaff = () => {
                       onEditStudent(record);
                     }}
                   />
-                  <DeleteOutlined style={{ fontSize: "20px" }} />
+                  <DeleteOutlined
+                    onClick={() => {
+                      onDeleteStudent(record);
+                    }}
+                    style={{ fontSize: "20px" }}
+                  />
                 </>
               );
             },
@@ -119,23 +197,25 @@ const ListStaff = () => {
         onOk={() => {
           setDataSource((pre) => {
             return pre.map((staff) => {
-              if (staff.id === editingStaff.id) {
+              if (staff.user_name === editingStaff.user_name) {
+                // updateEmployee();
                 return editingStaff;
               } else {
                 return staff;
               }
             });
           });
+
           resetEditing();
         }}
       >
         <label htmlFor="">Tên nhân viên</label>
         <Input
           style={{ margin: "10px 0" }}
-          value={editingStaff?.staff_name}
+          value={editingStaff?.full_name}
           onChange={(e) => {
             setEditingStaff((pre) => {
-              return { ...pre, staff_name: e.target.value };
+              return { ...pre, full_name: e.target.value };
             });
           }}
         />
@@ -146,16 +226,6 @@ const ListStaff = () => {
           onChange={(e) => {
             setEditingStaff((pre) => {
               return { ...pre, user_name: e.target.value };
-            });
-          }}
-        />
-        <label htmlFor="">Mật khẩu</label>
-        <Input
-          style={{ margin: "10px 0" }}
-          value={editingStaff?.password}
-          onChange={(e) => {
-            setEditingStaff((pre) => {
-              return { ...pre, password: e.target.value };
             });
           }}
         />
