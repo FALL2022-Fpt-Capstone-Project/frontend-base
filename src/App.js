@@ -10,6 +10,7 @@ import ContractRenter from "./pages/contract/ContractRenter";
 import Unauthorized from "./components/Unautharized";
 import Layout from "./components/Layout";
 import RequireAuth from "./components/RequireAuth";
+import CreateContractRenter from "./pages/contract/CreateContractRemter";
 
 const ROLES = {
   User: "ROLE_USER",
@@ -39,6 +40,9 @@ const App = () => {
         </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
           <Route path="contract-renter" element={<ContractRenter />} />
+        </Route>
+        <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
+          <Route path="contract-renter/create" element={<CreateContractRenter />} />
         </Route>
       </Routes>
       {/* <AuthVerify logOut={logOut}/> */}

@@ -58,7 +58,7 @@ const ContractRenter = () => {
               >
                 Thống kê hợp đồng
               </Button>
-              <Button type="primary" icon={<PlusOutlined />} size="middle" className="button-add">
+              <Button type="primary" icon={<PlusOutlined />} size="middle" className="button-add" href="/contract-renter/create">
                 Thêm hợp đồng
               </Button>
             </div>
