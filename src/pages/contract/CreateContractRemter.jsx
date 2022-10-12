@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import "./contract.scss";
 import axios from "axios";
-import { EditOutlined, DeleteOutlined, UploadOutlined, PlusCircleOutlined, EyeOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, UploadOutlined, PlusCircleOutlined, EyeOutlined, FilterOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import {
   Button, Layout, Modal, Form, Table, Space, Input, Select,
@@ -38,27 +38,15 @@ const CreateContractRenter = () => {
   };
   const columns = [
     {
-      title: 'Tầng',
-      dataIndex: 'floor',
+      title: 'Tên tài sản',
+      dataIndex: 'assetName',
       key: 'index',
       filteredValue: [searched],
       onFilter: (value, record) => {
         return (
-          String(record.floor).toLowerCase()?.includes(value.toLowerCase()) ||
-          String(record.roomCode).toLowerCase()?.includes(value.toLowerCase()) ||
           String(record.assetName).toLowerCase()?.includes(value.toLowerCase())
         );
       },
-    },
-    {
-      title: 'Phòng',
-      dataIndex: 'roomCode',
-      key: 'index',
-    },
-    {
-      title: 'Tên tài sản',
-      dataIndex: 'assetName',
-      key: 'index',
     },
     {
       title: 'Số lượng',
@@ -66,7 +54,12 @@ const CreateContractRenter = () => {
       key: 'index',
     },
     {
-      title: 'Ngày bàn giao',
+      title: 'Loại',
+      dataIndex: 'typeOfAsset',
+      key: 'index',
+    },
+    {
+      title: 'Thời gian',
       dataIndex: 'dateOfDelivery',
       key: 'index',
     },
@@ -119,10 +112,7 @@ const CreateContractRenter = () => {
       filteredValue: [searched],
       onFilter: (value, record) => {
         return (
-          String(record.name).toLowerCase()?.includes(value.toLowerCase()) ||
-          String(record.phoneNumber).toLowerCase()?.includes(value.toLowerCase()) ||
-          String(record.identityCard).toLowerCase()?.includes(value.toLowerCase()) ||
-          String(record.email).toLowerCase()?.includes(value.toLowerCase())
+          String(record.name).toLowerCase()?.includes(value.toLowerCase())
         );
       },
     },
@@ -156,20 +146,18 @@ const CreateContractRenter = () => {
     if ((Math.floor(Math.random() * (100 - 1 + 1)) + 1) % 2 === 0) {
       asset.push({
         index: i,
-        floor: Math.floor(Math.random() * (100 - 1 + 1)) + 1,
-        roomCode: i.toString(),
         assetName: `Tài sản ${i}`,
         numberOfAsset: Math.floor(Math.random() * (100 - 1 + 1)) + 1,
+        typeOfAsset: 'Đồ phòng ngủ',
         dateOfDelivery: `30/09/2022`,
         status: true,
       });
     } else {
       asset.push({
         index: i,
-        floor: Math.floor(Math.random() * (100 - 1 + 1)) + 1,
-        roomCode: i.toString(),
         assetName: `Tài sản ${i}`,
         numberOfAsset: Math.floor(Math.random() * (100 - 1 + 1)) + 1,
+        typeOfAsset: 'Đồ phòng khách',
         dateOfDelivery: `30/09/2022`,
         status: false,
       });
@@ -180,6 +168,9 @@ const CreateContractRenter = () => {
   const onChange = (value) => {
     console.log(`selected ${value}`);
   };
+  const onChangeAutoCheck = (value) => {
+    console.log(`switch ${value}`);
+  }
   const onSearch = (value) => {
     console.log('search:', value);
   };
@@ -536,13 +527,7 @@ const CreateContractRenter = () => {
                             }}>
                           </Input>
                         </Form.Item>
-                        <Form.Item className="form-item" name="sex"
-                          rules={[
-                            {
-                              required: true,
-                              message: "Vui lòng chọn giới tính",
-                            }
-                          ]}>
+                        <Form.Item className="form-item" name="sex">
                           <Radio.Group>
                             <Radio value={true}>Nam</Radio>
                             <Radio value={false}>Nữ</Radio>
@@ -562,7 +547,8 @@ const CreateContractRenter = () => {
                               message: "Vui lòng nhập số điện thoại",
                               whitespace: true,
                             }
-                          ]}>
+                          ]}
+                        >
                           <Input
                             placeholder="Số điện thoại" onChange={(e) => {
                               setDataOldUser(pre => {
@@ -573,14 +559,15 @@ const CreateContractRenter = () => {
                         </Form.Item>
                         <Form.Item className="form-item" name="email" labelCol={{ span: 24 }}
                           label={<span><b>Email: </b></span>}
-                          rules={[
-                            {
-                              required: true,
-                              message: "Vui lòng nhập email",
-                              whitespace: true,
-                              type: "email",
-                            }
-                          ]}>
+                        // rules={[
+                        //   {
+                        //     required: true,
+                        //     message: "Vui lòng nhập email",
+                        //     whitespace: true,
+                        //     type: "email",
+                        //   }
+                        // ]}
+                        >
                           <Input
                             placeholder="Email" onChange={(e) => {
                               setDataOldUser(pre => {
@@ -768,6 +755,10 @@ const CreateContractRenter = () => {
                             <Option value="30">kỳ 30</Option>
                           </Select>
                         </Form.Item>
+                        <Form.Item className="form-item" name="autoRenewContract"
+                          labelCol={{ span: 24 }} label={<span><b>Tự động gia hạn hợp đồng:  </b></span>}>
+                          <Switch defaultChecked onChange={onChangeAutoCheck} />
+                        </Form.Item>
                         <p><i>Tập tin và hình ảnh upload thả vào đây</i></p>
                         <Form.Item className="form-item" name="file1">
                           <Upload.Dragger multiple listType='picture' showUploadList={{ showRemoveIcon: true }}
@@ -784,12 +775,12 @@ const CreateContractRenter = () => {
                         </Form.Item>
                       </Col>
                     </Row>
-                    <p>Lưu ý:<br />
+                    <p><i>Lưu ý:<br />
                       - Kỳ thanh toán tùy thuộc vào từng khu nhà trọ, nếu khu trọ bạn thu tiền 1 lần vào cuối tháng thì bạn chọn là kỳ 30. Trường hợp khu nhà trọ bạn có số lượng phòng nhiều, chia làm 2 đợt thu, bạn dựa vào ngày vào của khách để gán kỳ cho phù hợp, ví dụ: vào từ ngày 1 đến 15 của tháng thì gán kỳ 15; nếu vào từ ngày 16 đến 31 của tháng thì gán kỳ 30. Khi tính tiền phòng bạn sẽ tính tiền theo kỳ.<br />
                       - Tiền đặt cọc sẽ không tính vào doanh thu ở các báo cáo và thống kê doanh thu. Nếu bạn muốn tính vào doanh thu bạn ghi nhận vào trong phần thu/chi khác (phát sinh). Tiền đặt cọc sẽ được trừ ra khi tính tiền trả phòng.<br />
                       - Các thông tin có giá trị là ngày nhập đủ ngày tháng năm và đúng định dạng dd/MM/yyyy (ví dụ: 01/12/2020)<br />
                       - Chu kỳ tính tiền: là số tháng được tính trên mỗi hóa đơn.<br />
-                    </p>
+                    </i></p>
                     <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
                   </Tabs.TabPane>
                   <Tabs.TabPane tab="Dịch vụ" key="2">
@@ -1079,10 +1070,10 @@ const CreateContractRenter = () => {
                   <Tabs.TabPane tab="Tài sản" key="4">
                     <Row>
                       <Col span={24}>
-                        <p><b>Thông tin tài sản bàn giao</b></p>
+                        <p><b>Thông tin tài sản bàn giao tòa A, tầng 5, phòng 501</b></p>
                         <Row>
                           <Col span={8}>
-                            <Input.Search placeholder="Tìm kiếm" style={{ marginBottom: 8 }}
+                            <Input.Search placeholder="Nhập tên tài sản để tìm kiếm" style={{ marginBottom: 8 }}
                               onSearch={(e) => {
                                 setSearched(e);
                               }}
@@ -1091,13 +1082,43 @@ const CreateContractRenter = () => {
                               }}
                             />
                           </Col>
-                          <Col span={8}></Col>
-                          <Col span={8}>
+                        </Row>
+                        <Row>
+                          <Col span={2}>
+                            <FilterOutlined style={{ fontSize: '150%' }} />
+                            <b>Loại tài sản:</b>
+                          </Col>
+                          <Col span={18}>
+                            <Row>
+                              <Col span={4}>
+                                <Checkbox>Đồ phòng ngủ</Checkbox>
+                              </Col>
+                              <Col span={4}>
+                                <Checkbox>Đồ phòng khách</Checkbox>
+                              </Col>
+                              <Col span={4}>
+                                <Checkbox>Đồ phòng bếp</Checkbox>
+                              </Col>
+                              <Col span={4}>
+                                <Checkbox>Đồ phòng tắm</Checkbox>
+                              </Col>
+                              <Col span={4}>
+                                <Checkbox>Khác</Checkbox>
+                              </Col>
+                            </Row>
+                          </Col>
+                          <Col span={4}>
                             <PlusCircleOutlined style={{ fontSize: 36, color: "#1890ff", float: "right" }} />
                           </Col>
                         </Row>
                         <Row>
                           <Table
+                            rowKey={(record) => record.index}
+                            rowSelection={{
+                              onSelect: (record) => {
+                                console.log(record);
+                              }
+                            }}
                             dataSource={dataSource}
                             columns={columns}
                             scroll={{ x: 800, y: 600 }}
@@ -1107,18 +1128,25 @@ const CreateContractRenter = () => {
                       </Col>
                     </Row>
                     <Row>
-                      <p><i>Tập tin và hình ảnh upload thả vào đây</i></p>
+                      <p><i>Lưu ý:<br />
+                        - Cột <b>"thời gian"</b>: trong bảng hiển thị là tính từ thời gian đó tới thời điểm hiện tại thì tài sản có trạng thái <b>"Tốt"</b> hoặc <b>"Hỏng"</b>. <br />
+                        - Trong trường hợp bàn giao với khách thuê, tài sản ở thời điểm bàn giao <b>"trạng thái"</b> không như trong bảng hiển thị. Cần cập nhập để hệ thống ghi nhận trạng thái của tài sản ở thời điểm hiện tại.<br />
+                      </i></p>
+
                     </Row>
                     <Row>
+                      <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
+                    </Row>
+                    {/* <Row>
                       <Upload>
                         <Button icon={<UploadOutlined />}>Click to Upload</Button>
                       </Upload>
-                    </Row>
+                    </Row> */}
                   </Tabs.TabPane>
                 </Tabs>
               </Form>
               <Modal
-                title="Khách hàng cũ"
+                title="Khách cũ"
                 visible={isAdd}
                 onCancel={() => {
                   resetAdd()
@@ -1135,7 +1163,7 @@ const CreateContractRenter = () => {
                   size={"default"}
                 >
                   <Form.Item >
-                    <Input.Search placeholder="Tìm kiếm" style={{ marginBottom: 8, width: "30%" }}
+                    <Input.Search placeholder="Nhập tên khách cũ để tìm kiếm" style={{ marginBottom: 8, width: "30%" }}
                       onSearch={(e) => {
                         setSearched(e);
                       }}
