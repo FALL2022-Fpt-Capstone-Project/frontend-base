@@ -7,6 +7,7 @@ import {
   SolutionOutlined,
   ProfileOutlined,
   HomeOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { Menu } from "antd";
@@ -101,6 +102,11 @@ const Sidebar = () => {
           </Menu.Item>
         </Menu.SubMenu>
         <Menu.Item key="10">
+          <UserOutlined />
+          <span>Danh sách nhân viên</span>
+          <Link to="/manage-admin" />
+        </Menu.Item>
+        <Menu.Item key="11">
           <LogoutOutlined />
           <span>Đăng xuất</span>
           <Link to="/login" />
