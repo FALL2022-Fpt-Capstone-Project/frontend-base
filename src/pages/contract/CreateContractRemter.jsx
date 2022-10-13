@@ -5,6 +5,9 @@ import axios from "axios";
 import { EditOutlined, DeleteOutlined, UploadOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { Button, Layout, Modal, Form, Table, Space, Input, Select, Tabs, Row, Col, Radio, DatePicker, Upload, Tag, Checkbox, InputNumber, AutoComplete, Switch } from "antd";
 import TextArea from "antd/lib/input/TextArea";
+import { useForm } from "react-hook-form";
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from "yup";
 const { Content, Sider, Header } = Layout;
 const { Option } = Select;
 
@@ -21,8 +24,49 @@ const CreateContractRenter = () => {
   const [editingMember, setEditingMember] = useState(null);
   const [addingMember, setAddingMember] = useState(null);
   const [isAddMem, setisAddMem] = useState(false);
+  const [isAddService, setisAddService] = useState(false);
   const [formEdit] = Form.useForm();
-  const [formAdd] = Form.useForm();
+  const [formAddMem] = Form.useForm();
+  const [formAddService] = Form.useForm();
+  const [valueGender, setValueGender] = useState('Nam');
+
+  const plainOptions = ['Nam', 'Nữ'];
+  const options = [
+    {
+      label: 'Nam',
+      value: 'nam',
+    },
+    {
+      label: 'Nữ',
+      value: 'nữ',
+    },
+  ]
+
+  const validateMem = (e) => {
+
+
+    // setisEditing(false)
+    if (e.member !== null && e.phone !== null && e.gender !== null && e.cmnd !== null && e.car_number !== null && e.address !== null) {
+      console.log('in');
+      const randomId = parseInt(Math.random() * 1000);
+
+      let newMember = {
+        id: randomId,
+        member: nMember,
+        gender: nGender,
+        phone: nPhone,
+        cmnd: nCmnd,
+        car_number: nCarNumber,
+        address: nAddress,
+      }
+      console.log('Received values of form: ', newMember)
+
+      setDataMember([...dataMember, newMember]);
+      setisAddMem(false);
+    }
+
+
+  }
 
   const onFinish = (e) => {
     console.log(e);
@@ -38,8 +82,8 @@ const CreateContractRenter = () => {
       filteredValue: [searched],
       onFilter: (value, record) => {
         return (
-          String(record.floor).toLowerCase()?.includes(value.toLowerCase()) ||
-          String(record.roomCode).toLowerCase()?.includes(value.toLowerCase()) ||
+          String(record.floor).toLowerCase()?.includes(value.toLowerCase()) &&
+          String(record.roomCode).toLowerCase()?.includes(value.toLowerCase()) &&
           String(record.assetName).toLowerCase()?.includes(value.toLowerCase())
         );
       },
@@ -91,9 +135,9 @@ const CreateContractRenter = () => {
       filteredValue: [searched],
       onFilter: (value, record) => {
         return (
-          String(record.name).toLowerCase()?.includes(value.toLowerCase()) ||
-          String(record.phoneNumber).toLowerCase()?.includes(value.toLowerCase()) ||
-          String(record.identityCard).toLowerCase()?.includes(value.toLowerCase()) ||
+          String(record.name).toLowerCase()?.includes(value.toLowerCase()) &&
+          String(record.phoneNumber).toLowerCase()?.includes(value.toLowerCase()) &&
+          String(record.identityCard).toLowerCase()?.includes(value.toLowerCase()) &&
           String(record.email).toLowerCase()?.includes(value.toLowerCase())
         );
       },
@@ -166,6 +210,7 @@ const CreateContractRenter = () => {
     form.setFieldsValue({
       contractName: dataOldUser.name,
       renterName: dataOldUser.name
+
     });
     setisAdd(false);
   }
@@ -175,39 +220,62 @@ const CreateContractRenter = () => {
       title: 'Dịch vụ sử dụng',
       dataIndex: 'service',
       key: 'service',
+      editable: true,
     },
     {
-      title: 'Đơn giá',
+      title: 'Đơn giá (VNĐ)',
       dataIndex: 'price',
       key: 'price',
-    },
-    {
-      title: 'Đơn vị',
-      dataIndex: 'unit',
-      key: 'unit',
-    },
-    {
-      title: 'Số lượng',
-      dataIndex: 'amount',
-      key: 'amount',
+      render: (record) => {
+        return (
+          <>
+
+            <Input placeholder={record}></Input>
+          </>
+        )
+      }
     },
     {
       title: 'Chỉ số ban đầu',
       dataIndex: 'first_number',
       key: 'first_number',
       render: (record) => {
-
         return (
           <>
-            <Input />
+            <Input placeholder={record} />
           </>
         )
       }
-    }
+    },
+
+    {
+      title: 'Số lượng',
+      dataIndex: 'amount',
+      key: 'amount',
+      render: (record) => {
+
+        return (
+          <>
+            <InputNumber placeholder={record} />
+          </>
+        )
+      }
+    },
+
+    {
+      title: "Thao tác",
+      dataIndex: "thaotac",
+      align: "center",
+      render: (_, record) =>
+      (
+        <Space>
+
+          <DeleteOutlined onClick={() => onDeleteService(record)} style={{ color: "red", marginLeft: 12 }} />
+
+        </Space>
+      )
+    },
   ];
-
-
-
 
   const columnsMember = [
 
@@ -215,6 +283,13 @@ const CreateContractRenter = () => {
       title: "Họ và tên",
       dataIndex: "member",
       key: "member",
+      align: "center",
+      editTable: true
+    },
+    {
+      title: "Giới tính",
+      dataIndex: "gender",
+      key: "gender",
       align: "center",
       editTable: true
     },
@@ -233,7 +308,7 @@ const CreateContractRenter = () => {
       editTable: true
     },
     {
-      title: "Số xe",
+      title: "Biển số xe",
       dataIndex: "car_number",
       key: "car_number",
       align: "center",
@@ -292,13 +367,21 @@ const CreateContractRenter = () => {
       amount: "1",
     });
 
+
+
   const [dataService, setDataService] = useState(service);
+  const [newService, setNewService] = useState([]);
+  const [nService, setNService] = useState("");
+  const [nPrice, setNPrice] = useState("");
+  const [nAmount, setNAmount] = useState("");
+  const [nFirstNumber, setNFirstNumber] = useState("");
 
   const member = [];
   member.push(
     {
       id: 1,
       member: "Nguyễn Văn B",
+      gender: "Nam",
       phone: "0645138795",
       cmnd: "001856447953",
       car_number: "30H-06789",
@@ -307,6 +390,7 @@ const CreateContractRenter = () => {
     {
       id: 2,
       member: "Chu Đình A",
+      gender: "Nữ",
       phone: "069413895",
       cmnd: "001856743684",
       car_number: "30H-01259",
@@ -317,6 +401,7 @@ const CreateContractRenter = () => {
   const [dataMember, setDataMember] = useState(member);
   const [newMember, setNewMember] = useState([]);
   const [nMember, setNMember] = useState("");
+  const [nGender, setNGender] = useState("");
   const [nPhone, setNPhone] = useState("");
   const [nCmnd, setNCmnd] = useState("");
   const [nCarNumber, setNCarNumber] = useState("");
@@ -326,7 +411,7 @@ const CreateContractRenter = () => {
 
   const onDeleteMember = (record) => {
     Modal.confirm({
-      title: "Bạn có chắc chắn muốn xóa không?",
+      title: `Bạn có chắc chắn muốn xóa ${record.member} không?`,
       okText: "Xóa",
       cancelText: "Hủy",
       onOk: () => {
@@ -338,11 +423,26 @@ const CreateContractRenter = () => {
 
   }
 
+  const onDeleteService = (record) => {
+    Modal.confirm({
+      title: `Bạn có chắc chắn muốn xóa dịch vụ ${record.service} không?`,
+      okText: "Xóa",
+      cancelText: "Hủy",
+      onOk: () => {
+        setDataService(pre => {
+          return pre.filter((service) => service.id !== record.id);
+        })
+      }
+    })
+
+  }
+
   const onEditMember = (record) => {
     setisEditing(true);
     setEditingMember({ ...record })
     formEdit.setFieldsValue({
       member: record.member,
+      gender: record.gender,
       phone: record.phone,
       cmnd: record.cmnd,
       car_number: record.car_number,
@@ -354,36 +454,70 @@ const CreateContractRenter = () => {
   const resetEditing = () => {
     setisEditing(false);
     setEditingMember(null);
+
   }
+
+  const resetEditingCl = () => {
+
+    setisEditing(false);
+
+  }
+
+  const onAddService = () => {
+    setisAddService(true);
+  }
+
+
 
   const onAddMem = () => {
     setisAddMem(true);
-    setAddingMember("");
   }
 
   const resetAddMemCl = () => {
     setisAddMem(false);
   }
 
+  const resetAddServiceCl = () => {
+    setisAddService(false);
+  }
+
   const resetAddMem = (e) => {
-    const randomId = parseInt(Math.random() * 1000);
-    let newMember = {
-      id: randomId,
-      member: nMember,
-      phone: nPhone,
-      cmnd: nCmnd,
-      car_number: nCarNumber,
-      address: nAddress,
+    if (e.member !== null && e.phone !== null && e.gender !== null && e.cmnd !== null && e.car_number !== null && e.address !== null) {
+      console.log('in');
+      const randomId = parseInt(Math.random() * 1000);
+
+      let newMember = {
+        id: randomId,
+        member: nMember,
+        gender: nGender,
+        phone: nPhone,
+        cmnd: nCmnd,
+        car_number: nCarNumber,
+        address: nAddress,
+      }
+      console.log('Received values of form: ', newMember)
+
+      setDataMember([...dataMember, newMember]);
+      setisAddMem(false);
     }
+    setisAddMem(true);
 
-    setDataMember([...dataMember, newMember]);
-    setNMember('');
-    setNPhone('');
-    setNCmnd('');
-    setNAddress('');
-    setNCarNumber('');
-    setisAddMem(false);
 
+  }
+
+  const resetAddService = () => {
+    const randomId = parseInt(Math.random() * 1000);
+    let newService = {
+      id: randomId,
+      service: nService,
+      price: nPrice,
+      first_number: nFirstNumber,
+      amount: nAmount,
+
+    }
+    console.log('Received values of form: ', newService)
+    setDataService([...dataService, newService]);
+    setisAddService(false);
   }
 
   const onSelectChange = (newSelectedRowKeys) => {
@@ -601,17 +735,119 @@ const CreateContractRenter = () => {
                     <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
                   </Tabs.TabPane>
                   <Tabs.TabPane tab="Dịch vụ" key="2">
+                    <p><b>Các thông tin về dịch vụ </b></p>
+                    <PlusCircleOutlined style={{ fontSize: 36, marginBottom: 20, color: "blue" }} onClick={() => {
+                      onAddService()
+                    }} />
                     <Row>
                       <Col span={24}>
+
                         <Table
                           rowSelection={rowSelection}
                           dataSource={dataService}
                           columns={columnsService}>
                         </Table>
                       </Col>
+                      <p>Lưu ý:<br />
+                        - Vui lòng chọn dịch vụ cho khách thuê. Nếu khách có chọn dịch vụ thì khi tính tiền phòng phần mềm sẽ tự tính các khoản phí vào hóa đơn; ngược lại nếu không chọn phần mềm sẽ bỏ qua.<br />
+                        - Đối với dịch vụ là loại điện/ nước thì sẽ tính theo chỉ số điện/ nước
+                        <br />
+                      </p>
                     </Row>
+                    <Modal
+                      title="Thêm dịch vụ"
+                      visible={isAddService}
+                      onCancel={
+                        resetAddServiceCl
+                      }
+                      destroyOnClose
+                      onOk={resetAddService}
+                      width={700}
+                      footer={[
+                        <Button htmlType="submit" key="submit" form="formAddMem" type="primary" onClick={resetAddService}>
+                          Lưu
+                        </Button>,
+                        <Button key="back" onClick={resetAddServiceCl}>
+                          Huỷ
+                        </Button>,
+                      ]}
+                    >
+                      <Form id="formAddService"
+                        preserve={false}
+                        destroyOnClose={true}
+                        form={formAddService}
+                        name="addService"
+                        onChange={(e) => setNAddress()}
+                      >
+                        <Form.Item
+                          name="service"
+                          label="Tên dịch vụ"
+                          rules={[
+                            {
+                              required: true,
+                              message: 'Chưa điền tên dịch vụ',
+                            },
+                          ]}
+                          onChange={(e) => setNService(e.target.value)}
+                        >
+                          <Input />
+                        </Form.Item>
+                        <Form.Item
+                          name="price"
+                          label="Đơn giá"
+                          rules={[
+                            {
+                              required: true,
+                              message: 'Chưa điền đơn giá',
+                            },
+                          ]}
+                          onChange={(e) => setNPrice(e.target.value)}
+                        >
+                          <Input
+                            style={{
+                              width: '100%',
+                            }}
+                          />
+                        </Form.Item>
+                        <Form.Item
+                          name="first_number"
+                          label="Chỉ số hiện tại"
+                          rules={[
+                            {
+                              required: false,
+                              message: 'Chưa điền chỉ số',
+                            },
+                          ]}
+                          onChange={(e) => setNFirstNumber(e.target.value)}
+                        >
+                          <Input
+                            style={{
+                              width: '100%',
+                            }}
+                          />
+                        </Form.Item>
+                        <Form.Item
+                          name="amount"
+                          label="Số lượng"
+                          rules={[
+                            {
+                              required: true,
+                              message: 'Chưa điền số lượng',
+                            },
+                          ]}
+                          onChange={(e) => setNAmount(e.target.value)}
+                        >
+                          <Input
+                            style={{
+                              width: '100%',
+                            }}
+                          />
+                        </Form.Item>
+                      </Form>
+                    </Modal>
                   </Tabs.TabPane>
                   <Tabs.TabPane tab="Thành viên" key="3">
+                    <p><b>Các thông tin về thành viên </b></p>
                     <PlusCircleOutlined style={{ fontSize: 36, marginBottom: 20, color: "blue" }} onClick={() => {
                       onAddMem()
                     }} />
@@ -627,7 +863,7 @@ const CreateContractRenter = () => {
                       cancelText="Hủy"
                       visible={isEditing}
                       onCancel={() => {
-                        resetEditing();
+                        resetEditingCl();
                       }}
                       onOk={(e) => {
                         setDataMember(pre => {
@@ -655,42 +891,54 @@ const CreateContractRenter = () => {
                               }
                             });
                           });
-                          resetEditing()
+
+                          resetEditingCl();
+
                         }}>
                           Lưu
                         </Button>,
                         <Button key="back" onClick={() => {
-                          resetEditing();
+                          resetEditingCl();
                         }}>
                           Huỷ
                         </Button>,
                       ]}
                     >
-
                       <Form
                         form={formEdit}
                         name="edit"
-
                         scrollToFirstError
                       >
                         <Form.Item
                           name="member"
                           label="Họ và tên"
-
                           rules={[
-
                             {
                               required: true,
                               message: 'Chưa điền họ và tên',
                             },
                           ]}
-
                           value={editingMember?.member}
                         >
                           <Input disabled={true} />
                         </Form.Item>
+                        <Form.Item
+                          name="gender"
+                          label="Giới tính"
+                          rules={[
+                            {
+                              required: true,
+                              message: 'Chưa chọn giới tính',
+                            },
+                          ]}
 
+                        >
+                          <Radio.Group value={editingMember?.gender} disabled={true}>
+                            <Radio value={"Nam"}>Nam</Radio>
+                            <Radio value={"Nữ"}>Nữ</Radio>
 
+                          </Radio.Group>
+                        </Form.Item>
                         <Form.Item
                           name="phone"
                           label="Số điện thoại"
@@ -738,7 +986,7 @@ const CreateContractRenter = () => {
                           label="Số xe"
                           rules={[
                             {
-                              required: true,
+                              required: false,
                               message: 'Chưa điền số xe',
                             },
                           ]}
@@ -756,7 +1004,6 @@ const CreateContractRenter = () => {
                             }}
                           />
                         </Form.Item>
-
                         <Form.Item
                           name="address"
                           label="Địa chỉ"
@@ -780,14 +1027,16 @@ const CreateContractRenter = () => {
                     <Modal
                       title="Thêm thành viên"
                       visible={isAddMem}
+                      preserve={false}
                       onCancel={
                         resetAddMemCl
                       }
-                      destroyOnClose={true}
+                      id="formAddMem"
+                      destroyOnClose
                       onOk={resetAddMem}
                       width={700}
                       footer={[
-                        <Button htmlType="submit" key="submit" form="formAdd" type="primary" onClick={resetAddMem}>
+                        <Button htmlType="submit" key="submit" form="formAddMem" type="primary" onClick={validateMem}>
                           Lưu
                         </Button>,
                         <Button key="back" onClick={resetAddMemCl}>
@@ -795,10 +1044,11 @@ const CreateContractRenter = () => {
                         </Button>,
                       ]}
                     >
-                      <Form id="formAdd"
+                      <Form
+                        id="formAddMem"
                         preserve={false}
-                        form={formAdd}
-                        name="add"
+                        form={formAddMem}
+                        destroyOnClose
                       >
                         <Form.Item
                           name="member"
@@ -809,9 +1059,29 @@ const CreateContractRenter = () => {
                               message: 'Chưa điền họ và tên',
                             },
                           ]}
-                          onChange={(e) => setNMember(e.target.value)}
+
                         >
-                          <Input />
+                          <Input onChange={(e) => setNMember(e.target.value)} />
+                        </Form.Item>
+
+                        <Form.Item
+                          name="gender"
+                          label="Giới tính"
+                          rules={[
+                            {
+                              required: true,
+                              message: 'Chưa chọn giới tính',
+                            },
+                          ]}
+
+                        >
+                          <Radio.Group onChange={(e) => setNGender(e.target.value)}>
+                            <Radio value="Nam">Nam</Radio>
+                            <Radio value="Nữ">Nữ</Radio>
+
+                          </Radio.Group>
+                          {/* <Radio.Group options={plainOptions} onChange={(e) => setNGender(e.target.value)} value={valueGender} />
+                          <br /> */}
                         </Form.Item>
                         <Form.Item
                           name="phone"
@@ -822,12 +1092,13 @@ const CreateContractRenter = () => {
                               message: 'Chưa điền số điện thoại',
                             },
                           ]}
-                          onChange={(e) => setNPhone(e.target.value)}
+
                         >
                           <Input
                             style={{
                               width: '100%',
                             }}
+                            onChange={(e) => setNPhone(e.target.value)}
                           />
                         </Form.Item>
                         <Form.Item
@@ -835,33 +1106,35 @@ const CreateContractRenter = () => {
                           label="CMND/CCCD"
                           rules={[
                             {
-                              required: true,
+                              required: false,
                               message: 'Chưa điền CMND/CCCD',
                             },
                           ]}
-                          onChange={(e) => setNCmnd(e.target.value)}
+
                         >
                           <Input
                             style={{
                               width: '100%',
                             }}
+                            onChange={(e) => setNCmnd(e.target.value)}
                           />
                         </Form.Item>
                         <Form.Item
                           name="car_number"
-                          label="Số xe"
+                          label="Biển số xe"
                           rules={[
                             {
-                              required: true,
-                              message: 'Chưa điền số xe',
+                              required: false,
+                              message: 'Chưa điền biển số xe',
                             },
                           ]}
-                          onChange={(e) => setNCarNumber(e.target.value)}
+
                         >
                           <Input
                             style={{
                               width: '100%',
                             }}
+                            onChange={(e) => setNCarNumber(e.target.value)}
                           />
                         </Form.Item>
                         <Form.Item
@@ -869,16 +1142,17 @@ const CreateContractRenter = () => {
                           label="Địa chỉ"
                           rules={[
                             {
-                              required: true,
+                              required: false,
                               message: 'Chưa điền địa chỉ',
                             },
                           ]}
-                          onChange={(e) => setNAddress(e.target.value)}
+
                         >
                           <Input
                             style={{
                               width: '100%',
                             }}
+                            onChange={(e) => setNAddress(e.target.value)}
                           />
                         </Form.Item>
                       </Form>
@@ -960,8 +1234,8 @@ const CreateContractRenter = () => {
             </div>
           </Content>
         </Layout>
-      </Layout >
-    </div >
+      </Layout>
+    </div>
   );
 };
 
