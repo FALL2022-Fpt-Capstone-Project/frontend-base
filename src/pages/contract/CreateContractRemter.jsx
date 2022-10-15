@@ -14,7 +14,7 @@ const { Option } = Select;
 
 
 const CreateContractRenter = () => {
-  const asset = [];
+  const assetData = [];
   const [searched, setSearched] = useState("");
   const [isAdd, setisAdd] = useState(false);
   const [componentSize, setComponentSize] = useState('default');
@@ -28,10 +28,17 @@ const CreateContractRenter = () => {
   const [isAddMem, setisAddMem] = useState(false);
   const [formEdit] = Form.useForm();
   const [formAdd] = Form.useForm();
-
+  const arrayAsset = [];
+  const [assetList, setAssetList] = useState({
+    selectedAsset: arrayAsset
+  });
+  form.setFieldsValue({
+    autoRenewContract: true,
+    sex: true,
+  });
   const onFinish = (e) => {
     message.success('Thêm mới hợp đồng thành công');
-    console.log(JSON.stringify(e));
+    console.log(e);
   }
   const onFormLayoutChange = ({ size }) => {
     setComponentSize(size);
@@ -81,7 +88,7 @@ const CreateContractRenter = () => {
       render: (record) => {
         return (
           <>
-            <EyeOutlined />
+            <EditOutlined />
             <DeleteOutlined onClick={() => {
               onDeleteAsset(record)
             }} style={{ color: "red", marginLeft: 12 }} />
@@ -92,7 +99,7 @@ const CreateContractRenter = () => {
   ];
   const onDeleteAsset = (record) => {
     Modal.confirm({
-      title: `Bạn có chắc chắn muốn xóa ${record.assetName} trong phòng ${record.roomCode} này ?`,
+      title: `Bạn có chắc chắn muốn xóa ${record.assetName} này ?`,
       okText: 'Có',
       cancelText: 'Hủy',
       onOk: () => {
@@ -144,7 +151,7 @@ const CreateContractRenter = () => {
   }
   for (let i = 1; i < 100; i++) {
     if ((Math.floor(Math.random() * (100 - 1 + 1)) + 1) % 2 === 0) {
-      asset.push({
+      assetData.push({
         index: i,
         assetName: `Tài sản ${i}`,
         numberOfAsset: Math.floor(Math.random() * (100 - 1 + 1)) + 1,
@@ -153,7 +160,7 @@ const CreateContractRenter = () => {
         status: true,
       });
     } else {
-      asset.push({
+      assetData.push({
         index: i,
         assetName: `Tài sản ${i}`,
         numberOfAsset: Math.floor(Math.random() * (100 - 1 + 1)) + 1,
@@ -163,7 +170,7 @@ const CreateContractRenter = () => {
       });
     }
   }
-  const [dataSource, setDataSource] = useState(asset);
+  const [dataSource, setDataSource] = useState(assetData);
 
   const onChange = (value) => {
     console.log(`selected ${value}`);
@@ -186,6 +193,7 @@ const CreateContractRenter = () => {
       phoneNumber: dataOldUser.phoneNumber,
       email: dataOldUser.email,
       identityCard: dataOldUser.identityCard,
+      asset: assetList,
     });
     setisAdd(false);
   };
@@ -527,7 +535,12 @@ const CreateContractRenter = () => {
                             }}>
                           </Input>
                         </Form.Item>
-                        <Form.Item className="form-item" name="sex">
+                        <Form.Item className="form-item" name="sex" rules={[
+                          {
+                            required: true,
+                            message: "Vui lòng nhập tên khách thuê",
+                          }
+                        ]}>
                           <Radio.Group>
                             <Radio value={true}>Nam</Radio>
                             <Radio value={false}>Nữ</Radio>
@@ -1112,18 +1125,34 @@ const CreateContractRenter = () => {
                           </Col>
                         </Row>
                         <Row>
-                          <Table
-                            rowKey={(record) => record.index}
-                            rowSelection={{
-                              onSelect: (record) => {
-                                console.log(record);
+                          <Form.Item className="form-item" name="asset"
+                            labelCol={{ span: 24 }}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Vui lòng chọn tài sản trong phòng",
                               }
-                            }}
-                            dataSource={dataSource}
-                            columns={columns}
-                            scroll={{ x: 800, y: 600 }}
-                          >
-                          </Table>
+                            ]}>
+                            <Table
+                              rowKey={(record) => record.index}
+                              rowSelection={{
+                                onSelect: (record) => {
+                                  // arrayAsset.push({ ...record });
+                                  // const b = arrayAsset.filter((ele, ind) => ind === arrayAsset.findIndex(elem => elem.index === ele.index && elem.assetName === ele.assetName))
+                                  // console.log(record);
+                                },
+                                onChange: (record) => {
+                                  form.setFieldsValue({
+                                    asset: record.map(indexAsset => dataSource.find(obj => obj.index === indexAsset)),
+                                  });
+                                }
+                              }}
+                              dataSource={dataSource}
+                              columns={columns}
+                              scroll={{ x: 800, y: 600 }}
+                            >
+                            </Table>
+                          </Form.Item>
                         </Row>
                       </Col>
                     </Row>
