@@ -3,11 +3,9 @@ import Sidebar from "../../components/sidebar/Sidebar";
 import "./contract.scss";
 import axios from "axios";
 import { EditOutlined, DeleteOutlined, UploadOutlined, PlusCircleOutlined } from '@ant-design/icons';
-import { Button, Layout, Modal, Form, Table, Space, Input, Select, Tabs, Row, Col, Radio, DatePicker, Upload, Tag, Checkbox, InputNumber, AutoComplete, Switch } from "antd";
+import { Button, Layout, Modal, Form, Table, Space, Input, Select, Tabs, Row, Col, Radio, DatePicker, Upload, Tag, Checkbox, InputNumber, AutoComplete, Switch, message } from "antd";
 import TextArea from "antd/lib/input/TextArea";
-import { useForm } from "react-hook-form";
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from "yup";
+
 const { Content, Sider, Header } = Layout;
 const { Option } = Select;
 
@@ -25,7 +23,7 @@ const CreateContractRenter = () => {
   const [addingMember, setAddingMember] = useState(null);
   const [isAddMem, setisAddMem] = useState(false);
   const [isAddService, setisAddService] = useState(false);
-  const [formEdit] = Form.useForm();
+  const [formEditMem] = Form.useForm();
   const [formAddMem] = Form.useForm();
   const [formAddService] = Form.useForm();
   const [valueGender, setValueGender] = useState('Nam');
@@ -44,9 +42,8 @@ const CreateContractRenter = () => {
 
   const validateMem = (e) => {
 
-
     // setisEditing(false)
-    if (e.member !== null && e.phone !== null && e.gender !== null && e.cmnd !== null && e.car_number !== null && e.address !== null) {
+    if (nMember !== "" && nPhone !== "" && nGender !== "" && nCmnd !== "" && nCarNumber !== "" && nAddress !== "") {
       console.log('in');
       const randomId = parseInt(Math.random() * 1000);
 
@@ -62,7 +59,27 @@ const CreateContractRenter = () => {
       console.log('Received values of form: ', newMember)
 
       setDataMember([...dataMember, newMember]);
+      setNMember("")
+      setNGender("")
+      setNPhone("")
+      setNCmnd("")
+      setNCarNumber("")
+      setNAddress("")
       setisAddMem(false);
+    } else {
+      setisAddMem(true);
+    }
+
+
+  }
+
+  const validateEditMem = (e) => {
+
+    // setisEditing(false)
+    if (e.member !== "" && e.phone !== "" && e.gender !== "" && e.cmnd !== "" && e.car_number !== "" && e.address !== "") {
+      setisEditing(false)
+    } else {
+      setisEditing(true)
     }
 
 
@@ -440,7 +457,7 @@ const CreateContractRenter = () => {
   const onEditMember = (record) => {
     setisEditing(true);
     setEditingMember({ ...record })
-    formEdit.setFieldsValue({
+    formEditMem.setFieldsValue({
       member: record.member,
       gender: record.gender,
       phone: record.phone,
@@ -482,7 +499,7 @@ const CreateContractRenter = () => {
   }
 
   const resetAddMem = (e) => {
-    if (e.member !== null && e.phone !== null && e.gender !== null && e.cmnd !== null && e.car_number !== null && e.address !== null) {
+    if (nMember !== "" && nPhone !== "" && nGender !== "" && nCmnd !== "" && nCarNumber !== "" && nAddress !== "") {
       console.log('in');
       const randomId = parseInt(Math.random() * 1000);
 
@@ -498,6 +515,7 @@ const CreateContractRenter = () => {
       console.log('Received values of form: ', newMember)
 
       setDataMember([...dataMember, newMember]);
+      setNMember("")
       setisAddMem(false);
     }
     setisAddMem(true);
@@ -505,19 +523,28 @@ const CreateContractRenter = () => {
 
   }
 
-  const resetAddService = () => {
-    const randomId = parseInt(Math.random() * 1000);
-    let newService = {
-      id: randomId,
-      service: nService,
-      price: nPrice,
-      first_number: nFirstNumber,
-      amount: nAmount,
+  const resetAddService = (e) => {
+    if (nService !== "" && nPrice !== "" && nFirstNumber !== "" && nAmount !== "") {
+      const randomId = parseInt(Math.random() * 1000);
+      let newService = {
+        id: randomId,
+        service: nService,
+        price: nPrice,
+        first_number: nFirstNumber,
+        amount: nAmount,
 
+      }
+      console.log('Received values of form: ', newService)
+      setDataService([...dataService, newService]);
+      setNService("")
+      setNPrice("")
+      setNFirstNumber("")
+      setNAmount("")
+      setisAddService(false);
+    } else {
+      setisAddService(true)
     }
-    console.log('Received values of form: ', newService)
-    setDataService([...dataService, newService]);
-    setisAddService(false);
+
   }
 
   const onSelectChange = (newSelectedRowKeys) => {
@@ -760,11 +787,12 @@ const CreateContractRenter = () => {
                       onCancel={
                         resetAddServiceCl
                       }
+                      id="formAddService"
                       destroyOnClose
                       onOk={resetAddService}
                       width={700}
                       footer={[
-                        <Button htmlType="submit" key="submit" form="formAddMem" type="primary" onClick={resetAddService}>
+                        <Button htmlType="submit" key="submit" form="formAddService" type="primary" onClick={resetAddService}>
                           Lưu
                         </Button>,
                         <Button key="back" onClick={resetAddServiceCl}>
@@ -800,6 +828,10 @@ const CreateContractRenter = () => {
                               required: true,
                               message: 'Chưa điền đơn giá',
                             },
+                            {
+                              pattern: /^[0-9]*$/,
+                              message: "Đơn giá sai"
+                            }
                           ]}
                           onChange={(e) => setNPrice(e.target.value)}
                         >
@@ -817,6 +849,10 @@ const CreateContractRenter = () => {
                               required: false,
                               message: 'Chưa điền chỉ số',
                             },
+                            {
+                              pattern: /^[0-9]*$/,
+                              message: "Chỉ số sai"
+                            }
                           ]}
                           onChange={(e) => setNFirstNumber(e.target.value)}
                         >
@@ -834,6 +870,10 @@ const CreateContractRenter = () => {
                               required: true,
                               message: 'Chưa điền số lượng',
                             },
+                            {
+                              pattern: /^[0-9]*$/,
+                              message: "Số lượng sai"
+                            }
                           ]}
                           onChange={(e) => setNAmount(e.target.value)}
                         >
@@ -856,12 +896,12 @@ const CreateContractRenter = () => {
                       dataSource={dataMember}
                       columns={columnsMember}>
                     </Table>
-
                     <Modal
                       title="Thông tin thành viên"
-                      okText="Lưu"
-                      cancelText="Hủy"
                       visible={isEditing}
+                      preserve={false}
+                      id="formEditMem"
+                      destroyOnClose
                       onCancel={() => {
                         resetEditingCl();
                       }}
@@ -875,13 +915,11 @@ const CreateContractRenter = () => {
                             }
                           });
                         });
-
-                        resetEditing()
-
+                        validateEditMem(editingMember);
                       }}
 
                       footer={[
-                        <Button htmlType="submit" form="editMember" type="primary" onClick={(e) => {
+                        <Button htmlType="submit" key="submit" form="formEditMem" type="primary" onClick={(e) => {
                           setDataMember((pre) => {
                             return pre.map(renter => {
                               if (renter.id === editingMember.id) {
@@ -891,23 +929,21 @@ const CreateContractRenter = () => {
                               }
                             });
                           });
-
-                          resetEditingCl();
-
+                          validateEditMem(editingMember);
                         }}>
                           Lưu
                         </Button>,
-                        <Button key="back" onClick={() => {
-                          resetEditingCl();
-                        }}>
+                        <Button key="back" onClick={resetEditingCl}>
+
                           Huỷ
                         </Button>,
                       ]}
                     >
                       <Form
-                        form={formEdit}
-                        name="edit"
-                        scrollToFirstError
+                        id="formEditMem"
+                        preserve={false}
+                        form={formEditMem}
+                        destroyOnClose
                       >
                         <Form.Item
                           name="member"
@@ -918,9 +954,9 @@ const CreateContractRenter = () => {
                               message: 'Chưa điền họ và tên',
                             },
                           ]}
-                          value={editingMember?.member}
+
                         >
-                          <Input disabled={true} />
+                          <Input disabled={true} value={editingMember?.member} />
                         </Form.Item>
                         <Form.Item
                           name="gender"
@@ -947,16 +983,26 @@ const CreateContractRenter = () => {
                               required: true,
                               message: 'Chưa điền số điện thoại',
                             },
-                          ]}
-                          value={editingMember?.phone}
-                          onChange={(e) => {
-                            setEditingMember(pre => {
-                              return { ...pre, phone: e.target.value }
-                            })
-                          }}
-                        >
-                          <Input
+                            {
+                              len: 10,
+                              message: "Số điện thoại phải có 10 chữ số"
+                            },
+                            {
+                              pattern: /^[0-9]*$/,
+                              message: "Số điện thoại không chứa chữ"
 
+                            }
+
+                          ]}
+
+
+                        >
+                          <Input value={editingMember?.phone}
+                            onChange={(e) => {
+                              setEditingMember(pre => {
+                                return { ...pre, phone: e.target.value }
+                              })
+                            }}
                             style={{
                               width: '100%',
                             }}
@@ -968,13 +1014,13 @@ const CreateContractRenter = () => {
                           label="CMND/CCCD"
                           rules={[
                             {
-                              required: true,
+                              required: false,
                               message: 'Chưa điền CMND/CCCD',
                             },
                           ]}
-                          value={editingMember?.cmnd}
+
                         >
-                          <Input disabled={true}
+                          <Input disabled={true} value={editingMember?.cmnd}
 
                             style={{
                               width: '100%',
@@ -990,15 +1036,15 @@ const CreateContractRenter = () => {
                               message: 'Chưa điền số xe',
                             },
                           ]}
-                          value={editingMember?.car_number}
-                          onChange={(e) => {
-                            setEditingMember(pre => {
-                              return { ...pre, car_number: e.target.value }
-                            })
-                          }}
+
                         >
                           <Input
-
+                            value={editingMember?.car_number}
+                            onChange={(e) => {
+                              setEditingMember(pre => {
+                                return { ...pre, car_number: e.target.value }
+                              })
+                            }}
                             style={{
                               width: '100%',
                             }}
@@ -1009,13 +1055,13 @@ const CreateContractRenter = () => {
                           label="Địa chỉ"
                           rules={[
                             {
-                              required: true,
+                              required: false,
                               message: 'Chưa điền địa chỉ',
                             },
                           ]}
-                          value={editingMember?.address}
                         >
                           <Input disabled={true}
+                            value={editingMember?.address}
 
                             style={{
                               width: '100%',
@@ -1086,11 +1132,22 @@ const CreateContractRenter = () => {
                         <Form.Item
                           name="phone"
                           label="Số điện thoại"
+
                           rules={[
                             {
                               required: true,
                               message: 'Chưa điền số điện thoại',
                             },
+                            {
+                              len: 10,
+                              message: "Số điện thoại phải có 10 chữ số"
+                            },
+                            {
+                              pattern: /^[0-9]*$/,
+                              message: "Số điện thoại không chứa chữ"
+
+                            }
+
                           ]}
 
                         >
@@ -1109,6 +1166,16 @@ const CreateContractRenter = () => {
                               required: false,
                               message: 'Chưa điền CMND/CCCD',
                             },
+
+                            {
+                              len: 12,
+                              message: "CMND/CCCD phải có 12 chữ số"
+                            },
+                            {
+                              pattern: /^[0-9]*$/,
+                              message: "CMND/CCCD không chứa chữ"
+
+                            }
                           ]}
 
                         >
@@ -1122,12 +1189,7 @@ const CreateContractRenter = () => {
                         <Form.Item
                           name="car_number"
                           label="Biển số xe"
-                          rules={[
-                            {
-                              required: false,
-                              message: 'Chưa điền biển số xe',
-                            },
-                          ]}
+
 
                         >
                           <Input
@@ -1140,12 +1202,6 @@ const CreateContractRenter = () => {
                         <Form.Item
                           name="address"
                           label="Địa chỉ"
-                          rules={[
-                            {
-                              required: false,
-                              message: 'Chưa điền địa chỉ',
-                            },
-                          ]}
 
                         >
                           <Input
@@ -1235,7 +1291,7 @@ const CreateContractRenter = () => {
           </Content>
         </Layout>
       </Layout>
-    </div>
+    </div >
   );
 };
 
