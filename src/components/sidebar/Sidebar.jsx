@@ -103,7 +103,7 @@ const Sidebar = () => {
         </Menu.SubMenu>
         <Menu.Item key="10">
           <UserOutlined />
-          <span>Danh sách nhân viên</span>
+          <span>Quản lý nhân viên</span>
           <Link to="/manage-admin" />
         </Menu.Item>
         <Menu.Item key="11">

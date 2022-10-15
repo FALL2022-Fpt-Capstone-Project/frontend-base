@@ -1,4 +1,4 @@
-import { Form, Input, Radio, Select, Checkbox, DatePicker } from "antd";
+import { Form, Input, Radio, Select, Checkbox, DatePicker, Switch } from "antd";
 import React, { useState } from "react";
 import axios from "../../api/axios";
 
@@ -24,47 +24,15 @@ const formItemLayout = {
 };
 
 const adminOptions = [
-  {
-    label: "Quản lý cơ sở vật chất",
-    value: 1,
-  },
-  {
-    label: "Quản lý nguồn tiền",
-    value: 2,
-  },
-  {
-    label: "Quản lý hoá đơn",
-    value: 3,
-  },
-  {
-    label: "Quản lý hợp đồng",
-    value: 4,
-  },
-  {
-    label: "Quản lý nhân viên",
-    value: 5,
-  },
+  "Quản lý cơ sở vật chất",
+  "Quản lý nguồn tiền",
+  "Quản lý hoá đơn",
+  "Quản lý hợp đồng",
+  "Quản lý nhân viên",
 ];
-const staffOptions = [
-  {
-    label: "Quản lý cơ sở vật chất",
-    value: 1,
-  },
-  {
-    label: "Quản lý nguồn tiền",
-    value: 2,
-  },
-  {
-    label: "Quản lý hoá đơn",
-    value: 3,
-  },
-  {
-    label: "Quản lý hợp đồng",
-    value: 4,
-  },
-];
+const staffOptions = ["Quản lý cơ sở vật chất", "Quản lý nguồn tiền", "Quản lý hoá đơn", "Quản lý hợp đồng"];
 
-const CreateStaff = () => {
+const UpdateStaff = () => {
   const [full_name, setName] = useState("");
   const [user_name, setUserName] = useState("");
   const [phone_number, setPhoneNumber] = useState("");
@@ -115,8 +83,8 @@ const CreateStaff = () => {
     <Form
       {...formItemLayout}
       form={form}
-      name="createStaff"
-      id="createStaff"
+      name="UpdateStaff"
+      id="UpdateStaff"
       scrollToFirstError
       onFinish={handleCreateEmployee}
     >
@@ -222,8 +190,11 @@ const CreateStaff = () => {
           <Checkbox.Group options={staffOptions} defaultValue={["Quản lý cơ sở vật chất"]} />
         </Form.Item>
       )}
+      <Form.Item name="status" label="Trạng thái ">
+        <Switch defaultChecked />
+      </Form.Item>
     </Form>
   );
 };
 
-export default CreateStaff;
+export default UpdateStaff;
