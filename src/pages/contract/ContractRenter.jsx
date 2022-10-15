@@ -9,7 +9,7 @@ import ListContractRenterAlmostExpired from "./ListContractRenterAlmostExpired";
 import ListContractRenterLatest from "./ListContractRenterLatest";
 const { Content, Sider, Header } = Layout;
 const ContractRenter = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const [isModalNewOpen, setIsModalNewOpen] = useState(false);
   const [isModalOldOpen, setIsModalOldOpen] = useState(false);
   const [isModalEndOpen, setIsModalEndOpen] = useState(false);
@@ -58,7 +58,13 @@ const ContractRenter = () => {
               >
                 Thống kê hợp đồng
               </Button>
-              <Button type="primary" icon={<PlusOutlined />} size="middle" className="button-add" href="/contract-renter/create">
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                size="middle"
+                className="button-add"
+                href="/contract-renter/create"
+              >
                 Thêm hợp đồng
               </Button>
             </div>

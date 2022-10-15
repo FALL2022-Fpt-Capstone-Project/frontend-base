@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Input, Table } from "antd";
+import { Input, Table, DatePicker } from "antd";
+import "./listContract.scss";
 
 import axios from "../../api/axios";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 const { Search } = Input;
 const LIST_CONTRACT_URL = "manager/contract/get-contract/1";
+const { RangePicker } = DatePicker;
 const ListContractRenter = () => {
   const [dataSource, setDataSource] = useState([]);
   const [textSearch, setTextSearch] = useState("");
@@ -41,17 +43,21 @@ const ListContractRenter = () => {
     return dateAndTime[0].split("-").reverse().join("-");
   };
   return (
-    <div>
-      <Search
-        placeholder="Tìm kiếm"
-        style={{ marginBottom: 8, width: 400, padding: "10px 0" }}
-        onSearch={(value) => {
-          setTextSearch(value);
-        }}
-        onChange={(e) => {
-          setTextSearch(e.target.value);
-        }}
-      />
+    <div className="list-contract">
+      <div className="list-contract-search">
+        <Search
+          placeholder="Tìm kiếm"
+          style={{ marginBottom: 8, marginRight: 20, width: 400, padding: "10px 0" }}
+          onSearch={(value) => {
+            setTextSearch(value);
+          }}
+          onChange={(e) => {
+            setTextSearch(e.target.value);
+          }}
+        />
+        <label htmlFor="">Ngày lập hợp đồng</label>
+        <RangePicker format={"DD/MM/YYYY"} placeholder={["Từ", "Đến"]} style={{ marginLeft: 20 }} />
+      </div>
       <Table
         bordered
         dataSource={dataSource}
@@ -78,28 +84,25 @@ const ListContractRenter = () => {
             dataIndex: "price",
           },
 
-          // {
-          //   title: "Tên khách thuê",
-          //   // dataIndex: "building_total_floor",
-          // },
           {
-            title: "số người trong phòng",
-            dataIndex: "renters",
+            title: "Tên khách thuê",
+            // dataIndex: "building_total_floor",
           },
           // {
           //   title: "Ngày lập",
           //   // dataIndex: "building_total_floor",
           // },
           {
-            title: "Ngày kết thúc",
-            dataIndex: "endDate",
-            render: (date) => getFullDate(date),
-          },
-          {
             title: "Ngày vào ở",
             dataIndex: "startDate",
             render: (date) => getFullDate(date),
           },
+          {
+            title: "Ngày kết thúc",
+            dataIndex: "endDate",
+            render: (date) => getFullDate(date),
+          },
+
           {
             title: "Chu kỳ thu",
             dataIndex: "paymentCycle",
