@@ -1,15 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import "./contract.scss";
 import { PlusOutlined, PieChartOutlined } from "@ant-design/icons";
 import { Button, Layout, Card, Modal } from "antd";
 import ListContractRenter from "./ListContractRenter";
+import ListContractExpired from "./ListContractExpired";
+import ListContractRenterAlmostExpired from "./ListContractRenterAlmostExpired";
+import ListContractRenterLatest from "./ListContractRenterLatest";
+import axios from "../../api/axios";
+
 const { Content, Sider, Header } = Layout;
+
+const LIST_CONTRACT_EXPIRED_URL = "manager/contract/get-contract/1?filter=expired";
+const LIST_CONTRACT_LATEST_URL = "manager/contract/get-contract/1?filter=latest";
+const LIST_CONTRACT_ALMOST_EXPIRED_URL = "manager/contract/get-contract/1?filter=almostExpired";
+
 const ContractRenter = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const [isModalNewOpen, setIsModalNewOpen] = useState(false);
   const [isModalOldOpen, setIsModalOldOpen] = useState(false);
   const [isModalEndOpen, setIsModalEndOpen] = useState(false);
+  const [countExpired, setcountExpired] = useState("");
+  const [countAlmostExpired, setcountAlmostExpired] = useState("");
+  const [countLatest, setcountLatest] = useState("");
+
   const showModalNew = () => {
     setIsModalNewOpen(true);
   };
@@ -19,7 +33,77 @@ const ContractRenter = () => {
   const showModalEnd = () => {
     setIsModalEndOpen(true);
   };
+  useEffect(() => {
+    getAllContractExpired();
+  }, []);
 
+  const getAllContractExpired = async () => {
+    let cookie = localStorage.getItem("Cookie");
+    const response = await axios
+      .get(LIST_CONTRACT_EXPIRED_URL, {
+        headers: {
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${cookie}`,
+        },
+        // withCredentials: true,
+      })
+      .then((res) => {
+        let a = res.data.body.length;
+        setcountExpired(a);
+        console.log(countExpired);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  useEffect(() => {
+    getAllContractLatest();
+  }, []);
+
+  const getAllContractLatest = async () => {
+    let cookie = localStorage.getItem("Cookie");
+    const response = await axios
+      .get(LIST_CONTRACT_LATEST_URL, {
+        headers: {
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${cookie}`,
+        },
+        // withCredentials: true,
+      })
+      .then((res) => {
+        setcountLatest(res.data.body.length);
+        console.log(res);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  useEffect(() => {
+    getAllContractAlmostExpired();
+  }, []);
+
+  const getAllContractAlmostExpired = async () => {
+    let cookie = localStorage.getItem("Cookie");
+    const response = await axios
+      .get(LIST_CONTRACT_ALMOST_EXPIRED_URL, {
+        headers: {
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${cookie}`,
+        },
+        // withCredentials: true,
+      })
+      .then((res) => {
+        setcountAlmostExpired(res.data.body.length);
+        console.log(res);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   return (
     <div className="contract">
       <Layout
@@ -55,7 +139,13 @@ const ContractRenter = () => {
               >
                 Thống kê hợp đồng
               </Button>
-              <Button type="primary" icon={<PlusOutlined />} size="middle" className="button-add" href="/contract-renter/create">
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                size="middle"
+                className="button-add"
+                href="/contract-renter/create"
+              >
                 Thêm hợp đồng
               </Button>
             </div>
@@ -69,7 +159,7 @@ const ContractRenter = () => {
                       marginRight: 20,
                     }}
                   >
-                    <p>100 hợp đồng</p>
+                    <p>{countLatest} hợp đồng</p>
                     <Button type="primary" onClick={showModalNew}>
                       Xem chi tiết
                     </Button>
@@ -81,7 +171,7 @@ const ContractRenter = () => {
                       marginRight: 20,
                     }}
                   >
-                    <p>100 hợp đồng</p>
+                    <p>{countExpired} hợp đồng</p>
                     <Button type="primary" onClick={showModalEnd}>
                       Xem chi tiết
                     </Button>
@@ -92,7 +182,7 @@ const ContractRenter = () => {
                       width: 300,
                     }}
                   >
-                    <p>100 hợp đồng</p>
+                    <p>{countAlmostExpired} hợp đồng</p>
                     <Button type="primary" onClick={showModalOld}>
                       Xem chi tiết
                     </Button>
@@ -119,7 +209,7 @@ const ContractRenter = () => {
             onOk={() => setIsModalNewOpen(false)}
             onCancel={() => setIsModalNewOpen(false)}
           >
-            <ListContractRenter />
+            <ListContractRenterLatest />
           </Modal>
           <Modal
             title="Số lượng hợp đồng sắp hết hạn"
@@ -129,7 +219,7 @@ const ContractRenter = () => {
             onOk={() => setIsModalOldOpen(false)}
             onCancel={() => setIsModalOldOpen(false)}
           >
-            <ListContractRenter />
+            <ListContractRenterAlmostExpired />
           </Modal>
           <Modal
             title="Số lượng hợp đồng đã kết thúc"
@@ -139,7 +229,7 @@ const ContractRenter = () => {
             onOk={() => setIsModalEndOpen(false)}
             onCancel={() => setIsModalEndOpen(false)}
           >
-            <ListContractRenter />
+            <ListContractExpired />
           </Modal>
         </Layout>
       </Layout>

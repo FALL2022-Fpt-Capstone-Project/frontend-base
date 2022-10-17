@@ -1,27 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { Input, Table, DatePicker, Select } from "antd";
-import "./listContract.scss";
+import { Input, Table, Select, DatePicker } from "antd";
+import { EyeOutlined, EditOutlined } from "@ant-design/icons";
 
 import axios from "../../api/axios";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 const { Search } = Input;
-const LIST_CONTRACT_URL = "manager/contract/get-contract/1";
+const LIST_CONTRACT_LATEST_URL = "manager/contract/get-contract/1?filter=latest";
 const { Option } = Select;
 const { RangePicker } = DatePicker;
-const ListContractRenter = () => {
+const ListContractRenterLatest = () => {
   const [dataSource, setDataSource] = useState([]);
   const [textSearch, setTextSearch] = useState("");
   const [loading, setLoading] = useState(false);
-
   useEffect(() => {
-    getAllContract();
+    getAllContractLatest();
   }, []);
 
-  const getAllContract = async () => {
+  const getAllContractLatest = async () => {
     let cookie = localStorage.getItem("Cookie");
     setLoading(true);
     const response = await axios
-      .get(LIST_CONTRACT_URL, {
+      .get(LIST_CONTRACT_LATEST_URL, {
         headers: {
           "Content-Type": "application/json",
           // "Access-Control-Allow-Origin": "*",
@@ -44,11 +42,11 @@ const ListContractRenter = () => {
     return dateAndTime[0].split("-").reverse().join("-");
   };
   return (
-    <div className="list-contract">
-      <div className="list-contract-search">
+    <div>
+      <div style={{ display: "flex", alignItems: "center" }}>
         <Search
           placeholder="Tìm kiếm"
-          style={{ marginBottom: 8, marginRight: 20, width: 400, padding: "10px 0" }}
+          style={{ marginBottom: 8, width: 400, padding: "10px 0", marginRight: 20 }}
           onSearch={(value) => {
             setTextSearch(value);
           }}
@@ -111,7 +109,11 @@ const ListContractRenter = () => {
 
           // {
           //   title: "Tên khách thuê",
-          //    dataIndex: "building_total_floor",
+          //   // dataIndex: "building_total_floor",
+          // },
+          // {
+          //   title: "Tên khách thuê",
+          //    dataIndex: "renters",
           // },
           // {
           //   title: "Ngày lập",
@@ -156,4 +158,4 @@ const ListContractRenter = () => {
   );
 };
 
-export default ListContractRenter;
+export default ListContractRenterLatest;
