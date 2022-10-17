@@ -33,24 +33,24 @@ const CreateContractRenter = () => {
     {
       key: 1,
       service: "Tiền điện",
-      price: "3000",
-      unit: "đ/KwH",
+      price: 3000,
+      electricityIndex: 789,
       amount: "1",
 
     },
     {
       key: 2,
       service: "Tiền nước",
-      price: "30000",
-      unit: "đ/Khối",
+      price: 30000,
+      electricityIndex: 789,
       amount: "1",
 
     },
     {
       key: 3,
       service: "Gửi xe",
-      price: "50000",
-      unit: "đ/lượt/xe",
+      price: 50000,
+      electricityIndex: 0,
       amount: "1",
     }];
 
