@@ -97,10 +97,16 @@ const ListContractRenter = () => {
           {
             title: "Số tiền cọc",
             dataIndex: "deposit",
+            render: (value) => {
+              return value.toLocaleString("vn") + " đ";
+            },
           },
           {
             title: "Tiền phòng",
             dataIndex: "price",
+            render: (value) => {
+              return value.toLocaleString("vn") + " đ";
+            },
           },
 
           // {
@@ -130,18 +136,18 @@ const ListContractRenter = () => {
           //   title: "Ghi chú",
           //   dataIndex: "address_more_detail",
           // },
-          // {
-          //   title: "Thao tác",
-          //   dataIndex: "action",
-          //   render: (_, record) => {
-          //     return (
-          //       <>
-          //         <EditOutlined style={{ fontSize: "20px", marginRight: "10px" }} />
-          //         <DeleteOutlined style={{ fontSize: "20px" }} />
-          //       </>
-          //     );
-          //   },
-          // },
+          {
+            title: "Thao tác",
+            dataIndex: "action",
+            render: (_, record) => {
+              return (
+                <>
+                  <EditOutlined style={{ fontSize: "20px", marginRight: "10px" }} />
+                  {/* <EyeOutlined style={{ fontSize: "20px" }} /> */}
+                </>
+              );
+            },
+          },
         ]}
         pagination={{ pageSize: 5 }}
         loading={loading}
