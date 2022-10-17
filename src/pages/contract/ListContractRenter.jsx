@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Input, Table, DatePicker } from "antd";
+import { Input, Table, DatePicker, Select } from "antd";
 import "./listContract.scss";
 
 import axios from "../../api/axios";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 const { Search } = Input;
 const LIST_CONTRACT_URL = "manager/contract/get-contract/1";
+const { Option } = Select;
 const { RangePicker } = DatePicker;
 const ListContractRenter = () => {
   const [dataSource, setDataSource] = useState([]);
@@ -57,6 +58,24 @@ const ListContractRenter = () => {
         />
         <label htmlFor="">Ngày lập hợp đồng</label>
         <RangePicker format={"DD/MM/YYYY"} placeholder={["Từ", "Đến"]} style={{ marginLeft: 20 }} />
+        <label
+          htmlFor=""
+          style={{
+            marginLeft: 20,
+          }}
+        >
+          Chu kỳ thanh toán
+        </label>
+        <Select
+          defaultValue={15}
+          style={{
+            width: 120,
+            marginLeft: 20,
+          }}
+        >
+          <Option value={15}>15</Option>
+          <Option value={30}>30</Option>
+        </Select>
       </div>
       <Table
         bordered
@@ -84,16 +103,16 @@ const ListContractRenter = () => {
             dataIndex: "price",
           },
 
-          {
-            title: "Tên khách thuê",
-            // dataIndex: "building_total_floor",
-          },
+          // {
+          //   title: "Tên khách thuê",
+          //    dataIndex: "building_total_floor",
+          // },
           // {
           //   title: "Ngày lập",
           //   // dataIndex: "building_total_floor",
           // },
           {
-            title: "Ngày vào ở",
+            title: "Ngày lập hợp đồng",
             dataIndex: "startDate",
             render: (date) => getFullDate(date),
           },
@@ -104,7 +123,7 @@ const ListContractRenter = () => {
           },
 
           {
-            title: "Chu kỳ thu",
+            title: "Chu kỳ thanh toán",
             dataIndex: "paymentCycle",
           },
           // {

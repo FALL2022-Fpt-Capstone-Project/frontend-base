@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Input, Table } from "antd";
+import { Input, Table, Select, DatePicker } from "antd";
 
 import axios from "../../api/axios";
 const { Search } = Input;
 const LIST_CONTRACT_LATEST_URL = "manager/contract/get-contract/1?filter=latest";
+const { Option } = Select;
+const { RangePicker } = DatePicker;
 const ListContractRenterLatest = () => {
   const [dataSource, setDataSource] = useState([]);
   const [textSearch, setTextSearch] = useState("");
@@ -40,16 +42,38 @@ const ListContractRenterLatest = () => {
   };
   return (
     <div>
-      <Search
-        placeholder="Tìm kiếm"
-        style={{ marginBottom: 8, width: 400, padding: "10px 0" }}
-        onSearch={(value) => {
-          setTextSearch(value);
-        }}
-        onChange={(e) => {
-          setTextSearch(e.target.value);
-        }}
-      />
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <Search
+          placeholder="Tìm kiếm"
+          style={{ marginBottom: 8, width: 400, padding: "10px 0", marginRight: 20 }}
+          onSearch={(value) => {
+            setTextSearch(value);
+          }}
+          onChange={(e) => {
+            setTextSearch(e.target.value);
+          }}
+        />
+        <label htmlFor="">Ngày lập hợp đồng</label>
+        <RangePicker format={"DD/MM/YYYY"} placeholder={["Từ", "Đến"]} style={{ marginLeft: 20 }} />
+        <label
+          htmlFor=""
+          style={{
+            marginLeft: 20,
+          }}
+        >
+          Chu kỳ thanh toán
+        </label>
+        <Select
+          defaultValue={15}
+          style={{
+            width: 120,
+            marginLeft: 20,
+          }}
+        >
+          <Option value={15}>15</Option>
+          <Option value={30}>30</Option>
+        </Select>
+      </div>
       <Table
         bordered
         dataSource={dataSource}
@@ -80,26 +104,27 @@ const ListContractRenterLatest = () => {
           //   title: "Tên khách thuê",
           //   // dataIndex: "building_total_floor",
           // },
-          {
-            title: "số người trong phòng",
-            dataIndex: "renters",
-          },
+          // {
+          //   title: "Tên khách thuê",
+          //    dataIndex: "renters",
+          // },
           // {
           //   title: "Ngày lập",
           //   // dataIndex: "building_total_floor",
           // },
           {
-            title: "Ngày kết thúc",
-            dataIndex: "endDate",
-            render: (date) => getFullDate(date),
-          },
-          {
-            title: "Ngày vào ở",
+            title: "Ngày lập hợp đồng",
             dataIndex: "startDate",
             render: (date) => getFullDate(date),
           },
           {
-            title: "Chu kỳ thu",
+            title: "Ngày kết thúc",
+            dataIndex: "endDate",
+            render: (date) => getFullDate(date),
+          },
+
+          {
+            title: "Chu kỳ thanh toán",
             dataIndex: "paymentCycle",
           },
           // {
