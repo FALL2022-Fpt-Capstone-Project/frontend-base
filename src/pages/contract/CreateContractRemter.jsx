@@ -1046,7 +1046,7 @@ const CreateContractRenter = () => {
                             <Button icon={<UploadOutlined />}>Click to Upload</Button>
                           </Upload.Dragger>
                         </Form.Item> */}
-                        <Button><DownloadOutlined />Tải hợp đồng</Button>
+                        {/* <Button><DownloadOutlined />Tải hợp đồng</Button> */}
                       </Col>
                     </Row>
                     <p><i><b>Lưu ý:</b><br />
