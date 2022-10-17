@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Input, Modal, Table, Select } from "antd";
+import { Input, Modal, Table, Select, Radio, DatePicker } from "antd";
 import axios from "../../api/axios";
+import "./listStaff.scss";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import UpdateStaff from "./UpdateStaff";
 const { Search } = Input;
 const { Option } = Select;
+const { RangePicker } = DatePicker;
 const ListStaff = () => {
   // const [dataSource, setDataSource] = useState([]);
   const [textSearch, setTextSearch] = useState("");
@@ -13,6 +16,23 @@ const ListStaff = () => {
   const [dataSource, setDataSource] = useState([]);
   const LIST_EMPLOYEE_URL = "manager/user/list-assistant-account";
   const UPDATE_EMPLOYEE_URL = "manager/user/update-role-account";
+  const options = [
+    {
+      label: "Admin",
+      value: "admin",
+    },
+    {
+      label: "Staff",
+      value: "staff",
+    },
+  ];
+  const children = [
+    <Option value={1}>Quản lý cơ sở vật chất</Option>,
+    <Option value={2}>Quản lý nguồn tiền</Option>,
+    <Option value={3}>Quản lý hoá đơn</Option>,
+    <Option value={4}>Quản lý hợp đồng</Option>,
+    <Option value={5}>Quản lý nhân viên</Option>,
+  ];
 
   useEffect(() => {
     getAllEmployees();
@@ -93,18 +113,34 @@ const ListStaff = () => {
 
   return (
     <div className="list-staff">
-      <Search
-        placeholder="Tìm kiếm"
-        style={{ marginBottom: 8, width: 400, padding: "10px 0" }}
-        onSearch={(value) => {
-          setTextSearch(value);
-          // console.log(value);
-        }}
-        onChange={(e) => {
-          setTextSearch(e.target.value);
-          // console.log(e.target.value);
-        }}
-      />
+      <div className="list-staff-search">
+        <Search
+          placeholder="Tìm kiếm theo tên, số điện thoại"
+          style={{ marginBottom: 8, width: 400, padding: "10px 0" }}
+          onSearch={(value) => {
+            setTextSearch(value);
+            // console.log(value);
+          }}
+          onChange={(e) => {
+            setTextSearch(e.target.value);
+            // console.log(e.target.value);
+          }}
+        />
+        <label htmlFor="">Ngày làm việc</label>
+        <RangePicker format={"DD/MM/YYYY"} placeholder={["Từ", "Đến"]} />
+        <label htmlFor=""></label>
+        <Radio.Group options={options} optionType="button" buttonStyle="solid" />
+        <Select
+          mode="multiple"
+          placeholder="Tìm kiếm theo quyền"
+          style={{
+            width: "30%",
+          }}
+          defaultValue={[1, 3]}
+        >
+          {children}
+        </Select>
+      </div>
       <Table
         bordered
         dataSource={dataSource}
@@ -159,6 +195,10 @@ const ListStaff = () => {
               return <>{role}</>;
             },
           },
+          {
+            title: "Trạng thái",
+            dataIndex: "status",
+          },
 
           {
             title: "Thao tác",
@@ -172,12 +212,12 @@ const ListStaff = () => {
                       onEditStudent(record);
                     }}
                   />
-                  <DeleteOutlined
+                  {/* <DeleteOutlined
                     onClick={() => {
                       onDeleteStudent(record);
                     }}
                     style={{ fontSize: "20px" }}
-                  />
+                  /> */}
                 </>
               );
             },
@@ -194,63 +234,24 @@ const ListStaff = () => {
         onCancel={() => {
           resetEditing();
         }}
-        onOk={() => {
-          setDataSource((pre) => {
-            return pre.map((staff) => {
-              if (staff.user_name === editingStaff.user_name) {
-                // updateEmployee();
-                return editingStaff;
-              } else {
-                return staff;
-              }
-            });
-          });
+        //   onOk={
+        //     () => {
+        //     setDataSource((pre) => {
+        //       return pre.map((staff) => {
+        //         if (staff.user_name === editingStaff.user_name) {
+        //           // updateEmployee();
+        //           return editingStaff;
+        //         } else {
+        //           return staff;
+        //         }
+        //       });
+        //     });
 
-          resetEditing();
-        }}
+        //     resetEditing();
+        //   }
+        // }
       >
-        <label htmlFor="">Tên nhân viên</label>
-        <Input
-          style={{ margin: "10px 0" }}
-          value={editingStaff?.full_name}
-          onChange={(e) => {
-            setEditingStaff((pre) => {
-              return { ...pre, full_name: e.target.value };
-            });
-          }}
-        />
-        <label htmlFor="">Tên đăng nhập</label>
-        <Input
-          style={{ margin: "10px 0" }}
-          value={editingStaff?.user_name}
-          onChange={(e) => {
-            setEditingStaff((pre) => {
-              return { ...pre, user_name: e.target.value };
-            });
-          }}
-        />
-        <label htmlFor="">Số điện thoại</label>
-        <Input
-          style={{ margin: "10px 0" }}
-          value={editingStaff?.phone_number}
-          onChange={(e) => {
-            setEditingStaff((pre) => {
-              return { ...pre, phone_number: e.target.value };
-            });
-          }}
-        />
-        <label htmlFor="">Vai trò</label>
-        <Select
-          defaultValue={editingStaff?.role}
-          style={{
-            width: 120,
-            display: "block",
-          }}
-          onChange={roleChange}
-        >
-          <Option value="Admin">Admin</Option>
-          <Option value="Staff">Staff</Option>
-        </Select>
+        <UpdateStaff />
       </Modal>
     </div>
   );
