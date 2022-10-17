@@ -11,7 +11,6 @@ import {
 import { EditOutlined, DeleteOutlined, UserOutlined, PlusOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import moment from 'moment';
-import EditRoom from "./EditRoom";
 import { Link } from "react-router-dom";
 const { Content, Sider, Header } = Layout;
 
@@ -345,6 +344,7 @@ function room(props) {
             <Layout
                 style={{
                     minHeight: "100vh",
+                    minWidth: "100vh"
                 }}
             >
                 <Sider width={250}>
@@ -370,11 +370,12 @@ function room(props) {
                             style={{
                                 padding: 0,
                                 minHeight: 360,
+                                overflow: "auto"
                             }}
                         >
                             {/* <Alert message="Success Text" type="success" />
                             <Alert message="Error Text" type="error" /> */}
-                            <Input.Search placeholder="Tìm kiếm" style={{ marginBottom: 8, width: 500 }}
+                            <Input.Search placeholder="Tìm kiếm" style={{ marginBottom: 8, width: "30%" }}
                                 onSearch={(e) => {
                                     setSearched(e);
                                 }}
@@ -382,15 +383,16 @@ function room(props) {
                                     setSearched(e.target.value);
                                 }}
                             />
-                            <Button type="primary" size="default" style={{ float: "right", width: 150 }}
+                            <Button type="primary" size="default" style={{ float: "right" }}
                                 onClick={() => {
                                     onAdd()
                                 }} icon={<PlusOutlined />}>
-                                Thêm phòng
+                                Thêm Phòng
                             </Button>
                             <Table
                                 dataSource={dataSource}
-                                columns={columns}>
+                                columns={columns}
+                                scroll={{ x: 1800, y: 600 }}>
                             </Table>
                             <Modal
                                 title="Thêm phòng"

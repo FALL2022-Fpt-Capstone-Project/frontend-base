@@ -9,6 +9,7 @@ import ContractApartment from "./pages/contract/Contract";
 import ContractRenter from "./pages/contract/ContractRenter";
 import Unauthorized from "./components/Unautharized";
 import RequireAuth from "./components/RequireAuth";
+import CreateContractRenter from "./pages/contract/CreateContractRemter";
 import Admin from "./pages/admin/Admin";
 
 const ROLES = {
@@ -39,6 +40,9 @@ const App = () => {
         </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
           <Route path="contract-renter" element={<ContractRenter />} />
+        </Route>
+        <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
+          <Route path="contract-renter/create" element={<CreateContractRenter />} />
         </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
           <Route path="manage-admin" element={<Admin />} />
