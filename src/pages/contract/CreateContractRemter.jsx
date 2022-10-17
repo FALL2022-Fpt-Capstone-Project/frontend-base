@@ -2,19 +2,20 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import "./contract.scss";
 import axios from "axios";
-import { EditOutlined, DeleteOutlined, UploadOutlined, PlusCircleOutlined, EyeOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, UploadOutlined, PlusCircleOutlined, EyeOutlined, FilterOutlined, DownloadOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import {
   Button, Layout, Modal, Form, Table, Space, Input, Select,
   Tabs, Row, Col, Radio, DatePicker, Upload, Tag, Checkbox, InputNumber, AutoComplete, Switch, message, Spin
 } from "antd";
 import TextArea from "antd/lib/input/TextArea";
+
 const { Content, Sider, Header } = Layout;
 const { Option } = Select;
 
 
 const CreateContractRenter = () => {
-  const asset = [];
+
   const [searched, setSearched] = useState("");
   const [isAdd, setisAdd] = useState(false);
   const [componentSize, setComponentSize] = useState('default');
@@ -28,37 +29,117 @@ const CreateContractRenter = () => {
   const [isAddMem, setisAddMem] = useState(false);
   const [formEdit] = Form.useForm();
   const [formAdd] = Form.useForm();
+  const service = [
+    {
+      key: 1,
+      service: "Tiền điện",
+      price: 3000,
+      electricityIndex: 789,
+      amount: "1",
 
-  const onFinish = (e) => {
-    message.success('Thêm mới hợp đồng thành công');
-    console.log(JSON.stringify(e));
+    },
+    {
+      key: 2,
+      service: "Tiền nước",
+      price: 30000,
+      electricityIndex: 789,
+      amount: "1",
+
+    },
+    {
+      key: 3,
+      service: "Gửi xe",
+      price: 50000,
+      electricityIndex: 0,
+      amount: "1",
+    }];
+
+  const [dataService, setDataService] = useState(service);
+  const [newService, setNewService] = useState([]);
+  const [nService, setNService] = useState("");
+  const [nPrice, setNPrice] = useState("");
+  const [nAmount, setNAmount] = useState("");
+  const [nFirstNumber, setNFirstNumber] = useState("");
+  form.setFieldsValue({
+    autoRenewContract: true,
+    sex: true,
+  });
+  const [isAddService, setisAddService] = useState(false);
+  const [formEditMem] = Form.useForm();
+  const [formAddMem] = Form.useForm();
+  const [formAddService] = Form.useForm();
+  const [valueGender, setValueGender] = useState('Nam');
+
+  const plainOptions = ['Nam', 'Nữ'];
+  const options = [
+    {
+      label: 'Nam',
+      value: 'nam',
+    },
+    {
+      label: 'Nữ',
+      value: 'nữ',
+    },
+  ]
+
+  const validateMem = (e) => {
+
+    // setisEditing(false)
+    if (nMember !== "" && nPhone !== "" && nGender !== "" && nCmnd !== "" && nCarNumber !== "" && nAddress !== "") {
+      console.log('in');
+      const randomId = parseInt(Math.random() * 1000);
+
+      let newMember = {
+        id: randomId,
+        member: nMember,
+        gender: nGender,
+        phone: nPhone,
+        cmnd: nCmnd,
+        car_number: nCarNumber,
+        address: nAddress,
+      }
+      console.log('Received values of form: ', newMember)
+
+      setDataMember([...dataMember, newMember]);
+      setNMember("")
+      setNGender("")
+      setNPhone("")
+      setNCmnd("")
+      setNCarNumber("")
+      setNAddress("")
+      setisAddMem(false);
+    } else {
+      setisAddMem(true);
+    }
+
+
+  }
+
+  const validateEditMem = (e) => {
+
+    // setisEditing(false)
+    if (e.member !== "" && e.phone !== "" && e.gender !== "" && e.cmnd !== "" && e.car_number !== "" && e.address !== "") {
+      setisEditing(false)
+    } else {
+      setisEditing(true)
+    }
+
+
   }
   const onFormLayoutChange = ({ size }) => {
     setComponentSize(size);
   };
   const columns = [
     {
-      title: 'Tầng',
-      dataIndex: 'floor',
+      title: 'Tên tài sản',
+      dataIndex: 'assetName',
       key: 'index',
       filteredValue: [searched],
       onFilter: (value, record) => {
         return (
-          String(record.floor).toLowerCase()?.includes(value.toLowerCase()) ||
-          String(record.roomCode).toLowerCase()?.includes(value.toLowerCase()) ||
           String(record.assetName).toLowerCase()?.includes(value.toLowerCase())
         );
       },
-    },
-    {
-      title: 'Phòng',
-      dataIndex: 'roomCode',
-      key: 'index',
-    },
-    {
-      title: 'Tên tài sản',
-      dataIndex: 'assetName',
-      key: 'index',
     },
     {
       title: 'Số lượng',
@@ -66,7 +147,12 @@ const CreateContractRenter = () => {
       key: 'index',
     },
     {
-      title: 'Ngày bàn giao',
+      title: 'Loại',
+      dataIndex: 'typeOfAsset',
+      key: 'index',
+    },
+    {
+      title: 'Thời gian',
       dataIndex: 'dateOfDelivery',
       key: 'index',
     },
@@ -88,7 +174,7 @@ const CreateContractRenter = () => {
       render: (record) => {
         return (
           <>
-            <EyeOutlined />
+            <EditOutlined />
             <DeleteOutlined onClick={() => {
               onDeleteAsset(record)
             }} style={{ color: "red", marginLeft: 12 }} />
@@ -99,7 +185,7 @@ const CreateContractRenter = () => {
   ];
   const onDeleteAsset = (record) => {
     Modal.confirm({
-      title: `Bạn có chắc chắn muốn xóa ${record.assetName} trong phòng ${record.roomCode} này ?`,
+      title: `Bạn có chắc chắn muốn xóa ${record.assetName} này ?`,
       okText: 'Có',
       cancelText: 'Hủy',
       onOk: () => {
@@ -119,10 +205,7 @@ const CreateContractRenter = () => {
       filteredValue: [searched],
       onFilter: (value, record) => {
         return (
-          String(record.name).toLowerCase()?.includes(value.toLowerCase()) ||
-          String(record.phoneNumber).toLowerCase()?.includes(value.toLowerCase()) ||
-          String(record.identityCard).toLowerCase()?.includes(value.toLowerCase()) ||
-          String(record.email).toLowerCase()?.includes(value.toLowerCase())
+          String(record.name).toLowerCase()?.includes(value.toLowerCase())
         );
       },
     },
@@ -152,34 +235,125 @@ const CreateContractRenter = () => {
     });
 
   }
-  for (let i = 1; i < 100; i++) {
-    if ((Math.floor(Math.random() * (100 - 1 + 1)) + 1) % 2 === 0) {
-      asset.push({
-        index: i,
-        floor: Math.floor(Math.random() * (100 - 1 + 1)) + 1,
-        roomCode: i.toString(),
-        assetName: `Tài sản ${i}`,
-        numberOfAsset: Math.floor(Math.random() * (100 - 1 + 1)) + 1,
-        dateOfDelivery: `30/09/2022`,
-        status: true,
-      });
-    } else {
-      asset.push({
-        index: i,
-        floor: Math.floor(Math.random() * (100 - 1 + 1)) + 1,
-        roomCode: i.toString(),
-        assetName: `Tài sản ${i}`,
-        numberOfAsset: Math.floor(Math.random() * (100 - 1 + 1)) + 1,
-        dateOfDelivery: `30/09/2022`,
-        status: false,
-      });
-    }
-  }
-  const [dataSource, setDataSource] = useState(asset);
+  const assetData = [
+    {
+      index: 1,
+      assetName: `Bình nóng lạnh`,
+      numberOfAsset: 2,
+      typeOfAsset: 'Đồ phòng tắm',
+      dateOfDelivery: `30/09/2022`,
+      status: true,
+    },
+    {
+      index: 2,
+      assetName: `Bồn rửa mặt`,
+      numberOfAsset: 2,
+      typeOfAsset: 'Đồ phòng tắm',
+      dateOfDelivery: `30/09/2022`,
+      status: true,
+    },
+    {
+      index: 3,
+      assetName: `Gương`,
+      numberOfAsset: 2,
+      typeOfAsset: 'Đồ phòng tắm',
+      dateOfDelivery: `30/09/2022`,
+      status: true,
+    },
+    {
+      index: 4,
+      assetName: `Bồn cầu`,
+      numberOfAsset: 2,
+      typeOfAsset: 'Đồ phòng tắm',
+      dateOfDelivery: `30/09/2022`,
+      status: true,
+    },
+    {
+      index: 5,
+      assetName: `Giường`,
+      numberOfAsset: 2,
+      typeOfAsset: 'Đồ phòng ngủ',
+      dateOfDelivery: `30/09/2022`,
+      status: true,
+    },
+    {
+      index: 6,
+      assetName: `Bàn học`,
+      numberOfAsset: 1,
+      typeOfAsset: 'Đồ phòng ngủ',
+      dateOfDelivery: `30/09/2022`,
+      status: true,
+    },
+    {
+      index: 7,
+      assetName: `Bàn trang điểm`,
+      numberOfAsset: 1,
+      typeOfAsset: 'Đồ phòng ngủ',
+      dateOfDelivery: `30/09/2022`,
+      status: true,
+    },
+    {
+      index: 8,
+      assetName: `Tủ quần áo`,
+      numberOfAsset: 1,
+      typeOfAsset: 'Đồ phòng ngủ',
+      dateOfDelivery: `30/09/2022`,
+      status: true,
+    },
+    {
+      index: 9,
+      assetName: `Tủ lạnh`,
+      numberOfAsset: 1,
+      typeOfAsset: 'Đồ phòng bếp',
+      dateOfDelivery: `30/09/2022`,
+      status: true,
+    },
+    {
+      index: 10,
+      assetName: `Máy giặt`,
+      numberOfAsset: 1,
+      typeOfAsset: 'Đồ phòng bếp',
+      dateOfDelivery: `30/09/2022`,
+      status: true,
+    },
+    {
+      index: 11,
+      assetName: `Bàn nấu ăn`,
+      numberOfAsset: 1,
+      typeOfAsset: 'Đồ phòng bếp',
+      dateOfDelivery: `30/09/2022`,
+      status: true,
+    },
+  ];
+  // for (let i = 1; i < 100; i++) {
+  //   if ((Math.floor(Math.random() * (100 - 1 + 1)) + 1) % 2 === 0) {
+  //     assetData.push({
+  //       index: i,
+  //       assetName: `Tài sản ${i}`,
+  //       numberOfAsset: Math.floor(Math.random() * (100 - 1 + 1)) + 1,
+  //       typeOfAsset: 'Đồ phòng ngủ',
+  //       dateOfDelivery: `30/09/2022`,
+  //       status: true,
+  //     });
+  //   } else {
+  //     assetData.push({
+  //       index: i,
+  //       assetName: `Tài sản ${i}`,
+  //       numberOfAsset: Math.floor(Math.random() * (100 - 1 + 1)) + 1,
+  //       typeOfAsset: 'Đồ phòng khách',
+  //       dateOfDelivery: `30/09/2022`,
+  //       status: false,
+  //     });
+  //   }
+  // }
+  const [dataSource, setDataSource] = useState(assetData);
 
   const onChange = (value) => {
     console.log(`selected ${value}`);
   };
+  const onChangeAutoCheck = (value) => {
+    console.log(`switch ${value}`);
+  }
   const onSearch = (value) => {
     console.log('search:', value);
   };
@@ -205,36 +379,70 @@ const CreateContractRenter = () => {
     {
       title: 'Dịch vụ sử dụng',
       dataIndex: 'service',
-      key: 'service',
+      key: 'key',
+      editable: true,
     },
     {
-      title: 'Đơn giá',
-      dataIndex: 'price',
-      key: 'price',
-    },
-    {
-      title: 'Đơn vị',
-      dataIndex: 'unit',
-      key: 'unit',
-    },
-    {
-      title: 'Số lượng',
-      dataIndex: 'amount',
-      key: 'amount',
+      title: 'Đơn giá (VNĐ)',
+      key: 'key',
+      render: (record) => {
+        return (
+          <>
+            {/* <Form.Item className="form-item" name="priceUnit"
+              labelCol={{ span: 24 }}> */}
+            <InputNumber
+              formatter={record => `${record}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              parser={record => record?.replace(/\$\s?|(,*)/g, '')}
+              style={{ width: '100%' }} placeholder="Đơn giá" value={record.price}
+              min={0}
+              onChange={(record) => {
+                setDataService(pre => {
+                  return { ...pre, price: record }
+                })
+              }}></InputNumber>
+            {/* </Form.Item> */}
+          </>
+        )
+      }
     },
     {
       title: 'Chỉ số ban đầu',
       dataIndex: 'first_number',
-      key: 'first_number',
+      key: 'key',
       render: (record) => {
-
         return (
           <>
-            <Input />
+            <InputNumber style={{ width: '100%' }} placeholder="Chỉ số ban đầu" min={0}></InputNumber>
           </>
         )
       }
-    }
+    },
+
+    {
+      title: 'Số lượng',
+      dataIndex: 'amount',
+      key: 'key',
+      render: (record) => {
+        return (
+          <>
+            <InputNumber placeholder="Số lượng" min={0}></InputNumber>
+          </>
+        )
+      }
+    },
+
+    {
+      title: "Thao tác",
+      dataIndex: "thaotac",
+      align: "center",
+      render: (_, record) =>
+      (
+        <Space>
+          <EditOutlined />
+          <DeleteOutlined onClick={() => onDeleteService(record)} style={{ color: "red", marginLeft: 12 }} />
+        </Space>
+      )
+    },
   ];
 
   const columnsMember = [
@@ -243,6 +451,13 @@ const CreateContractRenter = () => {
       title: "Họ và tên",
       dataIndex: "member",
       key: "member",
+      align: "center",
+      editTable: true
+    },
+    {
+      title: "Giới tính",
+      dataIndex: "gender",
+      key: "gender",
       align: "center",
       editTable: true
     },
@@ -261,7 +476,7 @@ const CreateContractRenter = () => {
       editTable: true
     },
     {
-      title: "Số xe",
+      title: "Biển số xe",
       dataIndex: "car_number",
       key: "car_number",
       align: "center",
@@ -294,57 +509,32 @@ const CreateContractRenter = () => {
 
 
 
-  const service = [];
-  service.push(
-    {
-      key: 1,
-      service: "Tiền điện",
-      price: "3000",
-      unit: "đ/KwH",
-      amount: "1",
 
-    },
-    {
-      key: 2,
-      service: "Tiền nước",
-      price: "2000",
-      unit: "đ/Khối",
-      amount: "1",
 
-    },
-    {
-      key: 3,
-      service: "Gửi xe",
-      price: "5000",
-      unit: "đ/lượt/xe",
-      amount: "1",
-    });
-
-  const [dataService, setDataService] = useState(service);
-
-  const member = [];
-  member.push(
-    {
-      id: 1,
-      member: "Nguyễn Văn B",
-      phone: "0645138795",
-      cmnd: "001856447953",
-      car_number: "30H-06789",
-      address: "Hà Nội",
-    },
-    {
-      id: 2,
-      member: "Chu Đình A",
-      phone: "069413895",
-      cmnd: "001856743684",
-      car_number: "30H-01259",
-      address: "Hà Nội",
-    }
-  )
+  const member = [{
+    id: 1,
+    member: "Nguyễn Văn B",
+    gender: "Nam",
+    phone: "0645138795",
+    cmnd: "001856447953",
+    car_number: "30H-06789",
+    address: "Hà Nội",
+  },
+  {
+    id: 2,
+    member: "Chu Đình A",
+    gender: "Nữ",
+    phone: "069413895",
+    cmnd: "001856743684",
+    car_number: "30H-01259",
+    address: "Hà Nội",
+  }
+  ];
 
   const [dataMember, setDataMember] = useState(member);
   const [newMember, setNewMember] = useState([]);
   const [nMember, setNMember] = useState("");
+  const [nGender, setNGender] = useState("");
   const [nPhone, setNPhone] = useState("");
   const [nCmnd, setNCmnd] = useState("");
   const [nCarNumber, setNCarNumber] = useState("");
@@ -354,7 +544,7 @@ const CreateContractRenter = () => {
 
   const onDeleteMember = (record) => {
     Modal.confirm({
-      title: "Bạn có chắc chắn muốn xóa không?",
+      title: `Bạn có chắc chắn muốn xóa ${record.member} không?`,
       okText: "Xóa",
       cancelText: "Hủy",
       onOk: () => {
@@ -366,11 +556,26 @@ const CreateContractRenter = () => {
 
   }
 
+  const onDeleteService = (record) => {
+    Modal.confirm({
+      title: `Bạn có chắc chắn muốn xóa dịch vụ ${record.service} không?`,
+      okText: "Xóa",
+      cancelText: "Hủy",
+      onOk: () => {
+        setDataService(pre => {
+          return pre.filter((service) => service.id !== record.id);
+        })
+      }
+    })
+
+  }
+
   const onEditMember = (record) => {
     setisEditing(true);
     setEditingMember({ ...record })
-    formEdit.setFieldsValue({
+    formEditMem.setFieldsValue({
       member: record.member,
+      gender: record.gender,
       phone: record.phone,
       cmnd: record.cmnd,
       car_number: record.car_number,
@@ -380,35 +585,79 @@ const CreateContractRenter = () => {
   const resetEditing = () => {
     setisEditing(false);
     setEditingMember(null);
+
   }
+
+  const resetEditingCl = () => {
+
+    setisEditing(false);
+
+  }
+
+  const onAddService = () => {
+    setisAddService(true);
+  }
+
+
 
   const onAddMem = () => {
     setisAddMem(true);
-    setAddingMember("");
   }
 
   const resetAddMemCl = () => {
     setisAddMem(false);
   }
 
-  const resetAddMem = (e) => {
-    const randomId = parseInt(Math.random() * 1000);
-    let newMember = {
-      id: randomId,
-      member: nMember,
-      phone: nPhone,
-      cmnd: nCmnd,
-      car_number: nCarNumber,
-      address: nAddress,
-    }
+  const resetAddServiceCl = () => {
+    setisAddService(false);
+  }
 
-    setDataMember([...dataMember, newMember]);
-    setNMember('');
-    setNPhone('');
-    setNCmnd('');
-    setNAddress('');
-    setNCarNumber('');
-    setisAddMem(false);
+  const resetAddMem = (e) => {
+    if (nMember !== "" && nPhone !== "" && nGender !== "" && nCmnd !== "" && nCarNumber !== "" && nAddress !== "") {
+      console.log('in');
+      const randomId = parseInt(Math.random() * 1000);
+
+      let newMember = {
+        id: randomId,
+        member: nMember,
+        gender: nGender,
+        phone: nPhone,
+        cmnd: nCmnd,
+        car_number: nCarNumber,
+        address: nAddress,
+      }
+      console.log('Received values of form: ', newMember)
+
+      setDataMember([...dataMember, newMember]);
+      setNMember("")
+      setisAddMem(false);
+    }
+    setisAddMem(true);
+
+
+  }
+
+  const resetAddService = (e) => {
+    if (nService !== "" && nPrice !== "" && nFirstNumber !== "" && nAmount !== "") {
+      const randomId = parseInt(Math.random() * 1000);
+      let newService = {
+        id: randomId,
+        service: nService,
+        price: nPrice,
+        first_number: nFirstNumber,
+        amount: nAmount,
+
+      }
+      console.log('Received values of form: ', newService)
+      setDataService([...dataService, newService]);
+      setNService("")
+      setNPrice("")
+      setNFirstNumber("")
+      setNAmount("")
+      setisAddService(false);
+    } else {
+      setisAddService(true)
+    }
 
   }
 
@@ -453,6 +702,14 @@ const CreateContractRenter = () => {
   const mapped = dataFloorRoom.map((obj, index) => obj.floor);
   const floors = mapped.filter((type, index) => mapped.indexOf(type) === index);
   const [room, setRoom] = useState(dataFloorRoom.map((obj, index) => obj.room));
+  const onFinish = (e) => {
+    console.log(dataMember);
+    message.success('Thêm mới hợp đồng thành công');
+    form.setFieldsValue({
+      memberInRoom: dataMember,
+    });
+    console.log(e);
+  }
   return (
     <div className="contract">
       <Layout
@@ -536,13 +793,12 @@ const CreateContractRenter = () => {
                             }}>
                           </Input>
                         </Form.Item>
-                        <Form.Item className="form-item" name="sex"
-                          rules={[
-                            {
-                              required: true,
-                              message: "Vui lòng chọn giới tính",
-                            }
-                          ]}>
+                        <Form.Item className="form-item" name="sex" rules={[
+                          {
+                            required: true,
+                            message: "Vui lòng nhập tên khách thuê",
+                          }
+                        ]}>
                           <Radio.Group>
                             <Radio value={true}>Nam</Radio>
                             <Radio value={false}>Nữ</Radio>
@@ -562,7 +818,8 @@ const CreateContractRenter = () => {
                               message: "Vui lòng nhập số điện thoại",
                               whitespace: true,
                             }
-                          ]}>
+                          ]}
+                        >
                           <Input
                             placeholder="Số điện thoại" onChange={(e) => {
                               setDataOldUser(pre => {
@@ -573,14 +830,15 @@ const CreateContractRenter = () => {
                         </Form.Item>
                         <Form.Item className="form-item" name="email" labelCol={{ span: 24 }}
                           label={<span><b>Email: </b></span>}
-                          rules={[
-                            {
-                              required: true,
-                              message: "Vui lòng nhập email",
-                              whitespace: true,
-                              type: "email",
-                            }
-                          ]}>
+                        // rules={[
+                        //   {
+                        //     required: true,
+                        //     message: "Vui lòng nhập email",
+                        //     whitespace: true,
+                        //     type: "email",
+                        //   }
+                        // ]}
+                        >
                           <Input
                             placeholder="Email" onChange={(e) => {
                               setDataOldUser(pre => {
@@ -725,6 +983,7 @@ const CreateContractRenter = () => {
                             formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                             parser={value => value?.replace(/\$\s?|(,*)/g, '')}
                             style={{ width: '100%' }}
+                            min={0}
                           />
                         </Form.Item>
                         <Form.Item className="form-item" name="depositAmount"
@@ -740,6 +999,7 @@ const CreateContractRenter = () => {
                             formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                             parser={value => value?.replace(/\$\s?|(,*)/g, '')}
                             style={{ width: '100%' }}
+                            min={0}
                           />
                         </Form.Item>
                         <Form.Item className="form-item" name="billCycle"
@@ -768,7 +1028,11 @@ const CreateContractRenter = () => {
                             <Option value="30">kỳ 30</Option>
                           </Select>
                         </Form.Item>
-                        <p><i>Tập tin và hình ảnh upload thả vào đây</i></p>
+                        <Form.Item className="form-item" name="autoRenewContract"
+                          labelCol={{ span: 24 }} label={<span><b>Tự động gia hạn hợp đồng:  </b></span>}>
+                          <Switch defaultChecked onChange={onChangeAutoCheck} />
+                        </Form.Item>
+                        {/* <p><i>Tập tin và hình ảnh upload thả vào đây</i></p>
                         <Form.Item className="form-item" name="file1">
                           <Upload.Dragger multiple listType='picture' showUploadList={{ showRemoveIcon: true }}
                             accept=".png,jpeg,.doc"
@@ -781,45 +1045,185 @@ const CreateContractRenter = () => {
                             action={"http://localhost:3000/contract-renter/create"}>
                             <Button icon={<UploadOutlined />}>Click to Upload</Button>
                           </Upload.Dragger>
-                        </Form.Item>
+                        </Form.Item> */}
+                        <Button><DownloadOutlined />Tải hợp đồng</Button>
                       </Col>
                     </Row>
-                    <p>Lưu ý:<br />
+                    <p><i><b>Lưu ý:</b><br />
                       - Kỳ thanh toán tùy thuộc vào từng khu nhà trọ, nếu khu trọ bạn thu tiền 1 lần vào cuối tháng thì bạn chọn là kỳ 30. Trường hợp khu nhà trọ bạn có số lượng phòng nhiều, chia làm 2 đợt thu, bạn dựa vào ngày vào của khách để gán kỳ cho phù hợp, ví dụ: vào từ ngày 1 đến 15 của tháng thì gán kỳ 15; nếu vào từ ngày 16 đến 31 của tháng thì gán kỳ 30. Khi tính tiền phòng bạn sẽ tính tiền theo kỳ.<br />
                       - Tiền đặt cọc sẽ không tính vào doanh thu ở các báo cáo và thống kê doanh thu. Nếu bạn muốn tính vào doanh thu bạn ghi nhận vào trong phần thu/chi khác (phát sinh). Tiền đặt cọc sẽ được trừ ra khi tính tiền trả phòng.<br />
                       - Các thông tin có giá trị là ngày nhập đủ ngày tháng năm và đúng định dạng dd/MM/yyyy (ví dụ: 01/12/2020)<br />
                       - Chu kỳ tính tiền: là số tháng được tính trên mỗi hóa đơn.<br />
-                    </p>
+                    </i></p>
                     <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
                   </Tabs.TabPane>
                   <Tabs.TabPane tab="Dịch vụ" key="2">
                     <Row>
+                      <Col span={23}>
+                        <Form.Item className="form-item" name="service"
+                          labelCol={{ span: 24 }}>
+                          <p><b>Các thông tin về dịch vụ </b></p>
+                        </Form.Item>
+                      </Col>
+                      <Col span={1}>
+                        <PlusCircleOutlined style={{ fontSize: 36, marginBottom: 20, color: "#1890ff" }} onClick={() => {
+                          onAddService()
+                        }} />
+                      </Col>
+                    </Row>
+                    <Row>
                       <Col span={24}>
                         <Table
-                          rowSelection={rowSelection}
+                          rowKey={(record) => record.key}
+                          rowSelection={{
+                            onChange: (record) => {
+                              console.log(record);
+                              form.setFieldsValue({
+                                service: record.map(indexService => dataService.find(obj => obj.key === indexService)),
+                              });
+                            }
+                          }}
                           dataSource={dataService}
                           columns={columnsService}>
                         </Table>
                       </Col>
+                      <p><i><b>Lưu ý:</b><br />
+                        - Vui lòng chọn dịch vụ cho khách thuê. Nếu khách có chọn dịch vụ thì khi tính tiền phòng phần mềm sẽ tự tính các khoản phí vào hóa đơn; ngược lại nếu không chọn phần mềm sẽ bỏ qua.<br />
+                        - Đối với dịch vụ là loại điện/ nước thì sẽ tính theo chỉ số điện/ nước
+                        <br />
+                      </i></p>
                     </Row>
+                    <Modal
+                      title="Thêm dịch vụ"
+                      visible={isAddService}
+                      onCancel={
+                        resetAddServiceCl
+                      }
+                      id="formAddService"
+                      destroyOnClose
+                      onOk={resetAddService}
+                      width={700}
+                      footer={[
+                        <Button htmlType="submit" key="submit" form="formAddService" type="primary" onClick={resetAddService}>
+                          Lưu
+                        </Button>,
+                        <Button key="back" onClick={resetAddServiceCl}>
+                          Huỷ
+                        </Button>,
+                      ]}
+                    >
+                      <Form id="formAddService"
+                        preserve={false}
+                        destroyOnClose={true}
+                        form={formAddService}
+                        name="addService"
+                        onChange={(e) => setNAddress()}
+                      >
+                        <Form.Item
+                          name="service"
+                          label="Tên dịch vụ"
+                          rules={[
+                            {
+                              required: true,
+                              message: 'Chưa điền tên dịch vụ',
+                            },
+                          ]}
+                          onChange={(e) => setNService(e.target.value)}
+                        >
+                          <Input />
+                        </Form.Item>
+                        <Form.Item
+                          name="price"
+                          label="Đơn giá"
+                          rules={[
+                            {
+                              required: true,
+                              message: 'Chưa điền đơn giá',
+                            },
+                            {
+                              pattern: /^[0-9]*$/,
+                              message: "Đơn giá sai"
+                            }
+                          ]}
+                          onChange={(e) => setNPrice(e.target.value)}
+                        >
+                          <Input
+                            style={{
+                              width: '100%',
+                            }}
+                          />
+                        </Form.Item>
+                        <Form.Item
+                          name="first_number"
+                          label="Chỉ số hiện tại"
+                          rules={[
+                            {
+                              required: false,
+                              message: 'Chưa điền chỉ số',
+                            },
+                            {
+                              pattern: /^[0-9]*$/,
+                              message: "Chỉ số sai"
+                            }
+                          ]}
+                          onChange={(e) => setNFirstNumber(e.target.value)}
+                        >
+                          <Input
+                            style={{
+                              width: '100%',
+                            }}
+                          />
+                        </Form.Item>
+                        <Form.Item
+                          name="amount"
+                          label="Số lượng"
+                          rules={[
+                            {
+                              required: true,
+                              message: 'Chưa điền số lượng',
+                            },
+                            {
+                              pattern: /^[0-9]*$/,
+                              message: "Số lượng sai"
+                            }
+                          ]}
+                          onChange={(e) => setNAmount(e.target.value)}
+                        >
+                          <Input
+                            style={{
+                              width: '100%',
+                            }}
+                          />
+                        </Form.Item>
+                      </Form>
+                    </Modal>
                   </Tabs.TabPane>
                   <Tabs.TabPane tab="Thành viên" key="3">
-                    <PlusCircleOutlined style={{ fontSize: 36, marginBottom: 20, color: "#1890ff" }} onClick={() => {
-                      onAddMem()
-                    }} />
-                    <Table style={{ width: '100%' }}
-
-                      dataSource={dataMember}
-                      columns={columnsMember}>
-                    </Table>
-
+                    <Row>
+                      <Col span={23}>
+                        <Form.Item className="form-item" name="memberInRoom"
+                          labelCol={{ span: 24 }}>
+                          <p><b>Các thông tin về thành viên trong phòng </b></p>
+                        </Form.Item>
+                      </Col>
+                      <Col span={1}>
+                        <PlusCircleOutlined style={{ fontSize: 36, marginBottom: 20, color: "#1890ff" }} onClick={() => {
+                          onAddMem()
+                        }} />
+                      </Col>
+                      <Table style={{ width: '100%' }}
+                        dataSource={dataMember}
+                        columns={columnsMember}>
+                      </Table>
+                    </Row>
                     <Modal
                       title="Thông tin thành viên"
-                      okText="Lưu"
-                      cancelText="Hủy"
                       visible={isEditing}
+                      preserve={false}
+                      id="formEditMem"
+                      destroyOnClose
                       onCancel={() => {
-                        resetEditing();
+                        resetEditingCl();
                       }}
                       onOk={(e) => {
                         setDataMember(pre => {
@@ -831,13 +1235,11 @@ const CreateContractRenter = () => {
                             }
                           });
                         });
-
-                        resetEditing()
-
+                        validateEditMem(editingMember);
                       }}
 
                       footer={[
-                        <Button htmlType="submit" form="editMember" type="primary" onClick={(e) => {
+                        <Button htmlType="submit" key="submit" form="formEditMem" type="primary" onClick={(e) => {
                           setDataMember((pre) => {
                             return pre.map(renter => {
                               if (renter.id === editingMember.id) {
@@ -847,42 +1249,52 @@ const CreateContractRenter = () => {
                               }
                             });
                           });
-                          resetEditing()
+                          validateEditMem(editingMember);
                         }}>
                           Lưu
                         </Button>,
-                        <Button key="back" onClick={() => {
-                          resetEditing();
-                        }}>
+                        <Button key="back" onClick={resetEditingCl}>
+
                           Huỷ
                         </Button>,
                       ]}
                     >
-
                       <Form
-                        form={formEdit}
-                        name="edit"
-
-                        scrollToFirstError
+                        id="formEditMem"
+                        preserve={false}
+                        form={formEditMem}
+                        destroyOnClose
                       >
                         <Form.Item
                           name="member"
                           label="Họ và tên"
-
                           rules={[
-
                             {
                               required: true,
                               message: 'Chưa điền họ và tên',
                             },
                           ]}
 
-                          value={editingMember?.member}
                         >
-                          <Input disabled={true} />
+                          <Input disabled={true} value={editingMember?.member} />
                         </Form.Item>
+                        <Form.Item
+                          name="gender"
+                          label="Giới tính"
+                          rules={[
+                            {
+                              required: true,
+                              message: 'Chưa chọn giới tính',
+                            },
+                          ]}
 
+                        >
+                          <Radio.Group value={editingMember?.gender} disabled={true}>
+                            <Radio value={"Nam"}>Nam</Radio>
+                            <Radio value={"Nữ"}>Nữ</Radio>
 
+                          </Radio.Group>
+                        </Form.Item>
                         <Form.Item
                           name="phone"
                           label="Số điện thoại"
@@ -891,16 +1303,26 @@ const CreateContractRenter = () => {
                               required: true,
                               message: 'Chưa điền số điện thoại',
                             },
-                          ]}
-                          value={editingMember?.phone}
-                          onChange={(e) => {
-                            setEditingMember(pre => {
-                              return { ...pre, phone: e.target.value }
-                            })
-                          }}
-                        >
-                          <Input
+                            {
+                              len: 10,
+                              message: "Số điện thoại phải có 10 chữ số"
+                            },
+                            {
+                              pattern: /^[0-9]*$/,
+                              message: "Số điện thoại không chứa chữ"
 
+                            }
+
+                          ]}
+
+
+                        >
+                          <Input value={editingMember?.phone}
+                            onChange={(e) => {
+                              setEditingMember(pre => {
+                                return { ...pre, phone: e.target.value }
+                              })
+                            }}
                             style={{
                               width: '100%',
                             }}
@@ -912,13 +1334,13 @@ const CreateContractRenter = () => {
                           label="CMND/CCCD"
                           rules={[
                             {
-                              required: true,
+                              required: false,
                               message: 'Chưa điền CMND/CCCD',
                             },
                           ]}
-                          value={editingMember?.cmnd}
+
                         >
-                          <Input disabled={true}
+                          <Input disabled={true} value={editingMember?.cmnd}
 
                             style={{
                               width: '100%',
@@ -930,37 +1352,36 @@ const CreateContractRenter = () => {
                           label="Số xe"
                           rules={[
                             {
-                              required: true,
+                              required: false,
                               message: 'Chưa điền số xe',
                             },
                           ]}
-                          value={editingMember?.car_number}
-                          onChange={(e) => {
-                            setEditingMember(pre => {
-                              return { ...pre, car_number: e.target.value }
-                            })
-                          }}
+
                         >
                           <Input
-
+                            value={editingMember?.car_number}
+                            onChange={(e) => {
+                              setEditingMember(pre => {
+                                return { ...pre, car_number: e.target.value }
+                              })
+                            }}
                             style={{
                               width: '100%',
                             }}
                           />
                         </Form.Item>
-
                         <Form.Item
                           name="address"
                           label="Địa chỉ"
                           rules={[
                             {
-                              required: true,
+                              required: false,
                               message: 'Chưa điền địa chỉ',
                             },
                           ]}
-                          value={editingMember?.address}
                         >
                           <Input disabled={true}
+                            value={editingMember?.address}
 
                             style={{
                               width: '100%',
@@ -972,14 +1393,16 @@ const CreateContractRenter = () => {
                     <Modal
                       title="Thêm thành viên"
                       visible={isAddMem}
+                      preserve={false}
                       onCancel={
                         resetAddMemCl
                       }
-                      destroyOnClose={true}
+                      id="formAddMem"
+                      destroyOnClose
                       onOk={resetAddMem}
                       width={700}
                       footer={[
-                        <Button htmlType="submit" key="submit" form="formAdd" type="primary" onClick={resetAddMem}>
+                        <Button htmlType="submit" key="submit" form="formAddMem" type="primary" onClick={validateMem}>
                           Lưu
                         </Button>,
                         <Button key="back" onClick={resetAddMemCl}>
@@ -987,10 +1410,11 @@ const CreateContractRenter = () => {
                         </Button>,
                       ]}
                     >
-                      <Form id="formAdd"
+                      <Form
+                        id="formAddMem"
                         preserve={false}
-                        form={formAdd}
-                        name="add"
+                        form={formAddMem}
+                        destroyOnClose
                       >
                         <Form.Item
                           name="member"
@@ -1001,25 +1425,57 @@ const CreateContractRenter = () => {
                               message: 'Chưa điền họ và tên',
                             },
                           ]}
-                          onChange={(e) => setNMember(e.target.value)}
+
                         >
-                          <Input />
+                          <Input onChange={(e) => setNMember(e.target.value)} />
+                        </Form.Item>
+
+                        <Form.Item
+                          name="gender"
+                          label="Giới tính"
+                          rules={[
+                            {
+                              required: true,
+                              message: 'Chưa chọn giới tính',
+                            },
+                          ]}
+
+                        >
+                          <Radio.Group onChange={(e) => setNGender(e.target.value)}>
+                            <Radio value="Nam">Nam</Radio>
+                            <Radio value="Nữ">Nữ</Radio>
+
+                          </Radio.Group>
+                          {/* <Radio.Group options={plainOptions} onChange={(e) => setNGender(e.target.value)} value={valueGender} />
+                          <br /> */}
                         </Form.Item>
                         <Form.Item
                           name="phone"
                           label="Số điện thoại"
+
                           rules={[
                             {
                               required: true,
                               message: 'Chưa điền số điện thoại',
                             },
+                            {
+                              len: 10,
+                              message: "Số điện thoại phải có 10 chữ số"
+                            },
+                            {
+                              pattern: /^[0-9]*$/,
+                              message: "Số điện thoại không chứa chữ"
+
+                            }
+
                           ]}
-                          onChange={(e) => setNPhone(e.target.value)}
+
                         >
                           <Input
                             style={{
                               width: '100%',
                             }}
+                            onChange={(e) => setNPhone(e.target.value)}
                           />
                         </Form.Item>
                         <Form.Item
@@ -1027,50 +1483,52 @@ const CreateContractRenter = () => {
                           label="CMND/CCCD"
                           rules={[
                             {
-                              required: true,
+                              required: false,
                               message: 'Chưa điền CMND/CCCD',
                             },
+
+                            {
+                              len: 12,
+                              message: "CMND/CCCD phải có 12 chữ số"
+                            },
+                            {
+                              pattern: /^[0-9]*$/,
+                              message: "CMND/CCCD không chứa chữ"
+
+                            }
                           ]}
-                          onChange={(e) => setNCmnd(e.target.value)}
+
                         >
                           <Input
                             style={{
                               width: '100%',
                             }}
+                            onChange={(e) => setNCmnd(e.target.value)}
                           />
                         </Form.Item>
                         <Form.Item
                           name="car_number"
-                          label="Số xe"
-                          rules={[
-                            {
-                              required: true,
-                              message: 'Chưa điền số xe',
-                            },
-                          ]}
-                          onChange={(e) => setNCarNumber(e.target.value)}
+                          label="Biển số xe"
+
+
                         >
                           <Input
                             style={{
                               width: '100%',
                             }}
+                            onChange={(e) => setNCarNumber(e.target.value)}
                           />
                         </Form.Item>
                         <Form.Item
                           name="address"
                           label="Địa chỉ"
-                          rules={[
-                            {
-                              required: true,
-                              message: 'Chưa điền địa chỉ',
-                            },
-                          ]}
-                          onChange={(e) => setNAddress(e.target.value)}
+
                         >
                           <Input
                             style={{
                               width: '100%',
                             }}
+                            onChange={(e) => setNAddress(e.target.value)}
                           />
                         </Form.Item>
                       </Form>
@@ -1079,10 +1537,13 @@ const CreateContractRenter = () => {
                   <Tabs.TabPane tab="Tài sản" key="4">
                     <Row>
                       <Col span={24}>
-                        <p><b>Thông tin tài sản bàn giao</b></p>
+                        <Form.Item className="form-item" name="asset"
+                          labelCol={{ span: 24 }}>
+                          <p><b>Thông tin tài sản bàn giao tòa A, tầng 5, phòng 501</b></p>
+                        </Form.Item>
                         <Row>
                           <Col span={8}>
-                            <Input.Search placeholder="Tìm kiếm" style={{ marginBottom: 8 }}
+                            <Input.Search placeholder="Nhập tên tài sản để tìm kiếm" style={{ marginBottom: 8 }}
                               onSearch={(e) => {
                                 setSearched(e);
                               }}
@@ -1091,13 +1552,51 @@ const CreateContractRenter = () => {
                               }}
                             />
                           </Col>
-                          <Col span={8}></Col>
-                          <Col span={8}>
+                        </Row>
+                        <Row>
+                          <Col span={2}>
+                            <FilterOutlined style={{ fontSize: '150%' }} />
+                            <b>Loại tài sản:</b>
+                          </Col>
+                          <Col span={18}>
+                            <Row>
+                              <Col span={4}>
+                                <Checkbox>Đồ phòng ngủ</Checkbox>
+                              </Col>
+                              <Col span={4}>
+                                <Checkbox>Đồ phòng khách</Checkbox>
+                              </Col>
+                              <Col span={4}>
+                                <Checkbox>Đồ phòng bếp</Checkbox>
+                              </Col>
+                              <Col span={4}>
+                                <Checkbox>Đồ phòng tắm</Checkbox>
+                              </Col>
+                              <Col span={4}>
+                                <Checkbox>Khác</Checkbox>
+                              </Col>
+                            </Row>
+                          </Col>
+                          <Col span={4}>
                             <PlusCircleOutlined style={{ fontSize: 36, color: "#1890ff", float: "right" }} />
                           </Col>
                         </Row>
                         <Row>
                           <Table
+                            bordered
+                            rowKey={(record) => record.index}
+                            rowSelection={{
+                              onSelect: (record) => {
+                                // arrayAsset.push({ ...record });
+                                // const b = arrayAsset.filter((ele, ind) => ind === arrayAsset.findIndex(elem => elem.index === ele.index && elem.assetName === ele.assetName))
+                                // console.log(record);
+                              },
+                              onChange: (record) => {
+                                form.setFieldsValue({
+                                  asset: record.map(indexAsset => dataSource.find(obj => obj.index === indexAsset)),
+                                });
+                              }
+                            }}
                             dataSource={dataSource}
                             columns={columns}
                             scroll={{ x: 800, y: 600 }}
@@ -1107,18 +1606,25 @@ const CreateContractRenter = () => {
                       </Col>
                     </Row>
                     <Row>
-                      <p><i>Tập tin và hình ảnh upload thả vào đây</i></p>
+                      <p><i><b>Lưu ý:</b><br />
+                        - Cột <b>"thời gian"</b>: trong bảng hiển thị là tính từ thời gian đó tới thời điểm hiện tại thì tài sản có trạng thái <b>"Tốt"</b> hoặc <b>"Hỏng"</b>. <br />
+                        - Trong trường hợp bàn giao với khách thuê, tài sản ở thời điểm bàn giao <b>"trạng thái"</b> không như trong bảng hiển thị. Cần cập nhập để hệ thống ghi nhận trạng thái của tài sản ở thời điểm hiện tại.<br />
+                      </i></p>
+
                     </Row>
                     <Row>
+                      <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
+                    </Row>
+                    {/* <Row>
                       <Upload>
                         <Button icon={<UploadOutlined />}>Click to Upload</Button>
                       </Upload>
-                    </Row>
+                    </Row> */}
                   </Tabs.TabPane>
                 </Tabs>
               </Form>
               <Modal
-                title="Khách hàng cũ"
+                title="Khách cũ"
                 visible={isAdd}
                 onCancel={() => {
                   resetAdd()
@@ -1135,7 +1641,7 @@ const CreateContractRenter = () => {
                   size={"default"}
                 >
                   <Form.Item >
-                    <Input.Search placeholder="Tìm kiếm" style={{ marginBottom: 8, width: "30%" }}
+                    <Input.Search placeholder="Nhập tên khách cũ để tìm kiếm" style={{ marginBottom: 8, width: "30%" }}
                       onSearch={(e) => {
                         setSearched(e);
                       }}
