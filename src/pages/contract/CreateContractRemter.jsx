@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import "./contract.scss";
-import axios from "axios";
-import { EditOutlined, DeleteOutlined, UploadOutlined, PlusCircleOutlined, EyeOutlined, FilterOutlined, DownloadOutlined } from '@ant-design/icons';
+import axios from "../../api/axios";
+import { EditOutlined, DeleteOutlined, PlusCircleOutlined, FilterOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import {
   Button, Layout, Modal, Form, Table, Space, Input, Select,
-  Tabs, Row, Col, Radio, DatePicker, Upload, Tag, Checkbox, InputNumber, AutoComplete, Switch, message, Spin
+  Tabs, Row, Col, Radio, DatePicker, Tag, Checkbox, InputNumber, message,
 } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 
@@ -15,78 +15,61 @@ const { Option } = Select;
 
 
 const CreateContractRenter = () => {
-
+  const LIST_OLD_RENTER = "manager/renter/old";
+  const defaultAddAsset = {
+    dateOfDelivery: moment(),
+    asset_unit: 1,
+    asset_type: "others",
+    asset_value: 0,
+    asset_status: true
+  };
   const [searched, setSearched] = useState("");
   const [isAdd, setisAdd] = useState(false);
   const [componentSize, setComponentSize] = useState('default');
-  const [dataOldUser, setDataOldUser] = useState([]);
-  const [editContract, setEditContract] = useState([]);
+  const [dataOldRenter, setDataOldRenter] = useState([]);
+  const [selectOldRenter, setSelectOldRenter] = useState([]);
   const [form] = Form.useForm();
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [createAssetForm] = Form.useForm();
   const [isEditing, setisEditing] = useState(false);
   const [editingMember, setEditingMember] = useState(null);
-  const [addingMember, setAddingMember] = useState(null);
   const [isAddMem, setisAddMem] = useState(false);
-  const [formEdit] = Form.useForm();
-  const [formAdd] = Form.useForm();
+  const [formAddAsset, setFormAddAsset] = useState(defaultAddAsset);
   const service = [
     {
       key: 1,
       service: "Tiền điện",
       price: 3000,
-      electricityIndex: 789,
-      amount: "1",
+      amount: 1,
 
     },
     {
       key: 2,
       service: "Tiền nước",
       price: 30000,
-      electricityIndex: 789,
-      amount: "1",
+      amount: 1,
 
     },
     {
       key: 3,
       service: "Gửi xe",
       price: 50000,
-      electricityIndex: 0,
-      amount: "1",
+      amount: 1,
     }];
 
   const [dataService, setDataService] = useState(service);
-  const [newService, setNewService] = useState([]);
-  const [nService, setNService] = useState("");
-  const [nPrice, setNPrice] = useState("");
-  const [nAmount, setNAmount] = useState("");
-  const [nFirstNumber, setNFirstNumber] = useState("");
   form.setFieldsValue({
     autoRenewContract: true,
-    sex: true,
+    // sex: true,
+    electricityIndex: 0,
+    waterIndex: 0,
+    service: dataService
   });
-  const [isAddService, setisAddService] = useState(false);
   const [formEditMem] = Form.useForm();
   const [formAddMem] = Form.useForm();
-  const [formAddService] = Form.useForm();
-  const [valueGender, setValueGender] = useState('Nam');
-
-  const plainOptions = ['Nam', 'Nữ'];
-  const options = [
-    {
-      label: 'Nam',
-      value: 'nam',
-    },
-    {
-      label: 'Nữ',
-      value: 'nữ',
-    },
-  ]
-
   const validateMem = (e) => {
 
     // setisEditing(false)
     if (nMember !== "" && nPhone !== "" && nGender !== "" && nCmnd !== "" && nCarNumber !== "" && nAddress !== "") {
-      console.log('in');
       const randomId = parseInt(Math.random() * 1000);
 
       let newMember = {
@@ -98,8 +81,6 @@ const CreateContractRenter = () => {
         car_number: nCarNumber,
         address: nAddress,
       }
-      console.log('Received values of form: ', newMember)
-
       setDataMember([...dataMember, newMember]);
       setNMember("")
       setNGender("")
@@ -196,179 +177,78 @@ const CreateContractRenter = () => {
     })
   }
 
-  const oldUser = [];
-  const userColumn = [
+  useEffect(() => {
+    getAllOldRenter();
+  }, []);
+
+  const getAllOldRenter = async () => {
+    let cookie = localStorage.getItem("Cookie");
+    await axios
+      .get(LIST_OLD_RENTER, {
+        headers: {
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${cookie}`,
+        },
+        // withCredentials: true,
+      })
+      .then((res) => {
+        setDataOldRenter(res.data.body);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const renterColumn = [
     {
-      title: 'Tên',
-      dataIndex: 'name',
-      key: 'index',
+      title: 'Họ và tên',
+      dataIndex: 'renter_full_name',
+      key: 'id',
       filteredValue: [searched],
       onFilter: (value, record) => {
         return (
-          String(record.name).toLowerCase()?.includes(value.toLowerCase())
+          String(record.renter_full_name).toLowerCase()?.includes(value.toLowerCase())
         );
       },
     },
     {
-      title: 'SĐT',
-      dataIndex: 'phoneNumber',
-      key: 'index',
+      title: 'Giới tính',
+      dataIndex: 'renter_gender',
+      key: 'id',
     },
     {
-      title: 'Gmail',
-      dataIndex: 'email',
-      key: 'index',
+      title: 'Số điện thoại',
+      dataIndex: 'renter_phone_number',
+      key: 'id',
+    },
+    {
+      title: 'Email',
+      dataIndex: 'renter_email',
+      key: 'id',
     },
     {
       title: 'CCCD/CMND',
-      dataIndex: 'identityCard',
-      key: 'index',
+      dataIndex: 'renter_identity_number',
+      key: 'id',
     },
   ];
-  for (let i = 1; i < 51; i++) {
-    oldUser.push({
-      index: i,
-      name: `user${i}`,
-      phoneNumber: `012345678${i}`,
-      email: `user${i}@gmail.com`,
-      identityCard: `03120000099${i}`
-    });
-
-  }
-  const assetData = [
-    {
-      index: 1,
-      assetName: `Bình nóng lạnh`,
-      numberOfAsset: 2,
-      typeOfAsset: 'Đồ phòng tắm',
-      dateOfDelivery: `30/09/2022`,
-      status: true,
-    },
-    {
-      index: 2,
-      assetName: `Bồn rửa mặt`,
-      numberOfAsset: 2,
-      typeOfAsset: 'Đồ phòng tắm',
-      dateOfDelivery: `30/09/2022`,
-      status: true,
-    },
-    {
-      index: 3,
-      assetName: `Gương`,
-      numberOfAsset: 2,
-      typeOfAsset: 'Đồ phòng tắm',
-      dateOfDelivery: `30/09/2022`,
-      status: true,
-    },
-    {
-      index: 4,
-      assetName: `Bồn cầu`,
-      numberOfAsset: 2,
-      typeOfAsset: 'Đồ phòng tắm',
-      dateOfDelivery: `30/09/2022`,
-      status: true,
-    },
-    {
-      index: 5,
-      assetName: `Giường`,
-      numberOfAsset: 2,
-      typeOfAsset: 'Đồ phòng ngủ',
-      dateOfDelivery: `30/09/2022`,
-      status: true,
-    },
-    {
-      index: 6,
-      assetName: `Bàn học`,
-      numberOfAsset: 1,
-      typeOfAsset: 'Đồ phòng ngủ',
-      dateOfDelivery: `30/09/2022`,
-      status: true,
-    },
-    {
-      index: 7,
-      assetName: `Bàn trang điểm`,
-      numberOfAsset: 1,
-      typeOfAsset: 'Đồ phòng ngủ',
-      dateOfDelivery: `30/09/2022`,
-      status: true,
-    },
-    {
-      index: 8,
-      assetName: `Tủ quần áo`,
-      numberOfAsset: 1,
-      typeOfAsset: 'Đồ phòng ngủ',
-      dateOfDelivery: `30/09/2022`,
-      status: true,
-    },
-    {
-      index: 9,
-      assetName: `Tủ lạnh`,
-      numberOfAsset: 1,
-      typeOfAsset: 'Đồ phòng bếp',
-      dateOfDelivery: `30/09/2022`,
-      status: true,
-    },
-    {
-      index: 10,
-      assetName: `Máy giặt`,
-      numberOfAsset: 1,
-      typeOfAsset: 'Đồ phòng bếp',
-      dateOfDelivery: `30/09/2022`,
-      status: true,
-    },
-    {
-      index: 11,
-      assetName: `Bàn nấu ăn`,
-      numberOfAsset: 1,
-      typeOfAsset: 'Đồ phòng bếp',
-      dateOfDelivery: `30/09/2022`,
-      status: true,
-    },
-  ];
-  // for (let i = 1; i < 100; i++) {
-  //   if ((Math.floor(Math.random() * (100 - 1 + 1)) + 1) % 2 === 0) {
-  //     assetData.push({
-  //       index: i,
-  //       assetName: `Tài sản ${i}`,
-  //       numberOfAsset: Math.floor(Math.random() * (100 - 1 + 1)) + 1,
-  //       typeOfAsset: 'Đồ phòng ngủ',
-  //       dateOfDelivery: `30/09/2022`,
-  //       status: true,
-  //     });
-  //   } else {
-  //     assetData.push({
-  //       index: i,
-  //       assetName: `Tài sản ${i}`,
-  //       numberOfAsset: Math.floor(Math.random() * (100 - 1 + 1)) + 1,
-  //       typeOfAsset: 'Đồ phòng khách',
-  //       dateOfDelivery: `30/09/2022`,
-  //       status: false,
-  //     });
-  //   }
-  // }
+  const assetData = [];
   const [dataSource, setDataSource] = useState(assetData);
-
-  const onChange = (value) => {
-    console.log(`selected ${value}`);
-  };
-  const onChangeAutoCheck = (value) => {
-    console.log(`switch ${value}`);
-  }
-  const onSearch = (value) => {
-    console.log('search:', value);
-  };
   const onAdd = (record) => {
     setisAdd(true);
   }
+
+
   const resetAdd = () => {
     setisAdd(false);
   }
   const onOk = () => {
     form.setFieldsValue({
-      renterName: dataOldUser.name,
-      phoneNumber: dataOldUser.phoneNumber,
-      email: dataOldUser.email,
-      identityCard: dataOldUser.identityCard,
+      renterName: selectOldRenter.renter_full_name,
+      phoneNumber: selectOldRenter.renter_phone_number,
+      sex: selectOldRenter.renter_gender === "Nam" ? true : false,
+      email: selectOldRenter.renter_email,
+      identityCard: selectOldRenter.renter_identity_number,
     });
     setisAdd(false);
   };
@@ -384,64 +264,23 @@ const CreateContractRenter = () => {
     },
     {
       title: 'Đơn giá (VNĐ)',
+      dataIndex: 'price',
       key: 'key',
-      render: (record) => {
-        return (
-          <>
-            {/* <Form.Item className="form-item" name="priceUnit"
-              labelCol={{ span: 24 }}> */}
-            <InputNumber
-              formatter={record => `${record}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-              parser={record => record?.replace(/\$\s?|(,*)/g, '')}
-              style={{ width: '100%' }} placeholder="Đơn giá" value={record.price}
-              min={0}
-              onChange={(record) => {
-                setDataService(pre => {
-                  return { ...pre, price: record }
-                })
-              }}></InputNumber>
-            {/* </Form.Item> */}
-          </>
-        )
+      render: (price) => {
+        return <span style={{ fontWeight: 'bold' }}>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price)}</span>
       }
     },
-    {
-      title: 'Chỉ số ban đầu',
-      dataIndex: 'first_number',
-      key: 'key',
-      render: (record) => {
-        return (
-          <>
-            <InputNumber style={{ width: '100%' }} placeholder="Chỉ số ban đầu" min={0}></InputNumber>
-          </>
-        )
-      }
-    },
-
     {
       title: 'Số lượng',
       dataIndex: 'amount',
       key: 'key',
-      render: (record) => {
+      render: (amount) => {
         return (
           <>
-            <InputNumber placeholder="Số lượng" min={0}></InputNumber>
+            <span>{amount}</span>
           </>
         )
       }
-    },
-
-    {
-      title: "Thao tác",
-      dataIndex: "thaotac",
-      align: "center",
-      render: (_, record) =>
-      (
-        <Space>
-          <EditOutlined />
-          <DeleteOutlined onClick={() => onDeleteService(record)} style={{ color: "red", marginLeft: 12 }} />
-        </Space>
-      )
     },
   ];
 
@@ -556,20 +395,6 @@ const CreateContractRenter = () => {
 
   }
 
-  const onDeleteService = (record) => {
-    Modal.confirm({
-      title: `Bạn có chắc chắn muốn xóa dịch vụ ${record.service} không?`,
-      okText: "Xóa",
-      cancelText: "Hủy",
-      onOk: () => {
-        setDataService(pre => {
-          return pre.filter((service) => service.id !== record.id);
-        })
-      }
-    })
-
-  }
-
   const onEditMember = (record) => {
     setisEditing(true);
     setEditingMember({ ...record })
@@ -594,10 +419,6 @@ const CreateContractRenter = () => {
 
   }
 
-  const onAddService = () => {
-    setisAddService(true);
-  }
-
 
 
   const onAddMem = () => {
@@ -608,13 +429,8 @@ const CreateContractRenter = () => {
     setisAddMem(false);
   }
 
-  const resetAddServiceCl = () => {
-    setisAddService(false);
-  }
-
   const resetAddMem = (e) => {
     if (nMember !== "" && nPhone !== "" && nGender !== "" && nCmnd !== "" && nCarNumber !== "" && nAddress !== "") {
-      console.log('in');
       const randomId = parseInt(Math.random() * 1000);
 
       let newMember = {
@@ -626,7 +442,6 @@ const CreateContractRenter = () => {
         car_number: nCarNumber,
         address: nAddress,
       }
-      console.log('Received values of form: ', newMember)
 
       setDataMember([...dataMember, newMember]);
       setNMember("")
@@ -636,40 +451,7 @@ const CreateContractRenter = () => {
 
 
   }
-
-  const resetAddService = (e) => {
-    if (nService !== "" && nPrice !== "" && nFirstNumber !== "" && nAmount !== "") {
-      const randomId = parseInt(Math.random() * 1000);
-      let newService = {
-        id: randomId,
-        service: nService,
-        price: nPrice,
-        first_number: nFirstNumber,
-        amount: nAmount,
-
-      }
-      console.log('Received values of form: ', newService)
-      setDataService([...dataService, newService]);
-      setNService("")
-      setNPrice("")
-      setNFirstNumber("")
-      setNAmount("")
-      setisAddService(false);
-    } else {
-      setisAddService(true)
-    }
-
-  }
-
-  const onSelectChange = (newSelectedRowKeys) => {
-    console.log('selectedRowKeys changed: ', selectedRowKeys);
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
-
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };
+  const [addAssetInRoom, setAddAssetInRoom] = useState(false);
   const [floorRoom, setFloorRoom] = useState();
 
   const [roomStatus, setRoomStatus] = useState(true);
@@ -703,13 +485,21 @@ const CreateContractRenter = () => {
   const floors = mapped.filter((type, index) => mapped.indexOf(type) === index);
   const [room, setRoom] = useState(dataFloorRoom.map((obj, index) => obj.room));
   const onFinish = (e) => {
-    console.log(dataMember);
     message.success('Thêm mới hợp đồng thành công');
     form.setFieldsValue({
       memberInRoom: dataMember,
     });
     console.log(e);
   }
+
+  const addAssetFinish = (e) => {
+    console.log(e);
+    setAddAssetInRoom(false);
+  }
+  const addAssetFail = (e) => {
+    setAddAssetInRoom(true);
+  }
+
   return (
     <div className="contract">
       <Layout
@@ -762,8 +552,8 @@ const CreateContractRenter = () => {
                 <Tabs defaultActiveKey="1">
                   <Tabs.TabPane tab="Thông tin hợp đồng" key="1">
                     <Row>
-                      <Col span={12}>
-                        <p><b>Các thông tin về khách và tiền cọc: </b></p>
+                      <Col span={8}>
+                        <h3><b>Các thông tin về khách thuê: </b></h3>
                         <Form.Item className="form-item" name="contractName"
                           labelCol={{ span: 24 }} label={<span><b>Tên hợp đồng: </b></span>}
                           rules={[
@@ -787,8 +577,8 @@ const CreateContractRenter = () => {
                           {/* <span><b>Tên khách thuê: </b></span> */}
                           <Input
                             placeholder="Tên khách thuê" onChange={(e) => {
-                              setDataOldUser(pre => {
-                                return { ...pre, name: e.target.value }
+                              setDataOldRenter(pre => {
+                                return { ...pre, renter_full_name: e.target.value }
                               })
                             }}>
                           </Input>
@@ -822,8 +612,8 @@ const CreateContractRenter = () => {
                         >
                           <Input
                             placeholder="Số điện thoại" onChange={(e) => {
-                              setDataOldUser(pre => {
-                                return { ...pre, phoneNumber: e.target.value }
+                              setDataOldRenter(pre => {
+                                return { ...pre, renter_phone_number: e.target.value }
                               })
                             }}>
                           </Input>
@@ -841,8 +631,8 @@ const CreateContractRenter = () => {
                         >
                           <Input
                             placeholder="Email" onChange={(e) => {
-                              setDataOldUser(pre => {
-                                return { ...pre, email: e.target.value }
+                              setDataOldRenter(pre => {
+                                return { ...pre, renter_email: e.target.value }
                               })
                             }}>
                           </Input>
@@ -858,65 +648,85 @@ const CreateContractRenter = () => {
                           ]}>
                           <Input
                             placeholder="CCCD/CMND" onChange={(e) => {
-                              setDataOldUser(pre => {
-                                return { ...pre, identityCard: e.target.value }
+                              setDataOldRenter(pre => {
+                                return { ...pre, renter_identity_number: e.target.value }
                               })
                             }}>
                           </Input>
                         </Form.Item>
-                        <Row>
-                          <Col span={9}>
-                            <Form.Item className="form-item" name="floor"
-                              labelCol={{ span: 24 }} label={<span><b>Tầng: </b></span>}
-                              rules={[
-                                {
-                                  required: true,
-                                  message: "Vui lòng chọn tầng",
-                                }
-                              ]}>
-                              <Select
-                                // showSearch
-                                placeholder="Chọn tầng"
-                                optionFilterProp="children"
-                                onChange={(e) => {
-                                  setRoomStatus(false)
-                                  setRoom(dataFloorRoom.filter(data => { return data.floor === e }))
-                                  setFloorRoom(pre => {
-                                    return { ...pre, floor: e }
-                                  })
-                                }}
-                                // onSearch={onSearch}
-                                // filterOption={(input, option) => {
-                                //   option.children.toLowerCase().includes(input.toLowerCase())
-                                // }
-                                // }
-                                value={floorRoom?.floor}
-                              >
-                                {floors.map((obj, index) => {
-                                  return <Select.Option key={index} value={obj}>{obj}</Select.Option>
-                                })}
-                              </Select>
-                            </Form.Item>
-                          </Col>
-                          <Col span={9}>
-                            <Form.Item className="form-item" name="room"
-                              labelCol={{ span: 24 }} label={<span><b>Phòng: </b></span>}
-                              rules={[
-                                {
-                                  required: true,
-                                  message: "Vui lòng chọn phòng",
-                                }
-                              ]}>
-                              <Select placeholder="Chọn phòng" disabled={roomStatus}>
-                                {room.map((obj, index) => {
-                                  return <Select.Option key={index} value={obj.room}>{obj.room}</Select.Option>
-                                })}
-                              </Select>
-                            </Form.Item>
-                          </Col>
-                        </Row>
+                        <Form.Item className="form-item" name="note"
+                          labelCol={{ span: 24 }} label={<span><b>Ghi chú: </b></span>}>
+                          <TextArea rows={4} placeholder="Ghi chú" value={""} />
+                        </Form.Item>
+                      </Col>
+                      <Col span={8}>
+                        <h3><b>Các thông tin về hợp đồng: </b></h3>
+                        <Form.Item className="form-item" name="floor"
+                          labelCol={{ span: 24 }} label={<span><b>Tầng: </b></span>}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Vui lòng chọn tầng",
+                            }
+                          ]}>
+                          <Select
+                            // showSearch
+                            placeholder="Chọn tầng"
+                            optionFilterProp="children"
+                            onChange={(e) => {
+                              setRoomStatus(false)
+                              setRoom(dataFloorRoom.filter(data => { return data.floor === e }))
+                              setFloorRoom(pre => {
+                                return { ...pre, floor: e }
+                              })
+                            }}
+                            // onSearch={onSearch}
+                            // filterOption={(input, option) => {
+                            //   option.children.toLowerCase().includes(input.toLowerCase())
+                            // }
+                            // }
+                            value={floorRoom?.floor}
+                          >
+                            {floors.map((obj, index) => {
+                              return <Select.Option key={index} value={obj}>{obj}</Select.Option>
+                            })}
+                          </Select>
+                        </Form.Item>
+                        <Form.Item className="form-item" name="room"
+                          labelCol={{ span: 24 }} label={<span><b>Phòng: </b></span>}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Vui lòng chọn phòng",
+                            }
+                          ]}>
+                          <Select placeholder="Chọn phòng" disabled={roomStatus}>
+                            {room.map((obj, index) => {
+                              return <Select.Option key={index} value={obj.room}>{obj.room}</Select.Option>
+                            })}
+                          </Select>
+                        </Form.Item>
+                        <Form.Item className="form-item" name="contractType"
+                          labelCol={{ span: 24 }} label={<span><b>Loại hợp đồng: </b></span>}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Vui lòng nhập chu kỳ tính tiền",
+                            }
+                          ]}>
+                          <Select placeholder="Loại hợp đồng" style={{ width: "100%" }}>
+                            <Option value="limit">Có thời hạn</Option>
+                            <Option value="no limit">Không có thời hạn</Option>
+                          </Select>
+                        </Form.Item>
                         <Form.Item className="form-item" name="contractTerm"
-                          labelCol={{ span: 24 }} label={<span><b>Thời hạn hợp đồng: </b></span>}
+                          labelCol={{ span: 24 }} label={<span><b>Thời hạn hợp đồng (Ít nhất 1 tháng): </b></span>}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Vui lòng chọn thời hạn hợp đồng",
+                            }
+                          ]}
                         >
                           <Select placeholder="Thời hạn hợp đồng">
                             <Option value="1 month">1 tháng</Option>
@@ -935,75 +745,11 @@ const CreateContractRenter = () => {
                             <Option value="3 year">3 năm</Option>
                             <Option value="4 year">4 năm</Option>
                             <Option value="5 year">5 năm</Option>
+                            <Option value="5 year">Vô thời hạn</Option>
                           </Select>
                         </Form.Item>
-                        <Row>
-                          <Col span={9}>
-                            <Form.Item className="form-item" name="startDate"
-                              labelCol={{ span: 24 }} label={<span><b>Ngày vào ở: </b></span>}
-                              rules={[
-                                {
-                                  required: true,
-                                  message: "Vui lòng chọn ngày vào ở",
-                                }
-                              ]}>
-                              <DatePicker placeholder="Ngày vào ở" defaultValue={moment()} format='DD/MM/YYYY' />
-                            </Form.Item>
-                          </Col>
-                          <Col span={9}>
-                            <Form.Item className="form-item" name="endDate"
-                              labelCol={{ span: 24 }} label={<span><b>Ngày kết thúc: </b></span>}
-                              rules={[
-                                {
-                                  required: true,
-                                  message: "Vui lòng chọn ngày kết khúc",
-                                }
-                              ]}>
-                              <DatePicker placeholder="Ngày kết thúc" format='DD/MM/YYYY' />
-                            </Form.Item>
-                          </Col>
-                        </Row>
-                        <Form.Item className="form-item" name="note"
-                          labelCol={{ span: 24 }} label={<span><b>Ghi chú: </b></span>}>
-                          <TextArea rows={4} placeholder="Ghi chú" value={""} />
-                        </Form.Item>
-                      </Col>
-                      <Col span={12}>
-                        <p><b>Thông tin giá trị hợp đồng: </b></p>
-                        <Form.Item className="form-item" name="roomPrice"
-                          labelCol={{ span: 24 }} label={<span><b>Giá phòng (VND): </b></span>}
-                          rules={[
-                            {
-                              required: true,
-                              message: "Vui lòng nhập giá phòng",
-                            },
-                          ]}>
-                          <InputNumber
-                            defaultValue={0}
-                            formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                            parser={value => value?.replace(/\$\s?|(,*)/g, '')}
-                            style={{ width: '100%' }}
-                            min={0}
-                          />
-                        </Form.Item>
-                        <Form.Item className="form-item" name="depositAmount"
-                          labelCol={{ span: 24 }} label={<span><b>Số tiền cọc (VND): </b></span>}
-                          rules={[
-                            {
-                              required: true,
-                              message: "Vui lòng nhập tiền cọc",
-                            }
-                          ]}>
-                          <InputNumber
-                            defaultValue={0}
-                            formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                            parser={value => value?.replace(/\$\s?|(,*)/g, '')}
-                            style={{ width: '100%' }}
-                            min={0}
-                          />
-                        </Form.Item>
                         <Form.Item className="form-item" name="billCycle"
-                          labelCol={{ span: 24 }} label={<span><b>Chu kỳ tính tiền: </b></span>}
+                          labelCol={{ span: 24 }} label={<span><b>Chu kỳ tính tiền (Tháng): </b></span>}
                           rules={[
                             {
                               required: true,
@@ -1028,11 +774,61 @@ const CreateContractRenter = () => {
                             <Option value="30">kỳ 30</Option>
                           </Select>
                         </Form.Item>
-                        <Form.Item className="form-item" name="autoRenewContract"
+                        <Form.Item className="form-item" name="startDate"
+                          labelCol={{ span: 24 }} label={<span><b>Ngày hợp đồng có hiệu lực: </b></span>}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Vui lòng chọn ngày vào ở",
+                            }
+                          ]}>
+                          <DatePicker style={{ width: "100%" }} placeholder="Ngày vào ở" defaultValue={moment()} format='DD/MM/YYYY' />
+                        </Form.Item>
+                        <Form.Item className="form-item" name="endDate"
+                          labelCol={{ span: 24 }} label={<span><b>Ngày kết thúc: </b></span>}>
+                          <DatePicker style={{ width: "100%" }} placeholder="Ngày kết thúc" format='DD/MM/YYYY' />
+                        </Form.Item>
+                      </Col>
+                      <Col span={8}>
+                        <Row>
+                          <h3><b>Thông tin giá trị hợp đồng: </b></h3>
+                          <Form.Item className="form-item" name="roomPrice"
+                            labelCol={{ span: 24 }} label={<span><b>Giá phòng (VND): </b></span>}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Vui lòng nhập giá phòng",
+                              },
+                            ]}>
+                            <InputNumber
+                              defaultValue={0}
+                              formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                              parser={value => value?.replace(/\$\s?|(,*)/g, '')}
+                              style={{ width: '100%' }}
+                              min={0}
+                            />
+                          </Form.Item>
+                          <Form.Item className="form-item" name="depositAmount"
+                            labelCol={{ span: 24 }} label={<span><b>Số tiền cọc (VND): </b></span>}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Vui lòng nhập tiền cọc",
+                              }
+                            ]}>
+                            <InputNumber
+                              defaultValue={0}
+                              formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                              parser={value => value?.replace(/\$\s?|(,*)/g, '')}
+                              style={{ width: '100%' }}
+                              min={0}
+                            />
+                          </Form.Item>
+                          {/* <Form.Item className="form-item" name="autoRenewContract"
                           labelCol={{ span: 24 }} label={<span><b>Tự động gia hạn hợp đồng:  </b></span>}>
                           <Switch defaultChecked onChange={onChangeAutoCheck} />
-                        </Form.Item>
-                        {/* <p><i>Tập tin và hình ảnh upload thả vào đây</i></p>
+                        </Form.Item> */}
+                          {/* <p><i>Tập tin và hình ảnh upload thả vào đây</i></p>
                         <Form.Item className="form-item" name="file1">
                           <Upload.Dragger multiple listType='picture' showUploadList={{ showRemoveIcon: true }}
                             accept=".png,jpeg,.doc"
@@ -1046,7 +842,8 @@ const CreateContractRenter = () => {
                             <Button icon={<UploadOutlined />}>Click to Upload</Button>
                           </Upload.Dragger>
                         </Form.Item> */}
-                        {/* <Button><DownloadOutlined />Tải hợp đồng</Button> */}
+                          {/* <Button><DownloadOutlined />Tải hợp đồng</Button> */}
+                        </Row>
                       </Col>
                     </Row>
                     <p><i><b>Lưu ý:</b><br />
@@ -1065,138 +862,61 @@ const CreateContractRenter = () => {
                           <p><b>Các thông tin về dịch vụ </b></p>
                         </Form.Item>
                       </Col>
-                      <Col span={1}>
-                        <PlusCircleOutlined style={{ fontSize: 36, marginBottom: 20, color: "#1890ff" }} onClick={() => {
-                          onAddService()
-                        }} />
+                    </Row>
+                    <Row>
+                      <Col span={8}>
+                        <Form.Item className="form-item" name="electricityIndex"
+                          labelCol={1}
+                          label={<span><b>Chỉ số điện hiện tại </b></span>}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Vui lòng nhập chỉ số điện hiện tại",
+                            },
+                          ]}>
+                          <InputNumber
+                            defaultValue={0}
+                            formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                            parser={value => value?.replace(/\$\s?|(,*)/g, '')}
+                            style={{ width: '100%' }}
+                            min={0}
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col span={8}>
+                        <Form.Item className="form-item" name="waterIndex"
+                          labelCol={1}
+                          label={<span><b>Chỉ số nước hiện tại </b></span>}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Vui lòng nhập chỉ số nước hiện tại",
+                            },
+                          ]}>
+                          <InputNumber
+                            defaultValue={0}
+                            formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                            parser={value => value?.replace(/\$\s?|(,*)/g, '')}
+                            style={{ width: '100%' }}
+                            min={0}
+                          />
+                        </Form.Item>
                       </Col>
                     </Row>
                     <Row>
                       <Col span={24}>
                         <Table
                           rowKey={(record) => record.key}
-                          rowSelection={{
-                            onChange: (record) => {
-                              console.log(record);
-                              form.setFieldsValue({
-                                service: record.map(indexService => dataService.find(obj => obj.key === indexService)),
-                              });
-                            }
-                          }}
                           dataSource={dataService}
                           columns={columnsService}>
                         </Table>
                       </Col>
                       <p><i><b>Lưu ý:</b><br />
-                        - Vui lòng chọn dịch vụ cho khách thuê. Nếu khách có chọn dịch vụ thì khi tính tiền phòng phần mềm sẽ tự tính các khoản phí vào hóa đơn; ngược lại nếu không chọn phần mềm sẽ bỏ qua.<br />
-                        - Đối với dịch vụ là loại điện/ nước thì sẽ tính theo chỉ số điện/ nước
+                        - Trên đây là dịch vụ chung áp dụng cho tất cả các phòng trong một tòa nhà.<br />
+                        - Nếu bạn muốn thay đổi dịch vụ chung này cần vào mục <b>Quản Lý Dịch Vụ Chung</b>
                         <br />
                       </i></p>
                     </Row>
-                    <Modal
-                      title="Thêm dịch vụ"
-                      visible={isAddService}
-                      onCancel={
-                        resetAddServiceCl
-                      }
-                      id="formAddService"
-                      destroyOnClose
-                      onOk={resetAddService}
-                      width={700}
-                      footer={[
-                        <Button htmlType="submit" key="submit" form="formAddService" type="primary" onClick={resetAddService}>
-                          Lưu
-                        </Button>,
-                        <Button key="back" onClick={resetAddServiceCl}>
-                          Huỷ
-                        </Button>,
-                      ]}
-                    >
-                      <Form id="formAddService"
-                        preserve={false}
-                        destroyOnClose={true}
-                        form={formAddService}
-                        name="addService"
-                        onChange={(e) => setNAddress()}
-                      >
-                        <Form.Item
-                          name="service"
-                          label="Tên dịch vụ"
-                          rules={[
-                            {
-                              required: true,
-                              message: 'Chưa điền tên dịch vụ',
-                            },
-                          ]}
-                          onChange={(e) => setNService(e.target.value)}
-                        >
-                          <Input />
-                        </Form.Item>
-                        <Form.Item
-                          name="price"
-                          label="Đơn giá"
-                          rules={[
-                            {
-                              required: true,
-                              message: 'Chưa điền đơn giá',
-                            },
-                            {
-                              pattern: /^[0-9]*$/,
-                              message: "Đơn giá sai"
-                            }
-                          ]}
-                          onChange={(e) => setNPrice(e.target.value)}
-                        >
-                          <Input
-                            style={{
-                              width: '100%',
-                            }}
-                          />
-                        </Form.Item>
-                        <Form.Item
-                          name="first_number"
-                          label="Chỉ số hiện tại"
-                          rules={[
-                            {
-                              required: false,
-                              message: 'Chưa điền chỉ số',
-                            },
-                            {
-                              pattern: /^[0-9]*$/,
-                              message: "Chỉ số sai"
-                            }
-                          ]}
-                          onChange={(e) => setNFirstNumber(e.target.value)}
-                        >
-                          <Input
-                            style={{
-                              width: '100%',
-                            }}
-                          />
-                        </Form.Item>
-                        <Form.Item
-                          name="amount"
-                          label="Số lượng"
-                          rules={[
-                            {
-                              required: true,
-                              message: 'Chưa điền số lượng',
-                            },
-                            {
-                              pattern: /^[0-9]*$/,
-                              message: "Số lượng sai"
-                            }
-                          ]}
-                          onChange={(e) => setNAmount(e.target.value)}
-                        >
-                          <Input
-                            style={{
-                              width: '100%',
-                            }}
-                          />
-                        </Form.Item>
-                      </Form>
-                    </Modal>
                   </Tabs.TabPane>
                   <Tabs.TabPane tab="Thành viên" key="3">
                     <Row>
@@ -1578,7 +1298,16 @@ const CreateContractRenter = () => {
                             </Row>
                           </Col>
                           <Col span={4}>
-                            <PlusCircleOutlined style={{ fontSize: 36, color: "#1890ff", float: "right" }} />
+                            <PlusCircleOutlined onClick={() => {
+                              setAddAssetInRoom(true);
+                              createAssetForm.setFieldsValue({
+                                dateOfDelivery: formAddAsset.dateOfDelivery,
+                                asset_unit: formAddAsset.asset_unit,
+                                asset_type: formAddAsset.asset_type,
+                                asset_value: formAddAsset.asset_value,
+                                asset_status: formAddAsset.asset_status
+                              });
+                            }} style={{ fontSize: 36, color: "#1890ff", float: "right" }} />
                           </Col>
                         </Row>
                         <Row>
@@ -1650,25 +1379,140 @@ const CreateContractRenter = () => {
                       }}
                     />
                     <Table
-                      columns={userColumn}
-                      dataSource={oldUser}
+                      columns={renterColumn}
+                      dataSource={dataOldRenter}
                       scroll={{ x: 1000, y: 400 }}
-                      rowKey={(record) => record.index}
+                      rowKey={(record) => record.id}
                       rowSelection={{
                         type: 'radio',
                         onSelect: (record) => {
-                          setDataOldUser({ ...record });
+                          setSelectOldRenter({ ...record });
                         }
                       }}
                     />
                   </Form.Item>
                 </Form>
               </Modal>
+              <Modal
+                title="Thêm tài sản mới cho phòng"
+                visible={addAssetInRoom}
+                onCancel={() => {
+                  setAddAssetInRoom(false)
+                }}
+                onOk={() => {
+                  setAddAssetInRoom(false)
+                }}
+                width={500}
+                footer={[
+                  <Button htmlType="submit" key="submit" form="create-asset" type="primary">
+                    Lưu
+                  </Button>,
+                  <Button key="back" onClick={() => {
+                    setFormAddAsset(createAssetForm.getFieldsValue());
+                    setAddAssetInRoom(false)
+                  }}>
+                    Huỷ
+                  </Button>,
+                ]}
+              >
+                <Form
+                  form={createAssetForm}
+                  onFinish={addAssetFinish}
+                  onFinishFailed={addAssetFail}
+                  labelCol={{ span: 5 }}
+                  wrapperCol={{ span: 30 }}
+                  layout="horizontal"
+                  initialValues={{ size: componentSize }}
+                  onValuesChange={onFormLayoutChange}
+                  size={"default"}
+                  id="create-asset"
+                >
+                  <Form.Item className="form-item" name="asset_name"
+                    labelCol={{ span: 24 }} label={<span><b>Tên tài sản: </b></span>}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng nhập tên tài sản",
+                        whitespace: true,
+                      }
+                    ]}>
+                    <Input
+                      placeholder="Tên tài sản">
+                    </Input>
+                  </Form.Item>
+                  <Form.Item className="form-item" name="dateOfDelivery"
+                    labelCol={{ span: 24 }} label={<span><b>Ngày bàn giao: </b></span>}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng chọn ngày bàn giao",
+                      }
+                    ]}>
+                    <DatePicker style={{ width: "100%" }} placeholder="Ngày bàn giao" defaultValue={moment()} format='DD/MM/YYYY' />
+                  </Form.Item>
+                  <Form.Item className="form-item" name="asset_unit"
+                    labelCol={{ span: 24 }} label={<span><b>Số lượng: </b></span>}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng nhập số lượng",
+                      },
+                    ]}>
+                    <InputNumber
+                      defaultValue={1}
+                      formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                      parser={value => value?.replace(/\$\s?|(,*)/g, '')}
+                      style={{ width: '100%' }}
+                      min={1}
+                    />
+                  </Form.Item>
+                  <Form.Item className="form-item" name="asset_type"
+                    labelCol={{ span: 24 }} label={<span><b>Loại tài sản: </b></span>}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng chọn loại tài sản",
+                      }
+                    ]}>
+                    <Select
+                      placeholder="Chọn loại tài sản"
+                    >
+                      <Select.Option value={"bedRoomItem"}>Đồ phòng ngủ</Select.Option>
+                      <Select.Option value={"livingRoomItem"}>Đồ phòng khách</Select.Option>
+                      <Select.Option value={"kitchenItem"}>Đồ phòng bếp</Select.Option>
+                      <Select.Option value={"bathRoomItem"}>Đồ phòng tắm</Select.Option>
+                      <Select.Option value={"others"}>khác</Select.Option>
+                    </Select>
+                  </Form.Item>
+                  <Form.Item className="form-item" name="asset_value"
+                    labelCol={{ span: 24 }} label={<span><b>Giá trị tài sản</b></span>}>
+                    <InputNumber
+                      defaultValue={0}
+                      formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                      parser={value => value?.replace(/\$\s?|(,*)/g, '')}
+                      style={{ width: '100%' }}
+                      min={0}
+                    />
+                  </Form.Item>
+                  <Form.Item className="form-item" name="asset_status"
+                    labelCol={{ span: 24 }} label={<span><b>Trạng thái </b></span>} rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng chọn trạng thái",
+                      }
+                    ]}>
+                    <Radio.Group>
+                      <Radio value={true}><Tag color="success">Tốt</Tag></Radio>
+                      <Radio value={false}><Tag color="error">Hỏng</Tag></Radio>
+                    </Radio.Group>
+                  </Form.Item>
+                </Form>
+              </Modal>
             </div>
           </Content>
         </Layout>
-      </Layout>
-    </div>
+      </Layout >
+    </div >
   );
 };
 export default CreateContractRenter
