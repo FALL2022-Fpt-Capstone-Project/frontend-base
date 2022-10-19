@@ -16,24 +16,56 @@ const { Option } = Select;
 
 const CreateContractRenter = () => {
   const LIST_OLD_RENTER = "manager/renter/old";
+  const dateFormatList = ['DD/MM/YYYY', 'YYYY/MM/DD'];
   const defaultAddAsset = {
     dateOfDelivery: moment(),
     asset_unit: 1,
-    asset_type: "others",
+    asset_type: "Khác",
     asset_value: 0,
     asset_status: true
   };
+  const dataFilter = {
+    id: [],
+    asset_type: []
+  };
+  const listAssetType = [
+    {
+      id: 1,
+      asset_type: "Đồ phòng ngủ",
+    },
+    {
+      id: 2,
+      asset_type: "Đồ phòng khách",
+    },
+    {
+      id: 3,
+      asset_type: "Đồ phòng bếp",
+    },
+    {
+      id: 4,
+      asset_type: "Đồ phòng tắm",
+    },
+    {
+      id: 5,
+      asset_type: "Khác",
+    }
+  ];
   const [searched, setSearched] = useState("");
+  const [filterAssetType, setFilterAssetType] = useState([]);
+  const [assetStatus, setAssetStatus] = useState([]);
   const [isAdd, setisAdd] = useState(false);
   const [componentSize, setComponentSize] = useState('default');
   const [dataOldRenter, setDataOldRenter] = useState([]);
   const [selectOldRenter, setSelectOldRenter] = useState([]);
   const [form] = Form.useForm();
   const [createAssetForm] = Form.useForm();
+  const [editAssetForm] = Form.useForm();
   const [isEditing, setisEditing] = useState(false);
   const [editingMember, setEditingMember] = useState(null);
   const [isAddMem, setisAddMem] = useState(false);
   const [formAddAsset, setFormAddAsset] = useState(defaultAddAsset);
+  const [isEditAsset, setIsEditAsset] = useState(false);
+
   const service = [
     {
       key: 1,
@@ -113,34 +145,47 @@ const CreateContractRenter = () => {
   const columns = [
     {
       title: 'Tên tài sản',
-      dataIndex: 'assetName',
-      key: 'index',
+      dataIndex: 'asset_name',
+      key: 'id',
       filteredValue: [searched],
       onFilter: (value, record) => {
         return (
-          String(record.assetName).toLowerCase()?.includes(value.toLowerCase())
+          String(record.asset_name).toLowerCase()?.includes(value.toLowerCase())
         );
       },
     },
     {
       title: 'Số lượng',
-      dataIndex: 'numberOfAsset',
-      key: 'index',
+      dataIndex: 'asset_unit',
+      key: 'id',
     },
     {
       title: 'Loại',
-      dataIndex: 'typeOfAsset',
-      key: 'index',
+      dataIndex: 'asset_type',
+      filters: [
+        { text: 'Đồ phòng ngủ', value: 'Đồ phòng ngủ' },
+        { text: 'Đồ phòng khách', value: 'Đồ phòng khách' },
+        { text: 'Đồ phòng bếp', value: 'Đồ phòng bếp' },
+        { text: 'Đồ phòng tắm', value: 'Đồ phòng tắm' },
+        { text: 'Khác', value: 'Khác' },
+      ],
+      filteredValue: filterAssetType.asset_type || null,
+      onFilter: (value, record) => record.asset_type.indexOf(value) === 0,
     },
     {
       title: 'Thời gian',
       dataIndex: 'dateOfDelivery',
-      key: 'index',
+      key: 'id',
     },
     {
       title: 'Trạng thái',
-      dataIndex: 'status',
-      key: 'index',
+      dataIndex: 'asset_status',
+      filters: [
+        { text: 'Tốt', value: true },
+        { text: 'Hỏng', value: false },
+      ],
+      filteredValue: assetStatus.asset_status || null,
+      onFilter: (value, record) => record.asset_status === value,
       render: (status) => {
         return (
           <>
@@ -151,11 +196,22 @@ const CreateContractRenter = () => {
     },
     {
       title: 'Thao tác',
-      key: 'index',
+      key: 'id',
       render: (record) => {
         return (
           <>
-            <EditOutlined />
+            <EditOutlined onClick={() => {
+              setIsEditAsset(true);
+              editAssetForm.setFieldsValue({
+                asset_id: record.id,
+                asset_name: record.asset_name,
+                dateOfDelivery: record.dateOfDelivery !== null ? moment(record.dateOfDelivery, dateFormatList) : '',
+                asset_unit: record.asset_unit,
+                asset_type: record.asset_type,
+                asset_value: record.asset_value,
+                asset_status: record.asset_status
+              });
+            }} />
             <DeleteOutlined onClick={() => {
               onDeleteAsset(record)
             }} style={{ color: "red", marginLeft: 12 }} />
@@ -166,12 +222,12 @@ const CreateContractRenter = () => {
   ];
   const onDeleteAsset = (record) => {
     Modal.confirm({
-      title: `Bạn có chắc chắn muốn xóa ${record.assetName} này ?`,
+      title: `Bạn có chắc chắn muốn xóa ${record.asset_name} này ?`,
       okText: 'Có',
       cancelText: 'Hủy',
       onOk: () => {
         setDataSource(pre => {
-          return pre.filter((asset) => asset.index !== record.index)
+          return pre.filter((asset) => asset.id !== record.id)
         })
       },
     })
@@ -232,7 +288,49 @@ const CreateContractRenter = () => {
       key: 'id',
     },
   ];
-  const assetData = [];
+  const assetData = [
+    {
+      id: 1,
+      asset_name: 'test1',
+      asset_unit: 10,
+      asset_type: 'Đồ phòng ngủ',
+      dateOfDelivery: '19/10/2022',
+      asset_status: true
+    },
+    {
+      id: 2,
+      asset_name: 'test2',
+      asset_unit: 10,
+      asset_type: 'Đồ phòng khách',
+      dateOfDelivery: '19/10/2022',
+      asset_status: false
+    },
+    {
+      id: 3,
+      asset_name: 'test3',
+      asset_unit: 10,
+      asset_type: 'Đồ phòng bếp',
+      dateOfDelivery: '19/10/2022',
+      asset_status: true
+    },
+    {
+      id: 4,
+      asset_name: 'test4',
+      asset_unit: 10,
+      asset_type: 'Đồ phòng tắm',
+      dateOfDelivery: '19/10/2022',
+      asset_status: true
+    },
+    {
+      id: 5,
+      asset_name: 'test5',
+      asset_unit: 10,
+      asset_type: 'Khác',
+      dateOfDelivery: '19/10/2022',
+      asset_status: true
+    },
+
+  ];
   const [dataSource, setDataSource] = useState(assetData);
   const onAdd = (record) => {
     setisAdd(true);
@@ -491,13 +589,45 @@ const CreateContractRenter = () => {
     });
     console.log(e);
   }
+  const onFinishContractFail = (e) => {
+    message.error('Thêm mới hợp đồng không thành công');
+  }
 
   const addAssetFinish = (e) => {
+    message.success('Thêm mới tài sản thành công');
     console.log(e);
+    const data = { ...e, dateOfDelivery: e.dateOfDelivery.format('DD/MM/YYYY') };
+    setDataSource([...dataSource, data]);
     setAddAssetInRoom(false);
   }
   const addAssetFail = (e) => {
     setAddAssetInRoom(true);
+  }
+
+  const editAssetFinish = (e) => {
+    message.success('Cập nhật tài sản thành công');
+    console.log(e);
+    const data = {
+      ...e,
+      asset_name: e.asset_name,
+      dateOfDelivery: e.dateOfDelivery.format('DD/MM/YYYY'),
+      asset_unit: e.asset_unit,
+      asset_type: e.asset_type,
+      asset_status: e.asset_status,
+    };
+    setDataSource(pre => {
+      return pre.map(asset => {
+        if (asset.id === e.asset_id) {
+          return { ...e, dateOfDelivery: e.dateOfDelivery.format('DD/MM/YYYY') };
+        } else {
+          return asset;
+        }
+      });
+    });
+    setIsEditAsset(false);
+  }
+  const editAssetFail = (e) => {
+    setIsEditAsset(true);
   }
 
   return (
@@ -533,6 +663,7 @@ const CreateContractRenter = () => {
               </div>
               <Form
                 onFinish={onFinish}
+                onFinishFailed={onFinishContractFail}
                 form={form}
                 labelCol={{
                   span: 6,
@@ -779,7 +910,7 @@ const CreateContractRenter = () => {
                           rules={[
                             {
                               required: true,
-                              message: "Vui lòng chọn ngày vào ở",
+                              message: "Vui lòng chọn ngày lập hợp đồng",
                             }
                           ]}>
                           <DatePicker style={{ width: "100%" }} placeholder="Ngày vào ở" defaultValue={moment()} format='DD/MM/YYYY' />
@@ -1280,21 +1411,32 @@ const CreateContractRenter = () => {
                           </Col>
                           <Col span={18}>
                             <Row>
-                              <Col span={4}>
-                                <Checkbox>Đồ phòng ngủ</Checkbox>
-                              </Col>
-                              <Col span={4}>
-                                <Checkbox>Đồ phòng khách</Checkbox>
-                              </Col>
-                              <Col span={4}>
-                                <Checkbox>Đồ phòng bếp</Checkbox>
-                              </Col>
-                              <Col span={4}>
-                                <Checkbox>Đồ phòng tắm</Checkbox>
-                              </Col>
-                              <Col span={4}>
-                                <Checkbox>Khác</Checkbox>
-                              </Col>
+                              {/* {listAssetType.map((obj, index) => {
+                                return <Col span={4}>
+                                  <Checkbox key={obj.id} value={obj.asset_type}
+                                    onChange={(e) => {
+                                      // if (e.target.checked) {
+                                      //   setFilterAssetType(obj);
+                                      // } else {
+                                      //   filterAssetType.splice(filterAssetType.indexOf(obj.asset_type_name), 1);
+                                      //   setFilterAssetType([]);
+                                      // }
+                                      dataFilter.asset_type.push(obj.asset_type);
+                                      setFilterAssetType(dataFilter);
+                                      console.log(dataFilter);
+                                    }}>
+                                    {obj.asset_type}
+                                  </Checkbox>
+                                </Col>
+                              })} */}
+                              <Checkbox.Group options={listAssetType.map((obj, index) => { return obj.asset_type })}
+                                onChange={(checkedValues) => {
+                                  dataFilter.asset_type = checkedValues;
+                                  setFilterAssetType(dataFilter);
+                                }}
+                              >
+
+                              </Checkbox.Group>
                             </Row>
                           </Col>
                           <Col span={4}>
@@ -1313,18 +1455,27 @@ const CreateContractRenter = () => {
                         <Row>
                           <Table
                             bordered
-                            rowKey={(record) => record.index}
-                            rowSelection={{
-                              onSelect: (record) => {
-                                // arrayAsset.push({ ...record });
-                                // const b = arrayAsset.filter((ele, ind) => ind === arrayAsset.findIndex(elem => elem.index === ele.index && elem.assetName === ele.assetName))
-                                // console.log(record);
-                              },
-                              onChange: (record) => {
-                                form.setFieldsValue({
-                                  asset: record.map(indexAsset => dataSource.find(obj => obj.index === indexAsset)),
-                                });
-                              }
+                            // rowKey={(record) => record.id}
+                            // rowSelection={{
+                            //   onSelect: (record) => {
+                            //     // arrayAsset.push({ ...record });
+                            //     // const b = arrayAsset.filter((ele, ind) => ind === arrayAsset.findIndex(elem => elem.index === ele.index && elem.assetName === ele.assetName))
+                            //     // console.log(record);
+                            //   },
+                            //   onChange: (pagination, filters, sorter, extra) => {
+                            //     console.log('params', pagination, filters, sorter, extra);
+                            //     // form.setFieldsValue({
+                            //     //   asset: record.map(indexAsset => dataSource.find(obj => obj.index === indexAsset)),
+                            //     // });
+                            //   }
+                            // }}
+                            onChange={(pagination, filters, sorter, extra) => {
+                              console.log(filters);
+                              setFilterAssetType(filters);
+                              setAssetStatus(filters)
+                              // form.setFieldsValue({
+                              //   asset: record.map(indexAsset => dataSource.find(obj => obj.index === indexAsset)),
+                              // });
                             }}
                             dataSource={dataSource}
                             columns={columns}
@@ -1477,15 +1628,133 @@ const CreateContractRenter = () => {
                     <Select
                       placeholder="Chọn loại tài sản"
                     >
-                      <Select.Option value={"bedRoomItem"}>Đồ phòng ngủ</Select.Option>
-                      <Select.Option value={"livingRoomItem"}>Đồ phòng khách</Select.Option>
-                      <Select.Option value={"kitchenItem"}>Đồ phòng bếp</Select.Option>
-                      <Select.Option value={"bathRoomItem"}>Đồ phòng tắm</Select.Option>
-                      <Select.Option value={"others"}>khác</Select.Option>
+                      <Select.Option value={"Đồ phòng ngủ"}>Đồ phòng ngủ</Select.Option>
+                      <Select.Option value={"Đồ phòng khách"}>Đồ phòng khách</Select.Option>
+                      <Select.Option value={"Đồ phòng bếp"}>Đồ phòng bếp</Select.Option>
+                      <Select.Option value={"Đồ phòng tắm"}>Đồ phòng tắm</Select.Option>
+                      <Select.Option value={"Khác"}>Khác</Select.Option>
                     </Select>
                   </Form.Item>
                   <Form.Item className="form-item" name="asset_value"
-                    labelCol={{ span: 24 }} label={<span><b>Giá trị tài sản</b></span>}>
+                    labelCol={{ span: 24 }} label={<span><b>Giá trị tài sản (VND): </b></span>}>
+                    <InputNumber
+                      defaultValue={0}
+                      formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                      parser={value => value?.replace(/\$\s?|(,*)/g, '')}
+                      style={{ width: '100%' }}
+                      min={0}
+                    />
+                  </Form.Item>
+                  <Form.Item className="form-item" name="asset_status"
+                    labelCol={{ span: 24 }} label={<span><b>Trạng thái </b></span>} rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng chọn trạng thái",
+                      }
+                    ]}>
+                    <Radio.Group>
+                      <Radio value={true}><Tag color="success">Tốt</Tag></Radio>
+                      <Radio value={false}><Tag color="error">Hỏng</Tag></Radio>
+                    </Radio.Group>
+                  </Form.Item>
+                </Form>
+              </Modal>
+
+              <Modal
+                title="Chỉnh sửa tài sản trong phòng"
+                visible={isEditAsset}
+                onCancel={() => {
+                  setIsEditAsset(false)
+                }}
+                onOk={() => {
+                  setIsEditAsset(false)
+                }}
+                width={500}
+                footer={[
+                  <Button htmlType="submit" key="submit" form="edit-asset" type="primary">
+                    Lưu
+                  </Button>,
+                  <Button key="back" onClick={() => {
+                    setFormAddAsset(createAssetForm.getFieldsValue());
+                    setAddAssetInRoom(false)
+                  }}>
+                    Huỷ
+                  </Button>,
+                ]}
+              >
+                <Form
+                  form={editAssetForm}
+                  onFinish={editAssetFinish}
+                  onFinishFailed={editAssetFail}
+                  labelCol={{ span: 5 }}
+                  wrapperCol={{ span: 30 }}
+                  layout="horizontal"
+                  initialValues={{ size: componentSize }}
+                  onValuesChange={onFormLayoutChange}
+                  size={"default"}
+                  id="edit-asset"
+                >
+                  <Form.Item className="form-item" name="asset_name"
+                    labelCol={{ span: 24 }} label={<span><b>Tên tài sản: </b></span>}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng nhập tên tài sản",
+                        whitespace: true,
+                      }
+                    ]}>
+                    <Input
+                      placeholder="Tên tài sản">
+                    </Input>
+                  </Form.Item>
+                  <Form.Item className="form-item" name="asset_id" style={{ display: 'none' }}>
+                  </Form.Item>
+                  <Form.Item className="form-item" name="dateOfDelivery"
+                    labelCol={{ span: 24 }} label={<span><b>Ngày bàn giao: </b></span>}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng chọn ngày bàn giao",
+                      }
+                    ]}>
+                    <DatePicker style={{ width: "100%" }} placeholder="Ngày bàn giao" defaultValue={moment()} format='DD/MM/YYYY' />
+                  </Form.Item>
+                  <Form.Item className="form-item" name="asset_unit"
+                    labelCol={{ span: 24 }} label={<span><b>Số lượng: </b></span>}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng nhập số lượng",
+                      },
+                    ]}>
+                    <InputNumber
+                      defaultValue={1}
+                      formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                      parser={value => value?.replace(/\$\s?|(,*)/g, '')}
+                      style={{ width: '100%' }}
+                      min={1}
+                    />
+                  </Form.Item>
+                  <Form.Item className="form-item" name="asset_type"
+                    labelCol={{ span: 24 }} label={<span><b>Loại tài sản: </b></span>}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng chọn loại tài sản",
+                      }
+                    ]}>
+                    <Select
+                      placeholder="Chọn loại tài sản"
+                    >
+                      <Select.Option value={"Đồ phòng ngủ"}>Đồ phòng ngủ</Select.Option>
+                      <Select.Option value={"Đồ phòng khách"}>Đồ phòng khách</Select.Option>
+                      <Select.Option value={"Đồ phòng bếp"}>Đồ phòng bếp</Select.Option>
+                      <Select.Option value={"Đồ phòng tắm"}>Đồ phòng tắm</Select.Option>
+                      <Select.Option value={"Khác"}>Khác</Select.Option>
+                    </Select>
+                  </Form.Item>
+                  <Form.Item className="form-item" name="asset_value"
+                    labelCol={{ span: 24 }} label={<span><b>Giá trị tài sản (VND): </b></span>}>
                     <InputNumber
                       defaultValue={0}
                       formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
@@ -1511,8 +1780,8 @@ const CreateContractRenter = () => {
             </div>
           </Content>
         </Layout>
-      </Layout >
-    </div >
+      </Layout>
+    </div>
   );
 };
 export default CreateContractRenter
