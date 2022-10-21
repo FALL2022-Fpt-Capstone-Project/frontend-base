@@ -8,6 +8,7 @@ import {
   ProfileOutlined,
   HomeOutlined,
   UserOutlined,
+  ApartmentOutlined
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { Menu } from "antd";
@@ -102,11 +103,16 @@ const Sidebar = () => {
           </Menu.Item>
         </Menu.SubMenu>
         <Menu.Item key="10">
+          <ApartmentOutlined />
+          <span>Dịch vụ</span>
+          <Link to="/service" />
+        </Menu.Item>
+        <Menu.Item key="11">
           <UserOutlined />
           <span>Quản lý nhân viên</span>
           <Link to="/manage-admin" />
         </Menu.Item>
-        <Menu.Item key="11">
+        <Menu.Item key="12">
           <LogoutOutlined />
           <span>Đăng xuất</span>
           <Link to="/login" />

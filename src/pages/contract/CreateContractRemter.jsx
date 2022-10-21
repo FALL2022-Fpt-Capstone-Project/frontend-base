@@ -15,8 +15,15 @@ const { Option } = Select;
 
 
 const CreateContractRenter = () => {
+
   const LIST_OLD_RENTER = "manager/renter/old";
+  const LIST_ASSET_TYPE = "manager/asset/type";
+  const APARTMENT_DATA_GROUP = "manager/group/get-group/1";
   const dateFormatList = ['DD/MM/YYYY', 'YYYY/MM/DD'];
+  const [dataApartmentGroup, setDataApartmentGroup] = useState([]);
+  const [dataOldRenter, setDataOldRenter] = useState([]);
+  const [listAssetType, setListAssetType] = useState([]);
+
   const defaultAddAsset = {
     dateOfDelivery: moment(),
     asset_unit: 1,
@@ -28,34 +35,12 @@ const CreateContractRenter = () => {
     id: [],
     asset_type: []
   };
-  const listAssetType = [
-    {
-      id: 1,
-      asset_type: "Đồ phòng ngủ",
-    },
-    {
-      id: 2,
-      asset_type: "Đồ phòng khách",
-    },
-    {
-      id: 3,
-      asset_type: "Đồ phòng bếp",
-    },
-    {
-      id: 4,
-      asset_type: "Đồ phòng tắm",
-    },
-    {
-      id: 5,
-      asset_type: "Khác",
-    }
-  ];
+
   const [searched, setSearched] = useState("");
   const [filterAssetType, setFilterAssetType] = useState([]);
   const [assetStatus, setAssetStatus] = useState([]);
   const [isAdd, setisAdd] = useState(false);
   const [componentSize, setComponentSize] = useState('default');
-  const [dataOldRenter, setDataOldRenter] = useState([]);
   const [selectOldRenter, setSelectOldRenter] = useState([]);
   const [form] = Form.useForm();
   const [createAssetForm] = Form.useForm();
@@ -70,23 +55,38 @@ const CreateContractRenter = () => {
     {
       key: 1,
       service: "Tiền điện",
+      serivceName: "electric",
       price: 3000,
+      cal_method: 'Đồng hồ điện/nước',
       amount: 1,
 
     },
     {
       key: 2,
       service: "Tiền nước",
+      serivceName: "water",
       price: 30000,
+      cal_method: 'Đồng hồ điện/nước',
       amount: 1,
 
     },
     {
       key: 3,
-      service: "Gửi xe",
+      service: "Tiền mạng",
+      serivceName: "internet",
       price: 50000,
+      cal_method: 'Tháng',
       amount: 1,
-    }];
+    },
+    {
+      key: 4,
+      service: "Tiền rác",
+      serivceName: "garbage",
+      price: 50000,
+      cal_method: 'Người',
+      amount: 1,
+    }
+  ];
 
   const [dataService, setDataService] = useState(service);
   form.setFieldsValue({
@@ -255,6 +255,53 @@ const CreateContractRenter = () => {
         console.log(error);
       });
   };
+
+  useEffect(() => {
+    getAssetType();
+  }, []);
+
+  const getAssetType = async () => {
+    let cookie = localStorage.getItem("Cookie");
+    await axios
+      .get(LIST_ASSET_TYPE, {
+        headers: {
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${cookie}`,
+        },
+        // withCredentials: true,
+      })
+      .then((res) => {
+        setListAssetType(res.data.body);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  useEffect(() => {
+    apartmentGroup();
+  }, []);
+
+  const apartmentGroup = async () => {
+    let cookie = localStorage.getItem("Cookie");
+    await axios
+      .get(APARTMENT_DATA_GROUP, {
+        headers: {
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${cookie}`,
+        },
+        // withCredentials: true,
+      })
+      .then((res) => {
+        setDataApartmentGroup(res.data.body);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   const renterColumn = [
     {
       title: 'Họ và tên',
@@ -291,7 +338,7 @@ const CreateContractRenter = () => {
   const assetData = [
     {
       id: 1,
-      asset_name: 'test1',
+      asset_name: 'Giường',
       asset_unit: 10,
       asset_type: 'Đồ phòng ngủ',
       dateOfDelivery: '19/10/2022',
@@ -299,7 +346,7 @@ const CreateContractRenter = () => {
     },
     {
       id: 2,
-      asset_name: 'test2',
+      asset_name: 'Bàn',
       asset_unit: 10,
       asset_type: 'Đồ phòng khách',
       dateOfDelivery: '19/10/2022',
@@ -307,7 +354,7 @@ const CreateContractRenter = () => {
     },
     {
       id: 3,
-      asset_name: 'test3',
+      asset_name: 'Máy hút mùi',
       asset_unit: 10,
       asset_type: 'Đồ phòng bếp',
       dateOfDelivery: '19/10/2022',
@@ -315,7 +362,7 @@ const CreateContractRenter = () => {
     },
     {
       id: 4,
-      asset_name: 'test4',
+      asset_name: 'Bồn rửa mặt',
       asset_unit: 10,
       asset_type: 'Đồ phòng tắm',
       dateOfDelivery: '19/10/2022',
@@ -323,7 +370,7 @@ const CreateContractRenter = () => {
     },
     {
       id: 5,
-      asset_name: 'test5',
+      asset_name: 'Kệ để giày',
       asset_unit: 10,
       asset_type: 'Khác',
       dateOfDelivery: '19/10/2022',
@@ -358,7 +405,6 @@ const CreateContractRenter = () => {
       title: 'Dịch vụ sử dụng',
       dataIndex: 'service',
       key: 'key',
-      editable: true,
     },
     {
       title: 'Đơn giá (VNĐ)',
@@ -367,6 +413,11 @@ const CreateContractRenter = () => {
       render: (price) => {
         return <span style={{ fontWeight: 'bold' }}>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price)}</span>
       }
+    },
+    {
+      title: 'Cách tính giá dịch vụ',
+      dataIndex: 'cal_method',
+      key: 'key',
     },
     {
       title: 'Số lượng',
@@ -444,10 +495,6 @@ const CreateContractRenter = () => {
     },
   ];
 
-
-
-
-
   const member = [{
     id: 1,
     member: "Nguyễn Văn B",
@@ -469,7 +516,6 @@ const CreateContractRenter = () => {
   ];
 
   const [dataMember, setDataMember] = useState(member);
-  const [newMember, setNewMember] = useState([]);
   const [nMember, setNMember] = useState("");
   const [nGender, setNGender] = useState("");
   const [nPhone, setNPhone] = useState("");
@@ -505,19 +551,12 @@ const CreateContractRenter = () => {
       address: record.address,
     });
   }
-  const resetEditing = () => {
-    setisEditing(false);
-    setEditingMember(null);
-
-  }
 
   const resetEditingCl = () => {
 
     setisEditing(false);
 
   }
-
-
 
   const onAddMem = () => {
     setisAddMem(true);
@@ -553,6 +592,7 @@ const CreateContractRenter = () => {
   const [floorRoom, setFloorRoom] = useState();
 
   const [roomStatus, setRoomStatus] = useState(true);
+
   const dataFloorRoom = [
     {
       floor: 2,
@@ -657,9 +697,9 @@ const CreateContractRenter = () => {
               style={{
                 minHeight: 360,
               }}>
-              <div className="" style={{ overflow: "auto" }}>
+              <div style={{ overflow: "auto" }}>
                 <Button htmlType="submit" style={{ float: "right" }} type="primary" form="create-contract">Lưu</Button>
-                <Button href="/contract-renter" type="primary" style={{ marginRight: 5, float: "right" }}>Quay lại</Button>
+                <Button href="/contract-renter" type="default" style={{ marginRight: 5, float: "right" }}>Quay lại</Button>
               </div>
               <Form
                 onFinish={onFinish}
@@ -876,7 +916,7 @@ const CreateContractRenter = () => {
                             <Option value="3 year">3 năm</Option>
                             <Option value="4 year">4 năm</Option>
                             <Option value="5 year">5 năm</Option>
-                            <Option value="5 year">Vô thời hạn</Option>
+                            <Option value="infinity">Vô thời hạn</Option>
                           </Select>
                         </Form.Item>
                         <Form.Item className="form-item" name="billCycle"
@@ -990,11 +1030,37 @@ const CreateContractRenter = () => {
                       <Col span={23}>
                         <Form.Item className="form-item" name="service"
                           labelCol={{ span: 24 }}>
-                          <p><b>Các thông tin về dịch vụ </b></p>
+                          <h3><b>Các thông tin về dịch vụ sử dụng </b></h3>
                         </Form.Item>
                       </Col>
                     </Row>
                     <Row>
+                      <Col span={12}>
+                        {dataService.map((obj, index) => {
+                          return (
+                            <>
+                              <Form.Item className="form-item" name={obj.serivceName}
+                                labelCol={{ span: 24 }}
+                                label={<h4>{obj.service} <b>({new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(obj.price)})</b></h4>}
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: `Vui lòng không để trống`,
+                                  },
+                                ]}>
+                                <InputNumber
+                                  addonAfter={String(obj.cal_method).toLowerCase()?.includes("Đồng hồ".toLowerCase()) ? 'Chỉ số hiện tại' : obj.cal_method}
+                                  defaultValue={0}
+                                  style={{ width: '100%' }}
+                                  min={0}
+                                />
+                              </Form.Item>
+                            </>
+                          )
+                        })}
+                      </Col>
+                    </Row>
+                    {/* <Row>
                       <Col span={8}>
                         <Form.Item className="form-item" name="electricityIndex"
                           labelCol={1}
@@ -1033,7 +1099,7 @@ const CreateContractRenter = () => {
                           />
                         </Form.Item>
                       </Col>
-                    </Row>
+                    </Row> */}
                     <Row>
                       <Col span={24}>
                         <Table
@@ -1044,7 +1110,7 @@ const CreateContractRenter = () => {
                       </Col>
                       <p><i><b>Lưu ý:</b><br />
                         - Trên đây là dịch vụ chung áp dụng cho tất cả các phòng trong một tòa nhà.<br />
-                        - Nếu bạn muốn thay đổi dịch vụ chung này cần vào mục <b>Quản Lý Dịch Vụ Chung</b>
+                        - Nếu bạn muốn thay đổi dịch vụ chung này cần vào mục <b>Dịch Vụ</b>
                         <br />
                       </i></p>
                     </Row>
@@ -1064,7 +1130,8 @@ const CreateContractRenter = () => {
                       </Col>
                       <Table style={{ width: '100%' }}
                         dataSource={dataMember}
-                        columns={columnsMember}>
+                        columns={columnsMember}
+                        scroll={{ x: 800, y: 600 }}>
                       </Table>
                     </Row>
                     <Modal
@@ -1429,7 +1496,7 @@ const CreateContractRenter = () => {
                                   </Checkbox>
                                 </Col>
                               })} */}
-                              <Checkbox.Group options={listAssetType.map((obj, index) => { return obj.asset_type })}
+                              <Checkbox.Group options={listAssetType.map((obj, index) => { return obj.asset_type_show_name })}
                                 onChange={(checkedValues) => {
                                   dataFilter.asset_type = checkedValues;
                                   setFilterAssetType(dataFilter);
