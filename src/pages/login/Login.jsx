@@ -57,7 +57,7 @@ const Login = () => {
       } else if (err.response?.status === 401) {
         notification.error({
           message: "Đăng nhập thất bại",
-          description: "Vui lòng kiểm tra lại thông tin đăng nhập.",
+          description: "Tài khoản đã bị khoá, vui lòng liên hệ với quản trị viên.",
           duration: 3,
         });
       }

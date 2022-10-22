@@ -11,6 +11,9 @@ import Unauthorized from "./components/Unautharized";
 import RequireAuth from "./components/RequireAuth";
 import CreateContractRenter from "./pages/contract/CreateContractRemter";
 import Admin from "./pages/admin/Admin";
+import CreateStaff from "./pages/admin/CreateStaff";
+import DetailStaff from "./pages/admin/DetailStaff";
+import UpdateStaff from "./pages/admin/UpdateStaff";
 
 const ROLES = {
   User: "ROLE_USER",
@@ -46,6 +49,15 @@ const App = () => {
         </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
           <Route path="manage-admin" element={<Admin />} />
+        </Route>
+        <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
+          <Route path="create-staff" element={<CreateStaff />} />
+        </Route>
+        <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
+          <Route path="detail-staff/:id" element={<DetailStaff />} />
+        </Route>
+        <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
+          <Route path="update-staff/:id" element={<UpdateStaff />} />
         </Route>
       </Routes>
       {/* <AuthVerify logOut={logOut}/> */}
