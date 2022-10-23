@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import "./contract.scss";
 import { PlusOutlined, PieChartOutlined } from "@ant-design/icons";
-import { Button, Layout, Card, Modal } from "antd";
+import { Button, Layout, Card, Modal, Select } from "antd";
 import ListContractRenter from "./ListContractRenter";
 import ListContractExpired from "./ListContractExpired";
 import ListContractRenterAlmostExpired from "./ListContractRenterAlmostExpired";
 import ListContractRenterLatest from "./ListContractRenterLatest";
 import axios from "../../api/axios";
-
+const { Option } = Select;
 const { Content, Sider, Header } = Layout;
 
 const LIST_CONTRACT_EXPIRED_URL = "manager/contract/get-contract/1?filter=expired";
@@ -23,7 +23,12 @@ const ContractRenter = () => {
   const [countExpired, setcountExpired] = useState("");
   const [countAlmostExpired, setcountAlmostExpired] = useState("");
   const [countLatest, setcountLatest] = useState("");
-
+  const children = [
+    <Option value={30}>1 tháng</Option>,
+    <Option value={120}>4 tháng</Option>,
+    <Option value={180}>6 tháng</Option>,
+    <Option value={365}>1 năm</Option>,
+  ];
   const showModalNew = () => {
     setIsModalNewOpen(true);
   };
@@ -68,10 +73,8 @@ const ContractRenter = () => {
       .get(LIST_CONTRACT_LATEST_URL, {
         headers: {
           "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
           Authorization: `Bearer ${cookie}`,
         },
-        // withCredentials: true,
       })
       .then((res) => {
         setcountLatest(res.data.body.length);
@@ -91,10 +94,8 @@ const ContractRenter = () => {
       .get(LIST_CONTRACT_ALMOST_EXPIRED_URL, {
         headers: {
           "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
           Authorization: `Bearer ${cookie}`,
         },
-        // withCredentials: true,
       })
       .then((res) => {
         setcountAlmostExpired(res.data.body.length);
@@ -188,7 +189,18 @@ const ContractRenter = () => {
                     </Button>
                   </Card>
                 </div>
-                <p className="card-info">Thông tin hiển thị dữ liệu 3 tháng gần nhất</p>
+                <label htmlFor="" style={{ margin: "0 10px 0 20px", fontSize: "14px" }}>
+                  Dữ liệu hợp đồng trong:
+                </label>
+                <Select
+                  placeholder="Tìm kiếm theo thời gian"
+                  style={{
+                    width: "10%",
+                  }}
+                  defaultValue={30}
+                >
+                  {children}
+                </Select>
               </div>
             )}
             <div

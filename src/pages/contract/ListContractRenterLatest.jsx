@@ -54,26 +54,6 @@ const ListContractRenterLatest = () => {
             setTextSearch(e.target.value);
           }}
         />
-        <label htmlFor="">Ngày lập hợp đồng</label>
-        <RangePicker format={"DD/MM/YYYY"} placeholder={["Từ", "Đến"]} style={{ marginLeft: 20 }} />
-        <label
-          htmlFor=""
-          style={{
-            marginLeft: 20,
-          }}
-        >
-          Chu kỳ thanh toán
-        </label>
-        <Select
-          defaultValue={15}
-          style={{
-            width: 120,
-            marginLeft: 20,
-          }}
-        >
-          <Option value={15}>15</Option>
-          <Option value={30}>30</Option>
-        </Select>
       </div>
       <Table
         bordered
@@ -91,6 +71,10 @@ const ListContractRenterLatest = () => {
             onFilter: (value, record) => {
               return record.contractName?.includes(value);
             },
+          },
+          {
+            title: "Tên khách thuê",
+            dataIndex: "building_total_floor",
           },
           {
             title: "Số tiền cọc",
