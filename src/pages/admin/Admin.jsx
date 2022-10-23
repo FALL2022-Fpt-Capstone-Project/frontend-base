@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Layout, Modal } from "antd";
+import { Button, Layout } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import Sidebar from "../../components/sidebar/Sidebar";
 import "./admin.scss";

@@ -83,7 +83,7 @@ const CreateStaff = () => {
     let rolefinal;
     let role;
     if (typeof value.roles == "undefined") {
-      rolefinal = ["Staff"];
+      rolefinal = ["staff"];
     } else {
       role = value.roles;
       rolefinal = role.split();
@@ -212,8 +212,8 @@ const CreateStaff = () => {
             }}
             onChange={roleChange}
           >
-            <Option value="Admin">ADMIN</Option>
-            <Option value="Staff">STAFF</Option>
+            <Option value="admin">ADMIN</Option>
+            <Option value="staff">STAFF</Option>
           </Select>
         </Form.Item>
       </>
@@ -222,7 +222,7 @@ const CreateStaff = () => {
   const Step2Form = () => {
     return (
       <>
-        {roles === "ROLE_ADMIN" || roles === "admin" ? (
+        {roles === "ROLE_ADMIN" || roles === "admin" || roles === "Admin" ? (
           <Form.Item name="permission" label="Quyền truy cập">
             <Checkbox.Group options={adminOptions} />
           </Form.Item>

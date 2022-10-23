@@ -208,7 +208,7 @@ const ListStaff = () => {
             dataIndex: "role",
             render: (_, record) => {
               let role;
-              if (record.role[0] === "ROLE_ADMIN" || record.role[0] === "admin") {
+              if (record.role[0] === "ROLE_ADMIN" || record.role[0] === "admin" || record.role[0] === "Admin") {
                 role = <p>ADMIN</p>;
               } else {
                 role = <p>Nhân Viên</p>;

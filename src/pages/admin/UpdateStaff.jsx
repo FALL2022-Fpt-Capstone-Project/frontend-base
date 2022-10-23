@@ -2,7 +2,7 @@ import { Form, Input, Radio, Select, Checkbox, Switch, Layout, Button } from "an
 import "./updateStaff.scss";
 import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
-import { useNavigate, useParams } from "react-router-dom";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../../components/sidebar/Sidebar";
 import { Link } from "react-router-dom";
 const { Content, Sider, Header } = Layout;
@@ -113,7 +113,7 @@ const UpdateStaff = () => {
         setRoles(role);
         setPermission(res.data?.body.permission);
         setDeactivate(res.data.body?.deactivate);
-        console.log(res.data.body?.deactivate);
+        console.log(res.data.body);
       });
   }, []);
   const data = {
@@ -136,14 +136,16 @@ const UpdateStaff = () => {
           Authorization: `Bearer ${cookie}`,
         },
       })
-      .then(() => {
-        navigate("/manage-admin");
+      .then((res) => {
+        navigate(`/detail-staff/${id}`);
+        console.log(res);
       })
       .catch((e) => console.log(e.request));
     console.log(data);
   }
   const roleChange = (value) => {
     setRoles(value);
+    console.log(value);
   };
   const genderChange = (e) => {
     setGender(e.target.value);
@@ -266,11 +268,11 @@ const UpdateStaff = () => {
                   }}
                   onChange={(value) => roleChange(value)}
                 >
-                  <Option value="admin">ADMIN</Option>
-                  <Option value="staff">STAFF</Option>
+                  <Option value="Admin">ADMIN</Option>
+                  <Option value="Staff">STAFF</Option>
                 </Select>
               </Form.Item>
-              {rolefinal === "admin" || rolefinal === "ROLE_ADMIN" || rolefinal === "ADMIN" ? (
+              {rolefinal === "admin" || rolefinal === "ROLE_ADMIN" || rolefinal === "ADMIN" || rolefinal === "Admin" ? (
                 <Form.Item name="permission" label="Quyền">
                   <Checkbox.Group options={adminOptions} defaultValue={permission} onChange={permissionChange} />
                 </Form.Item>
@@ -286,9 +288,9 @@ const UpdateStaff = () => {
               <Button type="primary" htmlType="submit" style={{ marginRight: "20px" }} onClick={Update}>
                 Cập nhật
               </Button>
-              <Link to="/manage-admin">
-                <Button htmlType="submit">Quay lại</Button>
-              </Link>
+              <NavLink to={`/detail-staff/${id}`}>
+                <Button>Quay lại</Button>
+              </NavLink>
             </Form>
             <div
               className="site-layout-background"
