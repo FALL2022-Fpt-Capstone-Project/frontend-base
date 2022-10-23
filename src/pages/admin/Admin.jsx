@@ -1,27 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Button, Layout, Modal } from "antd";
+import { Button, Layout } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import Sidebar from "../../components/sidebar/Sidebar";
 import "./admin.scss";
 import ListStaff from "./ListStaff";
-import CreateStaff from "./CreateStaff";
+import { Link } from "react-router-dom";
 
 const { Content, Sider, Header } = Layout;
 const Admin = () => {
-  const [open, setOpen] = useState(false);
-
-  const showModal = () => {
-    setOpen(true);
-  };
-
-  const handleOk = () => {
-    setOpen(false);
-  };
-
-  const handleCancel = () => {
-    setOpen(false);
-  };
-
   return (
     <div>
       <div className="admin">
@@ -41,7 +27,7 @@ const Admin = () => {
                 margin: "0 16px",
               }}
             >
-              <p className="header-title">Danh sách nhân viên</p>
+              <p className="header-title">Quản lý nhân viên</p>
             </Header>
             <Content
               className="layout-content"
@@ -50,9 +36,11 @@ const Admin = () => {
               }}
             >
               <div>
-                <Button type="primary" icon={<PlusOutlined />} size="middle" onClick={showModal} className="button-add">
-                  Tạo mới
-                </Button>
+                <Link to="/create-staff">
+                  <Button type="primary" icon={<PlusOutlined />} size="middle" className="button-add">
+                    Tạo mới
+                  </Button>
+                </Link>
               </div>
               <div
                 className="site-layout-background"
@@ -66,24 +54,6 @@ const Admin = () => {
             </Content>
           </Layout>
         </Layout>
-        <Modal
-          open={open}
-          title="Thêm nhân viên"
-          onOk={handleOk}
-          onCancel={handleCancel}
-          destroyOnClose={true}
-          width={700}
-          footer={[
-            <Button htmlType="submit" form="createStaff" type="primary" onClick={handleOk}>
-              Lưu
-            </Button>,
-            <Button key="back" onClick={handleCancel}>
-              Huỷ
-            </Button>,
-          ]}
-        >
-          <CreateStaff />
-        </Modal>
       </div>
     </div>
   );

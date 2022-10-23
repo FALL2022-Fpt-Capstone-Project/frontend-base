@@ -1,0 +1,39 @@
+.create-staff {
+  .sider-title {
+    color: #fff;
+    font-size: 24px;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+  }
+  .site-layout {
+    .layout-header {
+      background: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .header-title {
+        color: #868d96;
+        font-size: 20px;
+        font-weight: bold;
+      }
+    }
+    .layout-content {
+      display: flex;
+      flex-direction: column;
+
+      .button-add {
+        float: right;
+        margin: 10px;
+      }
+    }
+    // .ant-checkbox-group-item {
+    //   display: block;
+    //   margin-right: 0;
+    // }
+  }
+  .hidden {
+    display: none;
+  }
+}
