@@ -1,8 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import { Button, Layout } from "antd";
-import Sidebar from "./sidebar/Sidebar";
-
-const { Content, Sider, Header } = Layout;
+import { Button } from "antd";
+import "./Unauthorized.scss";
 
 const Unauthorized = () => {
   const navigate = useNavigate();
@@ -11,43 +9,27 @@ const Unauthorized = () => {
 
   return (
     <div className="unauthorized">
-      <Layout
-        style={{
-          minHeight: "100vh",
-        }}
-      >
-        <Sider width={250}>
-          <p className="sider-title">QUẢN LÝ CHUNG CƯ MINI</p>
-          <Sidebar />
-        </Sider>
-        <Layout className="site-layout">
-          {/* <Header
-          className="layout-header"
-          style={{
-            margin: "0 16px",
-          }}
-        >
-          <p className="header-title">Quản lý chung cư</p>
-        </Header> */}
-          <Content
-            style={{
-              margin: "10px 16px",
-            }}
-          >
-            <h1>Không có quyền truy cập</h1>
-            <Button onClick={goBack} type="primary">
-              Quay lại
-            </Button>
-            <div
-              className="site-layout-background"
-              style={{
-                padding: 24,
-                minHeight: 360,
-              }}
-            ></div>
-          </Content>
-        </Layout>
-      </Layout>
+      <div className="message">Bạn không có quyền truy cập vào mục này.</div>
+      <div className="message2">Nếu đây là lỗi, hãy báo với quản trị viên.</div>
+      <div>
+        <Button onClick={goBack} type="primary" className="btnBack">
+          Quay lại
+        </Button>
+      </div>
+      <div className="container">
+        <div className="neon">403</div>
+        <div className="door-frame">
+          <div className="door">
+            <div className="rectangle"></div>
+            <div className="handle"></div>
+            <div className="window">
+              <div className="eye"></div>
+              <div className="eye eye2"></div>
+              <div className="leaf"></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
