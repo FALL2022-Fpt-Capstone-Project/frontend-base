@@ -12,6 +12,7 @@ import RequireAuth from "./components/RequireAuth";
 import CreateContractRenter from "./pages/contract/CreateContractRemter";
 import Admin from "./pages/admin/Admin";
 import Service from "./pages/service/Service";
+import ServiceSetting from "./pages/service/ServiceSetting";
 
 const ROLES = {
   User: "ROLE_USER",
@@ -47,6 +48,7 @@ const App = () => {
         </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
           <Route path="service" element={<Service />} />
+          <Route path="service/setting" element={<ServiceSetting />} />
         </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
           <Route path="manage-admin" element={<Admin />} />
