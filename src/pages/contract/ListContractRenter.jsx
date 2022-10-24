@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Input, Table, DatePicker, Select, Button, Row, Col, Checkbox } from "antd";
+import { Input, Table, DatePicker, Select, Button, Row, Col, Checkbox, Tag } from "antd";
 import "./listContract.scss";
 
 import axios from "../../api/axios";
 import { DeleteOutlined, EditOutlined, SearchOutlined, EyeOutlined } from "@ant-design/icons";
 const { Search } = Input;
 const LIST_CONTRACT_URL = "manager/contract/get-contract/1";
+const FILTER_CONTRACT_URL = "manager/contract/get-contract/1";
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 const ListContractRenter = () => {
@@ -13,6 +14,7 @@ const ListContractRenter = () => {
   const [textSearch, setTextSearch] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [duration, setDuration] = useState();
   const [loading, setLoading] = useState(false);
   const options = [
     {
@@ -25,22 +27,22 @@ const ListContractRenter = () => {
     },
   ];
   const children = [
-    <Option value={30}>1 tháng</Option>,
-    <Option value={120}>2 tháng</Option>,
-    <Option value={180}>3 tháng</Option>,
-    <Option value={365}>4 tháng</Option>,
-    <Option value={365}>5 tháng</Option>,
-    <Option value={365}>6 tháng</Option>,
-    <Option value={365}>7 tháng</Option>,
-    <Option value={365}>8 tháng</Option>,
-    <Option value={365}>9 tháng</Option>,
-    <Option value={365}>10 tháng</Option>,
-    <Option value={365}>11 tháng</Option>,
-    <Option value={365}>1 năm</Option>,
-    <Option value={365}>2 năm</Option>,
-    <Option value={365}>3 năm</Option>,
-    <Option value={365}>4 năm</Option>,
-    <Option value={365}>5 năm</Option>,
+    <Option value={1}>1 tháng</Option>,
+    <Option value={2}>2 tháng</Option>,
+    <Option value={3}>3 tháng</Option>,
+    <Option value={4}>4 tháng</Option>,
+    <Option value={5}>5 tháng</Option>,
+    <Option value={6}>6 tháng</Option>,
+    <Option value={7}>7 tháng</Option>,
+    <Option value={8}>8 tháng</Option>,
+    <Option value={9}>9 tháng</Option>,
+    <Option value={10}>10 tháng</Option>,
+    <Option value={11}>11 tháng</Option>,
+    <Option value={12}>1 năm</Option>,
+    <Option value={24}>2 năm</Option>,
+    <Option value={36}>3 năm</Option>,
+    <Option value={48}>4 năm</Option>,
+    <Option value={60}>5 năm</Option>,
   ];
 
   useEffect(() => {
@@ -79,6 +81,29 @@ const ListContractRenter = () => {
     setStartDate(startDate);
     setEndDate(endDate);
   };
+  const getFilterContract = async () => {
+    let cookie = localStorage.getItem("Cookie");
+    setLoading(true);
+    const response = await axios
+      .get(FILTER_CONTRACT_URL, {
+        params: { duration: duration },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie}`,
+        },
+      })
+      .then((res) => {
+        setDataSource(res.data.body);
+        console.log(res);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    setLoading(false);
+  };
+  const durationChange = (value) => {
+    setDuration(value);
+  };
   return (
     <div className="list-contract">
       <div className="list-contract-search">
@@ -115,7 +140,8 @@ const ListContractRenter = () => {
                 style={{
                   width: "100%",
                 }}
-                defaultValue={30}
+                defaultValue={1}
+                onChange={durationChange}
               >
                 {children}
               </Select>
@@ -124,13 +150,13 @@ const ListContractRenter = () => {
         </Row>
         <Row style={{ marginBottom: "20px" }}>
           <Col offset={10}>
-            <Button type="primary" icon={<SearchOutlined />}>
+            <Button type="primary" icon={<SearchOutlined />} onClick={getFilterContract}>
               Tìm kiếm
             </Button>
           </Col>
         </Row>
         <Search
-          placeholder="Tìm kiếm theo tên hợp đồng"
+          placeholder="Tìm kiếm theo tên hợp đồng hoặc tên khách thuê"
           style={{ marginBottom: 8, width: 400, padding: "10px 0" }}
           onSearch={(value) => {
             setTextSearch(value);
@@ -151,59 +177,66 @@ const ListContractRenter = () => {
           // },
           {
             title: "Tên hợp đồng",
-            dataIndex: "contractName",
+            dataIndex: "contract_name",
             filteredValue: [textSearch],
             onFilter: (value, record) => {
-              return record.contractName?.includes(value);
+              return (
+                String(record.contract_name).toLowerCase()?.includes(value.toLowerCase()) ||
+                String(record.renter_name).toLowerCase()?.includes(value.toLowerCase())
+              );
             },
           },
           {
             title: "Tên khách thuê",
-            dataIndex: "building_total_floor",
+            dataIndex: "renter_name",
           },
 
           {
             title: "Số tiền cọc",
-            dataIndex: "deposit",
+            dataIndex: "contract_deposit",
             render: (value) => {
               return value.toLocaleString("vn") + " đ";
             },
           },
           {
             title: "Tiền phòng",
-            dataIndex: "price",
+            dataIndex: "contract_price",
             render: (value) => {
               return value.toLocaleString("vn") + " đ";
             },
           },
-
-          // {
-          //   title: "Tên khách thuê",
-          //    dataIndex: "building_total_floor",
-          // },
-          // {
-          //   title: "Ngày lập",
-          //   // dataIndex: "building_total_floor",
-          // },
           {
             title: "Ngày lập hợp đồng",
-            dataIndex: "startDate",
+            dataIndex: "contract_start_date",
             render: (date) => getFullDate(date),
           },
           {
             title: "Ngày kết thúc",
-            dataIndex: "endDate",
+            dataIndex: "contract_end_date",
             render: (date) => getFullDate(date),
           },
 
           {
             title: "Trạng thái hợp đồng",
-            dataIndex: "paymentCycle",
+            dataIndex: "contract_is_disable",
+            render: (_, record) => {
+              let status;
+              if (record.contract_is_disable === true) {
+                status = (
+                  <Tag color="default" key={record.status}>
+                    Hợp đồng đã kết thúc
+                  </Tag>
+                );
+              } else if (record.contract_is_disable === false) {
+                status = (
+                  <Tag color="green" key={record.status}>
+                    Hợp đồng còn hiệu lực
+                  </Tag>
+                );
+              }
+              return <>{status}</>;
+            },
           },
-          // {
-          //   title: "Ghi chú",
-          //   dataIndex: "address_more_detail",
-          // },
           {
             title: "Thao tác",
             dataIndex: "action",

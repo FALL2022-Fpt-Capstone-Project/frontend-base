@@ -10,10 +10,6 @@ const RequireAuth = ({ allowedRoles, allowedPermission }) => {
   let permission = localStorage.getItem("permission");
   let b = permission + ",6";
   let permissionfinal = b.split(",");
-  console.log(b.split(","));
-  console.log(permission);
-  console.log(allowedPermission);
-  console.log(permissionfinal?.includes(allowedPermission));
   return allowedRoles?.includes(role) && permissionfinal?.includes(allowedPermission) ? (
     <Outlet />
   ) : (

@@ -84,6 +84,7 @@ const UpdateStaff = () => {
   let roles = rolefinal.split(" ");
 
   let cookie = localStorage.getItem("Cookie");
+  let roleCheck = localStorage.getItem("Role");
   useEffect(() => {
     axios
       .get(`manager/account/staff-account/${id}`, {
@@ -260,31 +261,37 @@ const UpdateStaff = () => {
               {/* <Form.Item name="birth_date" label="Ngày sinh">
                 <DatePicker placeholder="Chọn ngày sinh" format={"DD/MM/YYYY"} />
               </Form.Item> */}
-              <Form.Item name="roles" label="Vai trò">
-                <Select
-                  defaultValue={roles}
-                  style={{
-                    width: 120,
-                  }}
-                  onChange={(value) => roleChange(value)}
-                >
-                  <Option value="Admin">ADMIN</Option>
-                  <Option value="Staff">STAFF</Option>
-                </Select>
-              </Form.Item>
-              {rolefinal === "admin" || rolefinal === "ROLE_ADMIN" || rolefinal === "ADMIN" || rolefinal === "Admin" ? (
-                <Form.Item name="permission" label="Quyền">
-                  <Checkbox.Group options={adminOptions} defaultValue={permission} onChange={permissionChange} />
-                </Form.Item>
-              ) : (
-                <Form.Item name="permission" label="Quyền">
-                  <Checkbox.Group options={staffOptions} onChange={permissionChange} />
-                </Form.Item>
+              {roleCheck === "ROLE_ADMIN" && (
+                <>
+                  <Form.Item name="roles" label="Vai trò">
+                    <Select
+                      defaultValue={roles}
+                      style={{
+                        width: 120,
+                      }}
+                      onChange={(value) => roleChange(value)}
+                    >
+                      <Option value="Admin">ADMIN</Option>
+                      <Option value="Staff">STAFF</Option>
+                    </Select>
+                  </Form.Item>
+                  {rolefinal === "admin" ||
+                  rolefinal === "ROLE_ADMIN" ||
+                  rolefinal === "ADMIN" ||
+                  rolefinal === "Admin" ? (
+                    <Form.Item name="permission" label="Quyền">
+                      <Checkbox.Group options={adminOptions} defaultValue={permission} onChange={permissionChange} />
+                    </Form.Item>
+                  ) : (
+                    <Form.Item name="permission" label="Quyền">
+                      <Checkbox.Group options={staffOptions} onChange={permissionChange} />
+                    </Form.Item>
+                  )}
+                  <Form.Item name="status" label="Khoá tài khoản nhân viên">
+                    <Switch checked={deactivate} onChange={deactivateChange} />
+                  </Form.Item>
+                </>
               )}
-
-              <Form.Item name="status" label="Khoá tài khoản nhân viên">
-                <Switch checked={deactivate} onChange={deactivateChange} />
-              </Form.Item>
               <Button type="primary" htmlType="submit" style={{ marginRight: "20px" }} onClick={Update}>
                 Cập nhật
               </Button>
