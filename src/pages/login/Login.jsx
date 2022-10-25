@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import { Button, Checkbox, Form, Input, notification } from "antd";
 import "antd/dist/antd.min.css";
@@ -15,18 +15,10 @@ const Login = () => {
   const location = useLocation();
   const from = location.state?.from?.pathname || "/home";
 
-  // console.log(location);
-
   const [user_name, setUser] = useState("");
   const [password, setPwd] = useState("");
 
-  // useEffect(() => {
-  //   userRef.current.focus();
-  // }, []);
-
   const handleSubmit = async (e) => {
-    // e.preventDefault();
-
     try {
       const response = await axios.post(LOGIN_URL, JSON.stringify({ user_name, password }), {
         headers: {
@@ -41,11 +33,16 @@ const Login = () => {
       //console.log(JSON.stringify(response));
       const accessToken = response?.data?.body.token;
       const roles = response?.data?.body.role;
+      const id = response?.data?.body.account_id;
+      const permission = response?.data?.body.permission;
       window.localStorage.setItem("Cookie", `${accessToken}`);
+      window.localStorage.setItem("Role", `${roles}`);
+      window.localStorage.setItem("id", `${id}`);
+      window.localStorage.setItem("permission", `${permission}`);
       setAuth({ user_name, password, roles, accessToken });
       setUser("");
       setPwd("");
-      navigate(from, { replace: true });
+      navigate("/home");
     } catch (err) {
       if (err.response?.status === 500) {
         notification.error({
@@ -56,7 +53,7 @@ const Login = () => {
       } else if (err.response?.status === 401) {
         notification.error({
           message: "Đăng nhập thất bại",
-          description: "Vui lòng kiểm tra lại thông tin đăng nhập.",
+          description: "Tài khoản đã bị khoá, vui lòng liên hệ với quản trị viên.",
           duration: 3,
         });
       }
@@ -80,15 +77,6 @@ const Login = () => {
 
           <Form.Item name="password" rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}>
             <Input.Password placeholder="Mật khẩu" onChange={(e) => setPwd(e.target.value)} value={password} />
-          </Form.Item>
-
-          <Form.Item>
-            <Form.Item name="remember">
-              <Checkbox>Ghi nhớ mật khẩu</Checkbox>
-            </Form.Item>
-            <a className="login-form-forgot" href="/forgot">
-              Quên mật khẩu?
-            </a>
           </Form.Item>
 
           <Form.Item>

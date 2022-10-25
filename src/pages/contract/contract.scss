@@ -1,24 +1,55 @@
 .contract {
-    .sider-title {
-      color: #fff;
-      font-size: 24px;
-      padding: 10px;
-      text-align: center;
-      font-weight: bold;
+  .sider-title {
+    color: #fff;
+    font-size: 24px;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+  }
+  .site-layout {
+    .layout-header {
+      background: #fff;
+      display: flex;
+      align-items: center;
+
+      .header-title {
+        color: #868d96;
+        font-size: 20px;
+        font-weight: bold;
+      }
     }
-    .site-layout {
-      .layout-header {
-        background: #fff;
+
+    .layout-content {
+      .btn-contract {
         display: flex;
-        justify-content: space-between;
         align-items: center;
-  
-        .header-title {
-          color: #868d96;
-          font-size: 20px;
-          font-weight: bold;
+        justify-content: end;
+        margin-right: 20px;
+
+        .button-collapse {
+          margin-right: 20px;
+        }
+      }
+
+      .contract-statistic {
+        .contract-card {
+          display: flex;
+          margin: 20px 0 20px 20px;
+        }
+        .card-info {
+          margin-left: 20px;
+          font-style: italic;
+          font-size: 16px;
         }
       }
     }
+    .form-item{
+      width: 100%;
+      padding: 0;
+      margin-bottom: 2% !important;
+    }
+    .ant-col-24.ant-form-item-label{
+      padding: 0 !important;
+    }
   }
-  
+}
