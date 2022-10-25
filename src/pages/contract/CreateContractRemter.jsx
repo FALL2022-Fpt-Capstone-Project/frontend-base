@@ -585,7 +585,6 @@ const CreateContractRenter = () => {
   const editAssetFail = (e) => {
     setIsEditAsset(true);
   }
-
   return (
     <div className="contract">
       <Layout
@@ -602,7 +601,7 @@ const CreateContractRenter = () => {
           <Header
             className="layout-header"
           >
-            <p className="header-title">Thêm hợp đồng mới cho khách thuê</p>
+            <p className="header-title">Thêm hợp đồng mới cho khách thuê {dataApartmentGroup?.group_name}</p>
           </Header>
           <Content
             style={{

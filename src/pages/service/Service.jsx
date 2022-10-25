@@ -1,20 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from "../../components/sidebar/Sidebar";
 import "./service.scss";
-import { Button, Col, Input, Layout, Modal, Row, Space, Table, Tag, Form, InputNumber, Select } from "antd";
+import { Button, Col, Input, Layout, Modal, Row, Space, Table, Tag, Form, InputNumber, Select, notification } from "antd";
 import { PlusCircleOutlined, SettingOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import axios from "../../api/axios";
+import { useNavigate } from "react-router-dom";
 
 function Service(props) {
     const APARTMENT_DATA_GROUP = "manager/group/get-group/1";
+    const APARTMENT_SERVICE_GENERAL = "manager/service/general-service/12";
+    const LIST_SERVICE_NAME = "manager/service/basic-service";
+    const ADD_NEW_SERIVCE = "manager/service/add-general-service";
+    const UPDATE_SERVICE = "manager/service/update-general-service/";
     const { Content, Sider, Header } = Layout;
     const [loading, setLoading] = useState(false);
     const [componentSize, setComponentSize] = useState('default');
     const [addServiceGeneral, setAddServiceGeneral] = useState(false);
     const [editServiceGeneral, setEditServiceGeneral] = useState(false);
     const [dataApartmentGroup, setDataApartmentGroup] = useState([]);
+    const [dataApartmentServiceGeneral, setDataApartmentServiceGeneral] = useState([]);
+    const [listServiceName, setListServiceName] = useState([]);
     const [formAddSerivce] = Form.useForm();
     const [formEditSerivce] = Form.useForm();
+    const navigate = useNavigate();
 
     useEffect(() => {
         apartmentGroup();
@@ -33,14 +41,66 @@ function Service(props) {
                 // withCredentials: true,
             })
             .then((res) => {
-                setDataApartmentGroup(res.data.body.list_general_service);
+                setDataApartmentGroup(res.data.body);
             })
             .catch((error) => {
                 console.log(error);
             });
         setLoading(false);
     }
-    const listServiceType = dataApartmentGroup?.map((obj, index) => obj?.service_type_name)?.filter((service, i) => dataApartmentGroup?.map((obj, index) => obj?.service_type_name).indexOf(service) === i);
+
+    useEffect(() => {
+        apartmentServiceGeneral();
+    }, []);
+
+    const apartmentServiceGeneral = async () => {
+        let cookie = localStorage.getItem("Cookie");
+        setLoading(true);
+        await axios
+            .get(APARTMENT_SERVICE_GENERAL, {
+                headers: {
+                    "Content-Type": "application/json",
+                    // "Access-Control-Allow-Origin": "*",
+                    Authorization: `Bearer ${cookie}`,
+                },
+                // withCredentials: true,
+            })
+            .then((res) => {
+                setDataApartmentServiceGeneral(res.data.body);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        setLoading(false);
+    }
+    const listServiceType = dataApartmentServiceGeneral?.filter((obj, index, self) =>
+        self.findIndex(v => v.service_type_id === obj.service_type_id) === index
+    );
+    console.log(listServiceType);
+    useEffect(() => {
+        listServiceNameApi();
+    }, []);
+
+    const listServiceNameApi = async () => {
+        let cookie = localStorage.getItem("Cookie");
+        setLoading(true);
+        await axios
+            .get(LIST_SERVICE_NAME, {
+                headers: {
+                    "Content-Type": "application/json",
+                    // "Access-Control-Allow-Origin": "*",
+                    Authorization: `Bearer ${cookie}`,
+                },
+                // withCredentials: true,
+            })
+            .then((res) => {
+                setListServiceName(res.data.body);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        setLoading(false);
+    }
 
     const columnServiceGeneral = [
         {
@@ -100,16 +160,45 @@ function Service(props) {
     const onClickSettingService = () => {
         console.log('setting');
     };
-    const onFinishAddService = (e) => {
-        console.log(e);
+    const onFinishAddService = async (e) => {
+        console.log({ ...e, contract_id: 12, service_id: parseInt(e.service_id) });
+        let cookie = localStorage.getItem("Cookie");
+        await axios
+            .post(ADD_NEW_SERIVCE, { ...e, contract_id: 12, service_id: parseInt(e.service_id) },
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        // "Access-Control-Allow-Origin": "*",
+                        Authorization: `Bearer ${cookie}`,
+                    },
+                    // withCredentials: true,
+                })
+            .then((res) => {
+                notification.success({
+                    message: "Thêm mới dịch vụ thành công",
+                    placement: 'top',
+                    duration: 3,
+                });
+                setAddServiceGeneral(false);
+                formAddSerivce.setFieldsValue({
+                    "contract_id": null,
+                    "service_id": null,
+                    "general_service_price": null,
+                    "general_service_type": null
+                })
+            })
+            .catch((error) => {
+                notification.error({
+                    message: "Thêm mới dịch vụ thất bại",
+                    description: "Vui lòng kiểm tra lại thông tin dịch vụ",
+                    placement: 'top',
+                    duration: 3,
+                });
+            });
     }
     const onFinishAddServiceFail = (e) => {
         console.log(e);
     }
-
-    formAddSerivce.setFieldsValue({
-        service_type_name: ""
-    });
 
     const onFinishEditService = (e) => {
         console.log(e);
@@ -131,7 +220,7 @@ function Service(props) {
                 </Sider>
                 <Layout className="site-layout">
                     <Header className="layout-header">
-                        <p className="header-title">Thiết lập dịch vụ chung tòa nhà</p>
+                        <p className="header-title">Thiết lập dịch vụ chung {dataApartmentGroup.group_name}</p>
                     </Header>
                     <Content style={{ margin: "10px 16px" }} >
                         <div
@@ -158,13 +247,13 @@ function Service(props) {
                                         bordered
                                         columns={columnServiceGeneral}
                                         loading={loading}
-                                        dataSource={dataApartmentGroup}
+                                        dataSource={dataApartmentServiceGeneral}
                                         scroll={{ x: 800, y: 600 }}
                                     />
                                 </Col>
                             </Row>
                             <Modal
-                                title="Thêm dịch vụ mới cho tòa nhà"
+                                title={"Thêm dịch vụ mới " + dataApartmentGroup.group_name}
                                 visible={addServiceGeneral}
                                 onCancel={() => {
                                     setAddServiceGeneral(false);
@@ -194,7 +283,7 @@ function Service(props) {
                                     size={"default"}
                                     id="add-service"
                                 >
-                                    <Form.Item className="form-item" name="service_show_name"
+                                    <Form.Item className="form-item" name="service_id"
                                         labelCol={{ span: 24 }} label={<span><b>Tên dịch vụ: </b></span>}
                                         rules={[
                                             {
@@ -203,9 +292,13 @@ function Service(props) {
                                                 whitespace: true,
                                             }
                                         ]}>
-                                        <Input
-                                            placeholder="Tên dịch vụ">
-                                        </Input>
+                                        <Select
+                                            placeholder="Chọn dịch vụ"
+                                            optionFilterProp="children">
+                                            {listServiceName.map((obj, index) => {
+                                                return <Select.Option value={obj.service_id}>{obj.service_show_name}</Select.Option>
+                                            })}
+                                        </Select>
                                     </Form.Item>
                                     <Form.Item className="form-item" name="service_price"
                                         labelCol={{ span: 24 }} label={<span><b>Đơn giá (VND): </b></span>}
@@ -216,14 +309,15 @@ function Service(props) {
                                             },
                                         ]}>
                                         <InputNumber
-                                            defaultValue={0}
+                                            placeholder='Nhập giá dịch vụ'
+                                            // defaultValue={0}
                                             formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                             parser={value => value?.replace(/\$\s?|(,*)/g, '')}
                                             style={{ width: '100%' }}
                                             min={0}
                                         />
                                     </Form.Item>
-                                    <Form.Item className="form-item" name="service_type_name"
+                                    <Form.Item className="form-item" name="service_type"
                                         labelCol={{ span: 24 }} label={<span><b>Cách tính giá dịch vụ: </b></span>}
                                         rules={[
                                             {
@@ -235,9 +329,8 @@ function Service(props) {
                                             placeholder="Chọn cách tính giá dịch vụ"
                                             optionFilterProp="children"
                                         >
-                                            <Select.Option value="">Tùy chọn</Select.Option>
                                             {listServiceType.map((obj, index) => {
-                                                return <Select.Option value={obj}>{obj}</Select.Option>
+                                                return <Select.Option value={obj.service_type_id}>{obj.service_type_name}</Select.Option>
                                             })}
                                         </Select>
                                     </Form.Item>
@@ -315,9 +408,8 @@ function Service(props) {
                                             placeholder="Chọn cách tính giá dịch vụ"
                                             optionFilterProp="children"
                                         >
-                                            <Select.Option value="">Tùy chọn</Select.Option>
                                             {listServiceType.map((obj, index) => {
-                                                return <Select.Option value={obj}>{obj}</Select.Option>
+                                                return <Select.Option value={obj.service_type_id}>{obj.service_type_name}</Select.Option>
                                             })}
                                         </Select>
                                     </Form.Item>
