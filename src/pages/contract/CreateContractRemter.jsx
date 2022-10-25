@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import "./contract.scss";
 import axios from "../../api/axios";
-import { EditOutlined, DeleteOutlined, PlusCircleOutlined, FilterOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, PlusCircleOutlined, FilterOutlined, ArrowLeftOutlined, UserOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import {
   Button, Layout, Modal, Form, Table, Space, Input, Select,
@@ -38,7 +38,7 @@ const CreateContractRenter = () => {
       contract_duration.push(
         {
           id: i,
-          contractTermName: `Tháng ${i}`,
+          contractTermName: `${i} tháng`,
           contractTermValue: i
         }
       );
@@ -79,6 +79,8 @@ const CreateContractRenter = () => {
   const [isAddMem, setIsAddMem] = useState(false);
   const [dataAsset, setDataAsset] = useState([]);
   const [assetId, setAssetId] = useState(-1);
+  const [changeTab, setChangeTab] = useState("1");
+  const [visibleSubmit, setVisibleSubmit] = useState(false);
 
   useEffect(() => {
     apartmentGroup();
@@ -516,11 +518,11 @@ const CreateContractRenter = () => {
           duration: 3,
         });
       });
-    message.success('Thêm mới hợp đồng thành công');
+    // message.success('Thêm mới hợp đồng thành công');
     // console.log({ ...e, contract_end_date: new Date(e.contract_end_date).toLocaleDateString(), contract_start_date: new Date(e.contract_start_date).toLocaleDateString() });
   }
   const onFinishContractFail = (e) => {
-    message.error('Thêm mới hợp đồng không thành công');
+    message.error('Vui lòng kiểm tra lại thông tin hợp đồng');
   }
 
   createAssetForm.setFieldsValue({
@@ -600,7 +602,7 @@ const CreateContractRenter = () => {
           <Header
             className="layout-header"
           >
-            <p className="header-title">Thêm hợp đồng mới</p>
+            <p className="header-title">Thêm hợp đồng mới cho khách thuê</p>
           </Header>
           <Content
             style={{
@@ -612,8 +614,8 @@ const CreateContractRenter = () => {
                 minHeight: 360,
               }}>
               <div style={{ overflow: "auto" }}>
-                <Button htmlType="submit" style={{ float: "right" }} type="primary" form="create-contract">Lưu</Button>
-                <Button href="/contract-renter" type="default" style={{ marginRight: 5, float: "right" }}>Quay lại</Button>
+                {/* <Button htmlType="submit" style={{ float: "right" }} type="primary" form="create-contract">Tạo mới hợp đồng</Button> */}
+                <Button href="/contract-renter" type="primary" icon={<ArrowLeftOutlined />} style={{ marginRight: 5, float: "right" }}>Danh sách hợp đồng</Button>
               </div>
               <Form
                 onFinish={onFinish}
@@ -635,11 +637,19 @@ const CreateContractRenter = () => {
                 id="create-contract"
               >
                 <Form.Item className="form-item" name="group_id" style={{ display: 'none' }}></Form.Item>
-                <Tabs defaultActiveKey="1">
-                  <Tabs.TabPane tab="Thông tin hợp đồng" key="1">
+                <Tabs activeKey={changeTab} defaultActiveKey="1">
+                  <Tabs.TabPane tab="1. Thông tin chung" key="1">
                     <Row>
                       <Col span={8}>
-                        <h3><b>Các thông tin về khách thuê: </b></h3>
+                        <div style={{ overflow: 'auto' }}>
+                          <h3><b>Các thông tin về khách thuê </b></h3>
+                          {/* <Form.Item className="form-item"> */}
+                          <Button icon={<UserOutlined />} type="primary" size="default"
+                            onClick={() => {
+                              onAdd()
+                            }}>Lấy thông tin khách cũ</Button>
+                          {/* </Form.Item> */}
+                        </div>
                         <Form.Item className="form-item" name="contract_name"
                           labelCol={{ span: 24 }} label={<span><b>Tên hợp đồng: </b></span>}
                           rules={[
@@ -677,12 +687,6 @@ const CreateContractRenter = () => {
                             <Radio value={false}>Nữ</Radio>
                           </Radio.Group>
                         </Form.Item>
-                        {/* <Form.Item className="form-item" name="oldCustomer"> */}
-                        <Button type="primary" size="default"
-                          onClick={() => {
-                            onAdd()
-                          }}>Khách cũ</Button>
-                        {/* </Form.Item> */}
                         <Form.Item className="form-item" name="renter_phone_number"
                           labelCol={{ span: 24 }} label={<span><b>Số điện thoại: </b></span>}
                           rules={[
@@ -786,7 +790,7 @@ const CreateContractRenter = () => {
                         </Form.Item>
                         <Form.Item className="form-item" name="contract_term" style={{ display: 'none' }}></Form.Item>
                         <Form.Item className="form-item" name="contract_duration"
-                          labelCol={{ span: 24 }} label={<span><b>Thời hạn hợp đồng (Ít nhất 1 tháng): </b></span>}
+                          labelCol={{ span: 24 }} label={<span><b>Thời hạn hợp đồng (ít nhất 1 tháng): </b></span>}
                           rules={[
                             {
                               required: true,
@@ -822,7 +826,7 @@ const CreateContractRenter = () => {
                           <DatePicker allowClear={false} style={{ width: "100%" }} placeholder="Ngày kết thúc" format='DD/MM/YYYY' />
                         </Form.Item>
                         <Form.Item className="form-item" name="contract_bill_cycle"
-                          labelCol={{ span: 24 }} label={<span><b>Chu kỳ tính tiền (Tháng): </b></span>}
+                          labelCol={{ span: 24 }} label={<span><b>Chu kỳ tính tiền (tháng): </b></span>}
                           rules={[
                             {
                               required: true,
@@ -848,6 +852,7 @@ const CreateContractRenter = () => {
                             <Option value={30}>kỳ 30</Option>
                           </Select>
                         </Form.Item>
+                        <span><i><b>Kỳ 15:</b> Khách thuê vào từ ngày 1-15 <br /> <b>Kỳ 30:</b> Khách thuê vào từ ngày 16-31</i></span>
                       </Col>
                       <Col span={8}>
                         <Row>
@@ -895,7 +900,7 @@ const CreateContractRenter = () => {
                     </i></p>
                     <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
                   </Tabs.TabPane>
-                  <Tabs.TabPane tab="Dịch vụ" key="2">
+                  <Tabs.TabPane tab="2. Dịch vụ" key="2">
                     <Row>
                       <Col span={23}>
                         <Form.Item className="form-item" name="list_general_service"
@@ -974,7 +979,7 @@ const CreateContractRenter = () => {
                       <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
                     </Row>
                   </Tabs.TabPane>
-                  <Tabs.TabPane tab="Thành viên" key="3">
+                  <Tabs.TabPane tab="3. Thành viên" key="3">
                     <Row>
                       <Col span={23}>
                         <Form.Item className="form-item" name="list_renter"
@@ -999,7 +1004,7 @@ const CreateContractRenter = () => {
                       </Table>
                     </Row>
                   </Tabs.TabPane>
-                  <Tabs.TabPane tab="Tài sản" key="4">
+                  <Tabs.TabPane tab="4. Tài sản" key="4">
                     <Row>
                       <Col span={24}>
                         <Form.Item className="form-item" name="list_hand_over_assets"
@@ -1070,8 +1075,35 @@ const CreateContractRenter = () => {
                   </Tabs.TabPane>
                 </Tabs>
               </Form>
+              {visibleSubmit ? <Button htmlType="submit" style={{ marginTop: '1%', marginRight: '1%' }} type="primary" form="create-contract">Tạo mới hợp đồng</Button> : ''}
+              <Button
+                style={visibleSubmit ? { display: 'none' } : { marginTop: '1%', marginRight: '0.5%', display: 'inline' }} type="primary"
+                onClick={() => {
+                  setChangeTab(pre => {
+                    if (pre === "4") {
+                      return "1";
+                    } else {
+                      return (parseInt(pre) + 1).toString();
+                    }
+                  });
+                  if (changeTab === "3") {
+                    setVisibleSubmit(true);
+                  }
+                }}>Tiếp</Button>
+              <Button style={changeTab === "1" ? { display: 'none' } : { display: 'inline' }} type="default" onClick={() => {
+                setChangeTab(pre => {
+                  if (pre === "1") {
+                    return "4";
+                  } else {
+                    return (parseInt(pre) - 1).toString();
+                  }
+                });
+                if (changeTab === "4") {
+                  setVisibleSubmit(false);
+                }
+              }}>Quay lại</Button>
               <Modal
-                title="Khách cũ"
+                title="Các thông tin khách hàng cũ"
                 visible={isAdd}
                 onCancel={() => {
                   resetAdd()
@@ -1513,7 +1545,7 @@ const CreateContractRenter = () => {
           </Content>
         </Layout>
       </Layout>
-    </div>
+    </div >
   );
 };
 export default CreateContractRenter

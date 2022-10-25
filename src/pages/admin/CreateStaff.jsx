@@ -192,15 +192,15 @@ const CreateStaff = () => {
         <Form.Item
           name="address_more_detail"
           label="Địa chỉ"
-          // rules={[
-          //   {
-          //     message: "Vui lòng nhập địa chỉ!",
-          //   },
-          //   {
-          //     required: true,
-          //     message: "Vui lòng nhập địa chỉ!",
-          //   },
-          // ]}
+        // rules={[
+        //   {
+        //     message: "Vui lòng nhập địa chỉ!",
+        //   },
+        //   {
+        //     required: true,
+        //     message: "Vui lòng nhập địa chỉ!",
+        //   },
+        // ]}
         >
           <Input autoComplete="off" />
         </Form.Item>
