@@ -51,7 +51,7 @@ const DetailStaff = () => {
       permissionfinal.push(permissionChange);
     }
 
-    if (permission === 5 && user.role[0] === "ADMIN") {
+    if (permission === 5 && user.role[0] === "ROLE_ADMIN") {
       let permissionChange = ", Quản lý nhân viên";
       permissionfinal.push(permissionChange);
     }

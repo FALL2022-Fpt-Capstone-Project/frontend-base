@@ -10,6 +10,7 @@ import {
   UserOutlined,
   IdcardOutlined,
   TeamOutlined,
+  ApartmentOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { Menu } from "antd";
@@ -116,6 +117,11 @@ const Sidebar = () => {
             <Link to="/contract-renter" />
           </Menu.Item>
         </Menu.SubMenu>
+        <Menu.Item key="10">
+          <ApartmentOutlined />
+          <span>Dịch vụ</span>
+          <Link to="/service" />
+        </Menu.Item>
         {role === "ROLE_ADMIN" ? (
           <Menu.SubMenu
             title={
@@ -125,26 +131,26 @@ const Sidebar = () => {
               </>
             }
           >
-            <Menu.Item key="10">
+            <Menu.Item key="11">
               <UserOutlined />
               <span>Quản lý nhân viên</span>
               <Link to="/manage-admin" />
             </Menu.Item>
-            <Menu.Item key="11">
+            <Menu.Item key="12">
               <IdcardOutlined />
               <span>Thông tin cá nhân</span>
               <Link to={`/detail-staff/${id}`} />
             </Menu.Item>
           </Menu.SubMenu>
         ) : (
-          <Menu.Item key="11">
+          <Menu.Item key="12">
             <IdcardOutlined />
             <span>Thông tin cá nhân</span>
             <Link to={`/detail-staff/${id}`} />
           </Menu.Item>
         )}
 
-        <Menu.Item key="12" onClick={() => localStorage.clear()}>
+        <Menu.Item key="13" onClick={() => localStorage.clear()}>
           <LogoutOutlined />
           <span>Đăng xuất</span>
           <Link to="/login" />

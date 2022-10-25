@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Input, Table, Select, DatePicker } from "antd";
+import { Input, Table, Select, DatePicker, Tag } from "antd";
 import { EyeOutlined, EditOutlined } from "@ant-design/icons";
 
 import axios from "../../api/axios";
 const { Search } = Input;
-const LIST_CONTRACT_EXPIRED_URL = "manager/contract/get-contract/1?filter=expired";
+const LIST_CONTRACT_EXPIRED_URL = "manager/contract/get-contract/1";
 const { Option } = Select;
 const { RangePicker } = DatePicker;
-const ListContractExpired = () => {
+const ListContractExpired = ({ duration }) => {
   const [dataSource, setDataSource] = useState([]);
   const [textSearch, setTextSearch] = useState("");
   const [loading, setLoading] = useState(false);
@@ -20,6 +20,7 @@ const ListContractExpired = () => {
     setLoading(true);
     const response = await axios
       .get(LIST_CONTRACT_EXPIRED_URL, {
+        params: { filter: "expired", duration: duration },
         headers: {
           "Content-Type": "application/json",
           // "Access-Control-Allow-Origin": "*",
@@ -45,7 +46,7 @@ const ListContractExpired = () => {
     <div>
       <div style={{ display: "flex", alignItems: "center" }}>
         <Search
-          placeholder="Tìm kiếm"
+          placeholder="Tìm kiếm theo tên hợp đồng hoặc tên khách thuê"
           style={{ marginBottom: 8, width: 400, padding: "10px 0", marginRight: 20 }}
           onSearch={(value) => {
             setTextSearch(value);
@@ -54,26 +55,6 @@ const ListContractExpired = () => {
             setTextSearch(e.target.value);
           }}
         />
-        <label htmlFor="">Ngày lập hợp đồng</label>
-        <RangePicker format={"DD/MM/YYYY"} placeholder={["Từ", "Đến"]} style={{ marginLeft: 20 }} />
-        <label
-          htmlFor=""
-          style={{
-            marginLeft: 20,
-          }}
-        >
-          Chu kỳ thanh toán
-        </label>
-        <Select
-          defaultValue={15}
-          style={{
-            width: 120,
-            marginLeft: 20,
-          }}
-        >
-          <Option value={15}>15</Option>
-          <Option value={30}>30</Option>
-        </Select>
       </div>
       <Table
         bordered
@@ -86,58 +67,66 @@ const ListContractExpired = () => {
           // },
           {
             title: "Tên hợp đồng",
-            dataIndex: "contractName",
+            dataIndex: "contract_name",
             filteredValue: [textSearch],
             onFilter: (value, record) => {
-              return record.contractName?.includes(value);
+              return (
+                String(record.contract_name).toLowerCase()?.includes(value.toLowerCase()) ||
+                String(record.renter_name).toLowerCase()?.includes(value.toLowerCase())
+              );
             },
           },
           {
+            title: "Tên khách thuê",
+            dataIndex: "renter_name",
+          },
+
+          {
             title: "Số tiền cọc",
-            dataIndex: "deposit",
+            dataIndex: "contract_deposit",
             render: (value) => {
               return value.toLocaleString("vn") + " đ";
             },
           },
           {
             title: "Tiền phòng",
-            dataIndex: "price",
+            dataIndex: "contract_price",
             render: (value) => {
               return value.toLocaleString("vn") + " đ";
             },
           },
-
-          // {
-          //   title: "Tên khách thuê",
-          //   // dataIndex: "building_total_floor",
-          // },
-          // {
-          //   title: "Tên khách thuê",
-          //    dataIndex: "renters",
-          // },
-          // {
-          //   title: "Ngày lập",
-          //   // dataIndex: "building_total_floor",
-          // },
           {
             title: "Ngày lập hợp đồng",
-            dataIndex: "startDate",
+            dataIndex: "contract_start_date",
             render: (date) => getFullDate(date),
           },
           {
             title: "Ngày kết thúc",
-            dataIndex: "endDate",
+            dataIndex: "contract_end_date",
             render: (date) => getFullDate(date),
           },
 
           {
-            title: "Chu kỳ thanh toán",
-            dataIndex: "paymentCycle",
+            title: "Trạng thái hợp đồng",
+            dataIndex: "contract_is_disable",
+            render: (_, record) => {
+              let status;
+              if (record.contract_is_disable === true) {
+                status = (
+                  <Tag color="default" key={record.status}>
+                    Hợp đồng đã kết thúc
+                  </Tag>
+                );
+              } else if (record.contract_is_disable === false) {
+                status = (
+                  <Tag color="green" key={record.status}>
+                    Hợp đồng còn hiệu lực
+                  </Tag>
+                );
+              }
+              return <>{status}</>;
+            },
           },
-          // {
-          //   title: "Ghi chú",
-          //   dataIndex: "address_more_detail",
-          // },
           {
             title: "Thao tác",
             dataIndex: "action",
@@ -145,7 +134,7 @@ const ListContractExpired = () => {
               return (
                 <>
                   <EditOutlined style={{ fontSize: "20px", marginRight: "10px" }} />
-                  {/* <EyeOutlined style={{ fontSize: "20px" }} /> */}
+                  <EyeOutlined style={{ fontSize: "20px" }} />
                 </>
               );
             },
