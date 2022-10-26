@@ -65,6 +65,7 @@ const Sidebar = () => {
           <span>Quản lý nguồn tiền</span>
         </Menu.Item>
 
+
         <Menu.Item>
           <ProfileOutlined />
           <span>Quản lý hoá đơn</span>
@@ -82,10 +83,12 @@ const Sidebar = () => {
         {role === "ROLE_ADMIN" ? (
           <>
             <Menu.Item key="/manage-admin">
+
               <UserOutlined />
               <span>Quản lý nhân viên</span>
               <Link to="/manage-admin" />
             </Menu.Item>
+
             <Menu.Item key={`/detail-staff/${id}`}>
               <IdcardOutlined />
               <span>Thông tin cá nhân</span>
@@ -94,6 +97,7 @@ const Sidebar = () => {
           </>
         ) : (
           <Menu.Item key={`/detail-staff/${id}`}>
+
             <IdcardOutlined />
             <span>Thông tin cá nhân</span>
             <Link to={`/detail-staff/${id}`} />
@@ -101,6 +105,7 @@ const Sidebar = () => {
         )}
 
         <Menu.Item key="/login" onClick={() => localStorage.clear()}>
+
           <LogoutOutlined />
           <span>Đăng xuất</span>
           <Link to="/login" />

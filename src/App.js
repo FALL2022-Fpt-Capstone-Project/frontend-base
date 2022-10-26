@@ -14,6 +14,8 @@ import Admin from "./pages/admin/Admin";
 import CreateStaff from "./pages/admin/CreateStaff";
 import DetailStaff from "./pages/admin/DetailStaff";
 import UpdateStaff from "./pages/admin/UpdateStaff";
+import Service from "./pages/service/Service";
+import ServiceSetting from "./pages/service/ServiceSetting";
 
 const ROLES = {
   User: "ROLE_STAFF",
@@ -58,6 +60,15 @@ const App = () => {
         </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
           <Route path="update-staff/:id" element={<UpdateStaff />} />
+        </Route>
+        <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
+          <Route path="contract-renter/create" element={<CreateContractRenter />} />
+        </Route>
+        <Route
+          element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} allowedPermission={PERMISSION.Contract} />}
+        >
+          <Route path="service" element={<Service />} />
+          <Route path="service/setting" element={<ServiceSetting />} />
         </Route>
       </Routes>
       {/* <AuthVerify logOut={logOut}/> */}

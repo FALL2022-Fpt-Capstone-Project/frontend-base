@@ -84,7 +84,6 @@ const UpdateStaff = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   let roles = rolefinal.split(" ");
-
   let cookie = auth.accessToken;
   useEffect(() => {
     axios
