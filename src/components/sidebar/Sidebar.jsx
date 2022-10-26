@@ -1,7 +1,6 @@
 import "antd/dist/antd.min.css";
 import {
   DashboardOutlined,
-  MailOutlined,
   LogoutOutlined,
   DollarOutlined,
   SolutionOutlined,
@@ -9,26 +8,20 @@ import {
   HomeOutlined,
   UserOutlined,
   IdcardOutlined,
-  TeamOutlined,
   ApartmentOutlined,
+  BulbOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { Menu } from "antd";
 import React, { useEffect, useState } from "react";
 import "./sidebar.scss";
+import useAuth from "../../hooks/useAuth";
 import axios from "../../api/axios";
-
 const Sidebar = () => {
-  const [current, setCurrent] = useState("1");
-  let id = localStorage.getItem("id");
-  let cookie = localStorage.getItem("Cookie");
-  let role = localStorage.getItem("Role");
-
-  const onClick = (e) => {
-    console.log("click ", e);
-    console.log(current);
-    setCurrent(e.key);
-  };
+  const { auth } = useAuth();
+  let id = auth.id;
+  let cookie = auth.accessToken;
+  let role = auth.roles[0];
   useEffect(() => {
     axios
       .get(`manager/account/staff-account/${id}`, {
@@ -41,116 +34,78 @@ const Sidebar = () => {
   }, []);
   return (
     <div>
-      <Menu theme="dark" defaultSelectedKeys={["1"]} selectedKeys={[current]} mode="inline" onClick={onClick}>
-        <Menu.Item key="1">
+      <Menu
+        theme="dark"
+        defaultSelectedKeys={[window.location.pathname]}
+        // selectedKeys={[window.location.pathname]}
+        mode="inline"
+      >
+        <Menu.Item key="/home">
           <DashboardOutlined />
           <span>Trang chủ</span>
           <Link to="/home" />
         </Menu.Item>
-        <Menu.SubMenu
-          title={
-            <>
-              <HomeOutlined />
-              <span>Quản lý cơ sở vật chất</span>
-            </>
-          }
-        >
-          <Menu.Item key="2">
-            <span>Quản lý chung cư</span>
-            <Link to="/building" />
-          </Menu.Item>
-          <Menu.Item key="3">
-            <span>Quản lý phòng</span>
-            <Link to="/room" />
-          </Menu.Item>
-          <Menu.Item key="4">
-            <span>Quản lý trang thiết bị</span>
-            <Link to="/" />
-          </Menu.Item>
-        </Menu.SubMenu>
-        <Menu.SubMenu
-          title={
-            <>
-              <DollarOutlined />
-              <span>Quản lý nguồn tiền</span>
-            </>
-          }
-        >
-          {/* <Menu.Item key="5">
-            <span>Quản lý chung cư</span>
-            <Link to="/" />
-          </Menu.Item> */}
-        </Menu.SubMenu>
-        <Menu.Item key="6">
-          <MailOutlined />
-          <span>Email/SMS</span>
-          {/* <Link to="/" /> */}
+        <Menu.Item key="/building">
+          <ApartmentOutlined />
+          <span>Quản lý chung cư</span>
+          <Link to="/building" />
+        </Menu.Item>
+        <Menu.Item key="/room">
+          <HomeOutlined />
+          <span>Quản lý phòng</span>
+          <Link to="/room" />
+        </Menu.Item>
+        <Menu.Item key="/equiment">
+          <BulbOutlined />
+          <span>Quản lý trang thiết bị</span>
+          <Link to="/equiment" />
+        </Menu.Item>
+        <Menu.Item>
+          <DollarOutlined />
+          <span>Quản lý nguồn tiền</span>
         </Menu.Item>
 
-        <Menu.SubMenu
-          title={
-            <>
-              <ProfileOutlined />
-              <span>Quản lý hoá đơn</span>
-            </>
-          }
-        >
-          {/* <Menu.Item key="7">
-            <span>Quản lý chung cư</span>
-            <Link to="/" />
-          </Menu.Item> */}
-        </Menu.SubMenu>
-        <Menu.SubMenu
-          title={
-            <>
-              <SolutionOutlined />
-              <span>Quản lý hợp đồng</span>
-            </>
-          }
-        >
-          <Menu.Item key="8">
-            <span>Quản lý hợp đồng chung cư</span>
-            <Link to="/contract-apartment" />
-          </Menu.Item>
-          <Menu.Item key="9">
-            <span>Quản lý hợp đồng khách thuê</span>
-            <Link to="/contract-renter" />
-          </Menu.Item>
-        </Menu.SubMenu>
-        <Menu.Item key="10">
-          <ApartmentOutlined />
-          <span>Dịch vụ</span>
-          <Link to="/service" />
+
+        <Menu.Item>
+          <ProfileOutlined />
+          <span>Quản lý hoá đơn</span>
+        </Menu.Item>
+        <Menu.Item key="/contract-apartment">
+          <SolutionOutlined />
+          <span>Quản lý hợp đồng chung cư</span>
+          <Link to="/contract-apartment" />
+        </Menu.Item>
+        <Menu.Item key="/contract-renter">
+          <SolutionOutlined />
+          <span>Quản lý hợp đồng khách thuê</span>
+          <Link to="/contract-renter" />
         </Menu.Item>
         {role === "ROLE_ADMIN" ? (
-          <Menu.SubMenu
-            title={
-              <>
-                <TeamOutlined />
-                <span>Quản lý nhân viên</span>
-              </>
-            }
-          >
-            <Menu.Item key="11">
+          <>
+            <Menu.Item key="/manage-admin">
+
               <UserOutlined />
               <span>Quản lý nhân viên</span>
               <Link to="/manage-admin" />
             </Menu.Item>
-            <Menu.Item key="12">
+
+            <Menu.Item key={`/detail-staff/${id}`}>
               <IdcardOutlined />
               <span>Thông tin cá nhân</span>
               <Link to={`/detail-staff/${id}`} />
             </Menu.Item>
-          </Menu.SubMenu>
+          </>
         ) : (
-          <Menu.Item key="12">
+          <Menu.Item key={`/detail-staff/${id}`}>
+
             <IdcardOutlined />
             <span>Thông tin cá nhân</span>
             <Link to={`/detail-staff/${id}`} />
           </Menu.Item>
         )}
 
-        <Menu.Item key="13" onClick={() => localStorage.clear()}>
+        <Menu.Item key="/login" onClick={() => localStorage.clear()}>
+
           <LogoutOutlined />
           <span>Đăng xuất</span>
           <Link to="/login" />

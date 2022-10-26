@@ -3,9 +3,11 @@ import { Layout } from "antd";
 import "./home.scss";
 import Sidebar from "../../components/sidebar/Sidebar";
 import "./home.scss";
+import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 const { Content, Sider, Header } = Layout;
 
 const Home = () => {
+  const [collapsed, setCollapsed] = useState(false);
   return (
     <div className="home">
       <Layout
@@ -13,7 +15,7 @@ const Home = () => {
           minHeight: "100vh",
         }}
       >
-        <Sider width={250}>
+        <Sider width={250} collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
           <p className="sider-title">QUẢN LÝ CHUNG CƯ MINI</p>
           <Sidebar />
         </Sider>

@@ -5,6 +5,7 @@ import axios from "../../api/axios";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../../components/sidebar/Sidebar";
 import { Link } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
 const { Content, Sider, Header } = Layout;
 const { Option } = Select;
 
@@ -69,6 +70,7 @@ const staffOptions = [
 ];
 
 const UpdateStaff = () => {
+  const { auth } = useAuth();
   const [full_name, setName] = useState("");
   const [user_name, setUserName] = useState("");
   const [phone_number, setPhoneNumber] = useState("");
@@ -82,9 +84,7 @@ const UpdateStaff = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   let roles = rolefinal.split(" ");
-
-  let cookie = localStorage.getItem("Cookie");
-  let roleCheck = localStorage.getItem("Role");
+  let cookie = auth.accessToken;
   useEffect(() => {
     axios
       .get(`manager/account/staff-account/${id}`, {
@@ -157,7 +157,6 @@ const UpdateStaff = () => {
   };
   const deactivateChange = (value) => {
     setDeactivate(value);
-    console.log(value);
   };
   return (
     <div className="update-staff">
@@ -261,43 +260,27 @@ const UpdateStaff = () => {
               {/* <Form.Item name="birth_date" label="Ngày sinh">
                 <DatePicker placeholder="Chọn ngày sinh" format={"DD/MM/YYYY"} />
               </Form.Item> */}
-              {roleCheck === "ROLE_ADMIN" && (
-                <>
-                  <Form.Item name="roles" label="Vai trò">
-                    <Select
-                      defaultValue={roles}
-                      style={{
-                        width: 120,
-                      }}
-                      onChange={(value) => roleChange(value)}
-                    >
-                      <Option value="Admin">ADMIN</Option>
-                      <Option value="Staff">STAFF</Option>
-                    </Select>
-                  </Form.Item>
-                  {rolefinal === "admin" ||
-                  rolefinal === "ROLE_ADMIN" ||
-                  rolefinal === "ADMIN" ||
-                  rolefinal === "Admin" ? (
-                    <Form.Item name="permission" label="Quyền">
-                      <Checkbox.Group options={adminOptions} defaultValue={permission} onChange={permissionChange} />
-                    </Form.Item>
-                  ) : (
-                    <Form.Item name="permission" label="Quyền">
-                      <Checkbox.Group options={staffOptions} onChange={permissionChange} />
-                    </Form.Item>
-                  )}
-                  <Form.Item name="status" label="Khoá tài khoản nhân viên">
-                    <Switch checked={deactivate} onChange={deactivateChange} />
-                  </Form.Item>
-                </>
-              )}
-              <Button type="primary" htmlType="submit" style={{ marginRight: "20px" }} onClick={Update}>
+              <Form.Item name="roles" label="Vai trò">
+                <Select
+                  defaultValue={roles}
+                  style={{
+                    width: 120,
+                  }}
+                  onChange={(value) => roleChange(value)}
+                >
+                  <Option value="Admin">ADMIN</Option>
+                  <Option value="Staff">Nhân viên</Option>
+                </Select>
+              </Form.Item>
+              <Form.Item name="status" label="Khoá tài khoản nhân viên">
+                <Switch checked={deactivate} onChange={deactivateChange} />
+              </Form.Item>
+              <NavLink to={`/detail-staff/${id}`}>
+                <Button style={{ marginRight: "20px" }}>Quay lại</Button>
+              </NavLink>
+              <Button type="primary" htmlType="submit" onClick={Update}>
                 Cập nhật
               </Button>
-              <NavLink to={`/detail-staff/${id}`}>
-                <Button>Quay lại</Button>
-              </NavLink>
             </Form>
             <div
               className="site-layout-background"

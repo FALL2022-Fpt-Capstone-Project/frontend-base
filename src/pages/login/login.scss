@@ -8,6 +8,15 @@ body {
   align-items: center;
   min-height: 100vh;
   background: #d9edff;
+  flex-direction: column;
+}
+.login-heading {
+  .login-title {
+    font-size: 40px;
+    text-transform: uppercase;
+    font-weight: 800;
+    margin-bottom: 40px;
+  }
 }
 .login-box {
   display: flex;

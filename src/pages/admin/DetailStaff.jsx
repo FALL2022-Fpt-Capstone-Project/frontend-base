@@ -13,7 +13,6 @@ const DetailStaff = () => {
   const goBack = () => navigate("/home");
   const [user, setUser] = useState([]);
   const [roles, setRole] = useState();
-  const [permission, setPermission] = useState([]);
   let cookie = localStorage.getItem("Cookie");
   let checkRole = localStorage.getItem("Role");
   let permissionfinal = [];
@@ -30,36 +29,9 @@ const DetailStaff = () => {
         let role = roles.toString().slice(5);
         setUser(res.data.body);
         setRole(role);
-        setPermission(res.data.body.permission);
       });
   }, []);
-  permission?.map((permission) => {
-    if (permission === 1) {
-      let permissionChange = "Quản lý cơ sở vật chất,";
-      permissionfinal.push(permissionChange);
-    }
-    if (permission === 2) {
-      let permissionChange = " Quản lý nguồn tiền,";
-      permissionfinal.push(permissionChange);
-    }
-    if (permission === 3) {
-      let permissionChange = " Quản lý hoá đơn,";
-      permissionfinal.push(permissionChange);
-    }
-    if (permission === 4) {
-      let permissionChange = " Quản lý hợp đồng";
-      permissionfinal.push(permissionChange);
-    }
 
-    if (permission === 5 && user.role[0] === "ROLE_ADMIN") {
-      let permissionChange = ", Quản lý nhân viên";
-      permissionfinal.push(permissionChange);
-    }
-  });
-  if (permission === null) {
-    let permissionChange = "Chưa được cấp quyền";
-    permissionfinal.push(permissionChange);
-  }
   return (
     <div className="detail-staff">
       <Layout
@@ -107,7 +79,6 @@ const DetailStaff = () => {
               ) : (
                 <Descriptions.Item label="Chức vụ">Nhân viên</Descriptions.Item>
               )}
-              <Descriptions.Item label="Quyền hạn">{permissionfinal}</Descriptions.Item>
             </Descriptions>
             <Descriptions title="Thông tin liên hệ">
               <Descriptions.Item label="Số điện thoại">{user.phone_number}</Descriptions.Item>

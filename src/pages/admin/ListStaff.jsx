@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Input, Table, Select, Checkbox, DatePicker, Tag, Row, Col, Button } from "antd";
+import { Input, Table, Select, Checkbox, DatePicker, Tag, Row, Col, Button, Tabs } from "antd";
 import axios from "../../api/axios";
 import { NavLink } from "react-router-dom";
 import "./listStaff.scss";
-import { EditOutlined, EyeOutlined, SearchOutlined } from "@ant-design/icons";
+import { EditOutlined, EyeOutlined, SearchOutlined, UndoOutlined } from "@ant-design/icons";
+import useAuth from "../../hooks/useAuth";
 const { Search } = Input;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -16,6 +17,7 @@ const ListStaff = () => {
   const [endDate, setEndDate] = useState("");
   const LIST_EMPLOYEE_URL = "manager/account/list-all-staff-account";
   const FILTER_EMPOYEE_URL = "manager/account/list-staff-account";
+  const { auth } = useAuth();
   const options = [
     {
       label: "Admin",
@@ -26,19 +28,11 @@ const ListStaff = () => {
       value: "staff",
     },
   ];
-  const children = [
-    <Option value={1}>Quản lý cơ sở vật chất</Option>,
-    <Option value={2}>Quản lý nguồn tiền</Option>,
-    <Option value={3}>Quản lý hoá đơn</Option>,
-    <Option value={4}>Quản lý hợp đồng</Option>,
-    <Option value={5}>Quản lý nhân viên</Option>,
-  ];
-
+  let cookie = auth.accessToken;
   useEffect(() => {
     getAllEmployees();
   }, []);
   const getAllEmployees = async () => {
-    let cookie = localStorage.getItem("Cookie");
     setLoading(true);
     const response = await axios
       .get(LIST_EMPLOYEE_URL, {
@@ -87,8 +81,6 @@ const ListStaff = () => {
     const valuesNew = values.filter((v) => v !== option);
     const value = valuesNew.length ? valuesNew[0] : "";
     setOption(value);
-
-    console.log("checked = ", value);
   };
   const dateChange = (value, dateString) => {
     let [day1, month1, year1] = dateString[0].split("-");
@@ -102,64 +94,86 @@ const ListStaff = () => {
   return (
     <div className="list-staff">
       <div className="list-staff-search">
-        <Row gutter={16} style={{ marginBottom: "20px" }}>
-          <Col className="gutter-row" span={8}>
-            <Row>
-              <label htmlFor="" style={{ marginBottom: "10px" }}>
-                Ngày bắt đầu làm việc
-              </label>
+        <Tabs defaultActiveKey="1">
+          <Tabs.TabPane tab="Tìm kiếm nâng cao" key="1">
+            <Row gutter={[16, 32]} style={{ marginBottom: "20px" }}>
+              <Col span={8}>
+                <Col className="gutter-row" span={16} style={{ marginBottom: "30px" }}>
+                  <Row>
+                    <label htmlFor="" style={{ marginBottom: "10px" }}>
+                      Tìm kiếm theo tên nhân viên
+                    </label>
+                  </Row>
+                  <Row>
+                    <Input placeholder="Nhập tên nhân viên" />
+                  </Row>
+                </Col>
+                <Col className="gutter-row" span={16}>
+                  <Row>
+                    <label htmlFor="" style={{ marginBottom: "10px" }}>
+                      Tìm kiếm theo tên đăng nhập
+                    </label>
+                  </Row>
+                  <Row>
+                    <Input placeholder="Nhập tên đăng nhập" />
+                  </Row>
+                </Col>
+              </Col>
+              <Col span={8}>
+                <Col className="gutter-row" span={24} style={{ marginBottom: "30px" }}>
+                  <Row>
+                    <label htmlFor="" style={{ marginBottom: "10px" }}>
+                      Ngày bắt đầu làm việc
+                    </label>
+                  </Row>
+                  <Row>
+                    <RangePicker format={"DD-MM-YYYY"} placeholder={["Từ", "Đến"]} onChange={dateChange} />
+                  </Row>
+                </Col>
+                <Col className="gutter-row" span={24}>
+                  <Row>
+                    <label htmlFor="" style={{ marginBottom: "10px" }}>
+                      Tìm kiếm theo chức vụ
+                    </label>
+                  </Row>
+                  <Row>
+                    <Checkbox.Group options={options} style={{ marginRight: "150px" }} />
+                    <Checkbox>Nhân viên đã nghỉ việc</Checkbox>
+                  </Row>
+                </Col>
+              </Col>
             </Row>
-            <Row>
-              <RangePicker format={"DD-MM-YYYY"} placeholder={["Từ", "Đến"]} onChange={dateChange} />
+            <Row style={{ marginBottom: "20px" }}>
+              <Col offset={10}>
+                <Row>
+                  <Button
+                    type="primary"
+                    icon={<SearchOutlined />}
+                    style={{ marginRight: "20px" }}
+                    onClick={getFilterEmployees}
+                  >
+                    Tìm kiếm
+                  </Button>
+                  <Button icon={<UndoOutlined />} onClick={getFilterEmployees}>
+                    Đặt lại
+                  </Button>
+                </Row>
+              </Col>
             </Row>
-          </Col>
-          <Col className="gutter-row" span={8}>
-            <Row>
-              <label htmlFor="" style={{ marginBottom: "10px" }}>
-                Tìm kiếm theo chức vụ
-              </label>
-            </Row>
-            <Row>
-              <Checkbox.Group options={options} value={[option]} onChange={filterRole} />
-            </Row>
-          </Col>
-          <Col className="gutter-row" span={8}>
-            <Row>
-              <label htmlFor="" style={{ marginBottom: "10px" }}>
-                Tìm kiếm theo quyền nhân viên
-              </label>
-            </Row>
-            <Row>
-              <Select
-                mode="multiple"
-                placeholder="Tìm kiếm theo quyền"
-                style={{
-                  width: "100%",
-                }}
-                defaultValue={[1, 3]}
-              >
-                {children}
-              </Select>
-            </Row>
-          </Col>
-        </Row>
-        <Row style={{ marginBottom: "20px" }}>
-          <Col offset={10}>
-            <Button type="primary" icon={<SearchOutlined />} onClick={getFilterEmployees}>
-              Tìm kiếm
-            </Button>
-          </Col>
-        </Row>
-        <Search
-          placeholder="Tìm kiếm theo tên, số điện thoại"
-          style={{ marginBottom: 8, width: 400, padding: "10px 0" }}
-          onSearch={(value) => {
-            setTextSearch(value);
-          }}
-          onChange={(e) => {
-            setTextSearch(e.target.value);
-          }}
-        />
+          </Tabs.TabPane>
+          <Tabs.TabPane tab="Tìm kiếm nhanh" key="2">
+            <Search
+              placeholder="Tìm kiếm theo tên, số điện thoại"
+              style={{ marginBottom: 8, width: 400, padding: "10px 0" }}
+              onSearch={(value) => {
+                setTextSearch(value);
+              }}
+              onChange={(e) => {
+                setTextSearch(e.target.value);
+              }}
+            />
+          </Tabs.TabPane>
+        </Tabs>
       </div>
       <Table
         bordered
@@ -221,22 +235,16 @@ const ListStaff = () => {
             dataIndex: "status",
             render: (_, record) => {
               let status;
-              if (record.deactivate === false && record.permission === null) {
-                status = (
-                  <Tag color="green" key={record.status}>
-                    Chưa cấp quyền
-                  </Tag>
-                );
-              } else if (record.deactivate === true) {
+              if (record.deactivate === true) {
                 status = (
                   <Tag color="default" key={record.status}>
-                    Đã khoá
+                    Đã nghỉ việc
                   </Tag>
                 );
               } else if (record.deactivate === false) {
                 status = (
                   <Tag color="red" key={record.status}>
-                    Đã cấp quyền
+                    Đang
                   </Tag>
                 );
               }
