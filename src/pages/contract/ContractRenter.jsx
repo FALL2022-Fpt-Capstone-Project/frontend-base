@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import "./contract.scss";
 import { PlusOutlined, PieChartOutlined } from "@ant-design/icons";
-import { Button, Layout, Card, Modal, Select } from "antd";
+import { Button, Layout, Card, Modal, Select, Row, Col } from "antd";
 import ListContractRenter from "./ListContractRenter";
 import ListContractExpired from "./ListContractExpired";
 import ListContractRenterAlmostExpired from "./ListContractRenterAlmostExpired";
@@ -116,55 +116,65 @@ const ContractRenter = () => {
             {isOpen && (
               <div className="contract-statistic">
                 <div className="contract-card">
-                  <Card
-                    title="Số lượng hợp đồng mới được mở"
-                    style={{
-                      width: 300,
-                      marginRight: 20,
-                    }}
-                  >
-                    <p>{countLatest} hợp đồng</p>
-                    <Button type="primary" onClick={showModalNew}>
-                      Xem chi tiết
-                    </Button>
-                  </Card>
-                  <Card
-                    title="Số lượng hợp đồng đã kết thúc"
-                    style={{
-                      width: 300,
-                      marginRight: 20,
-                    }}
-                  >
-                    <p>{countExpired} hợp đồng</p>
-                    <Button type="primary" onClick={showModalEnd}>
-                      Xem chi tiết
-                    </Button>
-                  </Card>
-                  <Card
-                    title="Số lượng hợp đồng sắp hết hạn"
-                    style={{
-                      width: 300,
-                    }}
-                  >
-                    <p>{countAlmostExpired} hợp đồng</p>
-                    <Button type="primary" onClick={showModalOld}>
-                      Xem chi tiết
-                    </Button>
-                  </Card>
+                  <Row>
+                    <Col span={6}>
+                      <Card
+                        title="Số lượng hợp đồng mới được mở"
+                        style={{
+                          width: 300,
+                          marginRight: 20,
+                        }}
+                      >
+                        <p>{countLatest} hợp đồng</p>
+                        <Button type="primary" onClick={showModalNew}>
+                          Xem chi tiết
+                        </Button>
+                      </Card>
+                    </Col>
+                    <Col span={6}>
+                      <Card
+                        title="Số lượng hợp đồng đã kết thúc"
+                        style={{
+                          width: 300,
+                          marginRight: 20,
+                        }}
+                      >
+                        <p>{countExpired} hợp đồng</p>
+                        <Button type="primary" onClick={showModalEnd}>
+                          Xem chi tiết
+                        </Button>
+                      </Card>
+                    </Col>
+                    <Col span={6}>
+                      <Card
+                        title="Số lượng hợp đồng sắp hết hạn"
+                        style={{
+                          width: 300,
+                        }}
+                      >
+                        <p>{countAlmostExpired} hợp đồng</p>
+                        <Button type="primary" onClick={showModalOld}>
+                          Xem chi tiết
+                        </Button>
+                      </Card>
+                    </Col>
+                    <Col span={6}>
+                      <label htmlFor="" style={{ margin: "120px 10px 0 20px", fontSize: "14px", display: "block" }}>
+                        Chọn thời gian thống kê dữ liệu hợp đồng
+                      </label>
+                      <Select
+                        style={{
+                          width: "80%",
+                          marginLeft: "20px",
+                        }}
+                        defaultValue={1}
+                        onChange={durationChange}
+                      >
+                        {children}
+                      </Select>
+                    </Col>
+                  </Row>
                 </div>
-                <label htmlFor="" style={{ margin: "0 10px 0 20px", fontSize: "14px" }}>
-                  Dữ liệu hợp đồng trong:
-                </label>
-                <Select
-                  placeholder="Tìm kiếm theo thời gian"
-                  style={{
-                    width: "10%",
-                  }}
-                  defaultValue={1}
-                  onChange={durationChange}
-                >
-                  {children}
-                </Select>
               </div>
             )}
             <div
