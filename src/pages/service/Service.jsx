@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from "../../components/sidebar/Sidebar";
 import "./service.scss";
-import { Button, Col, Input, Layout, Modal, Row, Space, Table, Tag, Form, InputNumber, Select, notification } from "antd";
+import { Button, Col, Input, Layout, Modal, Row, Space, Table, Tag, Form, InputNumber, Select, notification, message } from "antd";
 import { PlusCircleOutlined, SettingOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import axios from "../../api/axios";
 import { useNavigate } from "react-router-dom";
@@ -239,12 +239,13 @@ function Service(props) {
         setLoading(false);
     }
     const onFinishAddServiceFail = (e) => {
-        notification.error({
-            message: "Thêm mới dịch vụ thất bại",
-            description: "Vui lòng kiểm tra lại thông tin dịch vụ",
-            placement: 'top',
-            duration: 3,
-        });
+        message.error('Vui lòng kiểm tra lại thông tin');
+        // notification.error({
+        //     message: "Thêm mới dịch vụ thất bại",
+        //     description: "Vui lòng kiểm tra lại thông tin dịch vụ",
+        //     placement: 'top',
+        //     duration: 3,
+        // });
     }
 
     const onFinishEditService = async (e) => {
@@ -280,12 +281,13 @@ function Service(props) {
         setLoading(false);
     }
     const onFinishEditServiceFail = (e) => {
-        notification.error({
-            message: "Cập nhật dịch vụ thất bại",
-            description: "Vui lòng kiểm tra lại thông tin dịch vụ",
-            placement: 'top',
-            duration: 3,
-        });
+        message.error('Vui lòng kiểm tra lại thông tin');
+        // notification.error({
+        //     message: "Cập nhật dịch vụ thất bại",
+        //     description: "Vui lòng kiểm tra lại thông tin dịch vụ",
+        //     placement: 'top',
+        //     duration: 3,
+        // });
     }
 
     const onDeleteService = async (e) => {
@@ -320,7 +322,6 @@ function Service(props) {
     }
 
     const onQuickAdd = async () => {
-        console.log('in');
         setLoading(true);
         // console.log(JSON.stringify({ ...e, contract_id: 12, service_id: parseInt(e.service_id) }));
         let cookie = localStorage.getItem("Cookie");
@@ -361,7 +362,6 @@ function Service(props) {
         setLoading(false);
     }
 
-    console.log(dataApartmentGroup);
     return (
         <div className="service">
             <Layout
@@ -535,8 +535,8 @@ function Service(props) {
                                     size={"default"}
                                     id="edit-service"
                                 >
-                                    <Form.Item className="form-item" name="service_id" labelCol={{ span: 24 }} style={{ display: "none" }}></Form.Item>
                                     <Form.Item className="form-item" name="general_service_id" labelCol={{ span: 24 }} style={{ display: "none" }}></Form.Item>
+                                    <Form.Item className="form-item" name="service_id" labelCol={{ span: 24 }} style={{ display: "none" }}></Form.Item>
                                     <Form.Item className="form-item" name="service_show_name"
                                         labelCol={{ span: 24 }} label={<span><b>Tên dịch vụ: </b></span>}
                                         rules={[
@@ -546,9 +546,14 @@ function Service(props) {
                                                 whitespace: true,
                                             }
                                         ]}>
-                                        <Input
-                                            placeholder="Tên dịch vụ">
-                                        </Input>
+                                        <Select
+                                            onChange={(e) => { formEditSerivce.setFieldsValue({ service_id: e }) }}
+                                            placeholder="Chọn dịch vụ"
+                                            optionFilterProp="children">
+                                            {listServiceName.map((obj, index) => {
+                                                return <Select.Option value={obj.service_id}>{obj.service_show_name}</Select.Option>
+                                            })}
+                                        </Select>
                                     </Form.Item>
                                     <Form.Item className="form-item" name="general_service_price"
                                         labelCol={{ span: 24 }} label={<span><b>Đơn giá (VND): </b></span>}
