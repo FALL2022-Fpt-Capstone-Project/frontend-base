@@ -34,6 +34,7 @@ function ServiceSetting(props) {
                 console.log(error);
             });
     }
+    console.log(dataApartmentGroup);
     const onFinishEditService = (e) => {
         console.log(e);
     }
@@ -86,7 +87,7 @@ function ServiceSetting(props) {
                                         {dataApartmentGroup.map((service, index) =>
                                             <Row>
                                                 <Col span={8}>
-                                                    <Form.Item className="form-item" name="service_show_name"
+                                                    <Form.Item className="form-item" name='service_show_name'
                                                         labelCol={{ span: 24 }} label={<span><b>Tên dịch vụ: </b></span>}
                                                         rules={[
                                                             {
