@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import "./createStaff.scss";
 import axios from "../../api/axios";
 import { StepPanel } from "./StepPanel";
+import useAuth from "../../hooks/useAuth";
 const { Content, Sider, Header } = Layout;
 const { Option } = Select;
 const ADD_EMPLOYEE_URL = "manager/account/add-staff-account";
@@ -69,6 +70,9 @@ const staffOptions = [
 ];
 
 const CreateStaff = () => {
+  const { auth } = useAuth();
+  let cookie = auth.accessToken;
+  let role = auth.roles[0];
   const [gender, setGender] = useState("");
   const [roles, setRoles] = useState("staff");
 
@@ -76,7 +80,6 @@ const CreateStaff = () => {
 
   const navigate = useNavigate();
   const handleCreateEmployee = async (value) => {
-    let cookie = localStorage.getItem("Cookie");
     if (typeof value.permission == "undefined") {
       value.permission = [];
     }

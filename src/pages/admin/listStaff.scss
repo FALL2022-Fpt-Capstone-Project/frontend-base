@@ -3,37 +3,5 @@
     // display: flex;
     // align-items: center;
     // justify-content: space-between;
-
-    .ant-checkbox-group {
-      display: flex;
-
-      > label.ant-checkbox-wrapper {
-        font-size: 14px;
-        align-items: center;
-        margin-left: 10px;
-        width: auto;
-        height: 30px;
-        padding: 0 15px;
-        border: 1px solid rgb(217, 217, 217);
-        background-color: #fff;
-
-        > span:first-child {
-          display: none;
-        }
-        > span:last-child {
-          padding: 0;
-        }
-      }
-
-      label.ant-checkbox-wrapper-checked {
-        border: 1px solid #1890ff;
-        background-color: #1890ff;
-        color: #fff;
-      }
-
-      label.ant-checkbox-wrapper:last-child {
-        border-right-width: 1px;
-      }
-    }
   }
 }
