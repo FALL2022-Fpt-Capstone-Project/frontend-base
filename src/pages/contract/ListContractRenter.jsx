@@ -221,15 +221,9 @@ const ListContractRenter = () => {
             dataIndex: "contract_is_disable",
             render: (_, record) => {
               let status;
-              if (record.contract_is_disable === true) {
+              if (record.contract_is_disable === false) {
                 status = (
-                  <Tag color="default" key={record.status}>
-                    Hợp đồng đã kết thúc
-                  </Tag>
-                );
-              } else if (record.contract_is_disable === false) {
-                status = (
-                  <Tag color="green" key={record.status}>
+                  <Tag color="success" key={record.status}>
                     Hợp đồng còn hiệu lực
                   </Tag>
                 );

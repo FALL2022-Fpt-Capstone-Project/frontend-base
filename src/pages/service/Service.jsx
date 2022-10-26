@@ -5,13 +5,17 @@ import { Button, Col, Input, Layout, Modal, Row, Space, Table, Tag, Form, InputN
 import { PlusCircleOutlined, SettingOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import axios from "../../api/axios";
 import { useNavigate } from "react-router-dom";
+import TextArea from 'antd/lib/input/TextArea';
 
 function Service(props) {
     const APARTMENT_DATA_GROUP = "manager/group/get-group/1";
-    const APARTMENT_SERVICE_GENERAL = "manager/service/general-service/12";
+    const APARTMENT_SERVICE_GENERAL = "manager/service/general-services/12";
     const LIST_SERVICE_NAME = "manager/service/basic-service";
     const ADD_NEW_SERIVCE = "manager/service/add-general-service";
+    const DELETE_SERVICE = "manager/service/delete-general-service/"
     const UPDATE_SERVICE = "manager/service/update-general-service/";
+    const LIST_SERVICE_CACUL_METHOD = "manager/service/service-type";
+    const QUICK_ADD_SERVICE = "manager/service/quick-add-service"
     const { Content, Sider, Header } = Layout;
     const [loading, setLoading] = useState(false);
     const [componentSize, setComponentSize] = useState('default');
@@ -19,10 +23,36 @@ function Service(props) {
     const [editServiceGeneral, setEditServiceGeneral] = useState(false);
     const [dataApartmentGroup, setDataApartmentGroup] = useState([]);
     const [dataApartmentServiceGeneral, setDataApartmentServiceGeneral] = useState([]);
+    const [serviceCalCuMethod, setServiceCalCuMethod] = useState([]);
     const [listServiceName, setListServiceName] = useState([]);
     const [formAddSerivce] = Form.useForm();
     const [formEditSerivce] = Form.useForm();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        listServiceCalcuMethod();
+    }, []);
+
+    const listServiceCalcuMethod = async () => {
+        let cookie = localStorage.getItem("Cookie");
+        setLoading(true);
+        await axios
+            .get(LIST_SERVICE_CACUL_METHOD, {
+                headers: {
+                    "Content-Type": "application/json",
+                    // "Access-Control-Allow-Origin": "*",
+                    Authorization: `Bearer ${cookie}`,
+                },
+                // withCredentials: true,
+            })
+            .then((res) => {
+                setServiceCalCuMethod(res.data.body);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        setLoading(false);
+    }
 
     useEffect(() => {
         apartmentGroup();
@@ -48,7 +78,6 @@ function Service(props) {
             });
         setLoading(false);
     }
-
     useEffect(() => {
         apartmentServiceGeneral();
     }, []);
@@ -73,10 +102,11 @@ function Service(props) {
             });
         setLoading(false);
     }
-    const listServiceType = dataApartmentServiceGeneral?.filter((obj, index, self) =>
-        self.findIndex(v => v.service_type_id === obj.service_type_id) === index
-    );
-    console.log(listServiceType);
+    // const listServiceType = dataApartmentServiceGeneral?.filter((obj, index, self) =>
+    //     self.findIndex(v => v.service_type_id === obj.service_type_id) === index
+    // );
+    // console.log(dataApartmentServiceGeneral);
+
     useEffect(() => {
         listServiceNameApi();
     }, []);
@@ -107,6 +137,7 @@ function Service(props) {
             title: 'Tên dịch vụ',
             dataIndex: 'service_show_name',
             key: 'general_service_id',
+            defaultSortOrder: "descend",
         },
         {
             title: 'Đơn giá (VNĐ)',
@@ -122,6 +153,11 @@ function Service(props) {
             key: 'general_service_id',
         },
         {
+            title: 'Ghi chú',
+            dataIndex: 'note',
+            key: 'general_service_id',
+        },
+        {
             title: 'Thao tác',
             key: 'general_service_id',
             render: (record) => {
@@ -130,20 +166,22 @@ function Service(props) {
                         <EditOutlined onClick={() => {
                             setEditServiceGeneral(true);
                             formEditSerivce.setFieldsValue({
+                                general_service_id: record.general_service_id,
+                                service_id: record.service_id,
                                 service_show_name: record.service_show_name,
-                                service_price: record.service_price,
-                                service_type_name: record.service_type_name
+                                general_service_price: record.service_price,
+                                general_service_type: record.service_type_id,
+                                note: record.note
                             })
                         }} style={{ fontSize: '120%' }} />
                         <DeleteOutlined
                             onClick={() => {
+                                const data = record;
                                 Modal.confirm({
                                     title: `Bạn có chắc chắn muốn xóa ${record.service_show_name} ?`,
                                     okText: 'Có',
                                     cancelText: 'Hủy',
-                                    onOk: () => {
-                                        console.log('click ok');
-                                    },
+                                    onOk: () => { return onDeleteService(data) }
                                 })
                             }}
                             style={{ color: "red", marginLeft: 12, fontSize: '120%' }}
@@ -155,13 +193,14 @@ function Service(props) {
     ];
     const onClikAddService = () => {
         setAddServiceGeneral(true);
-        console.log('Them moi');
     };
     const onClickSettingService = () => {
         console.log('setting');
     };
+
     const onFinishAddService = async (e) => {
-        console.log({ ...e, contract_id: 12, service_id: parseInt(e.service_id) });
+        setLoading(true);
+        // console.log(JSON.stringify({ ...e, contract_id: 12, service_id: parseInt(e.service_id) }));
         let cookie = localStorage.getItem("Cookie");
         await axios
             .post(ADD_NEW_SERIVCE, { ...e, contract_id: 12, service_id: parseInt(e.service_id) },
@@ -181,11 +220,13 @@ function Service(props) {
                 });
                 setAddServiceGeneral(false);
                 formAddSerivce.setFieldsValue({
-                    "contract_id": null,
-                    "service_id": null,
-                    "general_service_price": null,
-                    "general_service_type": null
-                })
+                    contract_id: null,
+                    service_id: null,
+                    general_service_price: null,
+                    general_service_type: null,
+                    note: null
+                });
+                apartmentServiceGeneral();
             })
             .catch((error) => {
                 notification.error({
@@ -195,17 +236,132 @@ function Service(props) {
                     duration: 3,
                 });
             });
+        setLoading(false);
     }
     const onFinishAddServiceFail = (e) => {
-        console.log(e);
+        notification.error({
+            message: "Thêm mới dịch vụ thất bại",
+            description: "Vui lòng kiểm tra lại thông tin dịch vụ",
+            placement: 'top',
+            duration: 3,
+        });
     }
 
-    const onFinishEditService = (e) => {
-        console.log(e);
+    const onFinishEditService = async (e) => {
+        setLoading(true);
+        let cookie = localStorage.getItem("Cookie");
+        await axios
+            .put(UPDATE_SERVICE + e.general_service_id, e,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        // "Access-Control-Allow-Origin": "*",
+                        Authorization: `Bearer ${cookie}`,
+                    },
+                    // withCredentials: true,
+                })
+            .then((res) => {
+                notification.success({
+                    message: "Cập nhật dịch vụ thành công",
+                    placement: 'top',
+                    duration: 3,
+                });
+                apartmentServiceGeneral();
+                setEditServiceGeneral(false);
+            })
+            .catch((error) => {
+                notification.error({
+                    message: "Cập nhật dịch vụ thất bại",
+                    placement: 'top',
+                    duration: 3,
+                });
+                setEditServiceGeneral(true);
+            });
+        setLoading(false);
     }
     const onFinishEditServiceFail = (e) => {
-        console.log(e);
+        notification.error({
+            message: "Cập nhật dịch vụ thất bại",
+            description: "Vui lòng kiểm tra lại thông tin dịch vụ",
+            placement: 'top',
+            duration: 3,
+        });
     }
+
+    const onDeleteService = async (e) => {
+        setLoading(true);
+        let cookie = localStorage.getItem("Cookie");
+        await axios
+            .delete(DELETE_SERVICE + e.general_service_id,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        // "Access-Control-Allow-Origin": "*",
+                        Authorization: `Bearer ${cookie}`,
+                    },
+                    // withCredentials: true,
+                })
+            .then((res) => {
+                notification.success({
+                    message: "Xóa dịch vụ thành công",
+                    placement: 'top',
+                    duration: 3,
+                });
+                apartmentServiceGeneral();
+            })
+            .catch((error) => {
+                notification.error({
+                    message: "Xóa dịch vụ thất bại",
+                    placement: 'top',
+                    duration: 3,
+                });
+            });
+        setLoading(false);
+    }
+
+    const onQuickAdd = async () => {
+        console.log('in');
+        setLoading(true);
+        // console.log(JSON.stringify({ ...e, contract_id: 12, service_id: parseInt(e.service_id) }));
+        let cookie = localStorage.getItem("Cookie");
+        await axios
+            .post(QUICK_ADD_SERVICE, { contract_id: 12 },
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        // "Access-Control-Allow-Origin": "*",
+                        Authorization: `Bearer ${cookie}`,
+                    },
+                    // withCredentials: true,
+                })
+            .then((res) => {
+                notification.success({
+                    message: "Thêm mới dịch vụ thành công",
+                    placement: 'top',
+                    duration: 3,
+                });
+                setAddServiceGeneral(false);
+                formAddSerivce.setFieldsValue({
+                    contract_id: null,
+                    service_id: null,
+                    general_service_price: null,
+                    general_service_type: null,
+                    note: null
+                });
+                apartmentServiceGeneral();
+            })
+            .catch((error) => {
+                notification.error({
+                    message: "Thêm mới dịch vụ thất bại",
+                    description: "Vui lòng kiểm tra lại thông tin dịch vụ",
+                    placement: 'top',
+                    duration: 3,
+                });
+            });
+        setLoading(false);
+    }
+
+    console.log(dataApartmentGroup);
     return (
         <div className="service">
             <Layout
@@ -231,14 +387,22 @@ function Service(props) {
                             }}>
                             <Row>
                                 <Col span={24}>
+                                    <Button type="primary" style={{ marginBottom: '1%', float: 'left' }}
+                                        icon={<PlusCircleOutlined style={{ fontSize: 15, }} />}
+                                        onClick={onQuickAdd}>Thêm mới nhanh</Button>
                                     <Button type="primary" style={{ marginBottom: '1%', float: 'right' }}
                                         onClick={onClikAddService} icon={<PlusCircleOutlined style={{ fontSize: 15, }} />}>
                                         Thêm mới
                                     </Button>
-                                    <Button href="/service/setting" type="primary" style={{ marginBottom: '1%', float: 'right', marginRight: '1%' }}
+                                    {/* <Button href="/service/setting" type="primary" style={{ marginBottom: '1%', float: 'right', marginRight: '1%' }}
                                         onClick={onClickSettingService} icon={<SettingOutlined />}>
-                                        Thiết lập
-                                    </Button>
+                                        Thiết lập chung
+                                    </Button> */}
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col>
+                                    <p><i>Thêm mới nhanh các dịch vụ cơ bản (điện, nước, internet, xe) giúp việc nhập dữ liệu nhanh hơn</i></p>
                                 </Col>
                             </Row>
                             <Row>
@@ -300,7 +464,7 @@ function Service(props) {
                                             })}
                                         </Select>
                                     </Form.Item>
-                                    <Form.Item className="form-item" name="service_price"
+                                    <Form.Item className="form-item" name="general_service_price"
                                         labelCol={{ span: 24 }} label={<span><b>Đơn giá (VND): </b></span>}
                                         rules={[
                                             {
@@ -317,7 +481,7 @@ function Service(props) {
                                             min={0}
                                         />
                                     </Form.Item>
-                                    <Form.Item className="form-item" name="service_type"
+                                    <Form.Item className="form-item" name="general_service_type"
                                         labelCol={{ span: 24 }} label={<span><b>Cách tính giá dịch vụ: </b></span>}
                                         rules={[
                                             {
@@ -329,10 +493,14 @@ function Service(props) {
                                             placeholder="Chọn cách tính giá dịch vụ"
                                             optionFilterProp="children"
                                         >
-                                            {listServiceType.map((obj, index) => {
+                                            {serviceCalCuMethod.map((obj, index) => {
                                                 return <Select.Option value={obj.service_type_id}>{obj.service_type_name}</Select.Option>
                                             })}
                                         </Select>
+                                    </Form.Item>
+                                    <Form.Item className="form-item" name="note"
+                                        labelCol={{ span: 24 }} label={<span><b>Ghi chú: </b></span>}>
+                                        <TextArea rows={5} placeholder="Ghi chú"></TextArea>
                                     </Form.Item>
                                 </Form>
                             </Modal>
@@ -351,7 +519,7 @@ function Service(props) {
                                         Lưu
                                     </Button>,
                                     <Button key="back" onClick={() => {
-                                        setAddServiceGeneral(false);
+                                        setEditServiceGeneral(false);
                                     }}>
                                         Huỷ
                                     </Button>,
@@ -367,6 +535,8 @@ function Service(props) {
                                     size={"default"}
                                     id="edit-service"
                                 >
+                                    <Form.Item className="form-item" name="service_id" labelCol={{ span: 24 }} style={{ display: "none" }}></Form.Item>
+                                    <Form.Item className="form-item" name="general_service_id" labelCol={{ span: 24 }} style={{ display: "none" }}></Form.Item>
                                     <Form.Item className="form-item" name="service_show_name"
                                         labelCol={{ span: 24 }} label={<span><b>Tên dịch vụ: </b></span>}
                                         rules={[
@@ -380,7 +550,7 @@ function Service(props) {
                                             placeholder="Tên dịch vụ">
                                         </Input>
                                     </Form.Item>
-                                    <Form.Item className="form-item" name="service_price"
+                                    <Form.Item className="form-item" name="general_service_price"
                                         labelCol={{ span: 24 }} label={<span><b>Đơn giá (VND): </b></span>}
                                         rules={[
                                             {
@@ -396,7 +566,7 @@ function Service(props) {
                                             min={0}
                                         />
                                     </Form.Item>
-                                    <Form.Item className="form-item" name="service_type_name"
+                                    <Form.Item className="form-item" name="general_service_type"
                                         labelCol={{ span: 24 }} label={<span><b>Cách tính giá dịch vụ: </b></span>}
                                         rules={[
                                             {
@@ -408,14 +578,18 @@ function Service(props) {
                                             placeholder="Chọn cách tính giá dịch vụ"
                                             optionFilterProp="children"
                                         >
-                                            {listServiceType.map((obj, index) => {
+                                            {serviceCalCuMethod.map((obj, index) => {
                                                 return <Select.Option value={obj.service_type_id}>{obj.service_type_name}</Select.Option>
                                             })}
                                         </Select>
                                     </Form.Item>
+                                    <Form.Item className="form-item" name="note"
+                                        labelCol={{ span: 24 }} label={<span><b>Ghi chú: </b></span>}>
+                                        <TextArea rows={5} placeholder="Ghi chú"></TextArea>
+                                    </Form.Item>
                                 </Form>
                             </Modal>
-                            <p><i><b>Lưu ý: </b>Trên đây là danh sách dịch vụ áp dụng chung cho Tòa Nhà. Nếu muốn thay đổi thông tin, phương thức tính toán vào phần <b>"Thiết lập"</b><br />
+                            <p><i><b>Lưu ý: </b>Trên đây là danh sách dịch vụ áp dụng chung cho Tòa Nhà. Nếu muốn thay đổi thông tin, phương thức tính toán cho tất cả các <b>dịch vụ</b> vào phần <b>"Thiết lập"</b><br />
                             </i></p>
                             <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
                         </div>
