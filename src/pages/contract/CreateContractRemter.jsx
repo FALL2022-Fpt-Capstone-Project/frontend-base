@@ -81,6 +81,7 @@ const CreateContractRenter = () => {
   const [assetId, setAssetId] = useState(-1);
   const [changeTab, setChangeTab] = useState("1");
   const [visibleSubmit, setVisibleSubmit] = useState(false);
+  const [genderChange, setGenderChange] = useState(true);
 
   useEffect(() => {
     apartmentGroup();
@@ -234,7 +235,6 @@ const CreateContractRenter = () => {
         console.log(error);
       });
   };
-
   useEffect(() => {
     getAssetType();
   }, []);
@@ -300,10 +300,11 @@ const CreateContractRenter = () => {
     setisAdd(false);
   }
   const onOk = () => {
+    setGenderChange(selectOldRenter.renter_gender === "Nam" ? true : false);
     form.setFieldsValue({
       renter_name: selectOldRenter.renter_full_name,
       renter_phone_number: selectOldRenter.renter_phone_number,
-      renter_gender: selectOldRenter.renter_gender === "Nam" ? true : false,
+      // renter_gender: selectOldRenter.renter_gender === "Nam" ? true : false,
       renter_email: selectOldRenter.renter_email,
       renter_identity_card: selectOldRenter.renter_identity_number,
     });
@@ -316,7 +317,7 @@ const CreateContractRenter = () => {
     group_id: dataApartmentGroup?.group_id,
     contract_start_date: moment(),
     contract_note: "",
-    renter_gender: true,
+    renter_gender: genderChange,
     list_renter: dataMember,
     list_general_service: listGeneralService,
     list_hand_over_assets: dataAsset,
