@@ -199,6 +199,7 @@ const CreateContractRenter = () => {
       }
     },
   ];
+
   const onDeleteAsset = (record) => {
     Modal.confirm({
       title: `Bạn có chắc chắn muốn xóa ${record.asset_name} này ?`,
@@ -669,10 +670,10 @@ const CreateContractRenter = () => {
                             message: "Vui lòng nhập tên khách thuê",
                             whitespace: true,
                           }
-                        ]} labelCol={{ span: 24 }} label={<span><b>Tên khách thuê: </b></span>}>
+                        ]} labelCol={{ span: 24 }} label={<span><b>Họ và tên khách thuê: </b></span>}>
                           {/* <span><b>Tên khách thuê: </b></span> */}
                           <Input
-                            placeholder="Tên khách thuê"
+                            placeholder="Họ và tên khách thuê"
                           >
                           </Input>
                         </Form.Item>
@@ -1545,7 +1546,7 @@ const CreateContractRenter = () => {
           </Content>
         </Layout>
       </Layout>
-    </div >
+    </div>
   );
 };
 export default CreateContractRenter

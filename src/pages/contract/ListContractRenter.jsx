@@ -4,6 +4,7 @@ import "./listContract.scss";
 
 import axios from "../../api/axios";
 import { DeleteOutlined, EditOutlined, SearchOutlined, EyeOutlined } from "@ant-design/icons";
+import ViewContractRenter from "./ViewContractRenter";
 const { Search } = Input;
 const LIST_CONTRACT_URL = "manager/contract/get-contract/1";
 const FILTER_CONTRACT_URL = "manager/contract/get-contract/1";
@@ -16,6 +17,7 @@ const ListContractRenter = () => {
   const [endDate, setEndDate] = useState("");
   const [duration, setDuration] = useState();
   const [loading, setLoading] = useState(false);
+  const [viewContract, setViewContract] = useState(false);
   const options = [
     {
       label: "Hợp đồng còn hiệu lực",
@@ -68,6 +70,7 @@ const ListContractRenter = () => {
       });
     setLoading(false);
   };
+
   const getFullDate = (date) => {
     const dateAndTime = date.split("T");
 
@@ -238,7 +241,10 @@ const ListContractRenter = () => {
               return (
                 <>
                   <EditOutlined style={{ fontSize: "20px", marginRight: "10px" }} />
-                  <EyeOutlined style={{ fontSize: "20px" }} />
+                  <EyeOutlined style={{ fontSize: "20px" }} onClick={() => {
+                    console.log(record);
+                    setViewContract(true);
+                  }} />
                 </>
               );
             },
@@ -247,6 +253,7 @@ const ListContractRenter = () => {
         pagination={{ pageSize: 5 }}
         loading={loading}
       />
+      <ViewContractRenter openView={viewContract} closeView={setViewContract} />
     </div>
   );
 };
