@@ -28,47 +28,6 @@ const formItemLayout = {
   },
 };
 
-const adminOptions = [
-  {
-    label: "Quản lý cơ sở vật chất",
-    value: 1,
-  },
-  {
-    label: "Quản lý nguồn tiền",
-    value: 2,
-  },
-  {
-    label: "Quản lý hoá đơn",
-    value: 3,
-  },
-  {
-    label: "Quản lý hợp đồng",
-    value: 4,
-  },
-  {
-    label: "Quản lý nhân viên",
-    value: 5,
-  },
-];
-const staffOptions = [
-  {
-    label: "Quản lý cơ sở vật chất",
-    value: 1,
-  },
-  {
-    label: "Quản lý nguồn tiền",
-    value: 2,
-  },
-  {
-    label: "Quản lý hoá đơn",
-    value: 3,
-  },
-  {
-    label: "Quản lý hợp đồng",
-    value: 4,
-  },
-];
-
 const UpdateStaff = () => {
   const { auth } = useAuth();
   const [full_name, setName] = useState("");
@@ -84,7 +43,7 @@ const UpdateStaff = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   let roles = rolefinal.split(" ");
-  let cookie = auth.accessToken;
+  let cookie = localStorage.getItem("Cookie");
   useEffect(() => {
     axios
       .get(`manager/account/staff-account/${id}`, {

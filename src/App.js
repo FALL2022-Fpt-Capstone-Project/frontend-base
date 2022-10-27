@@ -64,9 +64,7 @@ const App = () => {
         <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
           <Route path="contract-renter/create" element={<CreateContractRenter />} />
         </Route>
-        <Route
-          element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} allowedPermission={PERMISSION.Contract} />}
-        >
+        <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
           <Route path="service" element={<Service />} />
           <Route path="service/setting" element={<ServiceSetting />} />
         </Route>

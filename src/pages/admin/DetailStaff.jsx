@@ -15,7 +15,6 @@ const DetailStaff = () => {
   const [roles, setRole] = useState();
   let cookie = localStorage.getItem("Cookie");
   let checkRole = localStorage.getItem("Role");
-  let permissionfinal = [];
   useEffect(() => {
     axios
       .get(`manager/account/staff-account/${id}`, {

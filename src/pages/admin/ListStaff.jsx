@@ -28,7 +28,7 @@ const ListStaff = () => {
       value: "staff",
     },
   ];
-  let cookie = auth.accessToken;
+  let cookie = localStorage.getItem("Cookie");
   useEffect(() => {
     getAllEmployees();
   }, []);
@@ -52,7 +52,6 @@ const ListStaff = () => {
   };
 
   const getFilterEmployees = async () => {
-    let cookie = localStorage.getItem("Cookie");
     setLoading(true);
     const response = await axios
       .get(FILTER_EMPOYEE_URL, {

@@ -8,13 +8,14 @@ import ListContractExpired from "./ListContractExpired";
 import ListContractRenterAlmostExpired from "./ListContractRenterAlmostExpired";
 import ListContractRenterLatest from "./ListContractRenterLatest";
 import axios from "../../api/axios";
+import useAuth from "../../hooks/useAuth";
 const { Option } = Select;
 const { Content, Sider, Header } = Layout;
 
 const COUNT_CONTRACT_GROUP = "manager/contract/statistical/get-contract/1";
 
 const ContractRenter = () => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const [isModalNewOpen, setIsModalNewOpen] = useState(false);
   const [isModalOldOpen, setIsModalOldOpen] = useState(false);
   const [isModalEndOpen, setIsModalEndOpen] = useState(false);
@@ -22,6 +23,7 @@ const ContractRenter = () => {
   const [countAlmostExpired, setcountAlmostExpired] = useState("");
   const [countLatest, setcountLatest] = useState("");
   const [countExpired, setcountExpired] = useState("");
+  const { auth } = useAuth();
   const children = [
     <Option value={1}>1 tháng</Option>,
     <Option value={4}>4 tháng</Option>,
@@ -46,9 +48,8 @@ const ContractRenter = () => {
   useEffect(() => {
     getCountContract();
   }, []);
-
+  let cookie = localStorage.getItem("Cookie");
   const getCountContract = async () => {
-    let cookie = localStorage.getItem("Cookie");
     const response = await axios
       .get(COUNT_CONTRACT_GROUP, {
         params: { duration: duration },
@@ -123,10 +124,11 @@ const ContractRenter = () => {
                         style={{
                           width: 300,
                           marginRight: 20,
+                          height: 175,
                         }}
                       >
-                        <p>{countLatest} hợp đồng</p>
-                        <Button type="primary" onClick={showModalNew}>
+                        <span>{countLatest} hợp đồng</span>
+                        <Button type="primary" onClick={showModalNew} style={{ marginLeft: "10px" }}>
                           Xem chi tiết
                         </Button>
                       </Card>
@@ -137,10 +139,11 @@ const ContractRenter = () => {
                         style={{
                           width: 300,
                           marginRight: 20,
+                          height: 175,
                         }}
                       >
-                        <p>{countExpired} hợp đồng</p>
-                        <Button type="primary" onClick={showModalEnd}>
+                        <span>{countExpired} hợp đồng</span>
+                        <Button type="primary" onClick={showModalEnd} style={{ marginLeft: "10px" }}>
                           Xem chi tiết
                         </Button>
                       </Card>
@@ -150,10 +153,11 @@ const ContractRenter = () => {
                         title="Số lượng hợp đồng sắp hết hạn"
                         style={{
                           width: 300,
+                          height: 175,
                         }}
                       >
-                        <p>{countAlmostExpired} hợp đồng</p>
-                        <Button type="primary" onClick={showModalOld}>
+                        <span>{countAlmostExpired} hợp đồng</span>
+                        <Button type="primary" onClick={showModalOld} style={{ marginLeft: "10px" }}>
                           Xem chi tiết
                         </Button>
                       </Card>

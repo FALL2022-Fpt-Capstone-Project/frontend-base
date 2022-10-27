@@ -71,7 +71,7 @@ const staffOptions = [
 
 const CreateStaff = () => {
   const { auth } = useAuth();
-  let cookie = auth.accessToken;
+  let cookie = localStorage.getItem("Cookie");
   let role = auth.roles[0];
   const [gender, setGender] = useState("");
   const [roles, setRoles] = useState("staff");
@@ -80,9 +80,6 @@ const CreateStaff = () => {
 
   const navigate = useNavigate();
   const handleCreateEmployee = async (value) => {
-    if (typeof value.permission == "undefined") {
-      value.permission = [];
-    }
     let rolefinal;
     let role;
     if (typeof value.roles == "undefined") {
@@ -195,15 +192,15 @@ const CreateStaff = () => {
         <Form.Item
           name="address_more_detail"
           label="Địa chỉ"
-        // rules={[
-        //   {
-        //     message: "Vui lòng nhập địa chỉ!",
-        //   },
-        //   {
-        //     required: true,
-        //     message: "Vui lòng nhập địa chỉ!",
-        //   },
-        // ]}
+          // rules={[
+          //   {
+          //     message: "Vui lòng nhập địa chỉ!",
+          //   },
+          //   {
+          //     required: true,
+          //     message: "Vui lòng nhập địa chỉ!",
+          //   },
+          // ]}
         >
           <Input autoComplete="off" />
         </Form.Item>

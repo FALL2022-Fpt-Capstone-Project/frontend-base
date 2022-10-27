@@ -32,6 +32,8 @@ const Login = () => {
       const roles = response?.data?.body.role;
       const id = response?.data?.body.account_id;
       window.localStorage.setItem("Cookie", `${accessToken}`);
+      window.localStorage.setItem("Role", `${roles}`);
+      window.localStorage.setItem("id", `${id}`);
       setAuth({ user_name, password, roles, accessToken, id });
       setUser("");
       setPwd("");
@@ -52,6 +54,7 @@ const Login = () => {
       }
     }
   };
+  // setAuth({ user_name, password, roles, accessToken, id });
   return (
     <div className="login-page">
       <div className="login-heading">

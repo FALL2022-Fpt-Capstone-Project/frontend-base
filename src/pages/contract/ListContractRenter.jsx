@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Input, Table, DatePicker, Select, Button, Row, Col, Checkbox, Tag, Tabs } from "antd";
 import "./listContract.scss";
-
+import useAuth from "../../hooks/useAuth";
 import axios from "../../api/axios";
 import { DeleteOutlined, EditOutlined, SearchOutlined, EyeOutlined, UndoOutlined } from "@ant-design/icons";
 const { Search } = Input;
@@ -16,23 +16,13 @@ const ListContractRenter = () => {
   const [endDate, setEndDate] = useState("");
   const [duration, setDuration] = useState();
   const [loading, setLoading] = useState(false);
-  const options = [
-    {
-      label: "Hợp đồng còn hiệu lực",
-      value: "newContract",
-    },
-    {
-      label: "Hợp đồng đã kết thúc",
-      value: "endContract",
-    },
-  ];
-
+  const { auth } = useAuth();
+  let cookie = localStorage.getItem("Cookie");
   useEffect(() => {
     getAllContract();
   }, []);
 
   const getAllContract = async () => {
-    let cookie = localStorage.getItem("Cookie");
     setLoading(true);
     const response = await axios
       .get(LIST_CONTRACT_URL, {
@@ -64,7 +54,6 @@ const ListContractRenter = () => {
     setEndDate(endDate);
   };
   const getFilterContract = async () => {
-    let cookie = localStorage.getItem("Cookie");
     setLoading(true);
     const response = await axios
       .get(FILTER_CONTRACT_URL, {
