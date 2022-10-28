@@ -5,7 +5,7 @@ import Login from "./pages/login/Login";
 import Home from "./pages/home/Home";
 import Building from "./pages/building/Building";
 import Room from "./pages/room/Room";
-import ContractApartment from "./pages/contract/Contract";
+import ContractApartment from "./pages/contract/ContractApartment";
 import ContractRenter from "./pages/contract/ContractRenter";
 import Unauthorized from "./components/Unautharized";
 import RequireAuth from "./components/RequireAuth";
