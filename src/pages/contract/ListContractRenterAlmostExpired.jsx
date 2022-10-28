@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Input, Table, Select, DatePicker, Tag } from "antd";
 import { EyeOutlined, EditOutlined } from "@ant-design/icons";
-
+import useAuth from "../../hooks/useAuth";
 import axios from "../../api/axios";
 const { Search } = Input;
 const LIST_CONTRACT_ALMOST_EXPIRED_URL = "manager/contract/get-contract/1";
@@ -11,12 +11,12 @@ const ListContractRenterAlmostExpired = ({ duration }) => {
   const [dataSource, setDataSource] = useState([]);
   const [textSearch, setTextSearch] = useState("");
   const [loading, setLoading] = useState(false);
+  const { auth } = useAuth();
   useEffect(() => {
     getAllContractAlmostExpired();
   }, []);
-  console.log(duration);
+  let cookie = localStorage.getItem("Cookie");
   const getAllContractAlmostExpired = async () => {
-    let cookie = localStorage.getItem("Cookie");
     setLoading(true);
     const response = await axios
       .get(LIST_CONTRACT_ALMOST_EXPIRED_URL, {

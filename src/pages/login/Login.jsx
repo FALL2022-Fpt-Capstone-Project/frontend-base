@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import useAuth from "../../hooks/useAuth";
-import { Button, Checkbox, Form, Input, notification } from "antd";
+import { Button, Form, Input, notification } from "antd";
 import "antd/dist/antd.min.css";
 import "./login.scss";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -28,18 +28,13 @@ const Login = () => {
           "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
         },
       });
-      console.log(JSON.stringify(response?.data));
-      console.log(JSON.stringify(response?.status.code));
-      //console.log(JSON.stringify(response));
       const accessToken = response?.data?.body.token;
       const roles = response?.data?.body.role;
       const id = response?.data?.body.account_id;
-      const permission = response?.data?.body.permission;
       window.localStorage.setItem("Cookie", `${accessToken}`);
       window.localStorage.setItem("Role", `${roles}`);
       window.localStorage.setItem("id", `${id}`);
-      window.localStorage.setItem("permission", `${permission}`);
-      setAuth({ user_name, password, roles, accessToken });
+      setAuth({ user_name, password, roles, accessToken, id });
       setUser("");
       setPwd("");
       navigate("/home");
@@ -57,11 +52,14 @@ const Login = () => {
           duration: 3,
         });
       }
-      // errRef.current.focus();
     }
   };
+  // setAuth({ user_name, password, roles, accessToken, id });
   return (
     <div className="login-page">
+      <div className="login-heading">
+        <h1 className="login-title">Quản lý chung cư mini</h1>
+      </div>
       <div className="login-box">
         <div className="illustration-wrapper">
           <img

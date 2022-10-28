@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Input, Table, DatePicker, Select, Button, Row, Col, Checkbox, Tag } from "antd";
+import { Input, Table, DatePicker, Select, Button, Row, Col, Checkbox, Tag, Tabs } from "antd";
 import "./listContract.scss";
-
+import useAuth from "../../hooks/useAuth";
 import axios from "../../api/axios";
-import { DeleteOutlined, EditOutlined, SearchOutlined, EyeOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, SearchOutlined, EyeOutlined, UndoOutlined } from "@ant-design/icons";
 import ViewContractRenter from "./ViewContractRenter";
+import { useNavigate } from "react-router-dom";
 const { Search } = Input;
 const LIST_CONTRACT_URL = "manager/contract/get-contract/1";
 const FILTER_CONTRACT_URL = "manager/contract/get-contract/1";
 const { Option } = Select;
 const { RangePicker } = DatePicker;
+
 const ListContractRenter = () => {
+
+  const GET_CONTRACT = "manager/contract/get-contract/rooms/";
   const [dataSource, setDataSource] = useState([]);
   const [textSearch, setTextSearch] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -18,41 +22,18 @@ const ListContractRenter = () => {
   const [duration, setDuration] = useState();
   const [loading, setLoading] = useState(false);
   const [viewContract, setViewContract] = useState(false);
-  const options = [
-    {
-      label: "Hợp đồng còn hiệu lực",
-      value: "newContract",
-    },
-    {
-      label: "Hợp đồng đã kết thúc",
-      value: "endContract",
-    },
-  ];
-  const children = [
-    <Option value={1}>1 tháng</Option>,
-    <Option value={2}>2 tháng</Option>,
-    <Option value={3}>3 tháng</Option>,
-    <Option value={4}>4 tháng</Option>,
-    <Option value={5}>5 tháng</Option>,
-    <Option value={6}>6 tháng</Option>,
-    <Option value={7}>7 tháng</Option>,
-    <Option value={8}>8 tháng</Option>,
-    <Option value={9}>9 tháng</Option>,
-    <Option value={10}>10 tháng</Option>,
-    <Option value={11}>11 tháng</Option>,
-    <Option value={12}>1 năm</Option>,
-    <Option value={24}>2 năm</Option>,
-    <Option value={36}>3 năm</Option>,
-    <Option value={48}>4 năm</Option>,
-    <Option value={60}>5 năm</Option>,
-  ];
+  const [contractId, setContractId] = useState();
+  const [contractInfor, setContractInfor] = useState([]);
 
+  const { auth } = useAuth();
+  const navigate = useNavigate();
+
+  let cookie = localStorage.getItem("Cookie");
   useEffect(() => {
     getAllContract();
   }, []);
 
   const getAllContract = async () => {
-    let cookie = localStorage.getItem("Cookie");
     setLoading(true);
     const response = await axios
       .get(LIST_CONTRACT_URL, {
@@ -76,6 +57,7 @@ const ListContractRenter = () => {
 
     return dateAndTime[0].split("-").reverse().join("-");
   };
+
   const dateChange = (value, dateString) => {
     let [day1, month1, year1] = dateString[0].split("-");
     let startDate = `${year1}-${month1}-${day1}`;
@@ -84,8 +66,8 @@ const ListContractRenter = () => {
     setStartDate(startDate);
     setEndDate(endDate);
   };
+
   const getFilterContract = async () => {
-    let cookie = localStorage.getItem("Cookie");
     setLoading(true);
     const response = await axios
       .get(FILTER_CONTRACT_URL, {
@@ -104,70 +86,107 @@ const ListContractRenter = () => {
       });
     setLoading(false);
   };
+
   const durationChange = (value) => {
     setDuration(value);
   };
+
+  // useEffect(() => {
+  //   getContractById();
+  // }, []);
+
+  const getContractById = async (contractId) => {
+    let cookie = localStorage.getItem("Cookie");
+    await axios
+      .get(GET_CONTRACT + contractId, {
+        headers: {
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${cookie}`,
+        },
+        // withCredentials: true,
+      })
+      .then((res) => {
+        setContractInfor(res.data.body);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <div className="list-contract">
       <div className="list-contract-search">
-        <Row gutter={16} style={{ marginBottom: "20px" }}>
-          <Col className="gutter-row" span={8}>
-            <Row>
-              <label htmlFor="" style={{ marginBottom: "10px" }}>
-                Tìm kiếm hợp đồng trong khoảng thời gian
-              </label>
+        <Tabs defaultActiveKey="1">
+          <Tabs.TabPane tab="Tìm kiếm nâng cao" key="1">
+            <Row gutter={[16, 32]} style={{ marginBottom: "20px" }}>
+              <Col className="gutter-row" span={6} style={{ marginBottom: "30px" }}>
+                <Row>
+                  <label htmlFor="" style={{ marginBottom: "10px" }}>
+                    Tìm kiếm theo tên hợp đồng
+                  </label>
+                </Row>
+                <Row>
+                  <Input placeholder="Nhập tên hợp đồng" />
+                </Row>
+              </Col>
+              <Col className="gutter-row" span={6}>
+                <Row>
+                  <label htmlFor="" style={{ marginBottom: "10px" }}>
+                    Tìm kiếm theo tên khách thuê
+                  </label>
+                </Row>
+                <Row>
+                  <Input placeholder="Nhập tên khách thuê" />
+                </Row>
+              </Col>
+
+              <Col className="gutter-row" span={8} style={{ marginBottom: "30px" }}>
+                <Row>
+                  <label htmlFor="" style={{ marginBottom: "10px" }}>
+                    Tìm kiếm theo thời gian hợp đồng
+                  </label>
+                </Row>
+                <Row>
+                  <RangePicker
+                    format={"DD-MM-YYYY"}
+                    placeholder={["Từ", "Đến"]}
+                    onChange={dateChange}
+                    style={{ marginRight: "50px" }}
+                  />
+                  <Checkbox>Hợp đồng đã kết thúc</Checkbox>
+                </Row>
+              </Col>
             </Row>
-            <Row>
-              <RangePicker format={"DD-MM-YYYY"} placeholder={["Từ", "Đến"]} onChange={dateChange} />
+            <Row style={{ marginBottom: "20px" }}>
+              <Col offset={10}>
+                <Row>
+                  <Button
+                    type="primary"
+                    icon={<SearchOutlined />}
+                    style={{ marginRight: "20px" }}
+                    onClick={getFilterContract}
+                  >
+                    Tìm kiếm
+                  </Button>
+                  <Button icon={<UndoOutlined />}>Đặt lại</Button>
+                </Row>
+              </Col>
             </Row>
-          </Col>
-          <Col className="gutter-row" span={8}>
-            <Row>
-              <label htmlFor="" style={{ marginBottom: "10px" }}>
-                Tìm kiếm theo trạng thái hợp đồng
-              </label>
-            </Row>
-            <Row>
-              <Checkbox.Group options={options} />
-            </Row>
-          </Col>
-          <Col className="gutter-row" span={6}>
-            <Row>
-              <label htmlFor="" style={{ marginBottom: "10px" }}>
-                Tìm kiếm theo thời gian (Tháng, năm)
-              </label>
-            </Row>
-            <Row>
-              <Select
-                placeholder="Tìm kiếm theo thời gian (Tháng, năm)"
-                style={{
-                  width: "100%",
-                }}
-                defaultValue={1}
-                onChange={durationChange}
-              >
-                {children}
-              </Select>
-            </Row>
-          </Col>
-        </Row>
-        <Row style={{ marginBottom: "20px" }}>
-          <Col offset={10}>
-            <Button type="primary" icon={<SearchOutlined />} onClick={getFilterContract}>
-              Tìm kiếm
-            </Button>
-          </Col>
-        </Row>
-        <Search
-          placeholder="Tìm kiếm theo tên hợp đồng hoặc tên khách thuê"
-          style={{ marginBottom: 8, width: 400, padding: "10px 0" }}
-          onSearch={(value) => {
-            setTextSearch(value);
-          }}
-          onChange={(e) => {
-            setTextSearch(e.target.value);
-          }}
-        />
+          </Tabs.TabPane>
+          <Tabs.TabPane tab="Tìm kiếm nhanh" key="2">
+            <Search
+              placeholder="Tìm kiếm theo tên hợp đồng, tên khách thuê"
+              style={{ marginBottom: 8, width: 400, padding: "10px 0" }}
+              onSearch={(value) => {
+                setTextSearch(value);
+              }}
+              onChange={(e) => {
+                setTextSearch(e.target.value);
+              }}
+            />
+          </Tabs.TabPane>
+        </Tabs>
       </div>
       <Table
         bordered
@@ -240,10 +259,13 @@ const ListContractRenter = () => {
             render: (_, record) => {
               return (
                 <>
-                  <EditOutlined style={{ fontSize: "20px", marginRight: "10px" }} />
+                  <EditOutlined style={{ fontSize: "20px", marginRight: "10px" }} onClick={() => {
+                    navigate(`/contract-renter/edit/${record.contract_id}`);
+                  }} />
                   <EyeOutlined style={{ fontSize: "20px" }} onClick={() => {
-                    console.log(record);
                     setViewContract(true);
+                    // setContractId(record.contract_id);
+                    getContractById(record.contract_id);
                   }} />
                 </>
               );
@@ -253,7 +275,7 @@ const ListContractRenter = () => {
         pagination={{ pageSize: 5 }}
         loading={loading}
       />
-      <ViewContractRenter openView={viewContract} closeView={setViewContract} />
+      <ViewContractRenter openView={viewContract} closeView={setViewContract} dataContract={contractInfor} />
     </div>
   );
 };

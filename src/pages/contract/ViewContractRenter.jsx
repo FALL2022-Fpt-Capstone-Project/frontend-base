@@ -2,8 +2,10 @@ import { Button, Card, Checkbox, Col, Input, Modal, Row, Table, Tabs, Tag } from
 import React, { useState, useEffect } from 'react';
 import { ArrowRightOutlined, UserOutlined, FilterOutlined } from "@ant-design/icons";
 import axios from "../../api/axios";
+import { useNavigate } from "react-router-dom";
 
-function ViewContractRenter({ openView, closeView }) {
+function ViewContractRenter({ openView, closeView, dataContract }) {
+    console.log(dataContract);
     const LIST_ASSET_TYPE = "manager/asset/type";
     const APARTMENT_DATA_GROUP = "manager/group/get-group/1";
 
@@ -13,6 +15,8 @@ function ViewContractRenter({ openView, closeView }) {
     const [filterAssetType, setFilterAssetType] = useState([]);
     const [assetStatus, setAssetStatus] = useState([]);
     const [listAssetType, setListAssetType] = useState([]);
+    const navigate = useNavigate();
+
     const dataFilter = {
         id: [],
         asset_type: []
@@ -62,6 +66,9 @@ function ViewContractRenter({ openView, closeView }) {
             title: 'Thời gian',
             dataIndex: 'hand_over_asset_date_delivery',
             key: 'asset_id',
+            render: (hand_over_asset_date_delivery) => {
+                return new Date(hand_over_asset_date_delivery).toLocaleDateString();
+            }
         },
         {
             title: 'Trạng thái',
@@ -136,6 +143,8 @@ function ViewContractRenter({ openView, closeView }) {
             });
     };
 
+
+    // console.log(contractInfor);
     return (
         <>
             <div>
@@ -147,6 +156,9 @@ function ViewContractRenter({ openView, closeView }) {
                             Đóng
                         </Button>,
                     ]}>
+                    <Row>
+                        <Col><h3><b>{dataContract.contract_name}</b></h3></Col>
+                    </Row>
                     <Tabs defaultActiveKey="1">
                         <Tabs.TabPane tab="Thông tin chung" key="1">
                             <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
@@ -157,7 +169,7 @@ function ViewContractRenter({ openView, closeView }) {
                                                 <h4><b>Tên:</b></h4>
                                             </Col>
                                             <Col span={14}>
-                                                <p>Nguyễn Đức Pháp</p>
+                                                <p>{dataContract.renter_name}</p>
                                             </Col>
                                         </Row>
                                         <Row>
@@ -201,7 +213,7 @@ function ViewContractRenter({ openView, closeView }) {
                                                 <h4><b>Thời hạn hợp đồng:</b></h4>
                                             </Col>
                                             <Col span={14}>
-                                                <p>8 tháng</p>
+                                                <p>1 tháng</p>
                                             </Col>
                                         </Row>
                                         <Row>
@@ -209,7 +221,7 @@ function ViewContractRenter({ openView, closeView }) {
                                                 <h4><b>Ngày hợp đồng có hiệu lực:</b></h4>
                                             </Col>
                                             <Col span={14}>
-                                                <p>27/10/2022</p>
+                                                <p>{new Date(dataContract.contract_start_date).toLocaleDateString()}</p>
                                             </Col>
                                         </Row>
                                         <Row>
@@ -217,7 +229,7 @@ function ViewContractRenter({ openView, closeView }) {
                                                 <h4><b>Ngày kết thúc: </b></h4>
                                             </Col>
                                             <Col span={14}>
-                                                <p>27/09/2023</p>
+                                                <p>{new Date(dataContract.contract_end_date).toLocaleDateString()}</p>
                                             </Col>
                                         </Row>
                                         <Row>
@@ -225,7 +237,7 @@ function ViewContractRenter({ openView, closeView }) {
                                                 <h4><b>Chu kỳ thanh toán:</b></h4>
                                             </Col>
                                             <Col span={14}>
-                                                <p>1 tháng 1 lần</p>
+                                                <p>{dataContract.contract_bill_cycle} tháng 1 lần</p>
                                             </Col>
                                         </Row>
                                         <Row>
@@ -233,7 +245,7 @@ function ViewContractRenter({ openView, closeView }) {
                                                 <h4><b>Thời gian thu tiền:</b></h4>
                                             </Col>
                                             <Col span={14}>
-                                                <p>Ngày 30 hàng tháng</p>
+                                                <p>Ngày {dataContract.contract_payment_cycle} hàng tháng</p>
                                             </Col>
                                         </Row>
                                     </Card>
@@ -247,7 +259,7 @@ function ViewContractRenter({ openView, closeView }) {
                                                 <h4><b>Tiền phòng (VNĐ): </b></h4>
                                             </Col>
                                             <Col span={14}>
-                                                <p>100.000.000đ</p>
+                                                <p><b>{new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(dataContract.contract_price)}</b></p>
                                             </Col>
                                         </Row>
                                         <Row>
@@ -255,29 +267,25 @@ function ViewContractRenter({ openView, closeView }) {
                                                 <h4><b>Tiền cọc (VNĐ): </b></h4>
                                             </Col>
                                             <Col span={14}>
-                                                <p>100.000.000đ</p>
+                                                <p><b>{new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(dataContract.contract_deposit)}</b></p>
                                             </Col>
                                         </Row>
                                     </Card>
                                 </Col>
                                 <Col span={12}>
                                     <Card title="Dịch vụ sử dụng" bordered={false}>
-                                        <Row>
-                                            <Col span={10}>
-                                                <h4><b>Dịch vụ điện: </b></h4>
-                                            </Col>
-                                            <Col span={14}>
-                                                <p>3.500 (tính theo đồng hồ điện/nước)</p>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col span={10}>
-                                                <h4><b>Dịch vụ nước: </b></h4>
-                                            </Col>
-                                            <Col span={14}>
-                                                <p>30.000 (tính theo đồng hồ điện/nước)</p>
-                                            </Col>
-                                        </Row>
+                                        {dataContract.list_hand_over_services?.map((obj, index) => {
+                                            return (
+                                                <Row>
+                                                    <Col span={10}>
+                                                        <h4><b>{obj.service_show_name}: </b></h4>
+                                                    </Col>
+                                                    <Col span={14}>
+                                                        <p><b>{new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(obj.service_price)}</b> ({obj.service_type_name})</p>
+                                                    </Col>
+                                                </Row>
+                                            )
+                                        })}
                                     </Card>
                                 </Col>
                             </Row>
@@ -515,7 +523,7 @@ function ViewContractRenter({ openView, closeView }) {
                                                 setFilterAssetType(filters);
                                                 setAssetStatus(filters)
                                             }}
-                                            dataSource={dataAsset}
+                                            dataSource={dataContract.list_hand_over_assets}
                                             columns={columns}
                                             scroll={{ x: 800, y: 600 }}
                                             loading={loading}
@@ -527,7 +535,9 @@ function ViewContractRenter({ openView, closeView }) {
                             <Row></Row>
                         </Tabs.TabPane>
                     </Tabs>
-                    <Button style={{ marginTop: '1%' }} type='primary' icon={<ArrowRightOutlined />}>Chỉnh sửa thông tin hợp đồng</Button>
+                    <Button onClick={() => {
+                        navigate(`/contract-renter/edit/${dataContract.contract_id}`);
+                    }} style={{ marginTop: '1%' }} type='primary' icon={<ArrowRightOutlined />}>Chỉnh sửa thông tin hợp đồng</Button>
                 </Modal>
             </div>
         </>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Input, Table, Select, DatePicker, Tag } from "antd";
 import { EyeOutlined, EditOutlined } from "@ant-design/icons";
-
+import useAuth from "../../hooks/useAuth";
 import axios from "../../api/axios";
 const { Search } = Input;
 const LIST_CONTRACT_LATEST_URL = "manager/contract/get-contract/1";
@@ -14,9 +14,9 @@ const ListContractRenterLatest = ({ duration }) => {
   useEffect(() => {
     getAllContractLatest();
   }, []);
-
+  const { auth } = useAuth();
+  let cookie = localStorage.getItem("Cookie");
   const getAllContractLatest = async () => {
-    let cookie = localStorage.getItem("Cookie");
     setLoading(true);
     const response = await axios
       .get(LIST_CONTRACT_LATEST_URL, {
