@@ -35,8 +35,8 @@ const UpdateStaff = () => {
   const [phone_number, setPhoneNumber] = useState("");
   const [address_more_detail, setAddress_more_detail] = useState("");
   // const [password, setPassword] = useState("");
+  const [collapsed, setCollapsed] = useState(false);
   const [gender, setGender] = useState("");
-  const [permission, setPermission] = useState([]);
   const [deactivate, setDeactivate] = useState();
   const [rolefinal, setRoles] = useState("");
   const [form] = Form.useForm();
@@ -63,7 +63,6 @@ const UpdateStaff = () => {
           gender: res.data.body?.gender,
           roles: role,
           status: res.data.body?.deactiave,
-          permission: res.data?.body.permission,
         });
         setName(res.data.body?.full_name);
         setUserName(res.data.body?.user_name);
@@ -71,7 +70,6 @@ const UpdateStaff = () => {
         setAddress_more_detail(res.data.body?.address_more_detail);
         setGender(res.data.body?.gender);
         setRoles(role);
-        setPermission(res.data?.body.permission);
         setDeactivate(res.data.body?.deactivate);
         console.log(res.data.body);
       });
@@ -84,7 +82,6 @@ const UpdateStaff = () => {
     address_more_detail: address_more_detail,
     deactivate: deactivate,
     role: roles,
-    permission: permission,
   };
 
   function Update(e) {
@@ -110,10 +107,6 @@ const UpdateStaff = () => {
   const genderChange = (e) => {
     setGender(e.target.value);
   };
-
-  const permissionChange = (value) => {
-    setPermission(value);
-  };
   const deactivateChange = (value) => {
     setDeactivate(value);
   };
@@ -124,7 +117,7 @@ const UpdateStaff = () => {
           minHeight: "100vh",
         }}
       >
-        <Sider width={250}>
+        <Sider width={250} collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
           <p className="sider-title">QUẢN LÝ CHUNG CƯ MINI</p>
           <Sidebar />
         </Sider>
