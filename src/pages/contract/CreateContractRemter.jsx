@@ -73,6 +73,7 @@ const CreateContractRenter = () => {
       });
     }
   }
+
   const dataFilter = {
     id: [],
     asset_type: [],
@@ -105,6 +106,9 @@ const CreateContractRenter = () => {
   const [genderChange, setGenderChange] = useState(true);
   const [paymentCircle, setPaymentCircle] = useState(new Date().getDate() < 16 ? 15 : 30);
   const [contractStartDate, setContractStartDate] = useState(moment());
+  const [contractDuration, setContractDuration] = useState();
+  const [contractBillCycle, setContractBillCycle] = useState(1);
+
   const { auth } = useAuth();
   let cookie = localStorage.getItem("Cookie");
   useEffect(() => {
@@ -335,26 +339,13 @@ const CreateContractRenter = () => {
     form.setFieldsValue({
       renter_name: selectOldRenter.renter_full_name,
       renter_phone_number: selectOldRenter.renter_phone_number,
-      // renter_gender: selectOldRenter.renter_gender === "Nam" ? true : false,
+      renter_gender: selectOldRenter.renter_gender === "Nam" ? true : false,
       renter_email: selectOldRenter.renter_email,
       renter_identity_card: selectOldRenter.renter_identity_number,
     });
     setisAdd(false);
   };
   const [listGeneralService, setListGeneralService] = useState([]);
-
-  form.setFieldsValue({
-    contract_term: 1,
-    group_id: dataApartmentGroup?.group_id,
-    contract_start_date: contractStartDate,
-    contract_note: "",
-    renter_gender: genderChange,
-    list_renter: dataMember,
-    list_general_service: listGeneralService,
-    list_hand_over_assets: dataAsset,
-    contract_bill_cycle: 1,
-    contract_payment_cycle: paymentCircle,
-  });
 
   const columnsService = [
     {
@@ -440,10 +431,7 @@ const CreateContractRenter = () => {
       ),
     },
   ];
-  formAddMem.setFieldsValue({
-    license_plates: "",
-    address: "",
-  });
+
   const onFinishAddMem = (e) => {
     const duplicate = dataMember.find(
       (mem) =>
@@ -522,24 +510,25 @@ const CreateContractRenter = () => {
 
   const [roomStatus, setRoomStatus] = useState(true);
 
-  const floors = dataApartmentGroup?.list_rooms
-    ?.map((obj, index) => obj.room_floor)
-    ?.filter(
-      (type, index) => dataApartmentGroup?.list_rooms?.map((obj, index) => obj.room_floor).indexOf(type) === index
-    );
+  const getListFloor = dataApartmentGroup?.list_rooms?.filter((obj, index) => obj.contract_id === null)?.map((o, i) => o.room_floor);
+  const floors = getListFloor?.filter((obj, index) => getListFloor.indexOf(obj) === index);
 
   const [room, setRoom] = useState([]);
   const [roomSelect, setRoomSelect] = useState("");
 
   // console.log(dataApartmentGroup);
   const onFinish = async (e) => {
-    console.log(
-      JSON.stringify({
-        ...e,
-        contract_end_date: new Date(e.contract_end_date).toLocaleDateString(),
-        contract_start_date: new Date(e.contract_start_date).toLocaleDateString(),
-      })
-    );
+    // console.log(
+    //   JSON.stringify({
+    //     ...e,
+    //     contract_end_date: new Date(e.contract_end_date).toLocaleDateString(),
+    //     contract_start_date: new Date(e.contract_start_date).toLocaleDateString(),
+    //   })
+    // );
+    // console.log({
+    //   ...e, contract_end_date: new Date(e.contract_end_date).toLocaleDateString(),
+    //   contract_start_date: new Date(e.contract_start_date).toLocaleDateString(),
+    // });
 
     await axios
       .post(
@@ -581,13 +570,7 @@ const CreateContractRenter = () => {
     message.error("Vui lòng kiểm tra lại thông tin hợp đồng");
   };
 
-  createAssetForm.setFieldsValue({
-    asset_id: assetId,
-    hand_over_asset_date_delivery: formAddAsset.dateOfDelivery,
-    hand_over_asset_quantity: formAddAsset.asset_unit,
-    asset_type_show_name: formAddAsset.asset_type,
-    hand_over_asset_status: formAddAsset.asset_status,
-  });
+
   const addAssetFinish = (e) => {
     setAssetId(e.asset_id - 1);
     const duplicate = dataAsset.find(
@@ -650,7 +633,40 @@ const CreateContractRenter = () => {
     setIsEditAsset(true);
   };
 
-  console.log(form.getFieldsValue());
+  useEffect(() => {
+    loadDefault();
+  }, []);
+
+  const loadDefault = () => {
+    form.setFieldsValue({
+      contract_term: 1,
+      contract_start_date: contractStartDate,
+      renter_gender: genderChange,
+      contract_bill_cycle: contractBillCycle,
+      contract_payment_cycle: paymentCircle,
+    });
+  }
+
+  form.setFieldsValue({
+    group_id: dataApartmentGroup?.group_id,
+    list_renter: dataMember,
+    list_general_service: listGeneralService,
+    list_hand_over_assets: dataAsset,
+  });
+
+  formAddMem.setFieldsValue({
+    license_plates: "",
+    address: "",
+  });
+
+  createAssetForm.setFieldsValue({
+    asset_id: assetId,
+    hand_over_asset_date_delivery: formAddAsset.dateOfDelivery,
+    hand_over_asset_quantity: formAddAsset.asset_unit,
+    asset_type_show_name: formAddAsset.asset_type,
+    hand_over_asset_status: formAddAsset.asset_status,
+  });
+  // console.log(dataApartmentGroup);
   return (
     <div className="contract">
       <Layout
@@ -954,24 +970,24 @@ const CreateContractRenter = () => {
                               <b>Thời hạn hợp đồng (ít nhất 1 tháng): </b>
                             </span>
                           }
-                          rules={[
-                            {
-                              required: true,
-                              message: "Vui lòng chọn thời hạn hợp đồng",
-                            },
-                          ]}
+                        // rules={[
+                        //   {
+                        //     required: true,
+                        //     message: "Vui lòng chọn thời hạn hợp đồng",
+                        //   },
+                        // ]}
                         >
                           <Select
                             placeholder="Thời hạn hợp đồng"
                             onChange={(e) => {
-                              console.log()
+                              setContractDuration(e);
                               form.setFieldsValue({
                                 contract_end_date: moment(
                                   contractStartDate.add(e, "M"),
                                   dateFormatList
                                 ),
                                 contract_start_date: moment(
-                                  contractStartDate.add(-e, "M"),
+                                  contractStartDate.subtract(e, "M"),
                                   dateFormatList
                                 ),
                               });
@@ -1000,7 +1016,13 @@ const CreateContractRenter = () => {
                           ]}
                         >
                           <DatePicker
-                            onChange={(e) => { setContractStartDate(e) }}
+                            onChange={(e) => {
+                              setContractStartDate(e);
+                              const startDate = form.getFieldsValue().contract_start_date;
+                              form.setFieldsValue({
+                                contract_end_date: moment(startDate).add(contractDuration, 'M')
+                              });
+                            }}
                             allowClear={false}
                             style={{ width: "100%" }}
                             placeholder="Ngày vào ở"
@@ -1041,7 +1063,7 @@ const CreateContractRenter = () => {
                             },
                           ]}
                         >
-                          <Select placeholder="Chu kỳ tính tiền" style={{ width: "100%" }}>
+                          <Select onChange={(e) => { setContractBillCycle(e) }} placeholder="Chu kỳ tính tiền" style={{ width: "100%" }}>
                             {contract_duration.map((obj, index) => {
                               return <Option value={obj.contractTermValue}>{obj.contractTermName}</Option>;
                             })}
@@ -1068,7 +1090,7 @@ const CreateContractRenter = () => {
                             },
                           ]}
                         >
-                          <Select onChange={(e) => { setPaymentCircle(e) }} placeholder="Kỳ thanh toán" style={{ width: "100%" }}>
+                          <Select placeholder="Kỳ thanh toán" style={{ width: "100%" }}>
                             <Option value={15}>kỳ 15</Option>
                             <Option value={30}>kỳ 30</Option>
                           </Select>
@@ -1155,9 +1177,6 @@ const CreateContractRenter = () => {
                         - Tiền đặt cọc sẽ không tính vào doanh thu ở các báo cáo và thống kê doanh thu. Nếu bạn muốn
                         tính vào doanh thu bạn ghi nhận vào trong phần thu/chi khác (phát sinh). Tiền đặt cọc sẽ được
                         trừ ra khi tính tiền trả phòng.
-                        <br />
-                        - Các thông tin có giá trị là ngày nhập đủ ngày tháng năm và đúng định dạng dd/MM/yyyy (ví dụ:
-                        01/12/2020)
                         <br />
                         - Chu kỳ tính tiền: là số tháng được tính trên mỗi hóa đơn.
                         <br />
@@ -1463,7 +1482,7 @@ const CreateContractRenter = () => {
                   <Form.Item>
                     <Input.Search
                       placeholder="Nhập tên khách cũ để tìm kiếm"
-                      style={{ marginBottom: 8, width: "30%" }}
+                      style={{ marginBottom: 8, width: "45%" }}
                       onSearch={(e) => {
                         setSearched(e);
                       }}
