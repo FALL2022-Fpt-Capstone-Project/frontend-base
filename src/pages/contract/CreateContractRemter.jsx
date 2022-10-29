@@ -9,6 +9,8 @@ import {
   FilterOutlined,
   ArrowLeftOutlined,
   UserOutlined,
+  AuditOutlined,
+  DollarOutlined,
   QuestionCircleTwoTone
 } from "@ant-design/icons";
 import moment from "moment";
@@ -711,12 +713,18 @@ const CreateContractRenter = () => {
                   <Tabs.TabPane tab="1. Thông tin chung" key="1">
                     <Row>
                       <Col span={8}>
-                        <div style={{ overflow: "auto" }}>
-                          <h3>
-                            <b>Các thông tin về khách thuê </b>
-                          </h3>
-                          {/* <Form.Item className="form-item"> */}
+                        <Row>
+                          <div style={{ overflow: "auto" }}>
+                            <Tag color="blue">
+                              <h3>
+                                <UserOutlined style={{ fontSize: '130%' }} /><b> Các thông tin về khách thuê </b>
+                              </h3>
+                            </Tag>
+                          </div>
+                        </Row>
+                        <Row>
                           <Button
+                            style={{ marginTop: '1%' }}
                             icon={<UserOutlined />}
                             type="primary"
                             size="default"
@@ -726,8 +734,7 @@ const CreateContractRenter = () => {
                           >
                             Lấy thông tin khách cũ
                           </Button>
-                          {/* </Form.Item> */}
-                        </div>
+                        </Row>
                         <Form.Item
                           className="form-item"
                           name="contract_name"
@@ -850,9 +857,11 @@ const CreateContractRenter = () => {
                         </Form.Item>
                       </Col>
                       <Col span={8}>
-                        <h3>
-                          <b>Các thông tin về hợp đồng: </b>
-                        </h3>
+                        <Tag color="blue">
+                          <h3>
+                            <AuditOutlined style={{ fontSize: '130%' }} /><b> Các thông tin về hợp đồng </b>
+                          </h3>
+                        </Tag>
                         <Form.Item className="form-item" name="room_floor" style={{ display: "none" }}></Form.Item>
                         <Form.Item
                           className="form-item"
@@ -1075,9 +1084,11 @@ const CreateContractRenter = () => {
                       </Col>
                       <Col span={8}>
                         <Row>
-                          <h3>
-                            <b>Thông tin giá trị hợp đồng: </b>
-                          </h3>
+                          <Tag color="blue">
+                            <h3>
+                              <DollarOutlined style={{ fontSize: '130%' }} /><b> Thông tin giá trị hợp đồng </b>
+                            </h3>
+                          </Tag>
                           <Form.Item
                             className="form-item"
                             name="contract_price"
@@ -1095,6 +1106,8 @@ const CreateContractRenter = () => {
                             ]}
                           >
                             <InputNumber
+                              controls={false}
+                              addonAfter="VNĐ"
                               defaultValue={0}
                               formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                               parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
@@ -1119,6 +1132,8 @@ const CreateContractRenter = () => {
                             ]}
                           >
                             <InputNumber
+                              controls={false}
+                              addonAfter="VNĐ"
                               defaultValue={0}
                               formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                               parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}

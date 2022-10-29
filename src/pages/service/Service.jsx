@@ -22,6 +22,7 @@ import axios from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 import TextArea from "antd/lib/input/TextArea";
 import useAuth from "../../hooks/useAuth";
+
 function Service(props) {
   const APARTMENT_DATA_GROUP = "manager/group/get-group/1";
   const APARTMENT_SERVICE_GENERAL = "manager/service/general-services/12";
@@ -44,9 +45,11 @@ function Service(props) {
   const [formEditSerivce] = Form.useForm();
   const navigate = useNavigate();
   const { auth } = useAuth();
+
   useEffect(() => {
     listServiceCalcuMethod();
   }, []);
+
   let cookie = localStorage.getItem("Cookie");
   const listServiceCalcuMethod = async () => {
     setLoading(true);
