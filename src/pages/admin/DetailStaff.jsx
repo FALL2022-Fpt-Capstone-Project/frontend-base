@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import "./detailStaff.scss";
-import { Layout, Descriptions, Button } from "antd";
+import { Layout, Descriptions, Button, Row, Col } from "antd";
 import axios from "../../api/axios";
 import { EditOutlined } from "@ant-design/icons";
 import { Link, useParams, useNavigate, NavLink } from "react-router-dom";
@@ -56,12 +56,97 @@ const DetailStaff = () => {
               margin: "10px 16px",
             }}
           >
-            <div>
+            <div className="basic-info" style={{ marginLeft: "5%" }}>
+              <Row>
+                <img
+                  src="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png"
+                  style={{ width: "10%", marginBottom: "10px" }}
+                  alt=""
+                />
+              </Row>
+              <Row>
+                <Col>
+                  <p style={{ fontSize: "16px", fontWeight: "bold" }}>Họ và tên: </p>
+                </Col>
+
+                <Col>
+                  <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.full_name}</p>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <p style={{ fontSize: "16px", fontWeight: "bold" }}>Tên đăng nhập: </p>
+                </Col>
+
+                <Col>
+                  <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.user_name}</p>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <p style={{ fontSize: "16px", fontWeight: "bold" }}>Giới tính: </p>
+                </Col>
+
+                <Col>
+                  <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.gender}</p>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <p style={{ fontSize: "16px", fontWeight: "bold" }}>Chức vụ: </p>
+                </Col>
+                <Col>
+                  {roles === "ADMIN" ? (
+                    <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>ADMIN</p>
+                  ) : (
+                    <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>Nhân viên</p>
+                  )}
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <p style={{ fontSize: "16px", fontWeight: "bold" }}>Số điện thoại: </p>
+                </Col>
+
+                <Col>
+                  <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.phone_number}</p>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <p style={{ fontSize: "16px", fontWeight: "bold" }}>Địa chỉ: </p>
+                </Col>
+
+                <Col>
+                  <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>
+                    {user.address_wards}, {user.address_district}, {user.address_city}
+                  </p>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <p style={{ fontSize: "16px", fontWeight: "bold" }}>Địa chỉ chi tiết: </p>
+                </Col>
+
+                <Col>
+                  <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.address_more_detail}</p>
+                </Col>
+              </Row>
+            </div>
+
+            <div style={{ marginLeft: "3%" }}>
+              {checkRole === "ROLE_ADMIN" ? (
+                <Link to="/manage-admin">
+                  <Button>Quay lại</Button>
+                </Link>
+              ) : (
+                <Button onClick={goBack}>Quay lại</Button>
+              )}
               <NavLink to={`/update-staff/${id}`}>
                 <Button
                   type="primary"
                   icon={<EditOutlined />}
-                  style={{ margin: "20px 0" }}
+                  style={{ margin: "20px 20px" }}
                   size="middle"
                   className="button-add"
                 >
@@ -69,29 +154,6 @@ const DetailStaff = () => {
                 </Button>
               </NavLink>
             </div>
-            <Descriptions title="Thông tin cơ bản">
-              <Descriptions.Item label="Họ và tên">{user.full_name}</Descriptions.Item>
-              <Descriptions.Item label="Tên đăng nhập">{user.user_name}</Descriptions.Item>
-              <Descriptions.Item label="Giới tính">{user.gender}</Descriptions.Item>
-              {roles === "ADMIN" ? (
-                <Descriptions.Item label="Chức vụ">ADMIN</Descriptions.Item>
-              ) : (
-                <Descriptions.Item label="Chức vụ">Nhân viên</Descriptions.Item>
-              )}
-            </Descriptions>
-            <Descriptions title="Thông tin liên hệ">
-              <Descriptions.Item label="Số điện thoại">{user.phone_number}</Descriptions.Item>
-              <Descriptions.Item label="Địa chỉ">{user.address_more_detail}</Descriptions.Item>
-            </Descriptions>
-            {checkRole === "ROLE_ADMIN" ? (
-              <Link to="/manage-admin">
-                <Button type="primary">Quay lại</Button>
-              </Link>
-            ) : (
-              <Button type="primary" onClick={goBack}>
-                Quay lại
-              </Button>
-            )}
             <div
               className="site-layout-background"
               style={{
