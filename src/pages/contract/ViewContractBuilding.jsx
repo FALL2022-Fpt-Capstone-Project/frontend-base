@@ -101,7 +101,7 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                         <Tabs.TabPane tab="Thông tin chung" key="1">
                             <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                                 <Col span={12}>
-                                    <Card title={<Tag color="blue"><h3>Thông tin người cho thuê</h3></Tag>} bordered={false}>
+                                    <Card style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }} title={<Tag color="blue"><h3>Thông tin người cho thuê</h3></Tag>} bordered={false}>
                                         <Row>
                                             <Col span={10}>
                                                 <h4><b>Họ và tên:</b></h4>
@@ -137,7 +137,7 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                                     </Card>
                                 </Col>
                                 <Col span={12}>
-                                    <Card title={<Tag color="blue"><h3>Thông tin chung cư mini/căn hộ</h3></Tag>} bordered={false}>
+                                    <Card style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }} title={<Tag color="blue"><h3>Thông tin chung cư mini/căn hộ</h3></Tag>} bordered={false}>
                                         <Row>
                                             <Col span={10}>
                                                 <h4><b>Tên chung cư/căn hộ:</b></h4>
@@ -215,7 +215,7 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                             </Row>
                             <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                                 <Col span={12}>
-                                    <Card title={<Tag color="blue"><h3>Giá trị hợp đồng</h3></Tag>} bordered={false}>
+                                    <Card style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }} title={<Tag color="blue"><h3>Giá trị hợp đồng</h3></Tag>} bordered={false}>
                                         <Row>
                                             <Col span={10}>
                                                 <h4><b>Giá thuê (VNĐ): </b></h4>
@@ -235,7 +235,7 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                                     </Card>
                                 </Col>
                                 <Col span={12}>
-                                    <Card title={<Tag color="blue"><h3>Dịch vụ chung của tòa nhà</h3></Tag>} bordered={false}>
+                                    <Card style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }} title={<Tag color="blue"><h3>Dịch vụ chung của tòa nhà</h3></Tag>} bordered={false}>
                                         <Row>
                                             <Col span={10}>
                                                 <h4><b>Dịch vụ điện: </b></h4>

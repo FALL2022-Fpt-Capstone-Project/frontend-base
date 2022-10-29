@@ -453,7 +453,7 @@ const CreateContractBuilding = () => {
                                         <Row>
                                             <Col span={12}>
                                                 <Row>
-                                                    <Tag color="blue">
+                                                    <Tag color="blue" style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}>
                                                         <div style={{ overflow: "auto" }}>
                                                             <h3>
                                                                 <UserOutlined style={{ fontSize: '130%' }} /><b> Các thông tin người cho thuê </b>
@@ -551,7 +551,7 @@ const CreateContractBuilding = () => {
                                                     </Form.Item>
                                                 </Row>
                                                 <Row>
-                                                    <Tag color="blue">
+                                                    <Tag color="blue" style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}>
                                                         <h3>
                                                             <AuditOutlined style={{ fontSize: '130%' }} /><b> Các thông tin về hợp đồng </b>
                                                         </h3>
@@ -716,7 +716,7 @@ const CreateContractBuilding = () => {
                                             </Col>
                                             <Col span={12}>
                                                 <Row>
-                                                    <Tag color="blue">
+                                                    <Tag color="blue" style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}>
                                                         <h3>
                                                             <HomeOutlined style={{ fontSize: '130%' }} /><b> Các thông tin tầng và phòng </b>
                                                         </h3>
@@ -817,7 +817,7 @@ const CreateContractBuilding = () => {
                                                     </Form.Item>
                                                 </Row>
                                                 <Row>
-                                                    <Tag color="blue">
+                                                    <Tag color="blue" style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}>
                                                         <h3>
                                                             <DollarOutlined style={{ fontSize: '130%' }} /><b> Thông tin giá trị hợp đồng </b>
                                                         </h3>

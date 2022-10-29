@@ -714,17 +714,15 @@ const CreateContractRenter = () => {
                     <Row>
                       <Col span={8}>
                         <Row>
-                          <div style={{ overflow: "auto" }}>
-                            <Tag color="blue">
-                              <h3>
-                                <UserOutlined style={{ fontSize: '130%' }} /><b> Các thông tin về khách thuê </b>
-                              </h3>
-                            </Tag>
-                          </div>
+                          <Tag color="blue" style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}>
+                            <h3>
+                              <UserOutlined style={{ fontSize: '130%' }} /><b> Các thông tin về khách thuê </b>
+                            </h3>
+                          </Tag>
                         </Row>
                         <Row>
                           <Button
-                            style={{ marginTop: '1%' }}
+                            style={{ marginTop: '1%', wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}
                             icon={<UserOutlined />}
                             type="primary"
                             size="default"
@@ -857,7 +855,7 @@ const CreateContractRenter = () => {
                         </Form.Item>
                       </Col>
                       <Col span={8}>
-                        <Tag color="blue">
+                        <Tag color="blue" style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}>
                           <h3>
                             <AuditOutlined style={{ fontSize: '130%' }} /><b> Các thông tin về hợp đồng </b>
                           </h3>
@@ -1084,7 +1082,7 @@ const CreateContractRenter = () => {
                       </Col>
                       <Col span={8}>
                         <Row>
-                          <Tag color="blue">
+                          <Tag color="blue" style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}>
                             <h3>
                               <DollarOutlined style={{ fontSize: '130%' }} /><b> Thông tin giá trị hợp đồng </b>
                             </h3>

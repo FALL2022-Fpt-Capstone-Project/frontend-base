@@ -163,7 +163,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                         <Tabs.TabPane tab="Thông tin chung" key="1">
                             <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                                 <Col span={12}>
-                                    <Card title={<Tag color="blue"><h3>Thông tin khách thuê</h3></Tag>} bordered={false}>
+                                    <Card style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }} title={<Tag color="blue"><h3>Thông tin khách thuê</h3></Tag>} bordered={false}>
                                         <Row>
                                             <Col span={10}>
                                                 <h4><b>Họ và tên:</b></h4>
@@ -207,7 +207,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                     </Card>
                                 </Col>
                                 <Col span={12}>
-                                    <Card title={<Tag color="blue"><h3>Thông tin hợp đồng</h3></Tag>} bordered={false}>
+                                    <Card style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }} title={<Tag color="blue"><h3>Thông tin hợp đồng</h3></Tag>} bordered={false}>
                                         <Row>
                                             <Col span={10}>
                                                 <h4><b>Phòng cho thuê:</b></h4>
@@ -269,7 +269,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                             </Row>
                             <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                                 <Col span={12}>
-                                    <Card title={<Tag color="blue"><h3>Giá trị hợp đồng</h3></Tag>} bordered={false}>
+                                    <Card style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }} title={<Tag color="blue"><h3>Giá trị hợp đồng</h3></Tag>} bordered={false}>
                                         <Row>
                                             <Col span={10}>
                                                 <h4><b>Tiền phòng (VNĐ): </b></h4>
@@ -289,7 +289,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                     </Card>
                                 </Col>
                                 <Col span={12}>
-                                    <Card title={<Tag color="blue"><h3>Dịch vụ sử dụng</h3></Tag>} bordered={false}>
+                                    <Card style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }} title={<Tag color="blue"><h3>Dịch vụ sử dụng</h3></Tag>} bordered={false}>
                                         {dataContract.list_hand_over_services?.map((obj, index) => {
                                             return (
                                                 <Row>
