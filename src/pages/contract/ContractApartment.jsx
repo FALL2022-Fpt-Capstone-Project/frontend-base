@@ -1,9 +1,10 @@
 import React from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import "./contract.scss";
-import { Layout } from "antd";
+import { Button, Layout } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 import ListContractApartment from "./ListContractApartment";
-
+import "./contract.scss";
 const { Content, Sider, Header } = Layout;
 
 const ContractApartment = () => {
@@ -33,6 +34,17 @@ const ContractApartment = () => {
               margin: "10px 10px",
             }}
           >
+            <div className="btn-contract">
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                size="middle"
+                className="button-add"
+                href="/contract-apartment/create"
+              >
+                Thêm hợp đồng
+              </Button>
+            </div>
             <div
               className="site-layout-background"
               style={{
