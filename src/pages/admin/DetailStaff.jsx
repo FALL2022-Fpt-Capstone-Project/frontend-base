@@ -9,7 +9,7 @@ const { Content, Sider, Header } = Layout;
 const DetailStaff = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-
+  const [collapsed, setCollapsed] = useState(false);
   const goBack = () => navigate("/home");
   const [user, setUser] = useState([]);
   const [roles, setRole] = useState();
@@ -38,7 +38,7 @@ const DetailStaff = () => {
           minHeight: "100vh",
         }}
       >
-        <Sider width={250}>
+        <Sider width={250} collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
           <p className="sider-title">QUẢN LÝ CHUNG CƯ MINI</p>
           <Sidebar />
         </Sider>

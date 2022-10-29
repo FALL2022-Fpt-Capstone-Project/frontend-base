@@ -875,6 +875,18 @@ const CreateContractBuilding = () => {
                                                         />
                                                     </Form.Item>
                                                 </Row>
+                                                <Form.Item
+                                                    className="form-item"
+                                                    name="contract_note"
+                                                    labelCol={{ span: 24 }}
+                                                    label={
+                                                        <span>
+                                                            <b>Ghi chú: </b>
+                                                        </span>
+                                                    }
+                                                >
+                                                    <TextArea rows={4} placeholder="Ghi chú" value={""} />
+                                                </Form.Item>
                                             </Col>
                                         </Row>
                                     </Tabs.TabPane>
@@ -905,14 +917,12 @@ const CreateContractBuilding = () => {
                                                 </p>
                                             </Col>
                                             <Col className="gutter-row" span={4}>
-                                                <Button
-                                                    type="primary"
-                                                    style={{ marginBottom: "1%", float: "right" }}
-                                                    onClick={() => { setAddServiceGeneral(true); }}
-                                                    icon={<PlusCircleOutlined style={{ fontSize: 15 }} />}
-                                                >
-                                                    Thêm mới
-                                                </Button>
+                                                <PlusCircleOutlined
+                                                    onClick={() => {
+                                                        setAddServiceGeneral(true);
+                                                    }}
+                                                    style={{ fontSize: 36, color: "#1890ff", marginBottom: "2%", float: "right" }}
+                                                />
                                             </Col>
                                         </Row>
                                         <Row>

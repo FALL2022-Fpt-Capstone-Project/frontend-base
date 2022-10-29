@@ -1,10 +1,11 @@
-import { Form, Input, Radio, Select, Checkbox, Layout } from "antd";
-import React, { useState } from "react";
+import { Form, Input, Radio, Checkbox, Layout, Button } from "antd";
+import React, { useEffect, useState } from "react";
+import Select from "react-select";
 import Sidebar from "../../components/sidebar/Sidebar";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, NavLink } from "react-router-dom";
+import useLocationForm from "../building/useLocationForm";
 import "./createStaff.scss";
 import axios from "../../api/axios";
-import { StepPanel } from "./StepPanel";
 import useAuth from "../../hooks/useAuth";
 const { Content, Sider, Header } = Layout;
 const { Option } = Select;
@@ -27,66 +28,42 @@ const formItemLayout = {
     },
   },
 };
-
-const adminOptions = [
-  {
-    label: "Quản lý cơ sở vật chất",
-    value: 1,
-  },
-  {
-    label: "Quản lý nguồn tiền",
-    value: 2,
-  },
-  {
-    label: "Quản lý hoá đơn",
-    value: 3,
-  },
-  {
-    label: "Quản lý hợp đồng",
-    value: 4,
-  },
-  {
-    label: "Quản lý nhân viên",
-    value: 5,
-  },
-];
-const staffOptions = [
-  {
-    label: "Quản lý cơ sở vật chất",
-    value: 1,
-  },
-  {
-    label: "Quản lý nguồn tiền",
-    value: 2,
-  },
-  {
-    label: "Quản lý hoá đơn",
-    value: 3,
-  },
-  {
-    label: "Quản lý hợp đồng",
-    value: 4,
-  },
+const options = [
+  { value: "admin", label: "Admin" },
+  { value: "staff", label: "Nhân viên" },
 ];
 
 const CreateStaff = () => {
+  const { state, onCitySelect, onDistrictSelect, onWardSelect } = useLocationForm(false);
+  const { cityOptions, districtOptions, wardOptions, selectedCity, selectedDistrict, selectedWard } = state;
+  const [address_city, setBuildingCty] = useState("");
+  const [address_district, setBuildingDistrict] = useState("");
+  const [address_wards, setBuildingWard] = useState("");
+  const [collapsed, setCollapsed] = useState(false);
   const { auth } = useAuth();
   let cookie = localStorage.getItem("Cookie");
-  let role = localStorage.getItem("Role");
   const [gender, setGender] = useState("");
   const [roles, setRoles] = useState("staff");
 
   const [form] = Form.useForm();
 
   const navigate = useNavigate();
+
+  const Address = () => {
+    setBuildingCty(selectedCity?.label);
+    setBuildingDistrict(selectedDistrict?.label);
+    setBuildingWard(selectedWard?.label);
+    // address();
+  };
+  useEffect(() => {
+    Address();
+  });
   const handleCreateEmployee = async (value) => {
     let rolefinal;
-    let role;
-    if (typeof value.roles == "undefined") {
+    if (typeof roles == "undefined") {
       rolefinal = ["staff"];
     } else {
-      role = value.roles;
-      rolefinal = role.split();
+      rolefinal = roles.split();
     }
     if (typeof value.gender == "undefined") {
       value.gender = "Nam";
@@ -99,8 +76,10 @@ const CreateStaff = () => {
       phone_number: value.phone_number,
       gender: value.gender,
       role: rolefinal,
+      address_city: address_city,
+      address_district: address_district,
+      address_wards: address_wards,
       address_more_detail: value.address_more_detail,
-      permission: value.permission,
     };
     const response = await axios
       .post(ADD_EMPLOYEE_URL, employee, {
@@ -120,133 +99,9 @@ const CreateStaff = () => {
     setGender(e.target.value);
   };
   const roleChange = (value) => {
-    setRoles(value);
-    console.log(value);
-  };
-  const Step1Form = () => {
-    return (
-      <>
-        <Form.Item
-          name="full_name"
-          label="Tên nhân viên"
-          rules={[
-            {
-              message: "Vui lòng nhập tên nhân viên!",
-            },
-            {
-              required: true,
-              message: "Vui lòng nhập tên nhân viên!",
-            },
-          ]}
-        >
-          <Input autoComplete="off" />
-        </Form.Item>
-        <Form.Item
-          name="user_name"
-          label="Tên đăng nhập"
-          rules={[
-            {
-              message: "Vui lòng nhập tên đăng nhập!",
-            },
-            {
-              required: true,
-              message: "Vui lòng nhập tên đăng nhập!",
-            },
-          ]}
-        >
-          <Input autoComplete="off" />
-        </Form.Item>
-        <Form.Item
-          name="password"
-          label="Mật khẩu"
-          rules={[
-            {
-              message: "Vui lòng nhập mật khẩu!",
-            },
-            {
-              required: true,
-              message: "Vui lòng nhập mật khẩu!",
-            },
-          ]}
-        >
-          <Input autoComplete="off" />
-        </Form.Item>
-        <Form.Item
-          name="phone_number"
-          label="Số điện thoại"
-          rules={[
-            {
-              required: true,
-              message: "Vui lòng nhập số điện thoại!",
-            },
-          ]}
-        >
-          <Input autoComplete="off" />
-        </Form.Item>
-        <Form.Item name="gender" label="Giới tính">
-          <Radio.Group onChange={genderChange} defaultValue={"Nam"}>
-            <Radio value={"Nam"}>Nam</Radio>
-            <Radio value={"Nữ"}>Nữ</Radio>
-          </Radio.Group>
-        </Form.Item>
-        <Form.Item
-          name="address_more_detail"
-          label="Địa chỉ"
-          // rules={[
-          //   {
-          //     message: "Vui lòng nhập địa chỉ!",
-          //   },
-          //   {
-          //     required: true,
-          //     message: "Vui lòng nhập địa chỉ!",
-          //   },
-          // ]}
-        >
-          <Input autoComplete="off" />
-        </Form.Item>
-        <Form.Item name="roles" label="Vai trò">
-          <Select
-            defaultValue="Staff"
-            style={{
-              width: 120,
-            }}
-            onChange={roleChange}
-          >
-            <Option value="admin">ADMIN</Option>
-            <Option value="staff">STAFF</Option>
-          </Select>
-        </Form.Item>
-      </>
-    );
-  };
-  const Step2Form = () => {
-    return (
-      <>
-        {roles === "ROLE_ADMIN" || roles === "admin" || roles === "Admin" ? (
-          <Form.Item name="permission" label="Quyền truy cập">
-            <Checkbox.Group options={adminOptions} />
-          </Form.Item>
-        ) : (
-          <Form.Item name="permission" label="Quyền truy cập">
-            <Checkbox.Group options={staffOptions} />
-          </Form.Item>
-        )}
-      </>
-    );
+    setRoles(value.value);
   };
 
-  const steps = [
-    {
-      step: 1,
-      title: "Thông tin cơ bản",
-      content: <Step1Form />,
-    },
-    {
-      step: 2,
-      title: "Cấp quyền nhân viên",
-      content: <Step2Form />,
-    },
-  ];
   return (
     <div className="create-staff">
       <Layout
@@ -254,7 +109,7 @@ const CreateStaff = () => {
           minHeight: "100vh",
         }}
       >
-        <Sider width={250}>
+        <Sider width={250} collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
           <p className="sider-title">QUẢN LÝ CHUNG CƯ MINI</p>
           <Sidebar />
         </Sider>
@@ -280,7 +135,136 @@ const CreateStaff = () => {
               onFinish={handleCreateEmployee}
               style={{ margin: "30px", width: 700 }}
             >
-              <StepPanel steps={steps} />
+              <Form.Item
+                name="full_name"
+                label="Tên nhân viên"
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập tên nhân viên!",
+                  },
+                ]}
+              >
+                <Input autoComplete="off" />
+              </Form.Item>
+              <Form.Item
+                name="user_name"
+                label="Tên đăng nhập"
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập tên đăng nhập!",
+                  },
+                ]}
+              >
+                <Input autoComplete="off" />
+              </Form.Item>
+              <Form.Item
+                name="password"
+                label="Mật khẩu"
+                hasFeedback
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập mật khẩu!",
+                  },
+                ]}
+              >
+                <Input.Password />
+              </Form.Item>
+              <Form.Item
+                name="comfirmPassword"
+                label="Nhập lại mật khẩu"
+                dependencies={["password"]}
+                hasFeedback
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập lại mật khẩu",
+                  },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value || getFieldValue("password") === value) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(new Error("Mật khẩu không khớp!"));
+                    },
+                  }),
+                ]}
+              >
+                <Input.Password />
+              </Form.Item>
+              <Form.Item
+                name="phone_number"
+                label="Số điện thoại"
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập số điện thoại!",
+                  },
+                ]}
+              >
+                <Input autoComplete="off" />
+              </Form.Item>
+              <Form.Item name="gender" label="Giới tính">
+                <Radio.Group onChange={genderChange} defaultValue={"Nam"}>
+                  <Radio value={"Nam"}>Nam</Radio>
+                  <Radio value={"Nữ"}>Nữ</Radio>
+                </Radio.Group>
+              </Form.Item>
+              <Form.Item name="building_address_city" label="Thành phố">
+                <Select
+                  name="cityId"
+                  key={`cityId_${selectedCity?.value}`}
+                  isDisabled={cityOptions.length === 0}
+                  options={cityOptions}
+                  onChange={(option) => onCitySelect(option)}
+                  placeholder="Tỉnh/Thành"
+                  defaultValue={selectedCity}
+                />
+              </Form.Item>
+              <Form.Item name="building_address_district" label="Quận/Huyện">
+                <Select
+                  name="districtId"
+                  key={`districtId_${selectedDistrict?.value}`}
+                  isDisabled={districtOptions.length === 0}
+                  options={districtOptions}
+                  onChange={(option) => onDistrictSelect(option)}
+                  placeholder="Quận/Huyện"
+                  defaultValue={selectedDistrict}
+                />
+              </Form.Item>
+
+              <Form.Item name="building_address_wards" label="Phường/Xã">
+                <Select
+                  name="wardId"
+                  key={`wardId_${selectedWard?.value}`}
+                  isDisabled={wardOptions.length === 0}
+                  options={wardOptions}
+                  placeholder="Phường/Xã"
+                  onChange={(option) => onWardSelect(option)}
+                  defaultValue={selectedWard}
+                />
+              </Form.Item>
+              <Form.Item name="address_more_detail" label="Địa chỉ">
+                <Input autoComplete="off" />
+              </Form.Item>
+              <Form.Item name="roles" label="Vai trò">
+                <Select
+                  defaultValue={{ label: "Nhân viên", value: "staff" }}
+                  style={{
+                    width: 120,
+                  }}
+                  onChange={roleChange}
+                  options={options}
+                />
+              </Form.Item>
+              <NavLink to="/manage-admin">
+                <Button style={{ marginRight: "20px" }}>Quay lại</Button>
+              </NavLink>
+              <Button type="primary" htmlType="submit">
+                Tạo mới
+              </Button>
             </Form>
             <div
               className="site-layout-background"

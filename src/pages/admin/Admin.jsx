@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 
 const { Content, Sider, Header } = Layout;
 const Admin = () => {
+  const [collapsed, setCollapsed] = useState(false);
   return (
     <div>
       <div className="admin">
@@ -16,7 +17,7 @@ const Admin = () => {
             minHeight: "100vh",
           }}
         >
-          <Sider width={250}>
+          <Sider width={250} collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
             <p className="sider-title">QUẢN LÝ CHUNG CƯ MINI</p>
             <Sidebar />
           </Sider>

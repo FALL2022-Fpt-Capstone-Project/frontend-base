@@ -163,10 +163,10 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                         <Tabs.TabPane tab="Thông tin chung" key="1">
                             <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                                 <Col span={12}>
-                                    <Card title="Thông tin khách thuê" bordered={false}>
+                                    <Card title={<Tag color="blue"><h3>Thông tin khách thuê</h3></Tag>} bordered={false}>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Tên:</b></h4>
+                                                <h4><b>Họ và tên:</b></h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>{dataContract.renter_name}</p>
@@ -196,10 +196,18 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                                 <p>012345678911</p>
                                             </Col>
                                         </Row>
+                                        <Row>
+                                            <Col span={10}>
+                                                <h4><b>Email:</b></h4>
+                                            </Col>
+                                            <Col span={14}>
+                                                <p>example@gmail.com</p>
+                                            </Col>
+                                        </Row>
                                     </Card>
                                 </Col>
                                 <Col span={12}>
-                                    <Card title="Thông tin hợp đồng" bordered={false}>
+                                    <Card title={<Tag color="blue"><h3>Thông tin hợp đồng</h3></Tag>} bordered={false}>
                                         <Row>
                                             <Col span={10}>
                                                 <h4><b>Phòng cho thuê:</b></h4>
@@ -234,6 +242,14 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
+                                                <h4><b>Trạng thái hợp đồng: </b></h4>
+                                            </Col>
+                                            <Col span={14}>
+                                                <Tag color="green">Còn hiệu lực</Tag>| <Tag color="red">Hết hiệu lực</Tag>
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col span={10}>
                                                 <h4><b>Chu kỳ thanh toán:</b></h4>
                                             </Col>
                                             <Col span={14}>
@@ -253,7 +269,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                             </Row>
                             <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                                 <Col span={12}>
-                                    <Card title="Giá trị hợp đồng" bordered={false}>
+                                    <Card title={<Tag color="blue"><h3>Giá trị hợp đồng</h3></Tag>} bordered={false}>
                                         <Row>
                                             <Col span={10}>
                                                 <h4><b>Tiền phòng (VNĐ): </b></h4>
@@ -273,7 +289,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                     </Card>
                                 </Col>
                                 <Col span={12}>
-                                    <Card title="Dịch vụ sử dụng" bordered={false}>
+                                    <Card title={<Tag color="blue"><h3>Dịch vụ sử dụng</h3></Tag>} bordered={false}>
                                         {dataContract.list_hand_over_services?.map((obj, index) => {
                                             return (
                                                 <Row>
@@ -309,7 +325,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                     >
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Tên: </b></h4>
+                                                <h4><b>Họ và tên: </b></h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>Nguyễn Đức Pháp</p>
@@ -369,7 +385,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                     >
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Tên: </b></h4>
+                                                <h4><b>Họ và tên: </b></h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>Nguyễn Đức Pháp</p>
@@ -429,7 +445,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                     >
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Tên: </b></h4>
+                                                <h4><b>Họ và tên: </b></h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>Nguyễn Đức Pháp</p>
