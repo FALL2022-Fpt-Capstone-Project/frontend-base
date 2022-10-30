@@ -39,36 +39,36 @@ const ContractRenter = () => {
   const showModalEnd = () => {
     setIsModalEndOpen(true);
   };
-  const durationChange = (value) => {
+  const durationChange = async (value) => {
     console.log(value);
     setDuration(value);
-    getCountContract();
   };
 
   useEffect(() => {
+    const getCountContract = async () => {
+      const response = await axios
+        .get(COUNT_CONTRACT_GROUP, {
+          params: { duration: duration },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cookie}`,
+          },
+        })
+        .then((res) => {
+          console.log(res);
+          setcountAlmostExpired(res.data.body?.almost_expired_contract);
+          setcountExpired(res.data.body?.expired_contract);
+          setcountLatest(res.data.body?.latest_contract);
+          console.log(res.data.body?.almost_expired_contract);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
     getCountContract();
-  }, []);
+  }, [duration]);
   let cookie = localStorage.getItem("Cookie");
-  const getCountContract = async () => {
-    const response = await axios
-      .get(COUNT_CONTRACT_GROUP, {
-        params: { duration: duration },
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${cookie}`,
-        },
-      })
-      .then((res) => {
-        console.log(res);
-        setcountAlmostExpired(res.data.body?.almost_expired_contract);
-        setcountExpired(res.data.body?.expired_contract);
-        setcountLatest(res.data.body?.latest_contract);
-        console.log(res.data.body?.almost_expired_contract);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+
   return (
     <div className="contract">
       <Layout

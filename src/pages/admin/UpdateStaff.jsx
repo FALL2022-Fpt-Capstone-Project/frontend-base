@@ -1,10 +1,9 @@
-import { Form, Input, Radio, Select, Checkbox, Switch, Layout, Button } from "antd";
+import { Form, Input, Radio, Select, notification, Switch, Layout, Button } from "antd";
 import "./updateStaff.scss";
 import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../../components/sidebar/Sidebar";
-import { Link } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 const { Content, Sider, Header } = Layout;
 const { Option } = Select;
@@ -39,6 +38,7 @@ const UpdateStaff = () => {
   const [gender, setGender] = useState("");
   const [deactivate, setDeactivate] = useState();
   const [rolefinal, setRoles] = useState("");
+
   const [form] = Form.useForm();
   const { id } = useParams();
   const navigate = useNavigate();
@@ -82,6 +82,7 @@ const UpdateStaff = () => {
     address_more_detail: address_more_detail,
     deactivate: deactivate,
     role: roles,
+    permission: [1],
   };
 
   function Update(e) {
@@ -97,7 +98,13 @@ const UpdateStaff = () => {
         navigate(`/detail-staff/${id}`);
         console.log(res);
       })
-      .catch((e) => console.log(e.request));
+      .catch((e) =>
+        notification.error({
+          message: "Chỉnh sửa nhân viên thất bại",
+          description: "Vui lòng kiểm tra lại thông tin và thử lại.",
+          duration: 3,
+        })
+      );
     console.log(data);
   }
   const roleChange = (value) => {
