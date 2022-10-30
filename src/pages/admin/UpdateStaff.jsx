@@ -42,8 +42,10 @@ const UpdateStaff = () => {
   const [form] = Form.useForm();
   const { id } = useParams();
   const navigate = useNavigate();
+  console.log(rolefinal);
   let roles = rolefinal.split(" ");
   let cookie = localStorage.getItem("Cookie");
+  let roleInfo = localStorage.getItem("Role");
   useEffect(() => {
     axios
       .get(`manager/account/staff-account/${id}`, {
@@ -95,7 +97,11 @@ const UpdateStaff = () => {
         },
       })
       .then((res) => {
-        navigate(`/detail-staff/${id}`);
+        if (roleInfo === "ROLE_ADMIN") {
+          navigate("/manage-admin");
+        } else {
+          navigate("/home");
+        }
         console.log(res);
       })
       .catch((e) =>
@@ -234,9 +240,15 @@ const UpdateStaff = () => {
               <Form.Item name="status" label="Khoá tài khoản nhân viên">
                 <Switch checked={deactivate} onChange={deactivateChange} />
               </Form.Item>
-              <NavLink to={`/detail-staff/${id}`}>
-                <Button style={{ marginRight: "20px" }}>Quay lại</Button>
-              </NavLink>
+              {rolefinal === "ADMIN" ? (
+                <NavLink to="/manage-admin">
+                  <Button style={{ marginRight: "20px" }}>Quay lại</Button>
+                </NavLink>
+              ) : (
+                <NavLink to="/home">
+                  <Button style={{ marginRight: "20px" }}>Quay lại</Button>
+                </NavLink>
+              )}
               <Button type="primary" htmlType="submit" onClick={Update}>
                 Cập nhật
               </Button>
