@@ -217,6 +217,7 @@ const CreateContractBuilding = () => {
                 console.log(error);
             });
     };
+    console.log(listAssetType);
     const [listGeneralService, setListGeneralService] = useState([]);
 
     form.setFieldsValue({
@@ -968,10 +969,10 @@ const CreateContractBuilding = () => {
                                                     <p><i>Thêm mới nhanh các tài sản cơ bản (điều hòa, giường tủ, nóng lạnh,...) giúp việc nhập dữ liệu nhanh hơn</i></p>
                                                 </Row>
                                                 <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                                                    <Col span={8}>
+                                                    <Col>
                                                         <Input.Search
                                                             placeholder="Nhập tên tài sản để tìm kiếm"
-                                                            style={{ marginBottom: 8 }}
+                                                            style={{ marginBottom: 8, width: 400 }}
                                                             onSearch={(e) => {
                                                                 setSearched(e);
                                                             }}
@@ -980,7 +981,9 @@ const CreateContractBuilding = () => {
                                                             }}
                                                         />
                                                     </Col>
-                                                    <Col span={12}>
+                                                </Row>
+                                                <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+                                                    <Col span={22}>
                                                         <Row>
                                                             <FilterOutlined style={{ fontSize: "150%" }} />
                                                             <p><b>Loại tài sản: </b></p>
@@ -995,7 +998,7 @@ const CreateContractBuilding = () => {
                                                             ></Checkbox.Group>
                                                         </Row>
                                                     </Col>
-                                                    <Col span={4}>
+                                                    <Col span={2}>
                                                         <PlusCircleOutlined
                                                             onClick={() => {
                                                                 setAddAssetInRoom(true);
@@ -1037,6 +1040,24 @@ const CreateContractBuilding = () => {
                                     </Tabs.TabPane>
                                 </Tabs>
                             </Form>
+                            <Button
+                                style={changeTab === "1" ? { display: "none" } : { display: "inline", marginRight: '0.5%' }}
+                                type="default"
+                                onClick={() => {
+                                    setChangeTab((pre) => {
+                                        if (pre === "1") {
+                                            return "3";
+                                        } else {
+                                            return (parseInt(pre) - 1).toString();
+                                        }
+                                    });
+                                    if (changeTab === "3") {
+                                        setVisibleSubmit(false);
+                                    }
+                                }}
+                            >
+                                Quay lại
+                            </Button>
                             {visibleSubmit ? (
                                 <Button
                                     htmlType="submit"
@@ -1068,24 +1089,6 @@ const CreateContractBuilding = () => {
                                 }}
                             >
                                 Tiếp
-                            </Button>
-                            <Button
-                                style={changeTab === "1" ? { display: "none" } : { display: "inline" }}
-                                type="default"
-                                onClick={() => {
-                                    setChangeTab((pre) => {
-                                        if (pre === "1") {
-                                            return "3";
-                                        } else {
-                                            return (parseInt(pre) - 1).toString();
-                                        }
-                                    });
-                                    if (changeTab === "3") {
-                                        setVisibleSubmit(false);
-                                    }
-                                }}
-                            >
-                                Quay lại
                             </Button>
                             <Modal
                                 title="Thêm tài sản mới"

@@ -503,7 +503,7 @@ function Service(props) {
                     rules={[
                       {
                         required: true,
-                        message: "Vui lòng nhập tên dịch vụ",
+                        message: "Vui lòng chọn tên dịch vụ",
                         whitespace: true,
                       },
                     ]}

@@ -9,7 +9,7 @@ import {
     Tag
 } from "antd";
 import { EditOutlined, DeleteOutlined, UserOutlined, PlusOutlined } from "@ant-design/icons";
-import { useState } from "react";
+import React, { useState } from "react";
 import moment from 'moment';
 import { Link } from "react-router-dom";
 const { Content, Sider, Header } = Layout;
@@ -37,67 +37,6 @@ function room(props) {
 
     }
     const renter = [];
-    // const renter = [{
-    //     index: 1,
-    //     roomCode: 'A201C',
-    //     owner: `Nguyen Duc Phap`,
-    //     building: 'Toa nha 15',
-    //     floor: 10,
-    //     numberOfRenter: 3,
-    //     square: `500m2`,
-    //     dateOfHire: `30/09/2022`,
-    //     contractExpirationDate: `30/09/2023`,
-    //     price: '2000000',
-    //     deposit: '2000000',
-    //     debit: '2000000',
-    //     status: true
-    // },
-    // {
-    //     index: 2,
-    //     roomCode: 'B201C',
-    //     owner: `Nguyen Duc Phanh`,
-    //     building: 'Toa nha 16',
-    //     floor: 5,
-    //     numberOfRenter: 4,
-    //     square: `600m2`,
-    //     dateOfHire: `30/08/2022`,
-    //     contractExpirationDate: `30/08/2025`,
-    //     price: '2000000',
-    //     deposit: '2000000',
-    //     debit: '2000000',
-    //     status: true
-    // },
-    // {
-    //     index: 3,
-    //     roomCode: 'C201',
-    //     owner: `Nguyen Duc Xo`,
-    //     building: 'Toa nha 16',
-    //     floor: 5,
-    //     numberOfRenter: 5,
-    //     square: `600m2`,
-    //     dateOfHire: `30/08/2022`,
-    //     contractExpirationDate: `30/08/2027`,
-    //     price: '2000000',
-    //     deposit: '2000000',
-    //     debit: '2000000',
-    //     status: true
-    // },
-    // {
-    //     index: 4,
-    //     roomCode: 'D201',
-    //     owner: null,
-    //     building: 'Toa nha 19',
-    //     floor: 5,
-    //     numberOfRenter: 0,
-    //     square: `600m2`,
-    //     dateOfHire: null,
-    //     contractExpirationDate: null,
-    //     price: '2000000',
-    //     deposit: '2000000',
-    //     debit: '2000000',
-    //     status: false
-    // }
-    // ];
     for (let i = 0; i < 100; i++) {
         if ((Math.floor(Math.random() * (100 - 1 + 1)) + 1) % 2 === 0) {
             renter.push({
@@ -136,11 +75,6 @@ function room(props) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [dataSource, setDataSource] = useState(renter);
     const columns = [
-        {
-            title: 'STT',
-            dataIndex: 'index',
-            key: 'index',
-        },
         {
             title: 'Phòng',
             dataIndex: 'roomCode',
@@ -392,7 +326,7 @@ function room(props) {
                             <Table
                                 dataSource={dataSource}
                                 columns={columns}
-                                scroll={{ x: 1800, y: 600 }}>
+                                scroll={{ x: 1600, y: 600 }} width>
                             </Table>
                             <Modal
                                 title="Thêm phòng"

@@ -992,7 +992,7 @@ const CreateContractRenter = () => {
                                 ),
                               });
                             }}
-                          >
+                          > 
                             {contract_duration.map((obj, index) => {
                               return <Option value={obj.contractTermValue}>{obj.contractTermName}</Option>;
                             })}
@@ -1339,10 +1339,10 @@ const CreateContractRenter = () => {
                           </p>
                         </Form.Item>
                         <Row>
-                          <Col span={8}>
+                          <Col>
                             <Input.Search
                               placeholder="Nhập tên tài sản để tìm kiếm"
-                              style={{ marginBottom: 8 }}
+                              style={{ marginBottom: 8, width: 400 }}
                               onSearch={(e) => {
                                 setSearched(e);
                               }}
@@ -1353,13 +1353,12 @@ const CreateContractRenter = () => {
                           </Col>
                         </Row>
                         <Row>
-                          <Col span={2}>
-                            <FilterOutlined style={{ fontSize: "150%" }} />
-                            <b>Loại tài sản:</b>
-                          </Col>
-                          <Col span={18}>
+                          <Col span={22}>
                             <Row>
+                              <FilterOutlined style={{ fontSize: "150%" }} />
+                              <b>Loại tài sản: </b>
                               <Checkbox.Group
+                                style={{ paddingLeft: '1%' }}
                                 options={listAssetType.map((obj, index) => {
                                   return obj.asset_type_show_name;
                                 })}
@@ -1370,7 +1369,7 @@ const CreateContractRenter = () => {
                               ></Checkbox.Group>
                             </Row>
                           </Col>
-                          <Col span={4}>
+                          <Col span={2}>
                             <PlusCircleOutlined
                               onClick={() => {
                                 setAddAssetInRoom(true);
@@ -1412,10 +1411,28 @@ const CreateContractRenter = () => {
                   </Tabs.TabPane>
                 </Tabs>
               </Form>
+              <Button
+                style={changeTab === "1" ? { display: "none" } : { display: "inline", marginRight: '0.5%' }}
+                type="default"
+                onClick={() => {
+                  setChangeTab((pre) => {
+                    if (pre === "1") {
+                      return "4";
+                    } else {
+                      return (parseInt(pre) - 1).toString();
+                    }
+                  });
+                  if (changeTab === "4") {
+                    setVisibleSubmit(false);
+                  }
+                }}
+              >
+                Quay lại
+              </Button>
               {visibleSubmit ? (
                 <Button
                   htmlType="submit"
-                  style={{ marginTop: "1%", marginRight: "1%" }}
+                  style={{ marginTop: "1%" }}
                   type="primary"
                   form="create-contract"
                 >
@@ -1426,7 +1443,7 @@ const CreateContractRenter = () => {
               )}
               <Button
                 style={
-                  visibleSubmit ? { display: "none" } : { marginTop: "1%", marginRight: "0.5%", display: "inline" }
+                  visibleSubmit ? { display: "none" } : { marginTop: "1%", display: "inline" }
                 }
                 type="primary"
                 onClick={() => {
@@ -1443,24 +1460,6 @@ const CreateContractRenter = () => {
                 }}
               >
                 Tiếp
-              </Button>
-              <Button
-                style={changeTab === "1" ? { display: "none" } : { display: "inline" }}
-                type="default"
-                onClick={() => {
-                  setChangeTab((pre) => {
-                    if (pre === "1") {
-                      return "4";
-                    } else {
-                      return (parseInt(pre) - 1).toString();
-                    }
-                  });
-                  if (changeTab === "4") {
-                    setVisibleSubmit(false);
-                  }
-                }}
-              >
-                Quay lại
               </Button>
               <Modal
                 title="Các thông tin khách hàng cũ"
