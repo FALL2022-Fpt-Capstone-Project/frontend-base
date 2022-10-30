@@ -4,12 +4,17 @@ import "./listContract.scss";
 import useAuth from "../../hooks/useAuth";
 import axios from "../../api/axios";
 import { DeleteOutlined, EditOutlined, SearchOutlined, EyeOutlined, UndoOutlined } from "@ant-design/icons";
+import ViewContractRenter from "./ViewContractRenter";
+import { useNavigate } from "react-router-dom";
 const { Search } = Input;
 const LIST_CONTRACT_URL = "manager/contract/get-contract/1";
 const FILTER_CONTRACT_URL = "manager/contract/get-contract/1";
 const { Option } = Select;
 const { RangePicker } = DatePicker;
+
 const ListContractRenter = () => {
+
+  const GET_CONTRACT = "manager/contract/get-contract/rooms/";
   const [dataSource, setDataSource] = useState([]);
   const [textSearch, setTextSearch] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -20,7 +25,13 @@ const ListContractRenter = () => {
   const [duration, setDuration] = useState();
   const [price, setPrice] = useState({ min: 0, max: 1000000 });
   const [loading, setLoading] = useState(false);
+  const [viewContract, setViewContract] = useState(false);
+  const [contractId, setContractId] = useState();
+  const [contractInfor, setContractInfor] = useState([]);
+
   const { auth } = useAuth();
+  const navigate = useNavigate();
+
   let cookie = localStorage.getItem("Cookie");
   useEffect(() => {
     getAllContract();
@@ -44,11 +55,13 @@ const ListContractRenter = () => {
       });
     setLoading(false);
   };
+
   const getFullDate = (date) => {
     const dateAndTime = date.split("T");
 
     return dateAndTime[0].split("-").reverse().join("-");
   };
+
   const dateChange = (value, dateString) => {
     let [day1, month1, year1] = dateString[0].split("-");
     let startDate = `${year1}-${month1}-${day1}`;
@@ -57,6 +70,7 @@ const ListContractRenter = () => {
     setStartDate(startDate);
     setEndDate(endDate);
   };
+
   const getFilterContract = async () => {
     // setLoading(true);
     // const response = await axios
@@ -77,9 +91,11 @@ const ListContractRenter = () => {
     // setLoading(false);
     console.log(filterContract);
   };
+
   const durationChange = (value) => {
     setDuration(value);
   };
+
   const filterContract = {
     contract_name: contractName,
     renter_name: renterName,
@@ -112,6 +128,31 @@ const ListContractRenter = () => {
   const endContractChange = (e) => {
     setEndContract(e.target.checked);
   };
+
+
+  // useEffect(() => {
+  //   getContractById();
+  // }, []);
+
+  const getContractById = async (contractId) => {
+    let cookie = localStorage.getItem("Cookie");
+    await axios
+      .get(GET_CONTRACT + contractId, {
+        headers: {
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${cookie}`,
+        },
+        // withCredentials: true,
+      })
+      .then((res) => {
+        setContractInfor(res.data.body);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <div className="list-contract">
       <div className="list-contract-search">
@@ -294,8 +335,14 @@ const ListContractRenter = () => {
             render: (_, record) => {
               return (
                 <>
-                  <EditOutlined style={{ fontSize: "20px", marginRight: "10px" }} />
-                  <EyeOutlined style={{ fontSize: "20px" }} />
+                  <EditOutlined style={{ fontSize: "20px", marginRight: "10px" }} onClick={() => {
+                    navigate(`/contract-renter/edit/${record.contract_id}`);
+                  }} />
+                  <EyeOutlined style={{ fontSize: "20px" }} onClick={() => {
+                    setViewContract(true);
+                    // setContractId(record.contract_id);
+                    getContractById(record.contract_id);
+                  }} />
                 </>
               );
             },
@@ -304,6 +351,7 @@ const ListContractRenter = () => {
         pagination={{ pageSize: 5 }}
         loading={loading}
       />
+      <ViewContractRenter openView={viewContract} closeView={setViewContract} dataContract={contractInfor} />
     </div>
   );
 };

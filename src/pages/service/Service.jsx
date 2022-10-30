@@ -22,6 +22,7 @@ import axios from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 import TextArea from "antd/lib/input/TextArea";
 import useAuth from "../../hooks/useAuth";
+
 function Service(props) {
   const APARTMENT_DATA_GROUP = "manager/group/get-group/1";
   const APARTMENT_SERVICE_GENERAL = "manager/service/general-services/12";
@@ -44,9 +45,11 @@ function Service(props) {
   const [formEditSerivce] = Form.useForm();
   const navigate = useNavigate();
   const { auth } = useAuth();
+
   useEffect(() => {
     listServiceCalcuMethod();
   }, []);
+
   let cookie = localStorage.getItem("Cookie");
   const listServiceCalcuMethod = async () => {
     setLoading(true);
@@ -500,7 +503,7 @@ function Service(props) {
                     rules={[
                       {
                         required: true,
-                        message: "Vui lòng nhập tên dịch vụ",
+                        message: "Vui lòng chọn tên dịch vụ",
                         whitespace: true,
                       },
                     ]}
@@ -714,14 +717,14 @@ function Service(props) {
                   </Form.Item>
                 </Form>
               </Modal>
-              <p>
+              {/* <p>
                 <i>
                   <b>Lưu ý: </b>Trên đây là danh sách dịch vụ áp dụng chung cho Tòa Nhà. Nếu muốn thay đổi thông tin,
                   phương thức tính toán cho tất cả các <b>dịch vụ</b> vào phần <b>"Thiết lập"</b>
                   <br />
                 </i>
               </p>
-              <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
+              <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p> */}
             </div>
           </Content>
         </Layout>
