@@ -22,11 +22,8 @@ function room(props) {
                 <Layout className="site-layout">
                     <Header
                         className="layout-header"
-                        style={{
-                            margin: "0 16px",
-                        }}
                     >
-                        <p className="header-title">Quản lý phòng</p>
+                        <p className="header-title">Quản lý danh sách phòng</p>
                     </Header>
                     <Content
                         style={{
