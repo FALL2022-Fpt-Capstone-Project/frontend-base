@@ -5,7 +5,7 @@ import Login from "./pages/login/Login";
 import Home from "./pages/home/Home";
 import Building from "./pages/building/Building";
 import Room from "./pages/room/Room";
-import ContractApartment from "./pages/contract/Contract";
+import ContractApartment from "./pages/contract/ContractApartment";
 import ContractRenter from "./pages/contract/ContractRenter";
 import Unauthorized from "./components/Unautharized";
 import RequireAuth from "./components/RequireAuth";
@@ -16,6 +16,8 @@ import DetailStaff from "./pages/admin/DetailStaff";
 import UpdateStaff from "./pages/admin/UpdateStaff";
 import Service from "./pages/service/Service";
 import ServiceSetting from "./pages/service/ServiceSetting";
+import EditContractRenter from "./pages/contract/EditContractRenter";
+import CreateContractBuilding from "./pages/contract/CreateContractBuilding";
 
 const ROLES = {
   User: "ROLE_STAFF",
@@ -49,6 +51,12 @@ const App = () => {
         <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
           <Route path="contract-renter/create" element={<CreateContractRenter />} />
         </Route>
+        <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
+          <Route path="contract-renter/edit/:contract_id" element={<EditContractRenter />} />
+        </Route>
+        <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
+          <Route path="contract-apartment/create" element={<CreateContractBuilding />} />
+        </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
           <Route path="manage-admin" element={<Admin />} />
         </Route>
@@ -60,9 +68,6 @@ const App = () => {
         </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
           <Route path="update-staff/:id" element={<UpdateStaff />} />
-        </Route>
-        <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
-          <Route path="contract-renter/create" element={<CreateContractRenter />} />
         </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
           <Route path="service" element={<Service />} />
