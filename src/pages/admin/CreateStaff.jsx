@@ -8,7 +8,6 @@ import "./createStaff.scss";
 import axios from "../../api/axios";
 import useAuth from "../../hooks/useAuth";
 const { Content, Sider, Header } = Layout;
-const { Option } = Select;
 const ADD_EMPLOYEE_URL = "manager/account/add-staff-account";
 const formItemLayout = {
   labelCol: {
@@ -127,152 +126,153 @@ const CreateStaff = () => {
               margin: "10px 16px",
             }}
           >
-            <Form
-              {...formItemLayout}
-              form={form}
-              name="createStaff"
-              id="createStaff"
-              onFinish={handleCreateEmployee}
-              style={{ margin: "30px", width: 700 }}
-            >
-              <Form.Item
-                name="full_name"
-                label="Tên nhân viên"
-                rules={[
-                  {
-                    required: true,
-                    message: "Vui lòng nhập tên nhân viên!",
-                  },
-                ]}
-              >
-                <Input autoComplete="off" />
-              </Form.Item>
-              <Form.Item
-                name="user_name"
-                label="Tên đăng nhập"
-                rules={[
-                  {
-                    required: true,
-                    message: "Vui lòng nhập tên đăng nhập!",
-                  },
-                ]}
-              >
-                <Input autoComplete="off" />
-              </Form.Item>
-              <Form.Item
-                name="password"
-                label="Mật khẩu"
-                hasFeedback
-                rules={[
-                  {
-                    required: true,
-                    message: "Vui lòng nhập mật khẩu!",
-                  },
-                ]}
-              >
-                <Input.Password />
-              </Form.Item>
-              <Form.Item
-                name="comfirmPassword"
-                label="Nhập lại mật khẩu"
-                dependencies={["password"]}
-                hasFeedback
-                rules={[
-                  {
-                    required: true,
-                    message: "Vui lòng nhập lại mật khẩu",
-                  },
-                  ({ getFieldValue }) => ({
-                    validator(_, value) {
-                      if (!value || getFieldValue("password") === value) {
-                        return Promise.resolve();
-                      }
-                      return Promise.reject(new Error("Mật khẩu không khớp!"));
-                    },
-                  }),
-                ]}
-              >
-                <Input.Password />
-              </Form.Item>
-              <Form.Item
-                name="phone_number"
-                label="Số điện thoại"
-                rules={[
-                  {
-                    required: true,
-                    message: "Vui lòng nhập số điện thoại!",
-                  },
-                ]}
-              >
-                <Input autoComplete="off" />
-              </Form.Item>
-              <Form.Item name="gender" label="Giới tính">
-                <Radio.Group onChange={genderChange} defaultValue={"Nam"}>
-                  <Radio value={"Nam"}>Nam</Radio>
-                  <Radio value={"Nữ"}>Nữ</Radio>
-                </Radio.Group>
-              </Form.Item>
-              <Form.Item name="building_address_city" label="Thành phố">
-                <Select
-                  name="cityId"
-                  key={`cityId_${selectedCity?.value}`}
-                  isDisabled={cityOptions.length === 0}
-                  options={cityOptions}
-                  onChange={(option) => onCitySelect(option)}
-                  placeholder="Tỉnh/Thành"
-                  defaultValue={selectedCity}
-                />
-              </Form.Item>
-              <Form.Item name="building_address_district" label="Quận/Huyện">
-                <Select
-                  name="districtId"
-                  key={`districtId_${selectedDistrict?.value}`}
-                  isDisabled={districtOptions.length === 0}
-                  options={districtOptions}
-                  onChange={(option) => onDistrictSelect(option)}
-                  placeholder="Quận/Huyện"
-                  defaultValue={selectedDistrict}
-                />
-              </Form.Item>
-
-              <Form.Item name="building_address_wards" label="Phường/Xã">
-                <Select
-                  name="wardId"
-                  key={`wardId_${selectedWard?.value}`}
-                  isDisabled={wardOptions.length === 0}
-                  options={wardOptions}
-                  placeholder="Phường/Xã"
-                  onChange={(option) => onWardSelect(option)}
-                  defaultValue={selectedWard}
-                />
-              </Form.Item>
-              <Form.Item name="address_more_detail" label="Địa chỉ">
-                <Input autoComplete="off" />
-              </Form.Item>
-              <Form.Item name="roles" label="Vai trò">
-                <Select
-                  defaultValue={{ label: "Nhân viên", value: "staff" }}
-                  style={{
-                    width: 120,
-                  }}
-                  onChange={roleChange}
-                  options={options}
-                />
-              </Form.Item>
-              <NavLink to="/manage-admin">
-                <Button style={{ marginRight: "20px" }}>Quay lại</Button>
-              </NavLink>
-              <Button type="primary" htmlType="submit">
-                Tạo mới
-              </Button>
-            </Form>
             <div
               className="site-layout-background"
               style={{
                 padding: 24,
                 minHeight: 360,
               }}
-            ></div>
+            >
+              <Form
+                {...formItemLayout}
+                form={form}
+                name="createStaff"
+                id="createStaff"
+                onFinish={handleCreateEmployee}
+                style={{ margin: "30px", width: 700 }}
+              >
+                <Form.Item
+                  name="full_name"
+                  label="Tên nhân viên"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng nhập tên nhân viên!",
+                    },
+                  ]}
+                >
+                  <Input autoComplete="off" />
+                </Form.Item>
+                <Form.Item
+                  name="user_name"
+                  label="Tên đăng nhập"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng nhập tên đăng nhập!",
+                    },
+                  ]}
+                >
+                  <Input autoComplete="off" />
+                </Form.Item>
+                <Form.Item
+                  name="password"
+                  label="Mật khẩu"
+                  hasFeedback
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng nhập mật khẩu!",
+                    },
+                  ]}
+                >
+                  <Input.Password />
+                </Form.Item>
+                <Form.Item
+                  name="comfirmPassword"
+                  label="Nhập lại mật khẩu"
+                  dependencies={["password"]}
+                  hasFeedback
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng nhập lại mật khẩu",
+                    },
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        if (!value || getFieldValue("password") === value) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject(new Error("Mật khẩu không khớp!"));
+                      },
+                    }),
+                  ]}
+                >
+                  <Input.Password />
+                </Form.Item>
+                <Form.Item
+                  name="phone_number"
+                  label="Số điện thoại"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng nhập số điện thoại!",
+                    },
+                  ]}
+                >
+                  <Input autoComplete="off" />
+                </Form.Item>
+                <Form.Item name="gender" label="Giới tính">
+                  <Radio.Group onChange={genderChange} defaultValue={"Nam"}>
+                    <Radio value={"Nam"}>Nam</Radio>
+                    <Radio value={"Nữ"}>Nữ</Radio>
+                  </Radio.Group>
+                </Form.Item>
+                <Form.Item name="building_address_city" label="Thành phố">
+                  <Select
+                    name="cityId"
+                    key={`cityId_${selectedCity?.value}`}
+                    isDisabled={cityOptions.length === 0}
+                    options={cityOptions}
+                    onChange={(option) => onCitySelect(option)}
+                    placeholder="Tỉnh/Thành"
+                    defaultValue={selectedCity}
+                  />
+                </Form.Item>
+                <Form.Item name="building_address_district" label="Quận/Huyện">
+                  <Select
+                    name="districtId"
+                    key={`districtId_${selectedDistrict?.value}`}
+                    isDisabled={districtOptions.length === 0}
+                    options={districtOptions}
+                    onChange={(option) => onDistrictSelect(option)}
+                    placeholder="Quận/Huyện"
+                    defaultValue={selectedDistrict}
+                  />
+                </Form.Item>
+
+                <Form.Item name="building_address_wards" label="Phường/Xã">
+                  <Select
+                    name="wardId"
+                    key={`wardId_${selectedWard?.value}`}
+                    isDisabled={wardOptions.length === 0}
+                    options={wardOptions}
+                    placeholder="Phường/Xã"
+                    onChange={(option) => onWardSelect(option)}
+                    defaultValue={selectedWard}
+                  />
+                </Form.Item>
+                <Form.Item name="address_more_detail" label="Địa chỉ">
+                  <Input autoComplete="off" />
+                </Form.Item>
+                <Form.Item name="roles" label="Vai trò">
+                  <Select
+                    defaultValue={{ label: "Nhân viên", value: "staff" }}
+                    style={{
+                      width: 120,
+                    }}
+                    onChange={roleChange}
+                    options={options}
+                  />
+                </Form.Item>
+                <NavLink to="/manage-admin">
+                  <Button style={{ marginRight: "20px" }}>Quay lại</Button>
+                </NavLink>
+                <Button type="primary" htmlType="submit">
+                  Tạo mới
+                </Button>
+              </Form>
+            </div>
           </Content>
         </Layout>
       </Layout>
