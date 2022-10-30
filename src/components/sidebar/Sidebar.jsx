@@ -11,14 +11,23 @@ import {
   ApartmentOutlined,
   BulbOutlined,
   GoldOutlined,
+  EditOutlined,
 } from "@ant-design/icons";
-import { Link } from "react-router-dom";
-import { Menu } from "antd";
+import { Link, NavLink } from "react-router-dom";
+import { Button, Col, Menu, Modal, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import "./sidebar.scss";
 import useAuth from "../../hooks/useAuth";
 import axios from "../../api/axios";
 const Sidebar = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [user, setUser] = useState([]);
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
   const { auth } = useAuth();
   let id = localStorage.getItem("id");
   let cookie = localStorage.getItem("Cookie");
@@ -31,7 +40,9 @@ const Sidebar = () => {
           Authorization: `Bearer ${cookie}`,
         },
       })
-      .then((res) => {});
+      .then((res) => {
+        setUser(res.data.body);
+      });
   }, []);
   return (
     <div>
@@ -94,8 +105,8 @@ const Sidebar = () => {
 
           <Menu.Item key={`/detail-staff/${id}`}>
             <IdcardOutlined />
-            <span>Thông tin cá nhân</span>
-            <Link to={`/detail-staff/${id}`} />
+            <span onClick={showModal}>Thông tin cá nhân</span>
+            {/* <Link to={`/detail-staff/${id}`} /> */}
           </Menu.Item>
 
           <Menu.Item key="/login" onClick={() => localStorage.clear()}>
@@ -144,8 +155,8 @@ const Sidebar = () => {
 
           <Menu.Item key={`/detail-staff/${id}`}>
             <IdcardOutlined />
-            <span>Thông tin cá nhân</span>
-            <Link to={`/detail-staff/${id}`} />
+            <span onClick={showModal}>Thông tin cá nhân</span>
+            {/* <Link to={`/detail-staff/${id}`} /> */}
           </Menu.Item>
 
           <Menu.Item key="/login" onClick={() => localStorage.clear()}>
@@ -155,6 +166,104 @@ const Sidebar = () => {
           </Menu.Item>
         </Menu>
       )}
+      <Modal title="Thông tin cá nhân" open={isModalOpen} footer={(null, null)} onCancel={handleCancel}>
+        <div
+          className="basic-info"
+          style={{
+            marginLeft: "3%",
+          }}
+        >
+          <Row>
+            <img
+              src="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png"
+              style={{ width: "100px", marginBottom: "10px" }}
+              alt=""
+            />
+          </Row>
+          <Row>
+            <Col>
+              <p style={{ fontSize: "16px", fontWeight: "bold" }}>Họ và tên: </p>
+            </Col>
+
+            <Col>
+              <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.full_name}</p>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <p style={{ fontSize: "16px", fontWeight: "bold" }}>Tên đăng nhập: </p>
+            </Col>
+
+            <Col>
+              <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.user_name}</p>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <p style={{ fontSize: "16px", fontWeight: "bold" }}>Giới tính: </p>
+            </Col>
+
+            <Col>
+              <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.gender}</p>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <p style={{ fontSize: "16px", fontWeight: "bold" }}>Chức vụ: </p>
+            </Col>
+            <Col>
+              {role === "ROLE_ADMIN" ? (
+                <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>ADMIN</p>
+              ) : (
+                <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>Nhân viên</p>
+              )}
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <p style={{ fontSize: "16px", fontWeight: "bold" }}>Số điện thoại: </p>
+            </Col>
+
+            <Col>
+              <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.phone_number}</p>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <p style={{ fontSize: "16px", fontWeight: "bold" }}>Địa chỉ: </p>
+            </Col>
+
+            <Col>
+              <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>
+                {user.address_wards}, {user.address_district}, {user.address_city}
+              </p>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <p style={{ fontSize: "16px", fontWeight: "bold" }}>Địa chỉ chi tiết: </p>
+            </Col>
+
+            <Col>
+              <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.address_more_detail}</p>
+            </Col>
+          </Row>
+        </div>
+        <div style={{ marginLeft: "3%" }}>
+          <Button onClick={handleCancel}>Quay lại</Button>
+          <NavLink to={`/update-staff/${id}`}>
+            <Button
+              type="primary"
+              icon={<EditOutlined />}
+              style={{ margin: "20px 20px" }}
+              size="middle"
+              className="button-add"
+            >
+              Sửa thông tin
+            </Button>
+          </NavLink>
+        </div>
+      </Modal>
     </div>
   );
 };

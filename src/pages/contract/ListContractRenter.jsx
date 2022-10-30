@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Input, Table, DatePicker, Select, Button, Row, Col, Checkbox, Tag, Tabs } from "antd";
+import { Input, Table, DatePicker, Select, Button, Row, Col, Checkbox, Tag, Tabs, Slider, InputNumber } from "antd";
 import "./listContract.scss";
 import useAuth from "../../hooks/useAuth";
 import axios from "../../api/axios";
@@ -19,7 +19,11 @@ const ListContractRenter = () => {
   const [textSearch, setTextSearch] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [contractName, setContractName] = useState("");
+  const [renterName, setRenterName] = useState("");
+  const [endContract, setEndContract] = useState(false);
   const [duration, setDuration] = useState();
+  const [price, setPrice] = useState({ min: 0, max: 1000000 });
   const [loading, setLoading] = useState(false);
   const [viewContract, setViewContract] = useState(false);
   const [contractId, setContractId] = useState();
@@ -68,28 +72,63 @@ const ListContractRenter = () => {
   };
 
   const getFilterContract = async () => {
-    setLoading(true);
-    const response = await axios
-      .get(FILTER_CONTRACT_URL, {
-        params: { duration: duration },
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${cookie}`,
-        },
-      })
-      .then((res) => {
-        setDataSource(res.data.body);
-        console.log(res);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    setLoading(false);
+    // setLoading(true);
+    // const response = await axios
+    //   .get(FILTER_CONTRACT_URL, {
+    //     params: { duration: duration },
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       Authorization: `Bearer ${cookie}`,
+    //     },
+    //   })
+    //   .then((res) => {
+    //     setDataSource(res.data.body);
+    //     console.log(res);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
+    // setLoading(false);
+    console.log(filterContract);
   };
 
   const durationChange = (value) => {
     setDuration(value);
   };
+
+  const filterContract = {
+    contract_name: contractName,
+    renter_name: renterName,
+    endContract: endContract,
+    startDate: startDate,
+    endDate: endDate,
+    price: price.min,
+  };
+
+  const onChange = (value) => {
+    if (value[0] < value[1]) {
+      setPrice({ min: value[0], max: value[1] });
+    }
+  };
+
+  const onChangeMin = (value) => {
+    if (price.max > value) {
+      setPrice({ min: value });
+    }
+  };
+  const onChangeMax = (value) => {
+    if (price.min < value) {
+      setPrice({ max: value });
+    }
+  };
+  console.log(price);
+  const renterNameChange = (e) => {
+    setRenterName(e.target.value);
+  };
+  const endContractChange = (e) => {
+    setEndContract(e.target.checked);
+  };
+
 
   // useEffect(() => {
   //   getContractById();
@@ -123,11 +162,42 @@ const ListContractRenter = () => {
               <Col className="gutter-row" span={6} style={{ marginBottom: "30px" }}>
                 <Row>
                   <label htmlFor="" style={{ marginBottom: "10px" }}>
-                    Tìm kiếm theo tên hợp đồng
+                    Tìm kiếm theo tiền phòng
                   </label>
                 </Row>
                 <Row>
-                  <Input placeholder="Nhập tên hợp đồng" />
+                  <Slider
+                    className="slider-main-div"
+                    min={0}
+                    max={10000000}
+                    onChange={onChange}
+                    range
+                    defaultValue={[price.min, price.max]}
+                    value={[price.min, price.max]}
+                    style={{ width: "80%" }}
+                    trackStyle={[{ color: "red" }]}
+                  />
+                </Row>
+                <Row>
+                  <InputNumber
+                    className="min-input-main"
+                    min={0}
+                    max={10000000}
+                    value={price.min}
+                    onChange={onChangeMin}
+                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
+                  />
+                  <span className="range-span"> - </span>
+                  <InputNumber
+                    className="min-input-main"
+                    min={0}
+                    max={10000000}
+                    value={price.max}
+                    onChange={onChangeMax}
+                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
+                  />
                 </Row>
               </Col>
               <Col className="gutter-row" span={6}>
@@ -137,7 +207,7 @@ const ListContractRenter = () => {
                   </label>
                 </Row>
                 <Row>
-                  <Input placeholder="Nhập tên khách thuê" />
+                  <Input placeholder="Nhập tên khách thuê" onChange={renterNameChange} />
                 </Row>
               </Col>
 
@@ -154,7 +224,7 @@ const ListContractRenter = () => {
                     onChange={dateChange}
                     style={{ marginRight: "50px" }}
                   />
-                  <Checkbox>Hợp đồng đã kết thúc</Checkbox>
+                  <Checkbox onChange={endContractChange}>Hợp đồng đã kết thúc</Checkbox>
                 </Row>
               </Col>
             </Row>
@@ -243,9 +313,15 @@ const ListContractRenter = () => {
             dataIndex: "contract_is_disable",
             render: (_, record) => {
               let status;
-              if (record.contract_is_disable === false) {
+              if (record.contract_is_disable === true) {
                 status = (
-                  <Tag color="success" key={record.status}>
+                  <Tag color="default" key={record.status}>
+                    Hợp đồng đã kết thúc
+                  </Tag>
+                );
+              } else if (record.contract_is_disable === false) {
+                status = (
+                  <Tag color="green" key={record.status}>
                     Hợp đồng còn hiệu lực
                   </Tag>
                 );

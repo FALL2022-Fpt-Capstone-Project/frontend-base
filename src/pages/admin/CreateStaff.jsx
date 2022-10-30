@@ -1,4 +1,4 @@
-import { Form, Input, Radio, Checkbox, Layout, Button } from "antd";
+import { Form, Input, Radio, notification, Layout, Button } from "antd";
 import React, { useEffect, useState } from "react";
 import Select from "react-select";
 import Sidebar from "../../components/sidebar/Sidebar";
@@ -79,6 +79,7 @@ const CreateStaff = () => {
       address_district: address_district,
       address_wards: address_wards,
       address_more_detail: value.address_more_detail,
+      permission: [1],
     };
     const response = await axios
       .post(ADD_EMPLOYEE_URL, employee, {
@@ -90,7 +91,13 @@ const CreateStaff = () => {
         // withCredentials: true,
       })
       .then(navigate("/manage-admin"))
-      .catch((e) => console.log(e.request));
+      .catch((e) => {
+        notification.error({
+          message: "Thêm mới nhân viên thất bại",
+          description: "Vui lòng kiểm tra lại thông tin và thử lại.",
+          duration: 3,
+        });
+      });
     console.log(JSON.stringify(response?.data));
     console.log(employee);
   };
