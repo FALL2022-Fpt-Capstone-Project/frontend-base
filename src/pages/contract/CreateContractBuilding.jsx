@@ -457,7 +457,7 @@ const CreateContractBuilding = () => {
                                                     <Tag color="blue" style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}>
                                                         <div style={{ overflow: "auto" }}>
                                                             <h3>
-                                                                <UserOutlined style={{ fontSize: '130%' }} /><b> Các thông tin người cho thuê </b>
+                                                                <UserOutlined style={{ fontSize: '130%' }} /><b> Thông tin người cho thuê </b>
                                                             </h3>
                                                         </div>
                                                     </Tag>
@@ -554,7 +554,7 @@ const CreateContractBuilding = () => {
                                                 <Row>
                                                     <Tag color="blue" style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}>
                                                         <h3>
-                                                            <AuditOutlined style={{ fontSize: '130%' }} /><b> Các thông tin về hợp đồng </b>
+                                                            <AuditOutlined style={{ fontSize: '130%' }} /><b> Thông tin về hợp đồng </b>
                                                         </h3>
                                                     </Tag>
                                                     <Form.Item
@@ -719,7 +719,7 @@ const CreateContractBuilding = () => {
                                                 <Row>
                                                     <Tag color="blue" style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}>
                                                         <h3>
-                                                            <HomeOutlined style={{ fontSize: '130%' }} /><b> Các thông tin tầng và phòng </b>
+                                                            <HomeOutlined style={{ fontSize: '130%' }} /><b> Thông tin tầng và phòng </b>
                                                         </h3>
                                                     </Tag>
                                                     <Form.Item
@@ -896,7 +896,7 @@ const CreateContractBuilding = () => {
                                             <Col span={23}>
                                                 <Form.Item className="form-item" name="list_general_service" labelCol={{ span: 24 }}>
                                                     <h3>
-                                                        <b>Các thông tin về dịch vụ sử dụng </b>
+                                                        <b>Thông tin về dịch vụ sử dụng </b>
                                                     </h3>
                                                 </Form.Item>
                                             </Col>
