@@ -666,7 +666,7 @@ const CreateContractRenter = () => {
     asset_type_show_name: formAddAsset.asset_type,
     hand_over_asset_status: formAddAsset.asset_status,
   });
-  // console.log(dataApartmentGroup);
+  console.log(dataApartmentGroup);
   return (
     <div className="contract">
       <Layout
@@ -732,7 +732,7 @@ const CreateContractRenter = () => {
                         <Row>
                           <Tag color="blue" style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}>
                             <h3>
-                              <UserOutlined style={{ fontSize: '130%' }} /><b> Các thông tin về khách thuê </b>
+                              <UserOutlined style={{ fontSize: '130%' }} /><b>Thông tin về khách thuê </b>
                             </h3>
                           </Tag>
                         </Row>
@@ -873,7 +873,7 @@ const CreateContractRenter = () => {
                       <Col span={8}>
                         <Tag color="blue" style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}>
                           <h3>
-                            <AuditOutlined style={{ fontSize: '130%' }} /><b> Các thông tin về hợp đồng </b>
+                            <AuditOutlined style={{ fontSize: '130%' }} /><b>Thông tin về hợp đồng </b>
                           </h3>
                         </Tag>
                         <Form.Item className="form-item" name="room_floor" style={{ display: "none" }}></Form.Item>
@@ -992,7 +992,7 @@ const CreateContractRenter = () => {
                                 ),
                               });
                             }}
-                          > 
+                          >
                             {contract_duration.map((obj, index) => {
                               return <Option value={obj.contractTermValue}>{obj.contractTermName}</Option>;
                             })}
@@ -1189,7 +1189,7 @@ const CreateContractRenter = () => {
                       <Col span={23}>
                         <Form.Item className="form-item" name="list_general_service" labelCol={{ span: 24 }}>
                           <h3>
-                            <b>Các thông tin về dịch vụ sử dụng </b>
+                            <b>Thông tin về dịch vụ sử dụng </b>
                           </h3>
                         </Form.Item>
                       </Col>
@@ -1299,7 +1299,7 @@ const CreateContractRenter = () => {
                       <Col span={23}>
                         <Form.Item className="form-item" name="list_renter" labelCol={{ span: 24 }}>
                           <h3>
-                            <b>Các thông tin về thành viên trong phòng </b>
+                            <b>Thông tin về thành viên trong phòng </b>
                           </h3>
                         </Form.Item>
                       </Col>
@@ -1462,7 +1462,7 @@ const CreateContractRenter = () => {
                 Tiếp
               </Button>
               <Modal
-                title="Các thông tin khách hàng cũ"
+                title="Thông tin khách hàng cũ"
                 visible={isAdd}
                 onCancel={() => {
                   resetAdd();
