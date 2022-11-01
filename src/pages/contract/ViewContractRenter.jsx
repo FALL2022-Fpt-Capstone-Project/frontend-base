@@ -1,6 +1,6 @@
 import { Button, Card, Checkbox, Col, Input, Modal, Row, Table, Tabs, Tag } from 'antd';
 import React, { useState, useEffect } from 'react';
-import { ArrowRightOutlined, UserOutlined, FilterOutlined } from "@ant-design/icons";
+import { ArrowRightOutlined, UserOutlined, FilterOutlined, AuditOutlined, DollarOutlined, GoldOutlined } from "@ant-design/icons";
 import axios from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 
@@ -148,7 +148,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
     return (
         <>
             <div>
-                <Modal title="Xem hợp đồng khách thuê" width={1200} open={openView} onOk={handleOk} onCancel={handleCancel}
+                <Modal title={<h2>{dataContract.contract_name}</h2>} width={1200} open={openView} onOk={handleOk} onCancel={handleCancel}
                     footer={[
                         <Button key="back" onClick={() => {
                             closeView(false)
@@ -156,17 +156,20 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                             Đóng
                         </Button>,
                     ]}>
-                    <Row>
-                        <Col><h3><b>{dataContract.contract_name}</b></h3></Col>
-                    </Row>
                     <Tabs defaultActiveKey="1">
-                        <Tabs.TabPane tab="Thông tin chung" key="1">
+                        <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>Thông tin chung</span>} key="1">
                             <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                                 <Col span={12}>
-                                    <Card style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }} title={<Tag color="blue"><h3>Thông tin khách thuê</h3></Tag>} bordered={false}>
+                                    <Card style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}
+                                        title={
+                                            <>
+                                                <Tag style={{ fontSize: '15px', color: 'black' }} color="blue">
+                                                    <UserOutlined style={{ fontSize: '120%' }} />Thông tin khách thuê
+                                                </Tag>
+                                            </>} bordered={false}>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Họ và tên:</b></h4>
+                                                <h4>Họ và tên:</h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>{dataContract.renter_name}</p>
@@ -174,7 +177,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Giới tính:</b></h4>
+                                                <h4>Giới tính:</h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>Nam</p>
@@ -182,7 +185,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Số điện thoại:</b></h4>
+                                                <h4>Số điện thoại:</h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>0345422402</p>
@@ -190,7 +193,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>CCCD/CMND:</b></h4>
+                                                <h4>CCCD/CMND:</h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>012345678911</p>
@@ -198,7 +201,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Email:</b></h4>
+                                                <h4>Email:</h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>example@gmail.com</p>
@@ -207,10 +210,16 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                     </Card>
                                 </Col>
                                 <Col span={12}>
-                                    <Card style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }} title={<Tag color="blue"><h3>Thông tin hợp đồng</h3></Tag>} bordered={false}>
+                                    <Card style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}
+                                        title={
+                                            <>
+                                                <Tag style={{ fontSize: '15px', color: 'black' }} color="blue">
+                                                    <AuditOutlined style={{ fontSize: '120%' }} />Thông tin hợp đồng
+                                                </Tag>
+                                            </>} bordered={false}>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Phòng cho thuê:</b></h4>
+                                                <h4>Phòng cho thuê:</h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>Tầng 2 phòng 201</p>
@@ -218,7 +227,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Thời hạn hợp đồng:</b></h4>
+                                                <h4>Thời hạn hợp đồng:</h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>1 tháng</p>
@@ -226,7 +235,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Ngày hợp đồng có hiệu lực:</b></h4>
+                                                <h4>Ngày hợp đồng có hiệu lực:</h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>{new Date(dataContract.contract_start_date).toLocaleDateString()}</p>
@@ -234,7 +243,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Ngày kết thúc: </b></h4>
+                                                <h4>Ngày kết thúc: </h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>{new Date(dataContract.contract_end_date).toLocaleDateString()}</p>
@@ -242,7 +251,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Trạng thái hợp đồng: </b></h4>
+                                                <h4>Trạng thái hợp đồng: </h4>
                                             </Col>
                                             <Col span={14}>
                                                 <Tag color="green">Còn hiệu lực</Tag>| <Tag color="red">Hết hiệu lực</Tag>
@@ -250,7 +259,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Chu kỳ thanh toán:</b></h4>
+                                                <h4>Chu kỳ thanh toán:</h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>{dataContract.contract_bill_cycle} tháng 1 lần</p>
@@ -258,7 +267,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Thời gian thu tiền:</b></h4>
+                                                <h4>Thời gian thu tiền:</h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>Ngày {dataContract.contract_payment_cycle} hàng tháng</p>
@@ -269,10 +278,13 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                             </Row>
                             <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                                 <Col span={12}>
-                                    <Card style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }} title={<Tag color="blue"><h3>Giá trị hợp đồng</h3></Tag>} bordered={false}>
+                                    <Card style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}
+                                        title={
+                                            <Tag style={{ fontSize: '15px', color: 'black' }} color="blue"><DollarOutlined style={{ fontSize: '120%' }} />Giá trị hợp đồng</Tag>
+                                        } bordered={false}>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Tiền phòng (VNĐ): </b></h4>
+                                                <h4>Tiền phòng (VNĐ): </h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p><b>{new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(dataContract.contract_price)}</b></p>
@@ -280,7 +292,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Tiền cọc (VNĐ): </b></h4>
+                                                <h4>Tiền cọc (VNĐ): </h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p><b>{new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(dataContract.contract_deposit)}</b></p>
@@ -289,12 +301,15 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                     </Card>
                                 </Col>
                                 <Col span={12}>
-                                    <Card style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }} title={<Tag color="blue"><h3>Dịch vụ sử dụng</h3></Tag>} bordered={false}>
+                                    <Card style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}
+                                        title={
+                                            <Tag style={{ fontSize: '15px', color: 'black' }} color="blue"><GoldOutlined />Dịch vụ sử dụng</Tag>
+                                        } bordered={false}>
                                         {dataContract.list_hand_over_services?.map((obj, index) => {
                                             return (
                                                 <Row>
                                                     <Col span={10}>
-                                                        <h4><b>{obj.service_show_name}: </b></h4>
+                                                        <h4>{obj.service_show_name}: </h4>
                                                     </Col>
                                                     <Col span={14}>
                                                         <p><b>{new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(obj.service_price)}</b> ({obj.service_type_name})</p>
@@ -306,10 +321,10 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                 </Col>
                             </Row>
                         </Tabs.TabPane>
-                        <Tabs.TabPane tab="Thành viên trong phòng" key="2">
+                        <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>Thành viên trong phòng</span>} key="2">
                             <Row>
                                 <div style={{ overflow: 'auto' }}>
-                                    <h3><b>Thông tin thành viên trong phòng (3/4)</b></h3>
+                                    <h3>Số lượng thành viên trong phòng: (3/4)</h3>
                                 </div>
                             </Row>
                             <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
@@ -325,7 +340,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                     >
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Họ và tên: </b></h4>
+                                                <h4>Họ và tên: </h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>Nguyễn Đức Pháp</p>
@@ -333,7 +348,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Giới tính: </b></h4>
+                                                <h4>Giới tính: </h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>Nam</p>
@@ -341,7 +356,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Số điện thoại: </b></h4>
+                                                <h4>Số điện thoại: </h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>0123456789</p>
@@ -349,7 +364,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>CCCD/CMND: </b></h4>
+                                                <h4>CCCD/CMND: </h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>012345678911</p>
@@ -357,7 +372,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Địa chỉ: </b></h4>
+                                                <h4>Địa chỉ: </h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>Hữu Quan, Dương Quan, Thủy Nguyên, Hải Phòng</p>
@@ -365,7 +380,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Biển số xe: </b></h4>
+                                                <h4>Biển số xe: </h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>16P1-7433</p>
@@ -385,7 +400,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                     >
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Họ và tên: </b></h4>
+                                                <h4>Họ và tên: </h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>Nguyễn Đức Pháp</p>
@@ -393,7 +408,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Giới tính: </b></h4>
+                                                <h4>Giới tính: </h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>Nam</p>
@@ -401,7 +416,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Số điện thoại: </b></h4>
+                                                <h4>Số điện thoại: </h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>0123456789</p>
@@ -409,7 +424,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>CCCD/CMND: </b></h4>
+                                                <h4>CCCD/CMND: </h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>012345678911</p>
@@ -417,7 +432,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Địa chỉ: </b></h4>
+                                                <h4>Địa chỉ: </h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>Hữu Quan, Dương Quan, Thủy Nguyên, Hải Phòng</p>
@@ -425,7 +440,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Biển số xe: </b></h4>
+                                                <h4>Biển số xe: </h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>16P1-7433</p>
@@ -445,7 +460,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                     >
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Họ và tên: </b></h4>
+                                                <h4>Họ và tên: </h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>Nguyễn Đức Pháp</p>
@@ -453,7 +468,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Giới tính: </b></h4>
+                                                <h4>Giới tính: </h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>Nam</p>
@@ -461,7 +476,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Số điện thoại: </b></h4>
+                                                <h4>Số điện thoại: </h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>0123456789</p>
@@ -469,7 +484,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>CCCD/CMND: </b></h4>
+                                                <h4>CCCD/CMND: </h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>012345678911</p>
@@ -477,7 +492,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Địa chỉ: </b></h4>
+                                                <h4>Địa chỉ: </h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>Hữu Quan, Dương Quan, Thủy Nguyên, Hải Phòng</p>
@@ -485,7 +500,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Biển số xe: </b></h4>
+                                                <h4>Biển số xe: </h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>16P1-7433</p>
@@ -495,12 +510,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                 </Col>
                             </Row>
                         </Tabs.TabPane>
-                        <Tabs.TabPane tab="Tài sản đã bàn giao" key="3">
-                            <Row>
-                                <div style={{ overflow: 'auto' }}>
-                                    <h3><b>Thông tin các tài sản đã bàn giao </b></h3>
-                                </div>
-                            </Row>
+                        <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>Tài sản đã bàn giao</span>} key="3">
                             <Row>
                                 <Col span={24}>
                                     <Row>
@@ -518,7 +528,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                     <Row>
                                         <Col span={3}>
                                             <FilterOutlined style={{ fontSize: '150%' }} />
-                                            <b>Loại tài sản:</b>
+                                            Loại tài sản:
                                         </Col>
                                         <Col span={21}>
                                             <Row>

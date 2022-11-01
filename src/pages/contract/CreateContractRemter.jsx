@@ -11,7 +11,7 @@ import {
   UserOutlined,
   AuditOutlined,
   DollarOutlined,
-  QuestionCircleTwoTone
+  CheckCircleTwoTone
 } from "@ant-design/icons";
 import moment from "moment";
 import {
@@ -32,8 +32,7 @@ import {
   Checkbox,
   InputNumber,
   message,
-  notification,
-  Tooltip,
+  notification
 } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import { useNavigate } from "react-router-dom";
@@ -83,6 +82,7 @@ const CreateContractRenter = () => {
   const [searched, setSearched] = useState("");
   const [filterAssetType, setFilterAssetType] = useState([]);
   const [assetStatus, setAssetStatus] = useState([]);
+  const [oldRenterGender, setOldRenterGender] = useState([]);
   const [isAdd, setisAdd] = useState(false);
   const [componentSize, setComponentSize] = useState("default");
   const [selectOldRenter, setSelectOldRenter] = useState([]);
@@ -108,6 +108,7 @@ const CreateContractRenter = () => {
   const [contractStartDate, setContractStartDate] = useState(moment());
   const [contractDuration, setContractDuration] = useState();
   const [contractBillCycle, setContractBillCycle] = useState(1);
+  const [displayFinish, setDisplayFinish] = useState([]);
 
   const { auth } = useAuth();
   let cookie = localStorage.getItem("Cookie");
@@ -274,6 +275,7 @@ const CreateContractRenter = () => {
         console.log(error);
       });
   };
+
   useEffect(() => {
     getAssetType();
   }, []);
@@ -303,28 +305,41 @@ const CreateContractRenter = () => {
       key: "id",
       filteredValue: [searched],
       onFilter: (value, record) => {
-        return String(record.renter_full_name).toLowerCase()?.includes(value.toLowerCase());
+        return String(record.renter_full_name).toLowerCase()?.includes(value.toLowerCase()) ||
+          String(record.renter_phone_number).toLowerCase()?.includes(value.toLowerCase()) ||
+          String(record.renter_identity_number).toLowerCase()?.includes(value.toLowerCase());
       },
+      width: 200
     },
     {
       title: "Giới tính",
       dataIndex: "renter_gender",
-      key: "id",
+      key: "renter_gender",
+      filters: [
+        { text: "Nam", value: 'Nam' },
+        { text: "Nữ", value: 'Nữ' },
+      ],
+      filteredValue: oldRenterGender.renter_gender || null,
+      onFilter: (value, record) => record.renter_gender === value,
+      width: 120
     },
     {
       title: "Số điện thoại",
       dataIndex: "renter_phone_number",
       key: "id",
+      width: 130
     },
     {
       title: "Email",
       dataIndex: "renter_email",
       key: "id",
+      width: 350
     },
     {
       title: "CCCD/CMND",
       dataIndex: "renter_identity_number",
       key: "id",
+      with: 250
     },
   ];
   const onAdd = (record) => {
@@ -645,6 +660,7 @@ const CreateContractRenter = () => {
       contract_bill_cycle: contractBillCycle,
       contract_payment_cycle: paymentCircle,
     });
+    setOldRenterGender({ ...oldRenterGender, renter_gender: ['Nam', 'Nữ'] });
   }
 
   form.setFieldsValue({
@@ -666,7 +682,42 @@ const CreateContractRenter = () => {
     asset_type_show_name: formAddAsset.asset_type,
     hand_over_asset_status: formAddAsset.asset_status,
   });
-  console.log(dataApartmentGroup);
+
+  const onNext = async () => {
+    try {
+      if (changeTab === "1") {
+        await form.validateFields([
+          'contract_name', 'renter_name', 'renter_gender', 'renter_phone_number', 'renter_identity_card', 'floor',
+          'room_id', 'contract_start_date', 'contract_bill_cycle', 'contract_payment_cycle', 'contract_price', 'contract_deposit',
+          'contract_end_date'
+        ]);
+        setDisplayFinish([...displayFinish, 1]);
+      } else {
+        await form.validateFields(dataApartmentGroup.list_general_service?.map((obj, index) => obj.service_name));
+        setDisplayFinish([...displayFinish, 2]);
+      }
+
+      setChangeTab((pre) => {
+        if (pre === "4") {
+          return "1";
+        } else {
+          return (parseInt(pre) + 1).toString();
+        }
+      });
+      if (changeTab === "3") {
+        setDisplayFinish([...displayFinish, 3]);
+        setVisibleSubmit(true);
+      }
+    } catch (e) {
+      notification.error({
+        message: "Không thể chuyển qua bước tiếp theo",
+        description: "Vui lòng điền đủ thông tin hợp đồng",
+        placement: "topRight",
+        duration: 2,
+      });
+    }
+  };
+  // console.log(dataApartmentGroup);
   return (
     <div className="contract">
       <Layout
@@ -681,7 +732,11 @@ const CreateContractRenter = () => {
         </Sider>
         <Layout className="site-layout">
           <Header className="layout-header">
-            <p className="header-title">Thêm hợp đồng mới cho khách thuê {dataApartmentGroup?.group_name}</p>
+            <Row>
+              <Col span={24}>
+                <p className="header-title">Thêm hợp đồng mới cho khách thuê {dataApartmentGroup?.group_name}</p>
+              </Col>
+            </Row>
           </Header>
           <Content
             style={{
@@ -726,7 +781,7 @@ const CreateContractRenter = () => {
               >
                 <Form.Item className="form-item" name="group_id" style={{ display: "none" }}></Form.Item>
                 <Tabs activeKey={changeTab} defaultActiveKey="1">
-                  <Tabs.TabPane tab="1. Thông tin chung" key="1">
+                  <Tabs.TabPane tab={<span style={{ fontSize: '16px' }}>1. Thông tin chung {displayFinish.find((obj, index) => obj === 1) ? <CheckCircleTwoTone style={{ fontSize: '130%' }} twoToneColor="#52c41a" /> : ''}</span>} key="1">
                     <Row>
                       <Col span={8}>
                         <Row>
@@ -739,7 +794,6 @@ const CreateContractRenter = () => {
                         <Row>
                           <Button
                             style={{ marginTop: '1%', wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}
-                            icon={<UserOutlined />}
                             type="primary"
                             size="default"
                             onClick={() => {
@@ -1039,6 +1093,12 @@ const CreateContractRenter = () => {
                               <b>Ngày kết thúc: </b>
                             </span>
                           }
+                          rules={[
+                            {
+                              required: true,
+                              message: "Vui lòng chọn ngày kết thúc",
+                            },
+                          ]}
                         >
                           <DatePicker
                             allowClear={false}
@@ -1077,9 +1137,6 @@ const CreateContractRenter = () => {
                             <>
                               <span>
                                 <b>Chu kỳ thanh toán: </b>
-                                <Tooltip color='#108ee9' placement="topLeft" title="Kỳ 15: Khách thuê vào từ ngày 1-15 Kỳ 30: Khách thuê vào từ ngày  16-31">
-                                  <QuestionCircleTwoTone style={{ fontSize: '130%' }} />
-                                </Tooltip>
                               </span>
                             </>
                           }
@@ -1096,11 +1153,11 @@ const CreateContractRenter = () => {
                           </Select>
                         </Form.Item>
 
-                        {/* <span>
+                        <span>
                           <i>
                             <b>Kỳ 15:</b> Khách thuê vào từ ngày 1-15 <br /> <b>Kỳ 30:</b> Khách thuê vào từ ngày 16-31
                           </i>
-                        </span> */}
+                        </span>
                       </Col>
                       <Col span={8}>
                         <Row>
@@ -1184,7 +1241,7 @@ const CreateContractRenter = () => {
                     </p>
                     <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
                   </Tabs.TabPane>
-                  <Tabs.TabPane tab="2. Dịch vụ" key="2">
+                  <Tabs.TabPane tab={<span style={{ fontSize: '16px' }}>2. Dịch vụ {displayFinish.find((obj, index) => obj === 2) ? <CheckCircleTwoTone style={{ fontSize: '130%' }} twoToneColor="#52c41a" /> : ''}</span>} key="2">
                     <Row>
                       <Col span={23}>
                         <Form.Item className="form-item" name="list_general_service" labelCol={{ span: 24 }}>
@@ -1294,7 +1351,7 @@ const CreateContractRenter = () => {
                       <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
                     </Row>
                   </Tabs.TabPane>
-                  <Tabs.TabPane tab="3. Thành viên" key="3">
+                  <Tabs.TabPane tab={<span style={{ fontSize: '16px' }}>3. Thành viên {displayFinish.find((obj, index) => obj === 3) ? <CheckCircleTwoTone style={{ fontSize: '130%' }} twoToneColor="#52c41a" /> : ''}</span>} key="3">
                     <Row>
                       <Col span={23}>
                         <Form.Item className="form-item" name="list_renter" labelCol={{ span: 24 }}>
@@ -1324,7 +1381,7 @@ const CreateContractRenter = () => {
                       ></Table>
                     </Row>
                   </Tabs.TabPane>
-                  <Tabs.TabPane tab="4. Tài sản" key="4">
+                  <Tabs.TabPane tab={<span style={{ fontSize: '16px' }}>4. Tài sản {displayFinish.find((obj, index) => obj === 4) ? <CheckCircleTwoTone style={{ fontSize: '130%' }} twoToneColor="#52c41a" /> : ''}</span>} key="4">
                     <Row>
                       <Col span={24}>
                         <Form.Item className="form-item" name="list_hand_over_assets" labelCol={{ span: 24 }}>
@@ -1446,18 +1503,7 @@ const CreateContractRenter = () => {
                   visibleSubmit ? { display: "none" } : { marginTop: "1%", display: "inline" }
                 }
                 type="primary"
-                onClick={() => {
-                  setChangeTab((pre) => {
-                    if (pre === "4") {
-                      return "1";
-                    } else {
-                      return (parseInt(pre) + 1).toString();
-                    }
-                  });
-                  if (changeTab === "3") {
-                    setVisibleSubmit(true);
-                  }
-                }}
+                onClick={onNext}
               >
                 Tiếp
               </Button>
@@ -1468,8 +1514,27 @@ const CreateContractRenter = () => {
                   resetAdd();
                 }}
                 onOk={onOk}
-                width={1000}
+                width={1200}
               >
+                <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32, }}>
+                  <Col span={12}>
+                    <Input.Search
+                      placeholder="Nhập thông tin khách cũ để tìm kiếm"
+                      style={{ marginBottom: '5%', width: '100%' }}
+                      onSearch={(e) => {
+                        setSearched(e);
+                      }}
+                      onChange={(e) => {
+                        setSearched(e.target.value);
+                      }}
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <span>Giới tính: </span>
+                    <Checkbox.Group defaultValue={['Nam', 'Nữ']} onChange={(e) => { setOldRenterGender({ ...oldRenterGender, renter_gender: e }) }}
+                      options={[{ label: 'Nam', value: 'Nam' }, { label: 'Nữ', value: 'Nữ' }]}></Checkbox.Group>
+                  </Col>
+                </Row>
                 <Form
                   labelCol={{ span: 5 }}
                   wrapperCol={{ span: 30 }}
@@ -1479,22 +1544,16 @@ const CreateContractRenter = () => {
                   size={"default"}
                 >
                   <Form.Item>
-                    <Input.Search
-                      placeholder="Nhập tên khách cũ để tìm kiếm"
-                      style={{ marginBottom: 8, width: "45%" }}
-                      onSearch={(e) => {
-                        setSearched(e);
-                      }}
-                      onChange={(e) => {
-                        setSearched(e.target.value);
-                      }}
-                    />
                     <Table
                       bordered
                       loading={loading}
                       columns={renterColumn}
                       dataSource={dataOldRenter}
                       scroll={{ x: 1000, y: 400 }}
+                      onChange={(pagination, filters, sorter, extra) => {
+                        console.log(filters);
+                        setOldRenterGender(filters);
+                      }}
                       rowKey={(record) => record.id}
                       rowSelection={{
                         type: "radio",
