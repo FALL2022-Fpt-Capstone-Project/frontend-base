@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
+
 import { Input, Table, Tag, Row, Checkbox, Tabs, Col, InputNumber, Select, DatePicker, Button } from "antd";
 import { EyeOutlined, EditOutlined, FilterOutlined, SearchOutlined, UndoOutlined } from "@ant-design/icons";
 import axios from "../../api/axios";
 import ViewContractBuilding from "./ViewContractBuilding";
 import moment from 'moment';
 
+
 const { Search } = Input;
 const LIST_CONTRACT_APARTMENT_URL = "";
 const { Column, ColumnGroup } = Table;
+
 
 const optionContract = [
   {
@@ -31,6 +34,7 @@ const optionRoom = [
 ];
 
 const ListContractApartment = () => {
+
   const dateFormat = 'DD/MM/YYYY';
   const { RangePicker } = DatePicker;
   const [dataSource, setDataSource] = useState([]);
@@ -87,6 +91,7 @@ const ListContractApartment = () => {
   const data = [
     {
       key: "1",
+
       apartmentName: "Trọ xanh",
       startDate: moment().format(dateFormat),
       endDate: moment().format(dateFormat),
@@ -120,6 +125,7 @@ const ListContractApartment = () => {
       numberOfFloor: 10,
       numberOfRoom: 100,
       roomStatus: "Đang trống"
+
     },
   ];
   return (

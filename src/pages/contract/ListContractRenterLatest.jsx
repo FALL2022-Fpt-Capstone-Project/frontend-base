@@ -12,29 +12,30 @@ const ListContractRenterLatest = ({ duration }) => {
   const [textSearch, setTextSearch] = useState("");
   const [loading, setLoading] = useState(false);
   useEffect(() => {
+    const getAllContractLatest = async () => {
+      setLoading(true);
+      const response = await axios
+        .get(LIST_CONTRACT_LATEST_URL, {
+          params: { filter: "latest", duration: duration },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cookie}`,
+          },
+        })
+        .then((res) => {
+          setDataSource(res.data.body);
+          console.log(res);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      setLoading(false);
+    };
     getAllContractLatest();
-  }, []);
+  }, [duration]);
   const { auth } = useAuth();
   let cookie = localStorage.getItem("Cookie");
-  const getAllContractLatest = async () => {
-    setLoading(true);
-    const response = await axios
-      .get(LIST_CONTRACT_LATEST_URL, {
-        params: { filter: "latest", duration: duration },
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${cookie}`,
-        },
-      })
-      .then((res) => {
-        setDataSource(res.data.body);
-        console.log(res);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    setLoading(false);
-  };
+
   const getFullDate = (date) => {
     const dateAndTime = date.split("T");
 

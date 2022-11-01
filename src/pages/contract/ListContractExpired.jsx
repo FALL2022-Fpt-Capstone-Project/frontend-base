@@ -13,30 +13,31 @@ const ListContractExpired = ({ duration }) => {
   const [loading, setLoading] = useState(false);
   const { auth } = useAuth();
   useEffect(() => {
+    const getAllContractExpired = async () => {
+      setLoading(true);
+      const response = await axios
+        .get(LIST_CONTRACT_EXPIRED_URL, {
+          params: { filter: "expired", duration: duration },
+          headers: {
+            "Content-Type": "application/json",
+            // "Access-Control-Allow-Origin": "*",
+            Authorization: `Bearer ${cookie}`,
+          },
+          // withCredentials: true,
+        })
+        .then((res) => {
+          setDataSource(res.data.body);
+          console.log(res);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      setLoading(false);
+    };
     getAllContractExpired();
-  }, []);
+  }, [duration]);
   let cookie = localStorage.getItem("Cookie");
-  const getAllContractExpired = async () => {
-    setLoading(true);
-    const response = await axios
-      .get(LIST_CONTRACT_EXPIRED_URL, {
-        params: { filter: "expired", duration: duration },
-        headers: {
-          "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
-          Authorization: `Bearer ${cookie}`,
-        },
-        // withCredentials: true,
-      })
-      .then((res) => {
-        setDataSource(res.data.body);
-        console.log(res);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    setLoading(false);
-  };
+
   const getFullDate = (date) => {
     const dateAndTime = date.split("T");
 

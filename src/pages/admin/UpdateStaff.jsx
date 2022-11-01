@@ -1,10 +1,9 @@
-import { Form, Input, Radio, Select, Checkbox, Switch, Layout, Button } from "antd";
+import { Form, Input, Radio, Select, notification, Switch, Layout, Button } from "antd";
 import "./updateStaff.scss";
 import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../../components/sidebar/Sidebar";
-import { Link } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 const { Content, Sider, Header } = Layout;
 const { Option } = Select;
@@ -39,11 +38,14 @@ const UpdateStaff = () => {
   const [gender, setGender] = useState("");
   const [deactivate, setDeactivate] = useState();
   const [rolefinal, setRoles] = useState("");
+
   const [form] = Form.useForm();
   const { id } = useParams();
   const navigate = useNavigate();
+  console.log(rolefinal);
   let roles = rolefinal.split(" ");
   let cookie = localStorage.getItem("Cookie");
+  let roleInfo = localStorage.getItem("Role");
   useEffect(() => {
     axios
       .get(`manager/account/staff-account/${id}`, {
@@ -82,6 +84,7 @@ const UpdateStaff = () => {
     address_more_detail: address_more_detail,
     deactivate: deactivate,
     role: roles,
+    permission: [1],
   };
 
   function Update(e) {
@@ -94,10 +97,20 @@ const UpdateStaff = () => {
         },
       })
       .then((res) => {
-        navigate(`/detail-staff/${id}`);
+        if (roleInfo === "ROLE_ADMIN") {
+          navigate("/manage-admin");
+        } else {
+          navigate("/home");
+        }
         console.log(res);
       })
-      .catch((e) => console.log(e.request));
+      .catch((e) =>
+        notification.error({
+          message: "Chỉnh sửa nhân viên thất bại",
+          description: "Vui lòng kiểm tra lại thông tin và thử lại.",
+          duration: 3,
+        })
+      );
     console.log(data);
   }
   const roleChange = (value) => {
@@ -227,9 +240,15 @@ const UpdateStaff = () => {
               <Form.Item name="status" label="Khoá tài khoản nhân viên">
                 <Switch checked={deactivate} onChange={deactivateChange} />
               </Form.Item>
-              <NavLink to={`/detail-staff/${id}`}>
-                <Button style={{ marginRight: "20px" }}>Quay lại</Button>
-              </NavLink>
+              {rolefinal === "ADMIN" ? (
+                <NavLink to="/manage-admin">
+                  <Button style={{ marginRight: "20px" }}>Quay lại</Button>
+                </NavLink>
+              ) : (
+                <NavLink to="/home">
+                  <Button style={{ marginRight: "20px" }}>Quay lại</Button>
+                </NavLink>
+              )}
               <Button type="primary" htmlType="submit" onClick={Update}>
                 Cập nhật
               </Button>

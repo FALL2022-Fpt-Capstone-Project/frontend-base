@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Input, Table, Select, Checkbox, DatePicker, Tag, Row, Col, Button, Tabs, Form } from "antd";
+import { Input, Table, Select, Checkbox, DatePicker, Tag, Row, Col, Button, Tabs, Form, Modal } from "antd";
 import axios from "../../api/axios";
 import { NavLink } from "react-router-dom";
 import "./listStaff.scss";
 import { EditOutlined, EyeOutlined, SearchOutlined, UndoOutlined } from "@ant-design/icons";
-import useAuth from "../../hooks/useAuth";
 const { Search } = Input;
-const { Option } = Select;
 const { RangePicker } = DatePicker;
 const ListStaff = () => {
   const [textSearch, setTextSearch] = useState("");
@@ -14,12 +12,25 @@ const ListStaff = () => {
   const [dataSource, setDataSource] = useState();
   const [deactive, setDeactive] = useState("");
   const [roles, setRoles] = useState("");
+  const [roleInfo, setRoleInfo] = useState("");
   const [full_name, setFullname] = useState("");
   const [user_name, setUsername] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [user, setUser] = useState([]);
+  const [id, setId] = useState();
   const LIST_EMPLOYEE_URL = "manager/account/list-all-staff-account";
   const FILTER_EMPOYEE_URL = "manager/account/list-staff-account";
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = (id) => {
+    setIsModalOpen(true);
+    setId(id);
+    console.log(id);
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
   const formItemLayout = {
     labelCol: {
       xs: {
@@ -38,7 +49,6 @@ const ListStaff = () => {
       },
     },
   };
-  const { auth } = useAuth();
   const [form] = Form.useForm();
   const options = [
     {
@@ -51,27 +61,43 @@ const ListStaff = () => {
     },
   ];
   let cookie = localStorage.getItem("Cookie");
+  let role = localStorage.getItem("Role");
   useEffect(() => {
+    const getAllEmployees = async () => {
+      setLoading(true);
+      const response = await axios
+        .get(LIST_EMPLOYEE_URL, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cookie}`,
+          },
+        })
+        .then((res) => {
+          setDataSource(res.data.body);
+          console.log(res);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      setLoading(false);
+    };
     getAllEmployees();
-  }, []);
-  const getAllEmployees = async () => {
-    setLoading(true);
-    const response = await axios
-      .get(LIST_EMPLOYEE_URL, {
+  }, [cookie]);
+
+  useEffect(() => {
+    axios
+      .get(`manager/account/staff-account/${id}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${cookie}`,
         },
       })
       .then((res) => {
-        setDataSource(res.data.body);
-        console.log(res);
-      })
-      .catch((error) => {
-        console.log(error);
+        setUser(res.data.body);
+        setRoleInfo(res.data.body.role[0]);
+        console.log(res.data);
       });
-    setLoading(false);
-  };
+  }, [id]);
 
   const getFilterEmployees = async (value) => {
     const data = {
@@ -328,9 +354,12 @@ const ListStaff = () => {
                   <NavLink to={`/update-staff/${record.id}`}>
                     <EditOutlined style={{ fontSize: "20px", marginRight: "10px" }} />
                   </NavLink>
-                  <NavLink to={`/detail-staff/${record.id}`}>
-                    <EyeOutlined style={{ fontSize: "20px" }} />
-                  </NavLink>
+                  <EyeOutlined
+                    style={{ fontSize: "20px", color: "#46a6ff" }}
+                    onClick={() => {
+                      showModal(record.id);
+                    }}
+                  />
                 </>
               );
             },
@@ -339,6 +368,104 @@ const ListStaff = () => {
         pagination={{ pageSize: 5 }}
         loading={loading}
       />
+      <Modal title="Thông tin cá nhân" open={isModalOpen} footer={(null, null)} onCancel={handleCancel}>
+        <div
+          className="basic-info"
+          style={{
+            marginLeft: "3%",
+          }}
+        >
+          <Row>
+            <img
+              src="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png"
+              style={{ width: "100px", marginBottom: "10px" }}
+              alt=""
+            />
+          </Row>
+          <Row>
+            <Col>
+              <p style={{ fontSize: "16px", fontWeight: "bold" }}>Họ và tên: </p>
+            </Col>
+
+            <Col>
+              <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.full_name}</p>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <p style={{ fontSize: "16px", fontWeight: "bold" }}>Tên đăng nhập: </p>
+            </Col>
+
+            <Col>
+              <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.user_name}</p>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <p style={{ fontSize: "16px", fontWeight: "bold" }}>Giới tính: </p>
+            </Col>
+
+            <Col>
+              <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.gender}</p>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <p style={{ fontSize: "16px", fontWeight: "bold" }}>Chức vụ: </p>
+            </Col>
+            <Col>
+              {roleInfo === "ROLE_ADMIN" ? (
+                <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>ADMIN</p>
+              ) : (
+                <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>Nhân viên</p>
+              )}
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <p style={{ fontSize: "16px", fontWeight: "bold" }}>Số điện thoại: </p>
+            </Col>
+
+            <Col>
+              <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.phone_number}</p>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <p style={{ fontSize: "16px", fontWeight: "bold" }}>Địa chỉ: </p>
+            </Col>
+
+            <Col>
+              <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>
+                {user.address_wards}, {user.address_district}, {user.address_city}
+              </p>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <p style={{ fontSize: "16px", fontWeight: "bold" }}>Địa chỉ chi tiết: </p>
+            </Col>
+
+            <Col>
+              <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.address_more_detail}</p>
+            </Col>
+          </Row>
+        </div>
+        <div style={{ marginLeft: "3%" }}>
+          <Button onClick={handleCancel}>Quay lại</Button>
+          <NavLink to={`/update-staff/${id}`}>
+            <Button
+              type="primary"
+              icon={<EditOutlined />}
+              style={{ margin: "20px 20px" }}
+              size="middle"
+              className="button-add"
+            >
+              Sửa thông tin
+            </Button>
+          </NavLink>
+        </div>
+      </Modal>
     </div>
   );
 };

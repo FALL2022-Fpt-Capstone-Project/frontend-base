@@ -13,28 +13,29 @@ const ListContractRenterAlmostExpired = ({ duration }) => {
   const [loading, setLoading] = useState(false);
   const { auth } = useAuth();
   useEffect(() => {
+    const getAllContractAlmostExpired = async () => {
+      setLoading(true);
+      const response = await axios
+        .get(LIST_CONTRACT_ALMOST_EXPIRED_URL, {
+          params: { filter: "almostExpired", duration: duration },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cookie}`,
+          },
+        })
+        .then((res) => {
+          setDataSource(res.data.body);
+          console.log(res);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      setLoading(false);
+    };
     getAllContractAlmostExpired();
-  }, []);
+  }, [duration]);
   let cookie = localStorage.getItem("Cookie");
-  const getAllContractAlmostExpired = async () => {
-    setLoading(true);
-    const response = await axios
-      .get(LIST_CONTRACT_ALMOST_EXPIRED_URL, {
-        params: { filter: "almostExpired", duration: duration },
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${cookie}`,
-        },
-      })
-      .then((res) => {
-        setDataSource(res.data.body);
-        console.log(res);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    setLoading(false);
-  };
+
   const getFullDate = (date) => {
     const dateAndTime = date.split("T");
 
