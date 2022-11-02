@@ -11,7 +11,7 @@ import {
   UserOutlined,
   AuditOutlined,
   DollarOutlined,
-  QuestionCircleTwoTone
+  QuestionCircleTwoTone,
 } from "@ant-design/icons";
 import moment from "moment";
 import {
@@ -510,7 +510,9 @@ const CreateContractRenter = () => {
 
   const [roomStatus, setRoomStatus] = useState(true);
 
-  const getListFloor = dataApartmentGroup?.list_rooms?.filter((obj, index) => obj.contract_id === null)?.map((o, i) => o.room_floor);
+  const getListFloor = dataApartmentGroup?.list_rooms
+    ?.filter((obj, index) => obj.contract_id === null)
+    ?.map((o, i) => o.room_floor);
   const floors = getListFloor?.filter((obj, index) => getListFloor.indexOf(obj) === index);
 
   const [room, setRoom] = useState([]);
@@ -569,7 +571,6 @@ const CreateContractRenter = () => {
   const onFinishContractFail = (e) => {
     message.error("Vui lòng kiểm tra lại thông tin hợp đồng");
   };
-
 
   const addAssetFinish = (e) => {
     setAssetId(e.asset_id - 1);
@@ -645,7 +646,7 @@ const CreateContractRenter = () => {
       contract_bill_cycle: contractBillCycle,
       contract_payment_cycle: paymentCircle,
     });
-  }
+  };
 
   form.setFieldsValue({
     group_id: dataApartmentGroup?.group_id,
@@ -730,15 +731,16 @@ const CreateContractRenter = () => {
                     <Row>
                       <Col span={8}>
                         <Row>
-                          <Tag color="blue" style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}>
+                          <Tag color="blue" style={{ wordBreak: "break-all", whiteSpace: "normal", height: "auto" }}>
                             <h3>
-                              <UserOutlined style={{ fontSize: '130%' }} /><b>Thông tin về khách thuê </b>
+                              <UserOutlined style={{ fontSize: "130%" }} />
+                              <b>Thông tin về khách thuê </b>
                             </h3>
                           </Tag>
                         </Row>
                         <Row>
                           <Button
-                            style={{ marginTop: '1%', wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}
+                            style={{ marginTop: "1%", wordBreak: "break-all", whiteSpace: "normal", height: "auto" }}
                             icon={<UserOutlined />}
                             type="primary"
                             size="default"
@@ -777,12 +779,16 @@ const CreateContractRenter = () => {
                               message: "Vui lòng nhập tên khách thuê",
                               whitespace: true,
                             },
-                          ]} labelCol={{ span: 24 }} label={<span><b>Họ và tên khách thuê: </b></span>}>
+                          ]}
+                          labelCol={{ span: 24 }}
+                          label={
+                            <span>
+                              <b>Họ và tên khách thuê: </b>
+                            </span>
+                          }
+                        >
                           {/* <span><b>Tên khách thuê: </b></span> */}
-                          <Input
-                            placeholder="Họ và tên khách thuê"
-                          >
-                          </Input>
+                          <Input placeholder="Họ và tên khách thuê"></Input>
                         </Form.Item>
                         <Form.Item
                           className="form-item"
@@ -871,9 +877,10 @@ const CreateContractRenter = () => {
                         </Form.Item>
                       </Col>
                       <Col span={8}>
-                        <Tag color="blue" style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}>
+                        <Tag color="blue" style={{ wordBreak: "break-all", whiteSpace: "normal", height: "auto" }}>
                           <h3>
-                            <AuditOutlined style={{ fontSize: '130%' }} /><b>Thông tin về hợp đồng </b>
+                            <AuditOutlined style={{ fontSize: "130%" }} />
+                            <b>Thông tin về hợp đồng </b>
                           </h3>
                         </Tag>
                         <Form.Item className="form-item" name="room_floor" style={{ display: "none" }}></Form.Item>
@@ -970,26 +977,20 @@ const CreateContractRenter = () => {
                               <b>Thời hạn hợp đồng (ít nhất 1 tháng): </b>
                             </span>
                           }
-                        // rules={[
-                        //   {
-                        //     required: true,
-                        //     message: "Vui lòng chọn thời hạn hợp đồng",
-                        //   },
-                        // ]}
+                          // rules={[
+                          //   {
+                          //     required: true,
+                          //     message: "Vui lòng chọn thời hạn hợp đồng",
+                          //   },
+                          // ]}
                         >
                           <Select
                             placeholder="Thời hạn hợp đồng"
                             onChange={(e) => {
                               setContractDuration(e);
                               form.setFieldsValue({
-                                contract_end_date: moment(
-                                  contractStartDate.add(e, "M"),
-                                  dateFormatList
-                                ),
-                                contract_start_date: moment(
-                                  contractStartDate.subtract(e, "M"),
-                                  dateFormatList
-                                ),
+                                contract_end_date: moment(contractStartDate.add(e, "M"), dateFormatList),
+                                contract_start_date: moment(contractStartDate.subtract(e, "M"), dateFormatList),
                               });
                             }}
                           >
@@ -1020,7 +1021,7 @@ const CreateContractRenter = () => {
                               setContractStartDate(e);
                               const startDate = form.getFieldsValue().contract_start_date;
                               form.setFieldsValue({
-                                contract_end_date: moment(startDate).add(contractDuration, 'M')
+                                contract_end_date: moment(startDate).add(contractDuration, "M"),
                               });
                             }}
                             allowClear={false}
@@ -1063,7 +1064,13 @@ const CreateContractRenter = () => {
                             },
                           ]}
                         >
-                          <Select onChange={(e) => { setContractBillCycle(e) }} placeholder="Chu kỳ tính tiền" style={{ width: "100%" }}>
+                          <Select
+                            onChange={(e) => {
+                              setContractBillCycle(e);
+                            }}
+                            placeholder="Chu kỳ tính tiền"
+                            style={{ width: "100%" }}
+                          >
                             {contract_duration.map((obj, index) => {
                               return <Option value={obj.contractTermValue}>{obj.contractTermName}</Option>;
                             })}
@@ -1077,8 +1084,12 @@ const CreateContractRenter = () => {
                             <>
                               <span>
                                 <b>Chu kỳ thanh toán: </b>
-                                <Tooltip color='#108ee9' placement="topLeft" title="Kỳ 15: Khách thuê vào từ ngày 1-15 Kỳ 30: Khách thuê vào từ ngày  16-31">
-                                  <QuestionCircleTwoTone style={{ fontSize: '130%' }} />
+                                <Tooltip
+                                  color="#108ee9"
+                                  placement="topLeft"
+                                  title="Kỳ 15: Khách thuê vào từ ngày 1-15 Kỳ 30: Khách thuê vào từ ngày  16-31"
+                                >
+                                  <QuestionCircleTwoTone style={{ fontSize: "130%" }} />
                                 </Tooltip>
                               </span>
                             </>
@@ -1104,9 +1115,10 @@ const CreateContractRenter = () => {
                       </Col>
                       <Col span={8}>
                         <Row>
-                          <Tag color="blue" style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}>
+                          <Tag color="blue" style={{ wordBreak: "break-all", whiteSpace: "normal", height: "auto" }}>
                             <h3>
-                              <DollarOutlined style={{ fontSize: '130%' }} /><b> Thông tin giá trị hợp đồng </b>
+                              <DollarOutlined style={{ fontSize: "130%" }} />
+                              <b> Thông tin giá trị hợp đồng </b>
                             </h3>
                           </Tag>
                           <Form.Item
@@ -1358,7 +1370,7 @@ const CreateContractRenter = () => {
                               <FilterOutlined style={{ fontSize: "150%" }} />
                               <b>Loại tài sản: </b>
                               <Checkbox.Group
-                                style={{ paddingLeft: '1%' }}
+                                style={{ paddingLeft: "1%" }}
                                 options={listAssetType.map((obj, index) => {
                                   return obj.asset_type_show_name;
                                 })}
@@ -1412,7 +1424,7 @@ const CreateContractRenter = () => {
                 </Tabs>
               </Form>
               <Button
-                style={changeTab === "1" ? { display: "none" } : { display: "inline", marginRight: '0.5%' }}
+                style={changeTab === "1" ? { display: "none" } : { display: "inline", marginRight: "0.5%" }}
                 type="default"
                 onClick={() => {
                   setChangeTab((pre) => {
@@ -1430,21 +1442,14 @@ const CreateContractRenter = () => {
                 Quay lại
               </Button>
               {visibleSubmit ? (
-                <Button
-                  htmlType="submit"
-                  style={{ marginTop: "1%" }}
-                  type="primary"
-                  form="create-contract"
-                >
+                <Button htmlType="submit" style={{ marginTop: "1%" }} type="primary" form="create-contract">
                   Tạo mới hợp đồng
                 </Button>
               ) : (
                 ""
               )}
               <Button
-                style={
-                  visibleSubmit ? { display: "none" } : { marginTop: "1%", display: "inline" }
-                }
+                style={visibleSubmit ? { display: "none" } : { marginTop: "1%", display: "inline" }}
                 type="primary"
                 onClick={() => {
                   setChangeTab((pre) => {
