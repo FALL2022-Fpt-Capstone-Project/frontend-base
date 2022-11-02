@@ -2183,8 +2183,8 @@ const CreateContractRenter = () => {
             </div>
           </Content>
         </Layout>
-      </Layout >
-    </div >
+      </Layout>
+    </div>
   );
 };
 export default CreateContractRenter;
