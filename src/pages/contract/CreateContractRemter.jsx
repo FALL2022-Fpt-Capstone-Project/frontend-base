@@ -43,7 +43,7 @@ const { Option } = Select;
 const CreateContractRenter = () => {
   const LIST_OLD_RENTER = "manager/renter/old";
   const LIST_ASSET_TYPE = "manager/asset/type";
-  const APARTMENT_DATA_GROUP = "manager/group/get-group/1";
+  const APARTMENT_DATA_GROUP = "/manager/group/get-group";
   const ADD_NEW_CONTRACT = "/manager/contract/add-new-contract";
   const dateFormatList = ["DD/MM/YYYY", "YYYY/MM/DD"];
   const [dataApartmentGroup, setDataApartmentGroup] = useState([]);
@@ -109,6 +109,7 @@ const CreateContractRenter = () => {
   const [contractDuration, setContractDuration] = useState();
   const [contractBillCycle, setContractBillCycle] = useState(1);
   const [displayFinish, setDisplayFinish] = useState([]);
+  const [dataApartmentGroupSelect, setDataApartmentGroupSelect] = useState([]);
 
   const { auth } = useAuth();
   let cookie = localStorage.getItem("Cookie");
@@ -129,22 +130,6 @@ const CreateContractRenter = () => {
       })
       .then((res) => {
         setDataApartmentGroup(res.data.body);
-        setDataAsset(
-          res.data.body.list_hand_over_assets.map(
-            (obj, index) =>
-              [
-                {
-                  asset_id: obj.asset_id,
-                  asset_name: obj.asset_name,
-                  asset_type: obj.asset_type,
-                  hand_over_asset_date_delivery: new Date(obj.hand_over_asset_date_delivery).toLocaleDateString(),
-                  asset_type_show_name: obj.asset_type_show_name,
-                  hand_over_asset_quantity: 1,
-                  hand_over_asset_status: obj.hand_over_asset_status,
-                },
-              ][0]
-          )
-        );
       })
       .catch((error) => {
         console.log(error);
@@ -524,8 +509,9 @@ const CreateContractRenter = () => {
   const [floorRoom, setFloorRoom] = useState();
 
   const [roomStatus, setRoomStatus] = useState(true);
+  const [floorStatus, setFloorStatus] = useState(true);
 
-  const getListFloor = dataApartmentGroup?.list_rooms?.filter((obj, index) => obj.contract_id === null)?.map((o, i) => o.room_floor);
+  const getListFloor = dataApartmentGroupSelect?.list_rooms?.filter((obj, index) => obj.contract_id === null)?.map((o, i) => o.room_floor);
   const floors = getListFloor?.filter((obj, index) => getListFloor.indexOf(obj) === index);
 
   const [room, setRoom] = useState([]);
@@ -579,7 +565,6 @@ const CreateContractRenter = () => {
         });
       });
     // message.success('Thêm mới hợp đồng thành công');
-    // console.log({ ...e, contract_end_date: new Date(e.contract_end_date).toLocaleDateString(), contract_start_date: new Date(e.contract_start_date).toLocaleDateString() });
   };
   const onFinishContractFail = (e) => {
     message.error("Vui lòng kiểm tra lại thông tin hợp đồng");
@@ -664,7 +649,7 @@ const CreateContractRenter = () => {
   }
 
   form.setFieldsValue({
-    group_id: dataApartmentGroup?.group_id,
+    // group_id: dataApartmentGroupSelect?.group_id,
     list_renter: dataMember,
     list_general_service: listGeneralService,
     list_hand_over_assets: dataAsset,
@@ -687,13 +672,13 @@ const CreateContractRenter = () => {
     try {
       if (changeTab === "1") {
         await form.validateFields([
-          'contract_name', 'renter_name', 'renter_gender', 'renter_phone_number', 'renter_identity_card', 'floor',
+          'contract_name', 'renter_name', 'renter_gender', 'renter_phone_number', 'renter_identity_card', 'room_floor',
           'room_id', 'contract_start_date', 'contract_bill_cycle', 'contract_payment_cycle', 'contract_price', 'contract_deposit',
           'contract_end_date'
         ]);
         setDisplayFinish([...displayFinish, 1]);
       } else {
-        await form.validateFields(dataApartmentGroup.list_general_service?.map((obj, index) => obj.service_name));
+        await form.validateFields(dataApartmentGroupSelect.list_general_service?.map((obj, index) => obj.service_name));
         setDisplayFinish([...displayFinish, 2]);
       }
 
@@ -717,7 +702,7 @@ const CreateContractRenter = () => {
       });
     }
   };
-  // console.log(dataApartmentGroup);
+  // console.log(dataApartmentGroupSelect);
   return (
     <div className="contract">
       <Layout
@@ -734,7 +719,7 @@ const CreateContractRenter = () => {
           <Header className="layout-header">
             <Row>
               <Col span={24}>
-                <p className="header-title">Thêm hợp đồng mới cho khách thuê {dataApartmentGroup?.group_name}</p>
+                <p className="header-title">Thêm hợp đồng mới cho khách thuê</p>
               </Col>
             </Row>
           </Header>
@@ -779,15 +764,14 @@ const CreateContractRenter = () => {
                 width={1000}
                 id="create-contract"
               >
-                <Form.Item className="form-item" name="group_id" style={{ display: "none" }}></Form.Item>
                 <Tabs activeKey={changeTab} defaultActiveKey="1">
-                  <Tabs.TabPane tab={<span style={{ fontSize: '16px' }}>1. Thông tin chung {displayFinish.find((obj, index) => obj === 1) ? <CheckCircleTwoTone style={{ fontSize: '130%' }} twoToneColor="#52c41a" /> : ''}</span>} key="1">
+                  <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>1. Thông tin chung {displayFinish.find((obj, index) => obj === 1) ? <CheckCircleTwoTone style={{ fontSize: '130%' }} twoToneColor="#52c41a" /> : ''}</span>} key="1">
                     <Row>
                       <Col span={8}>
                         <Row>
                           <Tag color="blue" style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}>
                             <h3>
-                              <UserOutlined style={{ fontSize: '130%' }} /><b>Thông tin về khách thuê </b>
+                              <UserOutlined style={{ fontSize: '130%' }} /><span style={{ fontSize: '15px' }}><b>Thông tin về khách thuê </b></span>
                             </h3>
                           </Tag>
                         </Row>
@@ -927,13 +911,55 @@ const CreateContractRenter = () => {
                       <Col span={8}>
                         <Tag color="blue" style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}>
                           <h3>
-                            <AuditOutlined style={{ fontSize: '130%' }} /><b>Thông tin về hợp đồng </b>
+                            <AuditOutlined style={{ fontSize: '130%' }} /> <span style={{ fontSize: '15px' }}><b>Thông tin về hợp đồng </b></span>
                           </h3>
                         </Tag>
-                        <Form.Item className="form-item" name="room_floor" style={{ display: "none" }}></Form.Item>
                         <Form.Item
                           className="form-item"
-                          name="floor"
+                          name="group_id"
+                          labelCol={{ span: 24 }}
+                          label={
+                            <span>
+                              <b>Tòa nhà: </b>
+                            </span>
+                          }
+                          rules={[
+                            {
+                              required: true,
+                              message: "Vui lòng chọn tòa nhà",
+                            },
+                          ]}
+                        >
+                          <Select onChange={(e) => {
+                            form.setFieldsValue({ room_floor: "", room_id: "", });
+                            setRoomStatus(true);
+                            setDataApartmentGroupSelect(dataApartmentGroup.find((obj, index) => obj.group_id === e));
+                            setDataAsset(
+                              dataApartmentGroup.find((obj, index) => obj.group_id === e)?.list_hand_over_assets?.map(
+                                (obj, index) =>
+                                  [
+                                    {
+                                      asset_id: obj.asset_id,
+                                      asset_name: obj.asset_name,
+                                      asset_type: obj.asset_type,
+                                      hand_over_asset_date_delivery: new Date(obj.hand_over_asset_date_delivery).toLocaleDateString(),
+                                      asset_type_show_name: obj.asset_type_show_name,
+                                      hand_over_asset_quantity: 1,
+                                      hand_over_asset_status: obj.hand_over_asset_status,
+                                    },
+                                  ][0]
+                              )
+                            );
+                            setFloorStatus(false);
+                          }} placeholder="Chọn tòa nhà">
+                            {dataApartmentGroup.map((obj, index) => {
+                              return <Select.Option value={obj.group_id}>{obj.group_name}</Select.Option>
+                            })}
+                          </Select>
+                        </Form.Item>
+                        <Form.Item
+                          className="form-item"
+                          name="room_floor"
                           labelCol={{ span: 24 }}
                           label={
                             <span>
@@ -948,19 +974,13 @@ const CreateContractRenter = () => {
                           ]}
                         >
                           <Select
-                            // showSearch
+                            disabled={floorStatus}
                             placeholder="Chọn tầng"
                             optionFilterProp="children"
                             onChange={(e) => {
-                              form.setFieldsValue({
-                                room_floor: dataApartmentGroup?.list_rooms?.find(
-                                  (room_floor) => room_floor.room_floor === e
-                                ).room_floor,
-                                room_id: "",
-                              });
                               setRoomStatus(false);
                               setRoom(
-                                dataApartmentGroup?.list_rooms?.filter(
+                                dataApartmentGroupSelect?.list_rooms?.filter(
                                   (data) => data.room_floor === e && data.contract_id === null
                                 )
                               );
@@ -968,8 +988,8 @@ const CreateContractRenter = () => {
                                 return { ...pre, room_floor: e };
                               });
                             }}
-                            value={floorRoom?.room_floor}
                           >
+                            <Select.Option value="">Chọn tầng</Select.Option>
                             {floors
                               ?.sort((a, b) => a - b)
                               ?.map((obj, index) => {
@@ -998,10 +1018,16 @@ const CreateContractRenter = () => {
                           ]}
                         >
                           <Select
+                            showSearch
+                            filterOption={(input, option) => (option?.children ?? '').includes(input)}
                             placeholder="Chọn phòng"
                             disabled={roomStatus}
                             onChange={(e) => {
-                              setRoomSelect(dataApartmentGroup?.list_rooms?.find((obj) => obj.room_id === e).room_name);
+                              setRoomSelect(dataApartmentGroupSelect?.list_rooms?.find((obj) => obj.room_id === e).room_name);
+                              form.setFieldsValue({
+                                contract_price: dataApartmentGroupSelect?.list_rooms?.find((obj) => obj.room_id === e).room_price,
+                                contract_deposit: dataApartmentGroupSelect?.list_rooms?.find((obj) => obj.room_id === e).room_price
+                              });
                             }}
                           >
                             <Select.Option value="">Chọn phòng</Select.Option>
@@ -1163,7 +1189,7 @@ const CreateContractRenter = () => {
                         <Row>
                           <Tag color="blue" style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}>
                             <h3>
-                              <DollarOutlined style={{ fontSize: '130%' }} /><b> Thông tin giá trị hợp đồng </b>
+                              <DollarOutlined style={{ fontSize: '130%' }} /> <span style={{ fontSize: '15px' }}><b> Thông tin giá trị hợp đồng </b></span>
                             </h3>
                           </Tag>
                           <Form.Item
@@ -1241,7 +1267,7 @@ const CreateContractRenter = () => {
                     </p>
                     <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
                   </Tabs.TabPane>
-                  <Tabs.TabPane tab={<span style={{ fontSize: '16px' }}>2. Dịch vụ {displayFinish.find((obj, index) => obj === 2) ? <CheckCircleTwoTone style={{ fontSize: '130%' }} twoToneColor="#52c41a" /> : ''}</span>} key="2">
+                  <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>2. Dịch vụ {displayFinish.find((obj, index) => obj === 2) ? <CheckCircleTwoTone style={{ fontSize: '130%' }} twoToneColor="#52c41a" /> : ''}</span>} key="2">
                     <Row>
                       <Col span={23}>
                         <Form.Item className="form-item" name="list_general_service" labelCol={{ span: 24 }}>
@@ -1253,7 +1279,7 @@ const CreateContractRenter = () => {
                     </Row>
                     <Row>
                       <Col span={12}>
-                        {dataApartmentGroup.list_general_service?.map((obj, index) => {
+                        {dataApartmentGroupSelect.list_general_service?.map((obj, index) => {
                           return (
                             <>
                               <Form.Item
@@ -1330,7 +1356,7 @@ const CreateContractRenter = () => {
                         <Table
                           bordered
                           rowKey={(record) => record.key}
-                          dataSource={dataApartmentGroup.list_general_service}
+                          dataSource={dataApartmentGroupSelect.list_general_service}
                           columns={columnsService}
                           loading={loading}
                         ></Table>
@@ -1351,7 +1377,7 @@ const CreateContractRenter = () => {
                       <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
                     </Row>
                   </Tabs.TabPane>
-                  <Tabs.TabPane tab={<span style={{ fontSize: '16px' }}>3. Thành viên {displayFinish.find((obj, index) => obj === 3) ? <CheckCircleTwoTone style={{ fontSize: '130%' }} twoToneColor="#52c41a" /> : ''}</span>} key="3">
+                  <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>3. Thành viên {displayFinish.find((obj, index) => obj === 3) ? <CheckCircleTwoTone style={{ fontSize: '130%' }} twoToneColor="#52c41a" /> : ''}</span>} key="3">
                     <Row>
                       <Col span={23}>
                         <Form.Item className="form-item" name="list_renter" labelCol={{ span: 24 }}>
@@ -1381,7 +1407,7 @@ const CreateContractRenter = () => {
                       ></Table>
                     </Row>
                   </Tabs.TabPane>
-                  <Tabs.TabPane tab={<span style={{ fontSize: '16px' }}>4. Tài sản {displayFinish.find((obj, index) => obj === 4) ? <CheckCircleTwoTone style={{ fontSize: '130%' }} twoToneColor="#52c41a" /> : ''}</span>} key="4">
+                  <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>4. Tài sản {displayFinish.find((obj, index) => obj === 4) ? <CheckCircleTwoTone style={{ fontSize: '130%' }} twoToneColor="#52c41a" /> : ''}</span>} key="4">
                     <Row>
                       <Col span={24}>
                         <Form.Item className="form-item" name="list_hand_over_assets" labelCol={{ span: 24 }}>
@@ -1389,6 +1415,7 @@ const CreateContractRenter = () => {
                             <h3>
                               <b>
                                 Thông tin tài sản bàn giao{" "}
+                                {dataApartmentGroupSelect?.group_name !== undefined ? dataApartmentGroupSelect?.group_name + " " : ''}
                                 {floorRoom?.room_floor !== undefined ? "tầng " + floorRoom?.room_floor : ""}{" "}
                                 {roomSelect === "" ? "" : "phòng " + roomSelect}
                               </b>
@@ -1431,7 +1458,7 @@ const CreateContractRenter = () => {
                               onClick={() => {
                                 setAddAssetInRoom(true);
                               }}
-                              style={{ fontSize: 36, color: "#1890ff", float: "right" }}
+                              style={{ fontSize: 36, color: "#1890ff", float: "right", marginBottom: '10%' }}
                             />
                           </Col>
                         </Row>
@@ -1514,7 +1541,18 @@ const CreateContractRenter = () => {
                   resetAdd();
                 }}
                 onOk={onOk}
-                width={1200}
+                footer={[
+                  <Button
+                    key="back"
+                    onClick={resetAdd}
+                  >
+                    Đóng
+                  </Button>,
+                  <Button type="primary" onClick={onOk}>
+                    Chọn
+                  </Button>,
+                ]}
+                width={1100}
               >
                 <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32, }}>
                   <Col span={12}>
@@ -1551,7 +1589,6 @@ const CreateContractRenter = () => {
                       dataSource={dataOldRenter}
                       scroll={{ x: 1000, y: 400 }}
                       onChange={(pagination, filters, sorter, extra) => {
-                        console.log(filters);
                         setOldRenterGender(filters);
                       }}
                       rowKey={(record) => record.id}
@@ -1576,9 +1613,6 @@ const CreateContractRenter = () => {
                 }}
                 width={500}
                 footer={[
-                  <Button htmlType="submit" key="submit" form="create-asset" type="primary">
-                    Lưu
-                  </Button>,
                   <Button
                     key="back"
                     onClick={() => {
@@ -1587,8 +1621,11 @@ const CreateContractRenter = () => {
                       setAddAssetInRoom(false);
                     }}
                   >
-                    Huỷ
+                    Đóng
                   </Button>,
+                  <Button htmlType="submit" key="submit" form="create-asset" type="primary">
+                    Lưu
+                  </Button>
                 ]}
               >
                 <Form
@@ -1727,17 +1764,17 @@ const CreateContractRenter = () => {
                 }}
                 width={500}
                 footer={[
-                  <Button htmlType="submit" key="submit" form="edit-asset" type="primary">
-                    Lưu
-                  </Button>,
                   <Button
                     key="back"
                     onClick={() => {
                       setIsEditAsset(false);
                     }}
                   >
-                    Huỷ
+                    Đóng
                   </Button>,
+                  <Button htmlType="submit" key="submit" form="edit-asset" type="primary">
+                    Lưu
+                  </Button>
                 ]}
               >
                 <Form
@@ -1874,11 +1911,11 @@ const CreateContractRenter = () => {
                   setIsAddMem(false);
                 }}
                 footer={[
+                  <Button key="back" onClick={() => setIsAddMem(false)}>
+                    Đóng
+                  </Button>,
                   <Button htmlType="submit" key="submit" form="add-member" type="primary">
                     Thêm mới
-                  </Button>,
-                  <Button key="back" onClick={() => setIsAddMem(false)}>
-                    Huỷ
                   </Button>,
                 ]}
               >
@@ -2011,16 +2048,16 @@ const CreateContractRenter = () => {
                   setIsEditMem(false);
                 }}
                 footer={[
-                  <Button htmlType="submit" key="submit" form="edit-member" type="primary">
-                    Lưu
-                  </Button>,
                   <Button
                     key="back"
                     onClick={() => {
                       setIsEditMem(false);
                     }}
                   >
-                    Huỷ
+                    Đóng
+                  </Button>,
+                  <Button htmlType="submit" key="submit" form="edit-member" type="primary">
+                    Lưu
                   </Button>,
                 ]}
               >
@@ -2146,8 +2183,8 @@ const CreateContractRenter = () => {
             </div>
           </Content>
         </Layout>
-      </Layout>
-    </div>
+      </Layout >
+    </div >
   );
 };
 export default CreateContractRenter;

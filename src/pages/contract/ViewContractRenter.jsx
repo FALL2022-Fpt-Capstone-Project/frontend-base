@@ -5,7 +5,6 @@ import axios from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 
 function ViewContractRenter({ openView, closeView, dataContract }) {
-    console.log(dataContract);
     const LIST_ASSET_TYPE = "manager/asset/type";
     const APARTMENT_DATA_GROUP = "manager/group/get-group/1";
 
@@ -164,7 +163,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         title={
                                             <>
                                                 <Tag style={{ fontSize: '15px', color: 'black' }} color="blue">
-                                                    <UserOutlined style={{ fontSize: '120%' }} />Thông tin khách thuê
+                                                    <UserOutlined style={{ fontSize: '120%' }} /> Thông tin khách thuê
                                                 </Tag>
                                             </>} bordered={false}>
                                         <Row>
@@ -214,7 +213,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         title={
                                             <>
                                                 <Tag style={{ fontSize: '15px', color: 'black' }} color="blue">
-                                                    <AuditOutlined style={{ fontSize: '120%' }} />Thông tin hợp đồng
+                                                    <AuditOutlined style={{ fontSize: '120%' }} /> Thông tin hợp đồng
                                                 </Tag>
                                             </>} bordered={false}>
                                         <Row>
@@ -280,7 +279,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                 <Col span={12}>
                                     <Card style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}
                                         title={
-                                            <Tag style={{ fontSize: '15px', color: 'black' }} color="blue"><DollarOutlined style={{ fontSize: '120%' }} />Giá trị hợp đồng</Tag>
+                                            <Tag style={{ fontSize: '15px', color: 'black' }} color="blue"><DollarOutlined style={{ fontSize: '120%' }} /> Giá trị hợp đồng</Tag>
                                         } bordered={false}>
                                         <Row>
                                             <Col span={10}>
@@ -303,7 +302,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                 <Col span={12}>
                                     <Card style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}
                                         title={
-                                            <Tag style={{ fontSize: '15px', color: 'black' }} color="blue"><GoldOutlined />Dịch vụ sử dụng</Tag>
+                                            <Tag style={{ fontSize: '15px', color: 'black' }} color="blue"><GoldOutlined /> Dịch vụ sử dụng</Tag>
                                         } bordered={false}>
                                         {dataContract.list_hand_over_services?.map((obj, index) => {
                                             return (
@@ -563,7 +562,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                     </Tabs>
                     <Button onClick={() => {
                         navigate(`/contract-renter/edit/${dataContract.contract_id}`);
-                    }} style={{ marginTop: '1%' }} type='primary' icon={<ArrowRightOutlined />}>Chỉnh sửa thông tin hợp đồng</Button>
+                    }} style={{ marginTop: '1%' }} type='primary' icon={<ArrowRightOutlined />}> Chỉnh sửa thông tin hợp đồng</Button>
                 </Modal>
             </div>
         </>
