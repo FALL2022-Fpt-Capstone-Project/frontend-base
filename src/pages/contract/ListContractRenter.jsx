@@ -13,7 +13,6 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 const ListContractRenter = () => {
-
   const GET_CONTRACT = "manager/contract/get-contract/rooms/";
   const [dataSource, setDataSource] = useState([]);
   const [textSearch, setTextSearch] = useState("");
@@ -128,7 +127,6 @@ const ListContractRenter = () => {
   const endContractChange = (e) => {
     setEndContract(e.target.checked);
   };
-
 
   // useEffect(() => {
   //   getContractById();
@@ -337,20 +335,26 @@ const ListContractRenter = () => {
             render: (_, record) => {
               return (
                 <>
-                  <EditOutlined style={{ fontSize: "20px", marginRight: "10px" }} onClick={() => {
-                    navigate(`/contract-renter/edit/${record.contract_id}`);
-                  }} />
-                  <EyeOutlined style={{ fontSize: "20px" }} onClick={() => {
-                    setViewContract(true);
-                    // setContractId(record.contract_id);
-                    getContractById(record.contract_id);
-                  }} />
+                  <EditOutlined
+                    style={{ fontSize: "20px", marginRight: "10px" }}
+                    onClick={() => {
+                      navigate(`/contract-renter/edit/${record.contract_id}`);
+                    }}
+                  />
+                  <EyeOutlined
+                    style={{ fontSize: "20px" }}
+                    onClick={() => {
+                      setViewContract(true);
+                      // setContractId(record.contract_id);
+                      getContractById(record.contract_id);
+                    }}
+                  />
                 </>
               );
             },
           },
         ]}
-        pagination={{ pageSize: 5 }}
+        pagination={{ pageSize: 10 }}
         loading={loading}
       />
       <ViewContractRenter openView={viewContract} closeView={setViewContract} dataContract={contractInfor} />

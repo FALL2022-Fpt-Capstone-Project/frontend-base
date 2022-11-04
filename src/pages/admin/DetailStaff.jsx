@@ -17,7 +17,7 @@ const DetailStaff = () => {
   let checkRole = localStorage.getItem("Role");
   useEffect(() => {
     axios
-      .get(`manager/account/staff-account/${id}`, {
+      .get(`manager/staff/${id}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${cookie}`,
