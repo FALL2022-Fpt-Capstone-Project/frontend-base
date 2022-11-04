@@ -67,7 +67,7 @@ const CreateStaff = () => {
         },
         // withCredentials: true,
       })
-      .then(navigate("/manage-admin"))
+      .then(() => navigate("/manage-admin"))
       .catch((e) => {
         notification.error({
           message: "Thêm mới nhân viên thất bại",

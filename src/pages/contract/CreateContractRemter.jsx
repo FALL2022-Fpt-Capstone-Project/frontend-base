@@ -1054,12 +1054,12 @@ const CreateContractRenter = () => {
                               <b>Thời hạn hợp đồng (ít nhất 1 tháng): </b>
                             </span>
                           }
-                          // rules={[
-                          //   {
-                          //     required: true,
-                          //     message: "Vui lòng chọn thời hạn hợp đồng",
-                          //   },
-                          // ]}
+                        // rules={[
+                        //   {
+                        //     required: true,
+                        //     message: "Vui lòng chọn thời hạn hợp đồng",
+                        //   },
+                        // ]}
                         >
                           <Select
                             placeholder="Thời hạn hợp đồng"
@@ -1447,7 +1447,7 @@ const CreateContractRenter = () => {
                               <b>Loại tài sản: </b>
                               <Checkbox.Group
                                 style={{ paddingLeft: "1%" }}
-                                options={listAssetType.map((obj, index) => {
+                                options={listAssetType?.map((obj, index) => {
                                   return obj.asset_type_show_name;
                                 })}
                                 onChange={(checkedValues) => {
