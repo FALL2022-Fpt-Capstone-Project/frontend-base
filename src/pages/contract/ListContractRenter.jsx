@@ -14,7 +14,7 @@ const { RangePicker } = DatePicker;
 
 const ListContractRenter = () => {
 
-  const GET_CONTRACT = "manager/contract/get-contract/rooms/";
+  const GET_CONTRACT = "manager/contract/room/";
   const [dataSource, setDataSource] = useState([]);
   const [textSearch, setTextSearch] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -135,6 +135,7 @@ const ListContractRenter = () => {
   // }, []);
 
   const getContractById = async (contractId) => {
+    console.log(GET_CONTRACT + contractId);
     let cookie = localStorage.getItem("Cookie");
     await axios
       .get(GET_CONTRACT + contractId, {
@@ -146,7 +147,8 @@ const ListContractRenter = () => {
         // withCredentials: true,
       })
       .then((res) => {
-        setContractInfor(res.data.body);
+        console.log(res);
+        // setContractInfor(res.data.body);
       })
       .catch((error) => {
         console.log(error);
@@ -341,6 +343,7 @@ const ListContractRenter = () => {
                     navigate(`/contract-renter/edit/${record.contract_id}`);
                   }} />
                   <EyeOutlined style={{ fontSize: "20px" }} onClick={() => {
+                    console.log(record.contract_id)
                     setViewContract(true);
                     // setContractId(record.contract_id);
                     getContractById(record.contract_id);

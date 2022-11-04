@@ -32,6 +32,7 @@ import {
     InputNumber,
     message,
     notification,
+    Divider,
 } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import { useNavigate } from "react-router-dom";
@@ -106,6 +107,7 @@ const CreateContractBuilding = () => {
     const [apartmentFloor, setApartmentFloor] = useState([]);
     const [floorAndRoom, setFloorAndRoom] = useState([]);
     const [displayFloor, setDisplayFloor] = useState(false);
+    const [selectFloorNumber, setSelectFloorNumber] = useState(0);
 
     let cookie = localStorage.getItem("Cookie");
 
@@ -770,61 +772,141 @@ const CreateContractBuilding = () => {
                                                             setCheckAll(false);
                                                             setNumberOfFloor([]);
                                                             setApartmentFloor([]);
-                                                            for (let i = 1; i <= e; i++) {
-                                                                setNumberOfFloor(pre => [...pre, i]);
-                                                            }
-                                                            setDisplayFloor(true);
+                                                            setSelectFloorNumber(e);
+                                                            setDisplayFloor(false);
                                                         }} placeholder="Số lượng tầng">
                                                             {floorNumber.map((obj, index) => {
                                                                 return <Select.Option value={obj.value}>{obj.name}</Select.Option>
                                                             })}
                                                         </Select>
                                                     </Form.Item>
-                                                    <div style={!displayFloor ? { display: 'none' } : { display: 'contents' }}>
-                                                        <Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>
-                                                            Chọn tất cả:
+                                                    <Row>
+                                                        <Checkbox
+                                                            checked={displayFloor} style={{ width: "100%" }}
+                                                            disabled={selectFloorNumber === 0 ? true : false}
+                                                            onChange={(e) => {
+                                                                if (e.target.checked) {
+                                                                    for (let i = 1; i <= selectFloorNumber; i++) {
+                                                                        setNumberOfFloor(pre => [...pre, i]);
+                                                                    }
+                                                                    setDisplayFloor(true);
+                                                                } else {
+                                                                    setNumberOfFloor([]);
+                                                                    setApartmentFloor([]);
+                                                                    setCheckAll(false);
+                                                                    setDisplayFloor(false);
+                                                                }
+
+                                                            }}>
+                                                            Chọn tầng thuê và nhập số lượng phòng mỗi tầng
                                                         </Checkbox>
-                                                        <Form.Item className="form-item" labelCol={{ span: 24 }}>
-                                                            <Checkbox.Group options={numberOfFloor} value={apartmentFloor} onChange={onChangeSelectFloor} />
-                                                        </Form.Item>
-                                                        <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                                                            {apartmentFloor.map((obj, index) => {
-                                                                return (
-                                                                    <>
-                                                                        <Col>
-                                                                            <span>Tầng {obj}</span>
-                                                                            <InputNumber
-                                                                                onChange={(e) => {
-                                                                                    if (!floorAndRoom.find(
-                                                                                        (o, i) => o.floor === obj
-                                                                                    )) {
-                                                                                        setFloorAndRoom(pre => [...pre, { floor: obj, number_of_room: e }]);
-                                                                                    } else {
-                                                                                        setFloorAndRoom((pre) => {
-                                                                                            return pre.map((o, i) => {
-                                                                                                if (o.floor === obj) {
-                                                                                                    return {
-                                                                                                        floor: o.floor,
-                                                                                                        number_of_room: e,
-                                                                                                    };
-                                                                                                } else {
-                                                                                                    return o;
-                                                                                                }
+                                                    </Row>
+                                                    <Form.Item
+                                                        style={displayFloor ? { display: 'none' } : { display: 'block' }}
+                                                        className="form-item"
+                                                        name="contract_deposit"
+                                                        labelCol={{ span: 24 }}
+                                                        label={
+                                                            <span>
+                                                                <b>Số lượng phòng mỗi tầng: </b>
+                                                            </span>
+                                                        }
+                                                    >
+                                                        <InputNumber
+                                                            placeholder="Số lượng phòng"
+                                                            controls={false}
+                                                            defaultValue={0}
+                                                            style={{ width: "100%" }}
+                                                            min={0}
+                                                        />
+                                                    </Form.Item>
+                                                    <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} style={!displayFloor ? { display: 'none' } : { display: 'contents' }}>
+                                                        <Col span={24}>
+                                                            <Row>
+                                                                <Col span={16}>
+                                                                    <span><b>Chọn các tầng:</b> <br />
+                                                                        <Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>
+                                                                            Chọn tất cả:
+                                                                        </Checkbox>
+                                                                        <Divider />
+                                                                    </span>
+                                                                </Col>
+                                                            </Row>
+                                                            <Row>
+                                                                <Col span={24}>
+                                                                    <Form.Item className="form-item" labelCol={{ span: 24 }}>
+                                                                        <Checkbox.Group options={numberOfFloor} value={apartmentFloor} onChange={onChangeSelectFloor} />
+                                                                    </Form.Item>
+                                                                </Col>
+                                                            </Row>
+                                                            <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+                                                                {apartmentFloor.map((obj, index) => {
+                                                                    return (
+                                                                        <>
+                                                                            <Col>
+                                                                                <span>Tầng {obj}</span>
+                                                                                <InputNumber
+                                                                                    onChange={(e) => {
+                                                                                        if (!floorAndRoom.find(
+                                                                                            (o, i) => o.floor === obj
+                                                                                        )) {
+                                                                                            setFloorAndRoom(pre => [...pre, { floor: obj, number_of_room: e }]);
+                                                                                        } else {
+                                                                                            setFloorAndRoom((pre) => {
+                                                                                                return pre.map((o, i) => {
+                                                                                                    if (o.floor === obj) {
+                                                                                                        return {
+                                                                                                            floor: o.floor,
+                                                                                                            number_of_room: e,
+                                                                                                        };
+                                                                                                    } else {
+                                                                                                        return o;
+                                                                                                    }
+                                                                                                });
                                                                                             });
-                                                                                        });
-                                                                                    }
-                                                                                }}
-                                                                                placeholder="Số lượng phòng"
-                                                                                style={{ width: "100%" }}
-                                                                                min={0}
-                                                                                max={20}
-                                                                            />
-                                                                        </Col>
-                                                                    </>
-                                                                )
-                                                            })}
-                                                        </Row>
-                                                    </div>
+                                                                                        }
+                                                                                    }}
+                                                                                    placeholder="Số lượng phòng"
+                                                                                    style={{ width: "100%" }}
+                                                                                    min={0}
+                                                                                    max={20}
+                                                                                />
+                                                                            </Col>
+                                                                        </>
+                                                                    )
+                                                                })}
+                                                            </Row>
+                                                        </Col>
+                                                    </Row>
+                                                    <br />
+                                                    <p><i>Hệ thống sẽ tự động tạo phòng theo số lượng bạn nhập bên trên để tiết kiệm thời gian việc nhập dữ liệu cho từng phòng</i></p>
+                                                    <Form.Item
+                                                        className="form-item"
+                                                        name="contract_deposit"
+                                                        labelCol={{ span: 24 }}
+                                                        label={
+                                                            <span>
+                                                                <b>Giá phòng trung bình (VND): </b>
+                                                            </span>
+                                                        }
+                                                        rules={[
+                                                            {
+                                                                required: true,
+                                                                message: "Vui lòng nhập diện tích trung bình mỗi phòng",
+                                                            },
+                                                        ]}
+                                                    >
+                                                        <InputNumber
+                                                            placeholder="Giá thuê trung bình"
+                                                            controls={false}
+                                                            addonAfter="VNĐ"
+                                                            formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                                            parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
+                                                            defaultValue={0}
+                                                            style={{ width: "100%" }}
+                                                            min={0}
+                                                        />
+                                                    </Form.Item>
                                                     <Form.Item
                                                         className="form-item"
                                                         name="contract_deposit"
@@ -842,6 +924,8 @@ const CreateContractBuilding = () => {
                                                         ]}
                                                     >
                                                         <InputNumber
+                                                            placeholder="Diện tích phòng"
+                                                            controls={false}
                                                             addonAfter="m2"
                                                             defaultValue={0}
                                                             style={{ width: "100%" }}
@@ -868,15 +952,6 @@ const CreateContractBuilding = () => {
                                                             <Select.Option>1 người</Select.Option>
                                                         </Select>
                                                     </Form.Item>
-                                                    <Form.Item
-                                                        className="form-item"
-                                                        name="contract_deposit"
-                                                        labelCol={{ span: 24 }}>
-                                                        <Checkbox>
-                                                            <b>Tạo phòng tự động</b>
-                                                        </Checkbox>
-                                                    </Form.Item>
-                                                    <p><i>Tạo phòng tự động theo tổng số lượng phòng bạn nhập bên trên sẽ giúp việc nhập dữ liệu nhanh hơn</i></p>
                                                 </Row>
                                                 <Row>
                                                     <Tag color="blue" style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}>

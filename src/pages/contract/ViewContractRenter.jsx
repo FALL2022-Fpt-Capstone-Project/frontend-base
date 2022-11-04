@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 function ViewContractRenter({ openView, closeView, dataContract }) {
     const LIST_ASSET_TYPE = "manager/asset/type";
-    const APARTMENT_DATA_GROUP = "manager/group/get-group/1";
+    const APARTMENT_DATA_GROUP = "manager/contract/room/";
 
     const [dataAsset, setDataAsset] = useState([]);
     const [loading, setLoading] = useState(false);

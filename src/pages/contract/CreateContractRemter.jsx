@@ -697,7 +697,7 @@ const CreateContractRenter = () => {
       notification.error({
         message: "Không thể chuyển qua bước tiếp theo",
         description: "Vui lòng điền đủ thông tin hợp đồng",
-        placement: "topRight",
+        placement: "top",
         duration: 2,
       });
     }
@@ -1272,7 +1272,7 @@ const CreateContractRenter = () => {
                       <Col span={23}>
                         <Form.Item className="form-item" name="list_general_service" labelCol={{ span: 24 }}>
                           <h3>
-                            <b>Thông tin về dịch vụ sử dụng </b>
+                            <b>Thông tin về dịch vụ sử dụng {dataApartmentGroupSelect?.group_name !== undefined ? dataApartmentGroupSelect?.group_name + " " : ''}</b>
                           </h3>
                         </Form.Item>
                       </Col>
@@ -1806,7 +1806,7 @@ const CreateContractRenter = () => {
                       },
                     ]}
                   >
-                    <Input placeholder="Tên tài sản"></Input>
+                    <Input disabled placeholder="Tên tài sản"></Input>
                   </Form.Item>
                   <Form.Item className="form-item" name="asset_id" style={{ display: "none" }}></Form.Item>
                   <Form.Item
@@ -1866,7 +1866,7 @@ const CreateContractRenter = () => {
                       },
                     ]}
                   >
-                    <Select placeholder={"Loại tài sản"}>
+                    <Select disabled placeholder={"Loại tài sản"}>
                       {listAssetType.map((obj, index) => {
                         return (
                           <Select.Option value={obj.asset_type_show_name}>{obj.asset_type_show_name}</Select.Option>

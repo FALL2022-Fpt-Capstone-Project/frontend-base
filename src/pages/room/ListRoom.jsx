@@ -12,19 +12,15 @@ import {
     Checkbox,
     Tabs,
     Statistic,
-    Tooltip
+    Tooltip,
+    Card
 } from "antd";
 import { MoreOutlined, FilterOutlined, SearchOutlined, UndoOutlined, QuestionCircleTwoTone, PlusOutlined, ArrowRightOutlined, AuditOutlined, DollarOutlined, SettingOutlined, DeleteOutlined } from "@ant-design/icons";
 import React, { useState } from "react";
-import moment from 'moment';
-import { Link } from "react-router-dom";
 
 function ListRoom(props) {
-    const [isEdit, setisEdit] = useState(false);
-    const [isAdd, setisAdd] = useState(false);
-    const [editRenter, setEditRenter] = useState(null);
-    const [searched, setSearched] = useState("");
     const [form] = Form.useForm();
+    const [isSelectBuildingOpen, setIsSelectBuildingOpen] = useState(false);
     const optionFilterRoom = [
         {
             label: "Phòng đang ở",
@@ -35,12 +31,8 @@ function ListRoom(props) {
             value: "2",
         },
         {
-            label: "Hợp đồng đã kết thúc",
-            value: "3",
-        },
-        {
             label: "Cọc giữ chỗ",
-            value: "4",
+            value: "3",
         },
     ];
     const optionPaymentCycle = [
@@ -68,135 +60,107 @@ function ListRoom(props) {
             value: 2,
         },
     ];
-    const validateRequired = (e) => {
-        console.log(e);
-        if (e.roomCode !== null && e.owner !== null && e.building !== null
-            && e.floor !== null && e.numberOfRenter !== null && e.square !== null
-            && e.contractExpirationDate !== null && e.dateOfHire !== null) {
-            console.log('in');
-            resetEditing();
-        }
-
-    }
     const renter = [
         {
             index: 1,
+            groupName: 'Trọ xanh',
             roomName: 'Phòng 201',
             roomFloor: 'Tầng 2',
             roomNumberOfRenter: '3/5',
             roomPrice: 10000000,
             roomDeposit: 10000000,
             roomSquare: '30m2',
-            renterName: 'Nguyễn Đức Pháp',
-            startDate: '30/10/2022',
-            endDate: '30/10/2023',
             billCycle: '1 tháng',
             paymentCycle: 'Kỳ 30',
+            durationContract: '6 tháng',
             roomStatus: 1,
         },
         {
             index: 2,
+            groupName: 'Trọ xanh',
             roomName: 'Phòng 202',
             roomFloor: 'Tầng 2',
             roomNumberOfRenter: '0/5',
             roomPrice: 3000000,
             roomDeposit: 0,
             roomSquare: '30m2',
-            renterName: '',
-            startDate: '',
-            endDate: '',
             billCycle: '',
             paymentCycle: '',
+            durationContract: '6 tháng',
             roomStatus: 0,
         },
         {
             index: 3,
+            groupName: 'Trọ tươi',
             roomName: 'Phòng 203',
             roomFloor: 'Tầng 2',
             roomNumberOfRenter: '1/5',
             roomPrice: 10000000,
             roomDeposit: 10000000,
             roomSquare: '30m2',
-            renterName: 'Nguyễn Đức Pháp',
-            startDate: '',
-            endDate: '',
             billCycle: '1 tháng',
             paymentCycle: 'Kỳ 30',
+            durationContract: '6 tháng',
             roomStatus: 2,
         },
     ];
     const [dataSource, setDataSource] = useState(renter);
     const columns = [
         {
-            title: 'Thông tin phòng',
-            children: [
-                {
-                    title: 'Tên phòng',
-                    dataIndex: 'roomName',
-                    key: 'index',
-                },
-                {
-                    title: 'Tầng',
-                    dataIndex: 'roomFloor',
-                    key: 'index',
-                },
-                {
-                    title: 'Số lượng người',
-                    dataIndex: 'roomNumberOfRenter',
-                    key: 'index',
-                },
-                {
-                    title: 'Giá phòng',
-                    dataIndex: 'roomPrice',
-                    key: 'index',
-                    render: (roomPrice) => {
-                        return <span style={{ fontWeight: 'bold' }}>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(roomPrice)}</span>
-                    }
-                },
-                {
-                    title: 'Tiền cọc',
-                    dataIndex: 'roomDeposit',
-                    key: 'index',
-                    render: (roomDeposit) => {
-                        return <span style={{ fontWeight: 'bold' }}>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(roomDeposit)}</span>
-                    }
-                },
-                {
-                    title: 'Diện tích',
-                    dataIndex: 'roomSquare',
-                    key: 'index',
-                },
-                {
-                    title: 'Chu kỳ thanh toán',
-                    dataIndex: 'paymentCycle',
-                    key: 'index',
-                },
-                {
-                    title: 'Chu kỳ tính tiền',
-                    dataIndex: 'billCycle',
-                    key: 'index',
-                },
-            ]
+            title: 'Tên chung cư',
+            dataIndex: 'groupName',
+            key: 'index',
         },
         {
-            title: 'Thông tin khách thuê',
-            children: [
-                {
-                    title: 'Tên khách thuê',
-                    dataIndex: 'renterName',
-                    key: 'index',
-                },
-                {
-                    title: 'Ngày vào ở',
-                    dataIndex: 'startDate',
-                    key: 'index',
-                },
-                {
-                    title: 'Ngày kết thúc hợp đồng',
-                    dataIndex: 'endDate',
-                    key: 'index',
-                },
-            ]
+            title: 'Tên phòng',
+            dataIndex: 'roomName',
+            key: 'index',
+        },
+        {
+            title: 'Tầng',
+            dataIndex: 'roomFloor',
+            key: 'index',
+        },
+        {
+            title: 'Số lượng người',
+            dataIndex: 'roomNumberOfRenter',
+            key: 'index',
+        },
+        {
+            title: 'Giá phòng',
+            dataIndex: 'roomPrice',
+            key: 'index',
+            render: (roomPrice) => {
+                return <span style={{ fontWeight: 'bold' }}>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(roomPrice)}</span>
+            }
+        },
+        {
+            title: 'Tiền cọc',
+            dataIndex: 'roomDeposit',
+            key: 'index',
+            render: (roomDeposit) => {
+                return <span style={{ fontWeight: 'bold' }}>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(roomDeposit)}</span>
+            }
+        },
+        {
+            title: 'Diện tích',
+            dataIndex: 'roomSquare',
+            key: 'index',
+        },
+        {
+            title: 'Chu kỳ thanh toán',
+            dataIndex: 'paymentCycle',
+            key: 'index',
+        },
+        {
+            title: 'Chu kỳ tính tiền',
+            dataIndex: 'billCycle',
+            key: 'index',
+        },
+        {
+            title: 'Thời hạn hợp đồng',
+            dataIndex: 'durationContract',
+            key: 'index',
         },
         {
             title: 'Trạng thái phòng',
@@ -227,12 +191,6 @@ function ListRoom(props) {
             render: (record) => {
                 return (
                     <>
-                        {/* <EditOutlined onClick={() => {
-                            onEdit(record)
-                        }} />
-                        <DeleteOutlined onClick={() => {
-                            onDelete(record)
-                        }} style={{ color: "red", marginLeft: 12 }} /> */}
                         <Popover placement="left" title="Thao tác" content={
                             <>
                                 <Row>
@@ -263,65 +221,10 @@ function ListRoom(props) {
             }
         }
     ];
-    const onDelete = (record) => {
-        Modal.confirm({
-            title: `Bạn có chắc chắn muốn xóa phòng ${record.roomCode} này ?`,
-            okText: 'Có',
-            cancelText: 'Hủy',
-            onOk: () => {
-                setDataSource(pre => {
-                    return pre.filter((renter) => renter.index !== record.index)
-                })
-            },
-        })
-    }
 
-    const onEdit = (record) => {
-        setisEdit(true);
-        setEditRenter({ ...record });
-        form.setFieldsValue({
-            roomCode: record.roomCode,
-            owner: record.owner,
-            building: record.building,
-            floor: record.floor,
-            numberOfRenter: record.numberOfRenter,
-            square: record.square,
-            dateOfHire: record.dateOfHire !== null ? moment(record.dateOfHire, dateFormatList) : '',
-            contractExpirationDate: record.contractExpirationDate !== null ? moment(record.contractExpirationDate, dateFormatList) : '',
-            status: record.status
-        });
-    }
-    const resetEditing = () => {
-        setisEdit(false);
-        setEditRenter(null);
-    }
-
-    const onAdd = (record) => {
-        setisAdd(true);
-    }
-    const resetAdd = () => {
-        setisAdd(false);
-    }
-
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const [componentSize, setComponentSize] = useState('default');
-
-    const onFormLayoutChange = ({ size }) => {
-        setComponentSize(size);
-    };
-    const onChange = (value) => {
-        console.log(`selected ${value}`);
-    };
-    const onSearch = (value) => {
-        console.log('search:', value);
-    };
-    const mapped = dataSource.map((obj, index) => obj.building);
-    const buidlingFilter = mapped.filter((type, index) => mapped.indexOf(type) === index);
-    const dateFormatList = ['DD/MM/YYYY', 'YYYY/MM/DD'];
-    const mappedFloor = dataSource.map((obj, index) => obj.floor);
-    const floorFilter = mappedFloor.filter((type, index) => mappedFloor.indexOf(type) === index);
-    const onFinish = (e) => {
+    const onOkSelectBuilding = (e) => {
         console.log(e);
+        setIsSelectBuildingOpen(false);
     }
     return (
         <div
@@ -331,16 +234,18 @@ function ListRoom(props) {
                 minHeight: 360,
             }}
         >
+            <Row>
+                <Button onClick={() => { setIsSelectBuildingOpen(true) }} type="primary">Chọn tòa nhà để hiển thị dữ liệu</Button>
+            </Row>
             <Row style={{ marginBottom: '2%' }} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                <Col span={6}>
+                <Col span={5}>
                     <Statistic title={
                         <>
                             <span style={{ fontSize: "16px", }}>Tổng số phòng: </span>
-                            {/* <Button icon={<ArrowRightOutlined />} style={{ borderRadius: '50%' }}></Button> */}
                         </>
                     } value={50} />
                 </Col>
-                <Col span={6}>
+                <Col span={7}>
                     <Statistic title={
                         <>
                             <span style={{ fontSize: "16px", }}>Tổng số phòng trống: </span>
@@ -352,7 +257,6 @@ function ListRoom(props) {
                     <Statistic title={
                         <>
                             <span style={{ fontSize: "16px", }}>Tổng số tiền cọc: </span>
-                            {/* <Button icon={<ArrowRightOutlined />} style={{ borderRadius: '50%' }}></Button> */}
                         </>
                     } value={100000000} />
                 </Col>
@@ -360,7 +264,6 @@ function ListRoom(props) {
                     <Statistic title={
                         <>
                             <span style={{ fontSize: "16px", }}>Tổng số tiền phòng: </span>
-                            {/* <Button icon={<ArrowRightOutlined />} style={{ borderRadius: '50%' }}></Button> */}
                         </>
                     } value={100000000} />
                 </Col>
@@ -369,31 +272,19 @@ function ListRoom(props) {
                 <Tabs.TabPane tab="Tìm kiếm nhanh" key="1">
                     <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                         <Col span={24}>
-                            <Row>
-                                <Col span={22}>
-                                    <Input.Search placeholder="Nhập tên phòng để tìm kiếm" style={{ marginBottom: 8, width: 400 }}
-                                        onSearch={(e) => {
-                                            setSearched(e);
-                                        }}
-                                        onChange={(e) => {
-                                            setSearched(e.target.value);
-                                        }}
-                                    />
+                            <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+                                <Col span={6}>
+                                    <Input.Search placeholder="Nhập tên phòng để tìm kiếm" style={{ marginBottom: 8 }} />
                                 </Col>
-                                <Col span={2}>
-                                    <Button type="primary" size="default" style={{ float: "right" }}
-                                        onClick={() => {
-                                            onAdd()
-                                        }} icon={<PlusOutlined />}>
+                                <Col span={12}>
+                                    <FilterOutlined style={{ fontSize: "150%" }} />
+                                    <span style={{ fontSize: "16px", }}>Trạng thái phòng: </span>
+                                    <Checkbox.Group options={optionFilterRoom} />
+                                </Col>
+                                <Col span={2} offset={4}>
+                                    <Button type="primary" size="default" style={{ float: "right" }} icon={<PlusOutlined />}>
                                         Thêm Phòng
                                     </Button>
-                                </Col>
-                            </Row>
-                            <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                                <Col>
-                                    <FilterOutlined style={{ fontSize: "150%" }} />
-                                    <span style={{ fontSize: "16px", }}>Bộ lọc: </span>
-                                    <Checkbox.Group options={optionFilterRoom} />
                                 </Col>
                             </Row>
                         </Col>
@@ -487,257 +378,53 @@ function ListRoom(props) {
             >
             </Table>
             <Modal
-                title="Thêm phòng"
-                visible={isAdd}
-                onCancel={() => {
-                    resetAdd()
-                }}
-                onOk={() => {
-                    resetAdd()
-                }}
-                width={700}
-            >
-                <Form
-                    labelCol={{ span: 5 }}
-                    wrapperCol={{ span: 15 }}
-                    layout="horizontal"
-                    initialValues={{ size: componentSize }}
-                    onValuesChange={onFormLayoutChange}
-                    size={"default"}
-                    width={700}
-                >
-                    <Form.Item label="Tên phòng">
-                        <Input />
-                    </Form.Item>
-                    <Form.Item label="Danh sách phòng">
-                        <Select>
-                            <Select.Option value="demo">Tầng</Select.Option>
-                        </Select>
-                    </Form.Item>
-                    <Form.Item label="Giá phòng">
-                        <Input />
-                    </Form.Item>
-                    <Form.Item label="Diện tích">
-                        <Input />
-                    </Form.Item>
-                    <Form.Item label="DatePicker">
-                        <DatePicker />
-                    </Form.Item>
-                    <Form.Item label="InputNumber">
-                        <InputNumber />
-                    </Form.Item>
-                    <Form.Item label="Switch" valuePropName="checked">
-                        <Switch />
-                    </Form.Item>
-                    <Form.Item label="Button">
-                        <Button>Button</Button>
-                    </Form.Item>
-                </Form>
-            </Modal>
-            <Modal
-                title="Sửa thông tin phòng"
-                visible={isEdit}
-                onCancel={() => {
-                    resetEditing()
-                }}
-                onOk={(e) => {
-                    setDataSource((pre) => {
-                        return pre.map(renter => {
-                            if (renter.index === editRenter.index) {
-                                return editRenter;
-                            } else {
-                                return renter;
-                            }
-                        });
-                    });
-                    if (e.owner !== null) {
-                        resetEditing()
-                    }
-                }}
-                width={700}
+                title={<h3>Danh sách tòa nhà của bạn</h3>}
+                visible={isSelectBuildingOpen}
+                onOk={onOkSelectBuilding}
+                onCancel={() => { setIsSelectBuildingOpen(false) }}
                 footer={[
-                    <Button htmlType="submit" form="editRoom" type="primary" onClick={(e) => {
-                        setDataSource((pre) => {
-                            return pre.map(renter => {
-                                if (renter.index === editRenter.index) {
-                                    return editRenter;
-                                } else {
-                                    return renter;
-                                }
-                            });
-                        });
-                        validateRequired(editRenter);
-                    }}>
-                        Lưu
+                    <Button
+                        key="back"
+                        onClick={() => { setIsSelectBuildingOpen(false) }}
+                    >
+                        Đóng
                     </Button>,
-                    <Button key="back" onClick={() => {
-                        resetEditing()
-                    }}>
-                        Huỷ
+                    <Button type="primary" onClick={onOkSelectBuilding}>
+                        Chọn
                     </Button>,
                 ]}>
-                <Form
-                    onFinish={onFinish}
-                    form={form}
-                    labelCol={{
-                        span: 6,
-                    }}
-                    wrapperCol={{
-                        span: 15,
-                    }}
-                    layout="horizontal"
-                    initialValues={{
-                        size: componentSize,
-                    }}
-                    onValuesChange={onFormLayoutChange}
-                    size={componentSize}
-                    width={1000}
-                    id="editRoom"
-                >
-                    <Form.Item label="Phòng" name="roomCode" rules={[
-                        {
-                            required: true,
-                            message: "Vui lòng nhập phòng",
-                        },
-                    ]}>
-                        <Input value={editRenter?.roomCode} onChange={(e) => {
-                            setEditRenter(pre => {
-                                return { ...pre, roomCode: e.target.value }
-                            })
-                        }} />
-                    </Form.Item>
-                    <Form.Item label="Tên chủ hộ" name="owner" rules={[
-                        {
-                            required: true,
-                            message: "Vui lòng nhập tên chủ hộ",
-                        },
-                        {
-                            whitespace: true
-                        }
-                    ]}>
-                        <Input value={editRenter?.owner} onChange={(e) => {
-                            setEditRenter(pre => {
-                                return { ...pre, owner: e.target.value }
-                            })
-                        }} />
-                    </Form.Item>
-                    <Form.Item label="Tòa" name="building" rules={[
-                        {
-                            required: true,
-                            message: "Vui lòng nhập tòa nhà",
-                        },
-                    ]}>
-                        <Select
-                            onChange={(e) => {
-                                setEditRenter(pre => {
-                                    return { ...pre, building: e }
-                                })
+                <Row>
+                    <Col span={24}>
+                        <Card
+                            extra={<a href="#">Chọn</a>}
+                            bordered
+                            title="Tòa nhà 1"
+                            style={{
+                                width: '100%',
+                                marginBottom: '2%'
                             }}
-                            value={editRenter?.building}>
-                            {buidlingFilter.map((obj, index) => {
-                                return <Select.Option key={index} value={obj}>{obj}</Select.Option>
-                            })}
-                        </Select>
-                    </Form.Item>
-                    <Form.Item label="Tầng" name="floor" rules={[
-                        {
-                            required: true,
-                            message: "Vui lòng nhập tầng",
-                        },
-                    ]}>
-                        <Select
-                            showSearch
-                            placeholder="Chọn tầng"
-                            optionFilterProp="children"
-                            onChange={(e) => {
-                                setEditRenter(pre => {
-                                    return { ...pre, floor: e }
-                                })
-                            }}
-                            onSearch={onSearch}
-                            filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
-                            value={editRenter?.floor}
                         >
-                            {floorFilter.map((obj, index) => {
-                                return <Select.Option key={index} value={obj}>{obj}</Select.Option>
-                            })}
-                        </Select>
-                    </Form.Item>
-                    <Form.Item label="Số lượng người" name="numberOfRenter" rules={[
-                        {
-                            required: true,
-                            message: "Vui lòng nhập số lượng người",
-                        },
-                    ]}>
-                        <InputNumber min={1} onChange={(e) => {
-                            setEditRenter(pre => {
-                                return { ...pre, numberOfRenter: e }
-                            })
-                        }} value={editRenter?.numberOfRenter} />
-                    </Form.Item>
-                    <Form.Item label="Diện tích" name="square" rules={[
-                        {
-                            required: true,
-                            message: "Vui lòng nhập diện tích",
-                        },
-                        {
-                            whitespace: true
-                        }
-                    ]}>
-                        <Input value={editRenter?.square} onChange={(e) => {
-                            setEditRenter(pre => {
-                                return { ...pre, square: e.target.value }
-                            })
-                        }} />
-                    </Form.Item>
-                    <Form.Item label="Ngày thuê" name="dateOfHire" rules={[
-                        {
-                            required: true,
-                            message: "Vui lòng nhập ngày thuê",
-                        },
-                    ]}>
-                        <DatePicker
-                            value={moment(editRenter?.dateOfHire, dateFormatList)}
-                            format='DD/MM/YYYY'
-                            onChange={(e) => {
-                                setEditRenter(pre => {
-                                    return { ...pre, dateOfHire: moment(e).format('DD/MM/YYYY') }
-                                })
+                            <p>Làng phú đô, Nam Từ Liêm, Hà Nội</p>
+                        </Card>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col span={24}>
+                        <Card
+                            extra={<a href="#">Chọn</a>}
+                            bordered
+                            title="Tòa nhà 2"
+                            style={{
+                                width: '100%',
                             }}
-                        />
-                    </Form.Item>
-                    <Form.Item label="Ngày hết hạn hợp đồng" name="contractExpirationDate" rules={[
-                        {
-                            required: true,
-                            message: "Vui lòng nhập ngày hết hạn hợp đồng",
-                        },
-                    ]}>
-                        <DatePicker
-                            value={moment(editRenter?.contractExpirationDate, dateFormatList)}
-                            format='DD/MM/YYYY'
-                            onChange={(e) => {
-                                setEditRenter(pre => {
-                                    return { ...pre, contractExpirationDate: moment(e).format('DD/MM/YYYY') }
-                                })
-                            }}
-                        />
-                    </Form.Item>
-                    <Form.Item label="Tình trạng" name="status" valuePropName="checked" rules={[
-                        {
-                            required: true,
-                            message: "Vui lòng nhập ngày hết hạn hợp đồng",
-                        },
-                    ]}>
-                        <Switch
-                            checked={editRenter?.status}
-                            onChange={(e) => {
-                                setEditRenter(pre => {
-                                    return { ...pre, status: e }
-                                })
-                            }}
-                        />
-                    </Form.Item>
-                </Form>
+                        >
+                            <p>Hữu Quan, Dương Quan, Thủy Nguyên, Hải Phòng</p>
+                        </Card>
+                    </Col>
+                </Row>
+                <Row>
+                    <Button type="primary" style={{ marginTop: '2%' }}>Chọn tất cả</Button>
+                </Row>
             </Modal>
         </div>
     );

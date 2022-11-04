@@ -165,60 +165,26 @@ const ListContractApartment = () => {
           <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
             <Col className="gutter-row" span={6}>
               <Row>
-                <label htmlFor="" style={{ marginBottom: "10px" }}>
-                  Tìm kiếm theo giá thuê
-                </label>
-              </Row>
-              <Row>
-                <Slider
-                  className="slider-main-div"
-                  min={0}
-                  max={10000000000}
-                  range
-                  onChange={onChangePrice}
-                  defaultValue={[price.min, price.max]}
-                  value={[price.min, price.max]}
-                  style={{ width: "80%" }}
-                  trackStyle={[{ color: "red" }]}
-                />
-              </Row>
-              <Row gutter={16}>
-                <Col span={11}>
-                  <InputNumber
-                    controls={false}
-                    className="min-input-main"
-                    style={{ width: '100%' }}
-                    min={0}
-                    max={10000000000}
-                    value={price.min}
-                    onChange={onChangeMin}
-                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                    parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
-                  />
-                </Col>
-                -
-                <Col span={11}>
-                  <InputNumber
-                    controls={false}
-                    className="min-input-main"
-                    style={{ width: '100%' }}
-                    min={0}
-                    max={10000000000}
-                    value={price.max}
-                    onChange={onChangeMax}
-                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                    parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
-                  />
-                </Col>
-              </Row>
-            </Col>
-            <Col className="gutter-row" span={6}>
-              <Row>
                 <span style={{ fontSize: "16px", }}>Tên người cho thuê: </span>
               </Row>
               <Row>
-                <Search
-                  placeholder="Nhập người cho thuê để tìm kiếm"
+                <Input
+                  placeholder="Nhập tên người cho thuê"
+                  style={{ marginBottom: '2%', width: '100%' }}
+                  onSearch={(value) => {
+                    setTextSearch(value);
+                  }}
+                  onChange={(e) => {
+                    setTextSearch(e.target.value);
+                  }}
+                />
+              </Row>
+              <Row>
+                <span style={{ fontSize: "16px", }}>Số điện thoại người cho thuê: </span>
+              </Row>
+              <Row>
+                <Input
+                  placeholder="Nhập số điện thoại người cho thuê"
                   style={{ marginBottom: '2%', width: '100%' }}
                   onSearch={(value) => {
                     setTextSearch(value);
@@ -229,7 +195,7 @@ const ListContractApartment = () => {
                 />
               </Row>
             </Col>
-            <Col className="gutter-row" span={6}>
+            <Col className="gutter-row" span={8}>
               <Row>
                 <span style={{ fontSize: "16px", }}>Thời gian: </span>
               </Row>
@@ -251,7 +217,7 @@ const ListContractApartment = () => {
                 </Col>
               </Row>
             </Col>
-            <Col className="gutter-row" span={6}>
+            <Col className="gutter-row" span={10}>
               <Row>
                 <span style={{ fontSize: "16px", }}>Trạng thái hợp đồng: </span>
               </Row>
