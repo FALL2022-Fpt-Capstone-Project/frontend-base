@@ -129,7 +129,6 @@ const ListContractRenter = () => {
     setEndContract(e.target.checked);
   };
 
-
   // useEffect(() => {
   //   getContractById();
   // }, []);
@@ -353,7 +352,7 @@ const ListContractRenter = () => {
             },
           },
         ]}
-        pagination={{ pageSize: 5 }}
+        pagination={{ pageSize: 10 }}
         loading={loading}
       />
       <ViewContractRenter openView={viewContract} closeView={setViewContract} dataContract={contractInfor} />

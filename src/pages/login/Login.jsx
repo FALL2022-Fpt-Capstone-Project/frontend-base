@@ -6,7 +6,7 @@ import "./login.scss";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import axios from "../../api/axios";
-const LOGIN_URL = "auth/signin";
+const LOGIN_URL = "auth/login";
 
 const Login = () => {
   const { setAuth } = useAuth();
@@ -31,9 +31,9 @@ const Login = () => {
         },
       })
       .then((res) => {
-        const accessToken = res?.data?.body.token;
-        const roles = res?.data?.body.role;
-        const id = res?.data?.body.account_id;
+        const accessToken = res?.data?.data.token;
+        const roles = res?.data?.data.roles;
+        const id = res?.data?.data.account_id;
         window.localStorage.setItem("Cookie", `${accessToken}`);
         window.localStorage.setItem("Role", `${roles}`);
         window.localStorage.setItem("id", `${id}`);
@@ -41,21 +41,23 @@ const Login = () => {
         setUser("");
         setPwd("");
         navigate("/home");
+        console.log(res);
       })
       .catch((err) => {
-        if (err.response?.status === 500) {
-          notification.error({
-            message: "Đăng nhập thất bại",
-            description: "Tên đăng nhập hoặc mật khẩu không chính xác.",
-            duration: 3,
-          });
-        } else if (err.response?.status === 401) {
-          notification.error({
-            message: "Đăng nhập thất bại",
-            description: "Tên đăng nhập hoặc mật khẩu không chính xác.",
-            duration: 3,
-          });
-        }
+        // if (err.response?.status === 500) {
+        //   notification.error({
+        //     message: "Đăng nhập thất bại",
+        //     description: "Tên đăng nhập hoặc mật khẩu không chính xác.",
+        //     duration: 3,
+        //   });
+        // } else if (err.response?.status === 401) {
+        //   notification.error({
+        //     message: "Đăng nhập thất bại",
+        //     description: "Tên đăng nhập hoặc mật khẩu không chính xác.",
+        //     duration: 3,
+        //   });
+        // }
+        console.log(err);
       });
     setLoading(false);
   };

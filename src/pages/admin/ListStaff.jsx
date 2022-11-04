@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Input, Table, Select, Checkbox, DatePicker, Tag, Row, Col, Button, Tabs, Form, Modal } from "antd";
+import { Input, Table, Select, DatePicker, Tag, Row, Col, Button, Tabs, Form, Modal, Switch, Tooltip } from "antd";
 import axios from "../../api/axios";
 import { NavLink } from "react-router-dom";
 import "./listStaff.scss";
@@ -10,8 +10,9 @@ const ListStaff = () => {
   const [textSearch, setTextSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState();
-  const [deactive, setDeactive] = useState("");
+  const [deactive, setDeactive] = useState(false);
   const [roles, setRoles] = useState("");
+  const [rolesFilter, setRolesFilter] = useState("");
   const [roleInfo, setRoleInfo] = useState("");
   const [full_name, setFullname] = useState("");
   const [user_name, setUsername] = useState("");
@@ -19,8 +20,8 @@ const ListStaff = () => {
   const [endDate, setEndDate] = useState("");
   const [user, setUser] = useState([]);
   const [id, setId] = useState();
-  const LIST_EMPLOYEE_URL = "manager/account/list-all-staff-account";
-  const FILTER_EMPOYEE_URL = "manager/account/list-staff-account";
+  const LIST_EMPLOYEE_URL = "manager/staff";
+  const LIST_ROLES_URL = "manager/staff/roles";
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const showModal = (id) => {
@@ -50,16 +51,7 @@ const ListStaff = () => {
     },
   };
   const [form] = Form.useForm();
-  const options = [
-    {
-      label: "Admin",
-      value: "admin",
-    },
-    {
-      label: "Nhân viên",
-      value: "staff",
-    },
-  ];
+  const options = [];
   let cookie = localStorage.getItem("Cookie");
   let role = localStorage.getItem("Role");
   useEffect(() => {
@@ -73,7 +65,7 @@ const ListStaff = () => {
           },
         })
         .then((res) => {
-          setDataSource(res.data.body);
+          setDataSource(res.data.data);
           console.log(res);
         })
         .catch((error) => {
@@ -83,19 +75,57 @@ const ListStaff = () => {
     };
     getAllEmployees();
   }, [cookie]);
+  useEffect(() => {
+    const getRoleFilter = async () => {
+      setLoading(true);
+      const response = await axios
+        .get(LIST_ROLES_URL, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cookie}`,
+          },
+        })
+        .then((res) => {
+          setRolesFilter(res.data.data);
+          console.log(res);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      setLoading(false);
+    };
+    getRoleFilter();
+  }, [cookie]);
+
+  for (let i = 0; i < rolesFilter.length; i++) {
+    if (rolesFilter[i] === "STAFF") {
+      options.push({
+        label: "Nhân viên",
+        value: rolesFilter[i].toLowerCase(),
+      });
+    } else {
+      options.push({
+        label: rolesFilter[i],
+        value: rolesFilter[i].toLowerCase(),
+      });
+    }
+  }
 
   useEffect(() => {
     axios
-      .get(`manager/account/staff-account/${id}`, {
+      .get(`manager/staff/${id}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${cookie}`,
         },
       })
       .then((res) => {
-        setUser(res.data.body);
-        setRoleInfo(res.data.body.role[0]);
+        setUser(res.data.data);
+        setRoleInfo(res.data.data.role_name);
         console.log(res.data);
+      })
+      .catch((e) => {
+        console.log(e);
       });
   }, [id]);
 
@@ -109,27 +139,27 @@ const ListStaff = () => {
       endDate: endDate,
     };
 
-    // setLoading(true);
-    // const response = await axios
-    //   .get(FILTER_EMPOYEE_URL, {
-    //     params: { role: option, startDate: startDate, endDate: endDate },
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //       Authorization: `Bearer ${cookie}`,
-    //     },
-    //   })
-    //   .then((res) => {
-    //     setDataSource(res.data.body);
-    //     console.log(res);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
-    // setLoading(false);
+    setLoading(true);
+    const response = await axios
+      .get(LIST_EMPLOYEE_URL, {
+        params: { name: full_name, userName: user_name, role: roles, deactivate: deactive },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie}`,
+        },
+      })
+      .then((res) => {
+        setDataSource(res.data.data);
+        console.log(res);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    setLoading(false);
     console.log(data);
   };
-  const deactiveChange = (e) => {
-    setDeactive(e.target.checked);
+  const deactiveChange = (value) => {
+    setDeactive(value);
   };
   const roleChange = (value) => {
     setRoles(value);
@@ -141,7 +171,7 @@ const ListStaff = () => {
     setUsername(e.target.value);
   };
   const getFullDate = (date) => {
-    const dateAndTime = date.split("T");
+    const dateAndTime = date.split(" ");
 
     return dateAndTime[0].split("-").reverse().join("-");
   };
@@ -224,10 +254,19 @@ const ListStaff = () => {
                     </Row>
                     <Row style={{ flexWrap: "nowrap", width: "700px" }}>
                       <Form.Item name="role">
-                        <Checkbox.Group options={options} onChange={roleChange} style={{ width: "300px" }} />
+                        <Select
+                          // defaultValue="a1"
+                          onChange={roleChange}
+                          style={{
+                            width: 150,
+                            marginRight: 50,
+                          }}
+                          options={options}
+                          placeholder="Chọn chức vụ"
+                        />
                       </Form.Item>
                       <Form.Item name="deactive" style={{ width: "500px" }}>
-                        <Checkbox onChange={deactiveChange}>Nhân viên đã nghỉ việc</Checkbox>
+                        <Switch onChange={deactiveChange} /> <span>Nhân viên đã nghỉ việc</span>
                       </Form.Item>
                     </Row>
                   </Col>
@@ -293,7 +332,7 @@ const ListStaff = () => {
           },
           {
             title: "Ngày bắt đầu làm việc",
-            dataIndex: "created_date",
+            dataIndex: "created_at",
             render: (date) => getFullDate(date),
           },
           {
@@ -301,7 +340,7 @@ const ListStaff = () => {
             dataIndex: "gender",
             render: (_, record) => {
               let gender;
-              if (record.gender === "Nam") {
+              if (record.gender === true) {
                 gender = <p>Nam</p>;
               } else {
                 gender = <p>Nữ</p>;
@@ -314,7 +353,7 @@ const ListStaff = () => {
             dataIndex: "role",
             render: (_, record) => {
               let role;
-              if (record.role[0] === "ROLE_ADMIN" || record.role[0] === "admin" || record.role[0] === "Admin") {
+              if (record.role_name === "ROLE_ADMIN") {
                 role = <p>ADMIN</p>;
               } else {
                 role = <p>Nhân Viên</p>;
@@ -327,13 +366,13 @@ const ListStaff = () => {
             dataIndex: "status",
             render: (_, record) => {
               let status;
-              if (record.deactivate === true) {
+              if (record.is_deactivate === true) {
                 status = (
                   <Tag color="default" key={record.status}>
                     Đã nghỉ việc
                   </Tag>
                 );
-              } else if (record.deactivate === false) {
+              } else if (record.is_deactivate === false) {
                 status = (
                   <Tag color="green" key={record.status}>
                     Đang làm việc
@@ -351,24 +390,35 @@ const ListStaff = () => {
             render: (_, record) => {
               return (
                 <>
-                  <NavLink to={`/update-staff/${record.id}`}>
-                    <EditOutlined style={{ fontSize: "20px", marginRight: "10px" }} />
-                  </NavLink>
-                  <EyeOutlined
-                    style={{ fontSize: "20px", color: "#46a6ff" }}
-                    onClick={() => {
-                      showModal(record.id);
-                    }}
-                  />
+                  <Tooltip title="Chỉnh sửa">
+                    <NavLink to={`/update-staff/${record.account_id}`}>
+                      <EditOutlined style={{ fontSize: "20px", marginRight: "10px" }} />
+                    </NavLink>
+                  </Tooltip>
+                  <Tooltip title="Xem">
+                    <EyeOutlined
+                      style={{ fontSize: "20px", color: "#46a6ff" }}
+                      onClick={() => {
+                        showModal(record.account_id);
+                      }}
+                    />
+                  </Tooltip>
                 </>
               );
             },
           },
         ]}
-        pagination={{ pageSize: 5 }}
+        pagination={{ pageSize: 10 }}
         loading={loading}
       />
-      <Modal title="Thông tin cá nhân" open={isModalOpen} footer={(null, null)} onCancel={handleCancel}>
+      <Modal
+        title="Thông tin cá nhân"
+        className="modalStyle"
+        open={isModalOpen}
+        footer={(null, null)}
+        onCancel={handleCancel}
+        width="700px"
+      >
         <div
           className="basic-info"
           style={{
@@ -376,78 +426,80 @@ const ListStaff = () => {
           }}
         >
           <Row>
-            <img
-              src="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png"
-              style={{ width: "100px", marginBottom: "10px" }}
-              alt=""
-            />
-          </Row>
-          <Row>
-            <Col>
-              <p style={{ fontSize: "16px", fontWeight: "bold" }}>Họ và tên: </p>
+            <Col span={12}>
+              <img
+                src="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png"
+                style={{ width: "150px" }}
+                alt=""
+              />
             </Col>
+            <Col span={12}>
+              <Row>
+                <Col span={12}>
+                  <p style={{ fontSize: "14px", textTransform: "uppercase", color: "rgb(113 102 102)" }}>Họ và tên: </p>
+                </Col>
+                <Col span={12}>
+                  <p style={{ fontSize: "14px", padding: "0 0 0 5px" }}>{user.full_name}</p>
+                </Col>
+              </Row>
+              <Row>
+                <Col span={12}>
+                  <p style={{ fontSize: "14px", textTransform: "uppercase", color: "rgb(113 102 102)" }}>
+                    Tên đăng nhập:
+                  </p>
+                </Col>
 
-            <Col>
-              <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.full_name}</p>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <p style={{ fontSize: "16px", fontWeight: "bold" }}>Tên đăng nhập: </p>
-            </Col>
+                <Col span={12}>
+                  <p style={{ fontSize: "14px", padding: "0 0 0 5px" }}>{user.user_name}</p>
+                </Col>
+              </Row>
+              <Row>
+                <Col span={12}>
+                  <p style={{ fontSize: "14px", textTransform: "uppercase", color: "rgb(113 102 102)" }}>Giới tính: </p>
+                </Col>
 
-            <Col>
-              <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.user_name}</p>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <p style={{ fontSize: "16px", fontWeight: "bold" }}>Giới tính: </p>
-            </Col>
+                <Col span={12}>
+                  {user.gender ? (
+                    <p style={{ fontSize: "14px", padding: "0 0 0 5px" }}>Nam</p>
+                  ) : (
+                    <p style={{ fontSize: "14px", padding: "0 0 0 5px" }}>Nữ</p>
+                  )}
+                </Col>
+              </Row>
+              <Row>
+                <Col span={12}>
+                  <p style={{ fontSize: "14px", textTransform: "uppercase", color: "rgb(113 102 102)" }}>Chức vụ: </p>
+                </Col>
+                <Col span={12}>
+                  {roleInfo === "ROLE_ADMIN" ? (
+                    <p style={{ fontSize: "14px", padding: "0 0 0 5px" }}>ADMIN</p>
+                  ) : (
+                    <p style={{ fontSize: "14px", padding: "0 0 0 5px" }}>Nhân viên</p>
+                  )}
+                </Col>
+              </Row>
+              <Row>
+                <Col span={12}>
+                  <p style={{ fontSize: "14px", textTransform: "uppercase", color: "rgb(113 102 102)" }}>
+                    Số điện thoại:
+                  </p>
+                </Col>
 
-            <Col>
-              <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.gender}</p>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <p style={{ fontSize: "16px", fontWeight: "bold" }}>Chức vụ: </p>
-            </Col>
-            <Col>
-              {roleInfo === "ROLE_ADMIN" ? (
-                <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>ADMIN</p>
-              ) : (
-                <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>Nhân viên</p>
-              )}
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <p style={{ fontSize: "16px", fontWeight: "bold" }}>Số điện thoại: </p>
-            </Col>
+                <Col span={12}>
+                  <p style={{ fontSize: "14px", padding: "0 0 0 5px" }}>{user.phone_number}</p>
+                </Col>
+              </Row>
+              <Row>
+                <Col span={12}>
+                  <p style={{ fontSize: "14px", textTransform: "uppercase", color: "rgb(113 102 102)" }}>
+                    Địa chỉ chi tiết:
+                  </p>
+                </Col>
 
-            <Col>
-              <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.phone_number}</p>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <p style={{ fontSize: "16px", fontWeight: "bold" }}>Địa chỉ: </p>
-            </Col>
-
-            <Col>
-              <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>
-                {user.address_wards}, {user.address_district}, {user.address_city}
-              </p>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <p style={{ fontSize: "16px", fontWeight: "bold" }}>Địa chỉ chi tiết: </p>
-            </Col>
-
-            <Col>
-              <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.address_more_detail}</p>
+                <Col span={12}>
+                  <p style={{ fontSize: "14px", padding: "0 0 0 5px" }}>{user.address_more_detail}</p>
+                </Col>
+              </Row>
             </Col>
           </Row>
         </div>
