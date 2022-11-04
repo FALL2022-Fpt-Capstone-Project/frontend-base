@@ -44,19 +44,19 @@ const Login = () => {
         console.log(res);
       })
       .catch((err) => {
-        // if (err.response?.status === 500) {
-        //   notification.error({
-        //     message: "Đăng nhập thất bại",
-        //     description: "Tên đăng nhập hoặc mật khẩu không chính xác.",
-        //     duration: 3,
-        //   });
-        // } else if (err.response?.status === 401) {
-        //   notification.error({
-        //     message: "Đăng nhập thất bại",
-        //     description: "Tên đăng nhập hoặc mật khẩu không chính xác.",
-        //     duration: 3,
-        //   });
-        // }
+        if (err.response?.status === 403) {
+          notification.error({
+            message: "Đăng nhập thất bại",
+            description: "Tên đăng nhập hoặc mật khẩu không chính xác.",
+            duration: 3,
+          });
+        } else if (err.response?.status === 401) {
+          notification.error({
+            message: "Đăng nhập thất bại",
+            description: "Bạn không có quyền truy cập.",
+            duration: 3,
+          });
+        }
         console.log(err);
       });
     setLoading(false);

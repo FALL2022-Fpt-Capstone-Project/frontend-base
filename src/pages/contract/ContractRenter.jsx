@@ -124,7 +124,7 @@ const ContractRenter = () => {
                         style={{
                           width: 300,
                           marginRight: 20,
-                          height: 175,
+                          height: 130,
                         }}
                       >
                         <span>{countLatest} hợp đồng</span>
@@ -135,25 +135,10 @@ const ContractRenter = () => {
                     </Col>
                     <Col span={6}>
                       <Card
-                        title="Số lượng hợp đồng đã kết thúc"
-                        style={{
-                          width: 300,
-                          marginRight: 20,
-                          height: 175,
-                        }}
-                      >
-                        <span>{countExpired} hợp đồng</span>
-                        <Button type="primary" onClick={showModalEnd} style={{ marginLeft: "10px" }}>
-                          Xem chi tiết
-                        </Button>
-                      </Card>
-                    </Col>
-                    <Col span={6}>
-                      <Card
                         title="Số lượng hợp đồng sắp hết hạn"
                         style={{
                           width: 300,
-                          height: 175,
+                          height: 130,
                         }}
                       >
                         <span>{countAlmostExpired} hợp đồng</span>
@@ -163,7 +148,22 @@ const ContractRenter = () => {
                       </Card>
                     </Col>
                     <Col span={6}>
-                      <label htmlFor="" style={{ margin: "120px 10px 0 20px", fontSize: "14px", display: "block" }}>
+                      <Card
+                        title="Số lượng hợp đồng đã kết thúc"
+                        style={{
+                          width: 300,
+                          marginRight: 20,
+                          height: 130,
+                        }}
+                      >
+                        <span>{countExpired} hợp đồng</span>
+                        <Button type="primary" onClick={showModalEnd} style={{ marginLeft: "10px" }}>
+                          Xem chi tiết
+                        </Button>
+                      </Card>
+                    </Col>
+                    <Col span={6}>
+                      <label htmlFor="" style={{ margin: "75px 10px 0 20px", fontSize: "14px", display: "block" }}>
                         Chọn thời gian thống kê dữ liệu hợp đồng
                       </label>
                       <Select
