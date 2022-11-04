@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Input, Table, DatePicker, Select, Button, Row, Col, Checkbox, Tag, Tabs, Slider, InputNumber } from "antd";
+import { Input, Table, DatePicker, Select, Button, Row, Col, Tag, Tabs, Switch, Form } from "antd";
 import "./listContract.scss";
 import useAuth from "../../hooks/useAuth";
 import axios from "../../api/axios";
-import { DeleteOutlined, EditOutlined, SearchOutlined, EyeOutlined, UndoOutlined } from "@ant-design/icons";
+import { EditOutlined, SearchOutlined, EyeOutlined, UndoOutlined } from "@ant-design/icons";
 const { Search } = Input;
 const LIST_CONTRACT_URL = "manager/contract/get-contract/1";
 const FILTER_CONTRACT_URL = "manager/contract/get-contract/1";
@@ -14,13 +14,31 @@ const ListContractRenter = () => {
   const [textSearch, setTextSearch] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [contractName, setContractName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [CCCD, setCCCD] = useState("");
   const [renterName, setRenterName] = useState("");
   const [endContract, setEndContract] = useState(false);
   const [duration, setDuration] = useState();
-  const [price, setPrice] = useState({ min: 0, max: 1000000 });
   const [loading, setLoading] = useState(false);
-  const { auth } = useAuth();
+  const formItemLayout = {
+    labelCol: {
+      xs: {
+        span: 24,
+      },
+      sm: {
+        span: 8,
+      },
+    },
+    wrapperCol: {
+      xs: {
+        span: 24,
+      },
+      sm: {
+        span: 16,
+      },
+    },
+  };
+  const [form] = Form.useForm();
   let cookie = localStorage.getItem("Cookie");
   useEffect(() => {
     getAllContract();
@@ -57,7 +75,7 @@ const ListContractRenter = () => {
     setStartDate(startDate);
     setEndDate(endDate);
   };
-  const getFilterContract = async () => {
+  const getFilterContractRenter = async () => {
     // setLoading(true);
     // const response = await axios
     //   .get(FILTER_CONTRACT_URL, {
@@ -81,127 +99,120 @@ const ListContractRenter = () => {
     setDuration(value);
   };
   const filterContract = {
-    contract_name: contractName,
+    phoneNumber: phoneNumber,
     renter_name: renterName,
     endContract: endContract,
     startDate: startDate,
     endDate: endDate,
-    price: price.min,
   };
 
-  const onChange = (value) => {
-    if (value[0] < value[1]) {
-      setPrice({ min: value[0], max: value[1] });
-    }
-  };
-
-  const onChangeMin = (value) => {
-    if (price.max > value) {
-      setPrice({ min: value });
-    }
-  };
-  const onChangeMax = (value) => {
-    if (price.min < value) {
-      setPrice({ max: value });
-    }
-  };
-  console.log(price);
   const renterNameChange = (e) => {
     setRenterName(e.target.value);
   };
-  const endContractChange = (e) => {
-    setEndContract(e.target.checked);
+  const endContractChange = (value) => {
+    setEndContract(value);
+  };
+  const resetForm = () => {
+    form.resetFields();
+    // setDeactive("");
+    // setEndDate("");
+    // setStartDate("");
+    // setFullname("");
+    // setRoles("");
+    // setUsername("");
   };
   return (
     <div className="list-contract">
       <div className="list-contract-search">
         <Tabs defaultActiveKey="1">
           <Tabs.TabPane tab="Tìm kiếm nâng cao" key="1">
-            <Row gutter={[16, 32]} style={{ marginBottom: "20px" }}>
-              <Col className="gutter-row" span={6} style={{ marginBottom: "30px" }}>
-                <Row>
-                  <label htmlFor="" style={{ marginBottom: "10px" }}>
-                    Tìm kiếm theo tiền phòng
-                  </label>
-                </Row>
-                <Row>
-                  <Slider
-                    className="slider-main-div"
-                    min={0}
-                    max={10000000}
-                    onChange={onChange}
-                    range
-                    defaultValue={[price.min, price.max]}
-                    value={[price.min, price.max]}
-                    style={{ width: "80%" }}
-                    trackStyle={[{ color: "red" }]}
-                  />
-                </Row>
-                <Row>
-                  <InputNumber
-                    className="min-input-main"
-                    min={0}
-                    max={10000000}
-                    value={price.min}
-                    onChange={onChangeMin}
-                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                    parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
-                  />
-                  <span className="range-span"> - </span>
-                  <InputNumber
-                    className="min-input-main"
-                    min={0}
-                    max={10000000}
-                    value={price.max}
-                    onChange={onChangeMax}
-                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                    parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
-                  />
-                </Row>
-              </Col>
-              <Col className="gutter-row" span={6}>
-                <Row>
-                  <label htmlFor="" style={{ marginBottom: "10px" }}>
-                    Tìm kiếm theo tên khách thuê
-                  </label>
-                </Row>
-                <Row>
-                  <Input placeholder="Nhập tên khách thuê" onChange={renterNameChange} />
-                </Row>
-              </Col>
+            <Form
+              {...formItemLayout}
+              form={form}
+              name="filterStaff"
+              id="filterStaff"
+              onFinish={getFilterContractRenter}
+              style={{ width: "100%" }}
+            >
+              <Row gutter={[16, 32]} style={{ marginBottom: "20px" }}>
+                <Col span={8}>
+                  <Form.Item name="full_name" style={{ width: "500px" }}>
+                    <Col className="gutter-row" span={24}>
+                      <Row>
+                        <label htmlFor="" style={{ marginBottom: "10px" }}>
+                          Tìm kiếm theo tên khách thuê
+                        </label>
+                      </Row>
+                      <Row>
+                        <Input placeholder="Nhập tên khách thuê" autoComplete="off" />
+                      </Row>
+                    </Col>
+                  </Form.Item>
 
-              <Col className="gutter-row" span={8} style={{ marginBottom: "30px" }}>
-                <Row>
-                  <label htmlFor="" style={{ marginBottom: "10px" }}>
-                    Tìm kiếm theo thời gian hợp đồng
-                  </label>
-                </Row>
-                <Row>
-                  <RangePicker
-                    format={"DD-MM-YYYY"}
-                    placeholder={["Từ", "Đến"]}
-                    onChange={dateChange}
-                    style={{ marginRight: "50px" }}
-                  />
-                  <Checkbox onChange={endContractChange}>Hợp đồng đã kết thúc</Checkbox>
-                </Row>
-              </Col>
-            </Row>
-            <Row style={{ marginBottom: "20px" }}>
-              <Col offset={10}>
-                <Row>
-                  <Button
-                    type="primary"
-                    icon={<SearchOutlined />}
-                    style={{ marginRight: "20px" }}
-                    onClick={getFilterContract}
-                  >
-                    Tìm kiếm
-                  </Button>
-                  <Button icon={<UndoOutlined />}>Đặt lại</Button>
-                </Row>
-              </Col>
-            </Row>
+                  <Form.Item name="user_name" style={{ width: "500px" }}>
+                    <Col className="gutter-row" span={24}>
+                      <Row>
+                        <label htmlFor="" style={{ marginBottom: "10px" }}>
+                          Tìm kiếm theo số CCCD/Số điện thoại
+                        </label>
+                      </Row>
+                      <Row>
+                        <Input placeholder="Nhập số CCCD/Số điện thoại" autoComplete="off" />
+                      </Row>
+                    </Col>
+                  </Form.Item>
+                </Col>
+                <Col span={8} offset={3}>
+                  <Form.Item name="date" style={{ width: "500px" }}>
+                    <Col className="gutter-row" span={24}>
+                      <Row>
+                        <label htmlFor="" style={{ marginBottom: "10px" }}>
+                          Ngày bắt đầu lập hợp đồng
+                        </label>
+                      </Row>
+                      <Row>
+                        <RangePicker format={"DD-MM-YYYY"} placeholder={["Từ", "Đến"]} onChange={dateChange} />
+                      </Row>
+                    </Col>
+                  </Form.Item>
+                  <Col className="gutter-row" span={24}>
+                    <Row style={{ flexWrap: "nowrap", width: "700px" }}>
+                      <Form.Item name="user_name" style={{ width: "500px" }}>
+                        <Row>
+                          <label htmlFor="" style={{ marginBottom: "10px" }}>
+                            Tìm kiếm theo tên chung cư
+                          </label>
+                        </Row>
+                        <Row>
+                          <Select placeholder="Chọn chung cư"></Select>
+                        </Row>
+                      </Form.Item>
+                      <Form.Item name="deactive" style={{ width: "500px", marginTop: "30px" }}>
+                        <Switch /> <span>Hợp đồng đã kết thúc</span>
+                      </Form.Item>
+                    </Row>
+                  </Col>
+                </Col>
+              </Row>
+              <Row style={{ marginBottom: "20px" }}>
+                <Col offset={10}>
+                  <Row>
+                    <Button
+                      type="primary"
+                      icon={<SearchOutlined />}
+                      style={{ marginRight: "20px" }}
+                      onClick={getFilterContractRenter}
+                      htmlType="submit"
+                    >
+                      Tìm kiếm
+                    </Button>
+                    <Button icon={<UndoOutlined />} onClick={resetForm}>
+                      Đặt lại
+                    </Button>
+                  </Row>
+                </Col>
+              </Row>
+            </Form>
           </Tabs.TabPane>
           <Tabs.TabPane tab="Tìm kiếm nhanh" key="2">
             <Search
