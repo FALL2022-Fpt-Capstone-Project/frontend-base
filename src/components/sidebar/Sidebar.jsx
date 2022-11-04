@@ -34,14 +34,14 @@ const Sidebar = () => {
   let role = localStorage.getItem("Role");
   useEffect(() => {
     axios
-      .get(`manager/account/staff-account/${id}`, {
+      .get(`manager/staff/${id}`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${cookie}`,
         },
       })
       .then((res) => {
-        setUser(res.data.body);
+        setUser(res.data.data);
       });
   }, []);
   return (
@@ -89,12 +89,12 @@ const Sidebar = () => {
           </Menu.Item>
           <Menu.Item key="/contract-apartment">
             <SolutionOutlined />
-            <span>Quản lý hợp đồng chung cư</span>
+            <span>Quản lý hợp đồng đi thuê</span>
             <Link to="/contract-apartment" />
           </Menu.Item>
           <Menu.Item key="/contract-renter">
             <SolutionOutlined />
-            <span>Quản lý hợp đồng khách thuê</span>
+            <span>Quản lý hợp đồng cho thuê</span>
             <Link to="/contract-renter" />
           </Menu.Item>
           <Menu.Item key="/manage-admin">
@@ -149,7 +149,7 @@ const Sidebar = () => {
           </Menu.Item>
           <Menu.Item key="/contract-renter">
             <SolutionOutlined />
-            <span>Quản lý hợp đồng khách thuê</span>
+            <span>Quản lý hợp đồng cho thuê</span>
             <Link to="/contract-renter" />
           </Menu.Item>
 
@@ -166,7 +166,14 @@ const Sidebar = () => {
           </Menu.Item>
         </Menu>
       )}
-      <Modal title="Thông tin cá nhân" open={isModalOpen} footer={(null, null)} onCancel={handleCancel}>
+      <Modal
+        title="Thông tin cá nhân"
+        className="modalStyle"
+        open={isModalOpen}
+        footer={(null, null)}
+        onCancel={handleCancel}
+        width="700px"
+      >
         <div
           className="basic-info"
           style={{
@@ -174,78 +181,80 @@ const Sidebar = () => {
           }}
         >
           <Row>
-            <img
-              src="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png"
-              style={{ width: "100px", marginBottom: "10px" }}
-              alt=""
-            />
-          </Row>
-          <Row>
-            <Col>
-              <p style={{ fontSize: "16px", fontWeight: "bold" }}>Họ và tên: </p>
+            <Col span={12}>
+              <img
+                src="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png"
+                style={{ width: "150px" }}
+                alt=""
+              />
             </Col>
+            <Col span={12}>
+              <Row>
+                <Col span={12}>
+                  <p style={{ fontSize: "14px", textTransform: "uppercase", color: "rgb(113 102 102)" }}>Họ và tên: </p>
+                </Col>
+                <Col span={12}>
+                  <p style={{ fontSize: "14px", padding: "0 0 0 5px" }}>{user.full_name}</p>
+                </Col>
+              </Row>
+              <Row>
+                <Col span={12}>
+                  <p style={{ fontSize: "14px", textTransform: "uppercase", color: "rgb(113 102 102)" }}>
+                    Tên đăng nhập:
+                  </p>
+                </Col>
 
-            <Col>
-              <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.full_name}</p>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <p style={{ fontSize: "16px", fontWeight: "bold" }}>Tên đăng nhập: </p>
-            </Col>
+                <Col span={12}>
+                  <p style={{ fontSize: "14px", padding: "0 0 0 5px" }}>{user.user_name}</p>
+                </Col>
+              </Row>
+              <Row>
+                <Col span={12}>
+                  <p style={{ fontSize: "14px", textTransform: "uppercase", color: "rgb(113 102 102)" }}>Giới tính: </p>
+                </Col>
 
-            <Col>
-              <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.user_name}</p>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <p style={{ fontSize: "16px", fontWeight: "bold" }}>Giới tính: </p>
-            </Col>
+                <Col span={12}>
+                  {user.gender ? (
+                    <p style={{ fontSize: "14px", padding: "0 0 0 5px" }}>Nam</p>
+                  ) : (
+                    <p style={{ fontSize: "14px", padding: "0 0 0 5px" }}>Nữ</p>
+                  )}
+                </Col>
+              </Row>
+              <Row>
+                <Col span={12}>
+                  <p style={{ fontSize: "14px", textTransform: "uppercase", color: "rgb(113 102 102)" }}>Chức vụ: </p>
+                </Col>
+                <Col span={12}>
+                  {role === "ROLE_ADMIN" ? (
+                    <p style={{ fontSize: "14px", padding: "0 0 0 5px" }}>ADMIN</p>
+                  ) : (
+                    <p style={{ fontSize: "14px", padding: "0 0 0 5px" }}>Nhân viên</p>
+                  )}
+                </Col>
+              </Row>
+              <Row>
+                <Col span={12}>
+                  <p style={{ fontSize: "14px", textTransform: "uppercase", color: "rgb(113 102 102)" }}>
+                    Số điện thoại:
+                  </p>
+                </Col>
 
-            <Col>
-              <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.gender}</p>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <p style={{ fontSize: "16px", fontWeight: "bold" }}>Chức vụ: </p>
-            </Col>
-            <Col>
-              {role === "ROLE_ADMIN" ? (
-                <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>ADMIN</p>
-              ) : (
-                <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>Nhân viên</p>
-              )}
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <p style={{ fontSize: "16px", fontWeight: "bold" }}>Số điện thoại: </p>
-            </Col>
+                <Col span={12}>
+                  <p style={{ fontSize: "14px", padding: "0 0 0 5px" }}>{user.phone_number}</p>
+                </Col>
+              </Row>
+              <Row>
+                <Col span={12}>
+                  <p style={{ fontSize: "14px", textTransform: "uppercase", color: "rgb(113 102 102)" }}>
+                    Địa chỉ chi tiết:
+                  </p>
+                </Col>
 
-            <Col>
-              <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.phone_number}</p>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <p style={{ fontSize: "16px", fontWeight: "bold" }}>Địa chỉ: </p>
-            </Col>
-
-            <Col>
-              <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>
-                {user.address_wards}, {user.address_district}, {user.address_city}
-              </p>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <p style={{ fontSize: "16px", fontWeight: "bold" }}>Địa chỉ chi tiết: </p>
-            </Col>
-
-            <Col>
-              <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.address_more_detail}</p>
+                <Col span={12}>
+                  <p style={{ fontSize: "14px", padding: "0 0 0 5px" }}>{user.address_more_detail}</p>
+                </Col>
+              </Row>
             </Col>
           </Row>
         </div>

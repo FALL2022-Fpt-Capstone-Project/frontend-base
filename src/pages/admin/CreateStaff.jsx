@@ -1,14 +1,12 @@
-import { Form, Input, Radio, notification, Layout, Button } from "antd";
+import { Form, Input, Radio, Select, notification, Layout, Button } from "antd";
 import React, { useEffect, useState } from "react";
-import Select from "react-select";
 import Sidebar from "../../components/sidebar/Sidebar";
 import { useNavigate, NavLink } from "react-router-dom";
-import useLocationForm from "../building/useLocationForm";
 import "./createStaff.scss";
 import axios from "../../api/axios";
 import useAuth from "../../hooks/useAuth";
 const { Content, Sider, Header } = Layout;
-const ADD_EMPLOYEE_URL = "manager/account/add-staff-account";
+const ADD_EMPLOYEE_URL = "manager/staff/add";
 const formItemLayout = {
   labelCol: {
     xs: {
@@ -33,11 +31,6 @@ const options = [
 ];
 
 const CreateStaff = () => {
-  const { state, onCitySelect, onDistrictSelect, onWardSelect } = useLocationForm(false);
-  const { cityOptions, districtOptions, wardOptions, selectedCity, selectedDistrict, selectedWard } = state;
-  const [address_city, setBuildingCty] = useState("");
-  const [address_district, setBuildingDistrict] = useState("");
-  const [address_wards, setBuildingWard] = useState("");
   const [collapsed, setCollapsed] = useState(false);
   const { auth } = useAuth();
   let cookie = localStorage.getItem("Cookie");
@@ -48,24 +41,12 @@ const CreateStaff = () => {
 
   const navigate = useNavigate();
 
-  const Address = () => {
-    setBuildingCty(selectedCity?.label);
-    setBuildingDistrict(selectedDistrict?.label);
-    setBuildingWard(selectedWard?.label);
-    // address();
-  };
-  useEffect(() => {
-    Address();
-  });
   const handleCreateEmployee = async (value) => {
-    let rolefinal;
-    if (typeof roles == "undefined") {
-      rolefinal = ["staff"];
-    } else {
-      rolefinal = roles.split();
+    if (typeof value.roles == "undefined") {
+      value.roles = "staff";
     }
     if (typeof value.gender == "undefined") {
-      value.gender = "Nam";
+      value.gender = true;
     }
 
     const employee = {
@@ -74,12 +55,8 @@ const CreateStaff = () => {
       password: value.password,
       phone_number: value.phone_number,
       gender: value.gender,
-      role: rolefinal,
-      address_city: address_city,
-      address_district: address_district,
-      address_wards: address_wards,
+      roles: value.roles,
       address_more_detail: value.address_more_detail,
-      permission: [1],
     };
     const response = await axios
       .post(ADD_EMPLOYEE_URL, employee, {
@@ -90,7 +67,7 @@ const CreateStaff = () => {
         },
         // withCredentials: true,
       })
-      .then(navigate("/manage-admin"))
+      .then(() => navigate("/manage-admin"))
       .catch((e) => {
         notification.error({
           message: "Thêm mới nhân viên thất bại",
@@ -104,10 +81,10 @@ const CreateStaff = () => {
   const genderChange = (e) => {
     setGender(e.target.value);
   };
-  const roleChange = (value) => {
-    setRoles(value.value);
-  };
 
+  const roleChange = (value) => {
+    setRoles(value);
+  };
   return (
     <div className="create-staff">
       <Layout
@@ -157,6 +134,7 @@ const CreateStaff = () => {
                       message: "Vui lòng nhập tên nhân viên!",
                     },
                   ]}
+                  labelAlign="left"
                 >
                   <Input autoComplete="off" />
                 </Form.Item>
@@ -169,6 +147,7 @@ const CreateStaff = () => {
                       message: "Vui lòng nhập tên đăng nhập!",
                     },
                   ]}
+                  labelAlign="left"
                 >
                   <Input autoComplete="off" />
                 </Form.Item>
@@ -182,6 +161,7 @@ const CreateStaff = () => {
                       message: "Vui lòng nhập mật khẩu!",
                     },
                   ]}
+                  labelAlign="left"
                 >
                   <Input.Password />
                 </Form.Item>
@@ -204,6 +184,7 @@ const CreateStaff = () => {
                       },
                     }),
                   ]}
+                  labelAlign="left"
                 >
                   <Input.Password />
                 </Form.Item>
@@ -214,57 +195,29 @@ const CreateStaff = () => {
                     {
                       required: true,
                       message: "Vui lòng nhập số điện thoại!",
+                      whitespace: true,
+                    },
+                    {
+                      pattern: /^((\+84|84|0)+(3|5|7|8|9|1[2|6|8|9]))+([0-9]{8})\b/,
+                      message: "Số điện thoại phải bắt đầu (+84,0,84)",
                     },
                   ]}
+                  labelAlign="left"
                 >
                   <Input autoComplete="off" />
                 </Form.Item>
-                <Form.Item name="gender" label="Giới tính">
-                  <Radio.Group onChange={genderChange} defaultValue={"Nam"}>
-                    <Radio value={"Nam"}>Nam</Radio>
-                    <Radio value={"Nữ"}>Nữ</Radio>
+                <Form.Item name="gender" label="Giới tính" labelAlign="left" style={{ paddingLeft: "10px" }}>
+                  <Radio.Group onChange={genderChange} defaultValue={true}>
+                    <Radio value={true}>Nam</Radio>
+                    <Radio value={false}>Nữ</Radio>
                   </Radio.Group>
                 </Form.Item>
-                <Form.Item name="building_address_city" label="Thành phố">
-                  <Select
-                    name="cityId"
-                    key={`cityId_${selectedCity?.value}`}
-                    isDisabled={cityOptions.length === 0}
-                    options={cityOptions}
-                    onChange={(option) => onCitySelect(option)}
-                    placeholder="Tỉnh/Thành"
-                    defaultValue={selectedCity}
-                  />
-                </Form.Item>
-                <Form.Item name="building_address_district" label="Quận/Huyện">
-                  <Select
-                    name="districtId"
-                    key={`districtId_${selectedDistrict?.value}`}
-                    isDisabled={districtOptions.length === 0}
-                    options={districtOptions}
-                    onChange={(option) => onDistrictSelect(option)}
-                    placeholder="Quận/Huyện"
-                    defaultValue={selectedDistrict}
-                  />
-                </Form.Item>
-
-                <Form.Item name="building_address_wards" label="Phường/Xã">
-                  <Select
-                    name="wardId"
-                    key={`wardId_${selectedWard?.value}`}
-                    isDisabled={wardOptions.length === 0}
-                    options={wardOptions}
-                    placeholder="Phường/Xã"
-                    onChange={(option) => onWardSelect(option)}
-                    defaultValue={selectedWard}
-                  />
-                </Form.Item>
-                <Form.Item name="address_more_detail" label="Địa chỉ">
+                <Form.Item name="address_more_detail" label="Địa chỉ" labelAlign="left" style={{ paddingLeft: "10px" }}>
                   <Input autoComplete="off" />
                 </Form.Item>
-                <Form.Item name="roles" label="Vai trò">
+                <Form.Item name="roles" label="Vai trò" labelAlign="left" style={{ paddingLeft: "10px" }}>
                   <Select
-                    defaultValue={{ label: "Nhân viên", value: "staff" }}
+                    defaultValue="staff"
                     style={{
                       width: 120,
                     }}
