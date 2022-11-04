@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
-import { Input, Table, Tag, Row, Checkbox, Tabs, Col, InputNumber, Select, DatePicker, Button } from "antd";
-import { EyeOutlined, EditOutlined, FilterOutlined, SearchOutlined, UndoOutlined } from "@ant-design/icons";
+import { Input, Table, Tag, Row, Checkbox, Tabs, Col, InputNumber, Select, DatePicker, Button, Slider } from "antd";
+import { EyeTwoTone, EditOutlined, FilterOutlined, SearchOutlined, UndoOutlined } from "@ant-design/icons";
 import axios from "../../api/axios";
 import ViewContractBuilding from "./ViewContractBuilding";
 import moment from 'moment';
@@ -22,16 +22,6 @@ const optionContract = [
     value: "2",
   },
 ];
-const optionRoom = [
-  {
-    label: "Đang trống",
-    value: "1",
-  },
-  {
-    label: "Đã hết phòng",
-    value: "2",
-  },
-];
 
 const ListContractApartment = () => {
 
@@ -41,6 +31,7 @@ const ListContractApartment = () => {
   const [textSearch, setTextSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [viewContract, setViewContract] = useState(false);
+  const [price, setPrice] = useState({ min: 0, max: 10000000000 });
   const dateTimeSelect = [];
   for (let i = 1; i < 17; i++) {
     if (i < 12) {
@@ -91,7 +82,7 @@ const ListContractApartment = () => {
   const data = [
     {
       key: "1",
-
+      ownerName: 'Antony',
       apartmentName: "Trọ xanh",
       startDate: moment().format(dateFormat),
       endDate: moment().format(dateFormat),
@@ -104,7 +95,8 @@ const ListContractApartment = () => {
     },
     {
       key: "2",
-      apartmentName: "Trọ xanh",
+      ownerName: 'Harry mac hai',
+      apartmentName: "Trọ sạch",
       startDate: moment().format(dateFormat),
       endDate: moment().format(dateFormat),
       statusContract: "Còn hiệu lực",
@@ -116,7 +108,8 @@ const ListContractApartment = () => {
     },
     {
       key: "3",
-      apartmentName: "Trọ xanh",
+      ownerName: 'Fred',
+      apartmentName: "Trọ đẹp",
       startDate: moment().format(dateFormat),
       endDate: moment().format(dateFormat),
       statusContract: "Còn hiệu lực",
@@ -128,6 +121,22 @@ const ListContractApartment = () => {
 
     },
   ];
+  const onChangePrice = (value) => {
+    if (value[0] < value[1]) {
+      setPrice({ min: value[0], max: value[1] });
+    }
+  };
+
+  const onChangeMin = (value) => {
+    if (price.max > value) {
+      setPrice({ min: value });
+    }
+  };
+  const onChangeMax = (value) => {
+    if (price.min < value) {
+      setPrice({ max: value });
+    }
+  };
   return (
     <div>
       <Tabs defaultActiveKey="1">
@@ -147,7 +156,7 @@ const ListContractApartment = () => {
             </Col>
             <Col>
               <FilterOutlined style={{ fontSize: "150%" }} />
-              <span style={{ fontSize: "16px", }}>Bộ lọc: </span>
+              <span style={{ fontSize: "16px", }}>Trạng thái hợp đồng: </span>
               <Checkbox.Group options={optionContract} />
             </Col>
           </Row>
@@ -156,42 +165,60 @@ const ListContractApartment = () => {
           <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
             <Col className="gutter-row" span={6}>
               <Row>
-                <span style={{ fontSize: "16px", }}>Giá thuê: </span>
+                <label htmlFor="" style={{ marginBottom: "10px" }}>
+                  Tìm kiếm theo giá thuê
+                </label>
               </Row>
               <Row>
-                <Select placeholder="Chọn khoảng giá" style={{ width: '100%' }}>
-                  <Select.Option>1.000.000đ - 10.000.0000đ</Select.Option>
-                </Select>
+                <Slider
+                  className="slider-main-div"
+                  min={0}
+                  max={10000000000}
+                  range
+                  onChange={onChangePrice}
+                  defaultValue={[price.min, price.max]}
+                  value={[price.min, price.max]}
+                  style={{ width: "80%" }}
+                  trackStyle={[{ color: "red" }]}
+                />
               </Row>
-              <Row gutter={12} style={{ marginTop: '2%' }}>
-                <Col span={12}>
-                  <Row>Từ: </Row>
+              <Row gutter={16}>
+                <Col span={11}>
                   <InputNumber
+                    controls={false}
+                    className="min-input-main"
+                    style={{ width: '100%' }}
+                    min={0}
+                    max={10000000000}
+                    value={price.min}
+                    onChange={onChangeMin}
                     formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                     parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
-                    addonAfter="đ"
-                    style={{ width: '100%' }}
-                    placeholder="Từ" controls={false} />
+                  />
                 </Col>
-                <Col span={12}>
-                  <Row>Đến: </Row>
+                -
+                <Col span={11}>
                   <InputNumber
+                    controls={false}
+                    className="min-input-main"
+                    style={{ width: '100%' }}
+                    min={0}
+                    max={10000000000}
+                    value={price.max}
+                    onChange={onChangeMax}
                     formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                     parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
-                    addonAfter="đ"
-                    style={{ width: '100%' }}
-                    placeholder="Đến"
-                    controls={false} />
+                  />
                 </Col>
               </Row>
             </Col>
             <Col className="gutter-row" span={6}>
               <Row>
-                <span style={{ fontSize: "16px", }}>Tên chung cư mini/căn hộ: </span>
+                <span style={{ fontSize: "16px", }}>Tên người cho thuê: </span>
               </Row>
               <Row>
                 <Search
-                  placeholder="Nhập tên chung cư/căn hộ để tìm kiếm"
+                  placeholder="Nhập người cho thuê để tìm kiếm"
                   style={{ marginBottom: '2%', width: '100%' }}
                   onSearch={(value) => {
                     setTextSearch(value);
@@ -231,12 +258,6 @@ const ListContractApartment = () => {
               <Row>
                 <Checkbox.Group options={optionContract} />
               </Row>
-              <Row>
-                <span style={{ fontSize: "16px", marginTop: '2%' }}>Trạng thái phòng: </span>
-              </Row>
-              <Row>
-                <Checkbox.Group options={optionRoom} />
-              </Row>
             </Col>
           </Row>
           <Row justify="center">
@@ -258,48 +279,39 @@ const ListContractApartment = () => {
         </Tabs.TabPane>
       </Tabs>
       <Table dataSource={data} scroll={{ x: 1600, y: 600 }} bordered>
-        <ColumnGroup title="Thông tin chung cư mini/căn hộ">
-          <Column title="Tên chung cư mini/căn hộ" dataIndex="apartmentName" key="key" responsive={["xs"]} />
-          <Column title="Ngày hợp đồng có hiệu lực" dataIndex="startDate" key="key" />
-          <Column title="Ngày kết thúc" dataIndex="endDate" key="key" />
-          <Column
-            title="Trạng thái hợp đồng"
-            dataIndex="statusContract"
-            key="key"
-            render={(statusContract) => {
-              return <Tag color="success">{statusContract}</Tag>
-            }}
-          />
-        </ColumnGroup>
-        <ColumnGroup title="Giá trị hợp đồng">
-          <Column title="Giá thuê" dataIndex="contractValue" key="key" responsive={["md"]} />
-          <Column title="Số tiền cọc" dataIndex="depositValue" key="key" />
-        </ColumnGroup>
-        <ColumnGroup title="Thông tin tầng/phòng">
-          <Column title="Số lượng tầng" dataIndex="numberOfFloor" key="key" />
-          <Column title="Số lượng phòng" dataIndex="numberOfRoom" key="key" />
-          <Column
-            title="Trạng thái phòng"
-            dataIndex="roomStatus"
-            key="key"
-          />
-        </ColumnGroup>
-
-        <ColumnGroup title="Thao tác">
-          <Column
-            key="action"
-            render={(_, record) => {
-              return (
-                <>
-                  <EditOutlined style={{ fontSize: "20px", marginRight: "10px" }} />
-                  <EyeOutlined style={{ fontSize: "20px" }} onClick={() => {
-                    setViewContract(true);
-                  }} />
-                </>
-              );
-            }}
-          />
-        </ColumnGroup>
+        <Column title="Tên người cho thuê" dataIndex="ownerName" key="key" />
+        <Column title="Ngày lập hợp đồng" dataIndex="startDate" key="key" />
+        <Column title="Ngày kết thúc" dataIndex="endDate" key="key" />
+        <Column title="Giá thuê" dataIndex="contractValue" key="key" render={(value) => {
+          return <b>{value.toLocaleString("vn") + " đ"}</b>;
+        }} />
+        <Column title="Số tiền cọc" dataIndex="depositValue" key="key" render={(value) => {
+          return <b>{value.toLocaleString("vn") + " đ"}</b>;
+        }} />
+        <Column title="Số lượng tầng" dataIndex="numberOfFloor" key="key" />
+        <Column title="Số lượng phòng" dataIndex="numberOfRoom" key="key" />
+        <Column
+          title="Trạng thái hợp đồng"
+          dataIndex="statusContract"
+          key="key"
+          render={(statusContract) => {
+            return <Tag color="success">{statusContract}</Tag>
+          }}
+        />
+        <Column
+          title="Thao tác"
+          key="action"
+          render={(_, record) => {
+            return (
+              <>
+                <EditOutlined style={{ fontSize: "20px", marginRight: "10px" }} />
+                <EyeTwoTone style={{ fontSize: "20px" }} onClick={() => {
+                  setViewContract(true);
+                }} />
+              </>
+            );
+          }}
+        />
       </Table>
       <ViewContractBuilding openView={viewContract} closeView={setViewContract} />
     </div>

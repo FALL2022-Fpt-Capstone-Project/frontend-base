@@ -11,7 +11,7 @@ import {
   UserOutlined,
   AuditOutlined,
   DollarOutlined,
-  QuestionCircleTwoTone,
+  CheckCircleTwoTone
 } from "@ant-design/icons";
 import moment from "moment";
 import {
@@ -32,8 +32,7 @@ import {
   Checkbox,
   InputNumber,
   message,
-  notification,
-  Tooltip,
+  notification
 } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import { useNavigate } from "react-router-dom";
@@ -44,7 +43,7 @@ const { Option } = Select;
 const CreateContractRenter = () => {
   const LIST_OLD_RENTER = "manager/renter/old";
   const LIST_ASSET_TYPE = "manager/asset/type";
-  const APARTMENT_DATA_GROUP = "manager/group/get-group/1";
+  const APARTMENT_DATA_GROUP = "/manager/group/get-group";
   const ADD_NEW_CONTRACT = "/manager/contract/add-new-contract";
   const dateFormatList = ["DD/MM/YYYY", "YYYY/MM/DD"];
   const [dataApartmentGroup, setDataApartmentGroup] = useState([]);
@@ -83,6 +82,7 @@ const CreateContractRenter = () => {
   const [searched, setSearched] = useState("");
   const [filterAssetType, setFilterAssetType] = useState([]);
   const [assetStatus, setAssetStatus] = useState([]);
+  const [oldRenterGender, setOldRenterGender] = useState([]);
   const [isAdd, setisAdd] = useState(false);
   const [componentSize, setComponentSize] = useState("default");
   const [selectOldRenter, setSelectOldRenter] = useState([]);
@@ -108,6 +108,8 @@ const CreateContractRenter = () => {
   const [contractStartDate, setContractStartDate] = useState(moment());
   const [contractDuration, setContractDuration] = useState();
   const [contractBillCycle, setContractBillCycle] = useState(1);
+  const [displayFinish, setDisplayFinish] = useState([]);
+  const [dataApartmentGroupSelect, setDataApartmentGroupSelect] = useState([]);
 
   const { auth } = useAuth();
   let cookie = localStorage.getItem("Cookie");
@@ -128,22 +130,6 @@ const CreateContractRenter = () => {
       })
       .then((res) => {
         setDataApartmentGroup(res.data.body);
-        setDataAsset(
-          res.data.body.list_hand_over_assets.map(
-            (obj, index) =>
-              [
-                {
-                  asset_id: obj.asset_id,
-                  asset_name: obj.asset_name,
-                  asset_type: obj.asset_type,
-                  hand_over_asset_date_delivery: new Date(obj.hand_over_asset_date_delivery).toLocaleDateString(),
-                  asset_type_show_name: obj.asset_type_show_name,
-                  hand_over_asset_quantity: 1,
-                  hand_over_asset_status: obj.hand_over_asset_status,
-                },
-              ][0]
-          )
-        );
       })
       .catch((error) => {
         console.log(error);
@@ -274,6 +260,7 @@ const CreateContractRenter = () => {
         console.log(error);
       });
   };
+
   useEffect(() => {
     getAssetType();
   }, []);
@@ -303,28 +290,41 @@ const CreateContractRenter = () => {
       key: "id",
       filteredValue: [searched],
       onFilter: (value, record) => {
-        return String(record.renter_full_name).toLowerCase()?.includes(value.toLowerCase());
+        return String(record.renter_full_name).toLowerCase()?.includes(value.toLowerCase()) ||
+          String(record.renter_phone_number).toLowerCase()?.includes(value.toLowerCase()) ||
+          String(record.renter_identity_number).toLowerCase()?.includes(value.toLowerCase());
       },
+      width: 200
     },
     {
       title: "Giới tính",
       dataIndex: "renter_gender",
-      key: "id",
+      key: "renter_gender",
+      filters: [
+        { text: "Nam", value: 'Nam' },
+        { text: "Nữ", value: 'Nữ' },
+      ],
+      filteredValue: oldRenterGender.renter_gender || null,
+      onFilter: (value, record) => record.renter_gender === value,
+      width: 120
     },
     {
       title: "Số điện thoại",
       dataIndex: "renter_phone_number",
       key: "id",
+      width: 130
     },
     {
       title: "Email",
       dataIndex: "renter_email",
       key: "id",
+      width: 350
     },
     {
       title: "CCCD/CMND",
       dataIndex: "renter_identity_number",
       key: "id",
+      with: 250
     },
   ];
   const onAdd = (record) => {
@@ -509,10 +509,10 @@ const CreateContractRenter = () => {
   const [floorRoom, setFloorRoom] = useState();
 
   const [roomStatus, setRoomStatus] = useState(true);
+  const [floorStatus, setFloorStatus] = useState(true);
 
-  const getListFloor = dataApartmentGroup?.list_rooms
-    ?.filter((obj, index) => obj.contract_id === null)
-    ?.map((o, i) => o.room_floor);
+
+  const getListFloor = dataApartmentGroupSelect?.list_rooms?.filter((obj, index) => obj.contract_id === null)?.map((o, i) => o.room_floor);
   const floors = getListFloor?.filter((obj, index) => getListFloor.indexOf(obj) === index);
 
   const [room, setRoom] = useState([]);
@@ -566,7 +566,6 @@ const CreateContractRenter = () => {
         });
       });
     // message.success('Thêm mới hợp đồng thành công');
-    // console.log({ ...e, contract_end_date: new Date(e.contract_end_date).toLocaleDateString(), contract_start_date: new Date(e.contract_start_date).toLocaleDateString() });
   };
   const onFinishContractFail = (e) => {
     message.error("Vui lòng kiểm tra lại thông tin hợp đồng");
@@ -646,10 +645,11 @@ const CreateContractRenter = () => {
       contract_bill_cycle: contractBillCycle,
       contract_payment_cycle: paymentCircle,
     });
-  };
+    setOldRenterGender({ ...oldRenterGender, renter_gender: ['Nam', 'Nữ'] });
+  }
 
   form.setFieldsValue({
-    group_id: dataApartmentGroup?.group_id,
+    // group_id: dataApartmentGroupSelect?.group_id,
     list_renter: dataMember,
     list_general_service: listGeneralService,
     list_hand_over_assets: dataAsset,
@@ -667,7 +667,42 @@ const CreateContractRenter = () => {
     asset_type_show_name: formAddAsset.asset_type,
     hand_over_asset_status: formAddAsset.asset_status,
   });
-  console.log(dataApartmentGroup);
+
+  const onNext = async () => {
+    try {
+      if (changeTab === "1") {
+        await form.validateFields([
+          'contract_name', 'renter_name', 'renter_gender', 'renter_phone_number', 'renter_identity_card', 'room_floor',
+          'room_id', 'contract_start_date', 'contract_bill_cycle', 'contract_payment_cycle', 'contract_price', 'contract_deposit',
+          'contract_end_date'
+        ]);
+        setDisplayFinish([...displayFinish, 1]);
+      } else {
+        await form.validateFields(dataApartmentGroupSelect.list_general_service?.map((obj, index) => obj.service_name));
+        setDisplayFinish([...displayFinish, 2]);
+      }
+
+      setChangeTab((pre) => {
+        if (pre === "4") {
+          return "1";
+        } else {
+          return (parseInt(pre) + 1).toString();
+        }
+      });
+      if (changeTab === "3") {
+        setDisplayFinish([...displayFinish, 3]);
+        setVisibleSubmit(true);
+      }
+    } catch (e) {
+      notification.error({
+        message: "Không thể chuyển qua bước tiếp theo",
+        description: "Vui lòng điền đủ thông tin hợp đồng",
+        placement: "topRight",
+        duration: 2,
+      });
+    }
+  };
+  // console.log(dataApartmentGroupSelect);
   return (
     <div className="contract">
       <Layout
@@ -682,7 +717,11 @@ const CreateContractRenter = () => {
         </Sider>
         <Layout className="site-layout">
           <Header className="layout-header">
-            <p className="header-title">Thêm hợp đồng mới cho khách thuê {dataApartmentGroup?.group_name}</p>
+            <Row>
+              <Col span={24}>
+                <p className="header-title">Thêm hợp đồng mới cho khách thuê</p>
+              </Col>
+            </Row>
           </Header>
           <Content
             style={{
@@ -725,23 +764,20 @@ const CreateContractRenter = () => {
                 width={1000}
                 id="create-contract"
               >
-                <Form.Item className="form-item" name="group_id" style={{ display: "none" }}></Form.Item>
                 <Tabs activeKey={changeTab} defaultActiveKey="1">
-                  <Tabs.TabPane tab="1. Thông tin chung" key="1">
+                  <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>1. Thông tin chung {displayFinish.find((obj, index) => obj === 1) ? <CheckCircleTwoTone style={{ fontSize: '130%' }} twoToneColor="#52c41a" /> : ''}</span>} key="1">
                     <Row>
                       <Col span={8}>
                         <Row>
                           <Tag color="blue" style={{ wordBreak: "break-all", whiteSpace: "normal", height: "auto" }}>
                             <h3>
-                              <UserOutlined style={{ fontSize: "130%" }} />
-                              <b>Thông tin về khách thuê </b>
+                              <UserOutlined style={{ fontSize: '130%' }} /><span style={{ fontSize: '15px' }}><b>Thông tin về khách thuê </b></span>
                             </h3>
                           </Tag>
                         </Row>
                         <Row>
                           <Button
-                            style={{ marginTop: "1%", wordBreak: "break-all", whiteSpace: "normal", height: "auto" }}
-                            icon={<UserOutlined />}
+                            style={{ marginTop: '1%', wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}
                             type="primary"
                             size="default"
                             onClick={() => {
@@ -879,14 +915,55 @@ const CreateContractRenter = () => {
                       <Col span={8}>
                         <Tag color="blue" style={{ wordBreak: "break-all", whiteSpace: "normal", height: "auto" }}>
                           <h3>
-                            <AuditOutlined style={{ fontSize: "130%" }} />
-                            <b>Thông tin về hợp đồng </b>
+                            <AuditOutlined style={{ fontSize: '130%' }} /> <span style={{ fontSize: '15px' }}><b>Thông tin về hợp đồng </b></span>
                           </h3>
                         </Tag>
-                        <Form.Item className="form-item" name="room_floor" style={{ display: "none" }}></Form.Item>
                         <Form.Item
                           className="form-item"
-                          name="floor"
+                          name="group_id"
+                          labelCol={{ span: 24 }}
+                          label={
+                            <span>
+                              <b>Tòa nhà: </b>
+                            </span>
+                          }
+                          rules={[
+                            {
+                              required: true,
+                              message: "Vui lòng chọn tòa nhà",
+                            },
+                          ]}
+                        >
+                          <Select onChange={(e) => {
+                            form.setFieldsValue({ room_floor: "", room_id: "", });
+                            setRoomStatus(true);
+                            setDataApartmentGroupSelect(dataApartmentGroup.find((obj, index) => obj.group_id === e));
+                            setDataAsset(
+                              dataApartmentGroup.find((obj, index) => obj.group_id === e)?.list_hand_over_assets?.map(
+                                (obj, index) =>
+                                  [
+                                    {
+                                      asset_id: obj.asset_id,
+                                      asset_name: obj.asset_name,
+                                      asset_type: obj.asset_type,
+                                      hand_over_asset_date_delivery: new Date(obj.hand_over_asset_date_delivery).toLocaleDateString(),
+                                      asset_type_show_name: obj.asset_type_show_name,
+                                      hand_over_asset_quantity: 1,
+                                      hand_over_asset_status: obj.hand_over_asset_status,
+                                    },
+                                  ][0]
+                              )
+                            );
+                            setFloorStatus(false);
+                          }} placeholder="Chọn tòa nhà">
+                            {dataApartmentGroup.map((obj, index) => {
+                              return <Select.Option value={obj.group_id}>{obj.group_name}</Select.Option>
+                            })}
+                          </Select>
+                        </Form.Item>
+                        <Form.Item
+                          className="form-item"
+                          name="room_floor"
                           labelCol={{ span: 24 }}
                           label={
                             <span>
@@ -901,19 +978,13 @@ const CreateContractRenter = () => {
                           ]}
                         >
                           <Select
-                            // showSearch
+                            disabled={floorStatus}
                             placeholder="Chọn tầng"
                             optionFilterProp="children"
                             onChange={(e) => {
-                              form.setFieldsValue({
-                                room_floor: dataApartmentGroup?.list_rooms?.find(
-                                  (room_floor) => room_floor.room_floor === e
-                                ).room_floor,
-                                room_id: "",
-                              });
                               setRoomStatus(false);
                               setRoom(
-                                dataApartmentGroup?.list_rooms?.filter(
+                                dataApartmentGroupSelect?.list_rooms?.filter(
                                   (data) => data.room_floor === e && data.contract_id === null
                                 )
                               );
@@ -921,8 +992,8 @@ const CreateContractRenter = () => {
                                 return { ...pre, room_floor: e };
                               });
                             }}
-                            value={floorRoom?.room_floor}
                           >
+                            <Select.Option value="">Chọn tầng</Select.Option>
                             {floors
                               ?.sort((a, b) => a - b)
                               ?.map((obj, index) => {
@@ -951,10 +1022,16 @@ const CreateContractRenter = () => {
                           ]}
                         >
                           <Select
+                            showSearch
+                            filterOption={(input, option) => (option?.children ?? '').includes(input)}
                             placeholder="Chọn phòng"
                             disabled={roomStatus}
                             onChange={(e) => {
-                              setRoomSelect(dataApartmentGroup?.list_rooms?.find((obj) => obj.room_id === e).room_name);
+                              setRoomSelect(dataApartmentGroupSelect?.list_rooms?.find((obj) => obj.room_id === e).room_name);
+                              form.setFieldsValue({
+                                contract_price: dataApartmentGroupSelect?.list_rooms?.find((obj) => obj.room_id === e).room_price,
+                                contract_deposit: dataApartmentGroupSelect?.list_rooms?.find((obj) => obj.room_id === e).room_price
+                              });
                             }}
                           >
                             <Select.Option value="">Chọn phòng</Select.Option>
@@ -1040,6 +1117,12 @@ const CreateContractRenter = () => {
                               <b>Ngày kết thúc: </b>
                             </span>
                           }
+                          rules={[
+                            {
+                              required: true,
+                              message: "Vui lòng chọn ngày kết thúc",
+                            },
+                          ]}
                         >
                           <DatePicker
                             allowClear={false}
@@ -1084,13 +1167,6 @@ const CreateContractRenter = () => {
                             <>
                               <span>
                                 <b>Chu kỳ thanh toán: </b>
-                                <Tooltip
-                                  color="#108ee9"
-                                  placement="topLeft"
-                                  title="Kỳ 15: Khách thuê vào từ ngày 1-15 Kỳ 30: Khách thuê vào từ ngày  16-31"
-                                >
-                                  <QuestionCircleTwoTone style={{ fontSize: "130%" }} />
-                                </Tooltip>
                               </span>
                             </>
                           }
@@ -1107,18 +1183,17 @@ const CreateContractRenter = () => {
                           </Select>
                         </Form.Item>
 
-                        {/* <span>
+                        <span>
                           <i>
                             <b>Kỳ 15:</b> Khách thuê vào từ ngày 1-15 <br /> <b>Kỳ 30:</b> Khách thuê vào từ ngày 16-31
                           </i>
-                        </span> */}
+                        </span>
                       </Col>
                       <Col span={8}>
                         <Row>
                           <Tag color="blue" style={{ wordBreak: "break-all", whiteSpace: "normal", height: "auto" }}>
                             <h3>
-                              <DollarOutlined style={{ fontSize: "130%" }} />
-                              <b> Thông tin giá trị hợp đồng </b>
+                              <DollarOutlined style={{ fontSize: '130%' }} /> <span style={{ fontSize: '15px' }}><b> Thông tin giá trị hợp đồng </b></span>
                             </h3>
                           </Tag>
                           <Form.Item
@@ -1196,7 +1271,7 @@ const CreateContractRenter = () => {
                     </p>
                     <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
                   </Tabs.TabPane>
-                  <Tabs.TabPane tab="2. Dịch vụ" key="2">
+                  <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>2. Dịch vụ {displayFinish.find((obj, index) => obj === 2) ? <CheckCircleTwoTone style={{ fontSize: '130%' }} twoToneColor="#52c41a" /> : ''}</span>} key="2">
                     <Row>
                       <Col span={23}>
                         <Form.Item className="form-item" name="list_general_service" labelCol={{ span: 24 }}>
@@ -1208,7 +1283,7 @@ const CreateContractRenter = () => {
                     </Row>
                     <Row>
                       <Col span={12}>
-                        {dataApartmentGroup.list_general_service?.map((obj, index) => {
+                        {dataApartmentGroupSelect.list_general_service?.map((obj, index) => {
                           return (
                             <>
                               <Form.Item
@@ -1285,7 +1360,7 @@ const CreateContractRenter = () => {
                         <Table
                           bordered
                           rowKey={(record) => record.key}
-                          dataSource={dataApartmentGroup.list_general_service}
+                          dataSource={dataApartmentGroupSelect.list_general_service}
                           columns={columnsService}
                           loading={loading}
                         ></Table>
@@ -1306,7 +1381,7 @@ const CreateContractRenter = () => {
                       <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
                     </Row>
                   </Tabs.TabPane>
-                  <Tabs.TabPane tab="3. Thành viên" key="3">
+                  <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>3. Thành viên {displayFinish.find((obj, index) => obj === 3) ? <CheckCircleTwoTone style={{ fontSize: '130%' }} twoToneColor="#52c41a" /> : ''}</span>} key="3">
                     <Row>
                       <Col span={23}>
                         <Form.Item className="form-item" name="list_renter" labelCol={{ span: 24 }}>
@@ -1336,7 +1411,7 @@ const CreateContractRenter = () => {
                       ></Table>
                     </Row>
                   </Tabs.TabPane>
-                  <Tabs.TabPane tab="4. Tài sản" key="4">
+                  <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>4. Tài sản {displayFinish.find((obj, index) => obj === 4) ? <CheckCircleTwoTone style={{ fontSize: '130%' }} twoToneColor="#52c41a" /> : ''}</span>} key="4">
                     <Row>
                       <Col span={24}>
                         <Form.Item className="form-item" name="list_hand_over_assets" labelCol={{ span: 24 }}>
@@ -1344,6 +1419,7 @@ const CreateContractRenter = () => {
                             <h3>
                               <b>
                                 Thông tin tài sản bàn giao{" "}
+                                {dataApartmentGroupSelect?.group_name !== undefined ? dataApartmentGroupSelect?.group_name + " " : ''}
                                 {floorRoom?.room_floor !== undefined ? "tầng " + floorRoom?.room_floor : ""}{" "}
                                 {roomSelect === "" ? "" : "phòng " + roomSelect}
                               </b>
@@ -1386,7 +1462,7 @@ const CreateContractRenter = () => {
                               onClick={() => {
                                 setAddAssetInRoom(true);
                               }}
-                              style={{ fontSize: 36, color: "#1890ff", float: "right" }}
+                              style={{ fontSize: 36, color: "#1890ff", float: "right", marginBottom: '10%' }}
                             />
                           </Col>
                         </Row>
@@ -1451,18 +1527,7 @@ const CreateContractRenter = () => {
               <Button
                 style={visibleSubmit ? { display: "none" } : { marginTop: "1%", display: "inline" }}
                 type="primary"
-                onClick={() => {
-                  setChangeTab((pre) => {
-                    if (pre === "4") {
-                      return "1";
-                    } else {
-                      return (parseInt(pre) + 1).toString();
-                    }
-                  });
-                  if (changeTab === "3") {
-                    setVisibleSubmit(true);
-                  }
-                }}
+                onClick={onNext}
               >
                 Tiếp
               </Button>
@@ -1473,8 +1538,38 @@ const CreateContractRenter = () => {
                   resetAdd();
                 }}
                 onOk={onOk}
-                width={1000}
+                footer={[
+                  <Button
+                    key="back"
+                    onClick={resetAdd}
+                  >
+                    Đóng
+                  </Button>,
+                  <Button type="primary" onClick={onOk}>
+                    Chọn
+                  </Button>,
+                ]}
+                width={1100}
               >
+                <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32, }}>
+                  <Col span={12}>
+                    <Input.Search
+                      placeholder="Nhập thông tin khách cũ để tìm kiếm"
+                      style={{ marginBottom: '5%', width: '100%' }}
+                      onSearch={(e) => {
+                        setSearched(e);
+                      }}
+                      onChange={(e) => {
+                        setSearched(e.target.value);
+                      }}
+                    />
+                  </Col>
+                  <Col span={12}>
+                    <span>Giới tính: </span>
+                    <Checkbox.Group defaultValue={['Nam', 'Nữ']} onChange={(e) => { setOldRenterGender({ ...oldRenterGender, renter_gender: e }) }}
+                      options={[{ label: 'Nam', value: 'Nam' }, { label: 'Nữ', value: 'Nữ' }]}></Checkbox.Group>
+                  </Col>
+                </Row>
                 <Form
                   labelCol={{ span: 5 }}
                   wrapperCol={{ span: 30 }}
@@ -1484,22 +1579,15 @@ const CreateContractRenter = () => {
                   size={"default"}
                 >
                   <Form.Item>
-                    <Input.Search
-                      placeholder="Nhập tên khách cũ để tìm kiếm"
-                      style={{ marginBottom: 8, width: "45%" }}
-                      onSearch={(e) => {
-                        setSearched(e);
-                      }}
-                      onChange={(e) => {
-                        setSearched(e.target.value);
-                      }}
-                    />
                     <Table
                       bordered
                       loading={loading}
                       columns={renterColumn}
                       dataSource={dataOldRenter}
                       scroll={{ x: 1000, y: 400 }}
+                      onChange={(pagination, filters, sorter, extra) => {
+                        setOldRenterGender(filters);
+                      }}
                       rowKey={(record) => record.id}
                       rowSelection={{
                         type: "radio",
@@ -1522,9 +1610,6 @@ const CreateContractRenter = () => {
                 }}
                 width={500}
                 footer={[
-                  <Button htmlType="submit" key="submit" form="create-asset" type="primary">
-                    Lưu
-                  </Button>,
                   <Button
                     key="back"
                     onClick={() => {
@@ -1533,8 +1618,11 @@ const CreateContractRenter = () => {
                       setAddAssetInRoom(false);
                     }}
                   >
-                    Huỷ
+                    Đóng
                   </Button>,
+                  <Button htmlType="submit" key="submit" form="create-asset" type="primary">
+                    Lưu
+                  </Button>
                 ]}
               >
                 <Form
@@ -1673,17 +1761,17 @@ const CreateContractRenter = () => {
                 }}
                 width={500}
                 footer={[
-                  <Button htmlType="submit" key="submit" form="edit-asset" type="primary">
-                    Lưu
-                  </Button>,
                   <Button
                     key="back"
                     onClick={() => {
                       setIsEditAsset(false);
                     }}
                   >
-                    Huỷ
+                    Đóng
                   </Button>,
+                  <Button htmlType="submit" key="submit" form="edit-asset" type="primary">
+                    Lưu
+                  </Button>
                 ]}
               >
                 <Form
@@ -1820,11 +1908,11 @@ const CreateContractRenter = () => {
                   setIsAddMem(false);
                 }}
                 footer={[
+                  <Button key="back" onClick={() => setIsAddMem(false)}>
+                    Đóng
+                  </Button>,
                   <Button htmlType="submit" key="submit" form="add-member" type="primary">
                     Thêm mới
-                  </Button>,
-                  <Button key="back" onClick={() => setIsAddMem(false)}>
-                    Huỷ
                   </Button>,
                 ]}
               >
@@ -1957,16 +2045,16 @@ const CreateContractRenter = () => {
                   setIsEditMem(false);
                 }}
                 footer={[
-                  <Button htmlType="submit" key="submit" form="edit-member" type="primary">
-                    Lưu
-                  </Button>,
                   <Button
                     key="back"
                     onClick={() => {
                       setIsEditMem(false);
                     }}
                   >
-                    Huỷ
+                    Đóng
+                  </Button>,
+                  <Button htmlType="submit" key="submit" form="edit-member" type="primary">
+                    Lưu
                   </Button>,
                 ]}
               >
@@ -2092,8 +2180,8 @@ const CreateContractRenter = () => {
             </div>
           </Content>
         </Layout>
-      </Layout>
-    </div>
+      </Layout >
+    </div >
   );
 };
 export default CreateContractRenter;

@@ -178,6 +178,7 @@ const ListContractRenter = () => {
                 </Row>
                 <Row>
                   <InputNumber
+                    placeholder="Từ"
                     className="min-input-main"
                     min={0}
                     max={10000000}
@@ -188,7 +189,8 @@ const ListContractRenter = () => {
                   />
                   <span className="range-span"> - </span>
                   <InputNumber
-                    className="min-input-main"
+                    placeholder="Đến"
+                    className="max-input-main"
                     min={0}
                     max={10000000}
                     value={price.max}

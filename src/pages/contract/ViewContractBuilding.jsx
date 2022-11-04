@@ -1,11 +1,12 @@
 import { Button, Card, Checkbox, Col, Input, Modal, Row, Table, Tabs, Tag } from 'antd';
 import React, { useState, useEffect } from 'react';
-import { ArrowRightOutlined, UserOutlined, FilterOutlined } from "@ant-design/icons";
+import { ArrowRightOutlined, UserOutlined, FilterOutlined, AuditOutlined, DollarOutlined, GoldOutlined } from "@ant-design/icons";
 import axios from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 
 function ViewContractBuilding({ openView, closeView, dataContract }) {
 
+    const LIST_ASSET_TYPE = "manager/asset/type";
     const [loading, setLoading] = useState(false);
     const [searched, setSearched] = useState("");
     const [filterAssetType, setFilterAssetType] = useState([]);
@@ -23,6 +24,28 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
     };
     const handleCancel = () => {
         closeView(false)
+    };
+    useEffect(() => {
+        getAssetType();
+    }, []);
+
+    const getAssetType = async () => {
+        let cookie = localStorage.getItem("Cookie");
+        await axios
+            .get(LIST_ASSET_TYPE, {
+                headers: {
+                    "Content-Type": "application/json",
+                    // "Access-Control-Allow-Origin": "*",
+                    Authorization: `Bearer ${cookie}`,
+                },
+                // withCredentials: true,
+            })
+            .then((res) => {
+                setListAssetType(res.data.body);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     };
 
 
@@ -86,7 +109,7 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
     return (
         <>
             <div>
-                <Modal title="Xem hợp đồng chung cư mini/căn hộ" width={1200} open={openView} onOk={handleOk} onCancel={handleCancel}
+                <Modal title={<h2>Tên chung cư mini/ căn hộ </h2>} width={1200} open={openView} onOk={handleOk} onCancel={handleCancel}
                     footer={[
                         <Button key="back" onClick={() => {
                             closeView(false)
@@ -94,17 +117,19 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                             Đóng
                         </Button>,
                     ]}>
-                    <Row>
-                        <Col>Tên chung cư</Col>
-                    </Row>
                     <Tabs defaultActiveKey="1">
-                        <Tabs.TabPane tab="Thông tin chung" key="1">
+                        <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>Thông tin chung</span>} key="1">
                             <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                                 <Col span={12}>
-                                    <Card style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }} title={<Tag color="blue"><h3>Thông tin người cho thuê</h3></Tag>} bordered={false}>
+                                    <Card style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}
+                                        title={
+                                            <Tag style={{ fontSize: '15px', color: 'black' }} color="blue">
+                                                <UserOutlined style={{ fontSize: '120%' }} /> Thông tin người cho thuê
+                                            </Tag>
+                                        } bordered={false}>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Họ và tên:</b></h4>
+                                                <h4>Họ và tên:</h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>Lê Văn Luyện</p>
@@ -112,7 +137,7 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Số điện thoại:</b></h4>
+                                                <h4>Số điện thoại:</h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>0345422402</p>
@@ -120,7 +145,7 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Email:</b></h4>
+                                                <h4>Email:</h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>example@gmail.com</p>
@@ -128,7 +153,7 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>CCCD/CMND:</b></h4>
+                                                <h4>CCCD/CMND:</h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>012345678911</p>
@@ -137,10 +162,15 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                                     </Card>
                                 </Col>
                                 <Col span={12}>
-                                    <Card style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }} title={<Tag color="blue"><h3>Thông tin chung cư mini/căn hộ</h3></Tag>} bordered={false}>
+                                    <Card style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}
+                                        title={
+                                            <Tag style={{ fontSize: '15px', color: 'black' }} color="blue">
+                                                <AuditOutlined style={{ fontSize: '120%' }} /> Thông tin chung cư mini / căn hộ
+                                            </Tag>
+                                        } bordered={false}>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Tên chung cư/căn hộ:</b></h4>
+                                                <h4>Tên chung cư/căn hộ:</h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>trọ xanh</p>
@@ -148,7 +178,7 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Địa chỉ:</b></h4>
+                                                <h4>Địa chỉ:</h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>Hà nội</p>
@@ -156,7 +186,7 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Thời hạn hợp đồng:</b></h4>
+                                                <h4>Thời hạn hợp đồng:</h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>6 tháng</p>
@@ -164,7 +194,7 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Ngày hợp đồng có hiệu lực:</b></h4>
+                                                <h4>Ngày hợp đồng có hiệu lực:</h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>29/10/2022</p>
@@ -172,7 +202,7 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Ngày kết thúc: </b></h4>
+                                                <h4>Ngày kết thúc: </h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>29/10/2023</p>
@@ -180,7 +210,7 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Trạng thái hợp đồng: </b></h4>
+                                                <h4>Trạng thái hợp đồng: </h4>
                                             </Col>
                                             <Col span={14}>
                                                 <Tag color="green">Còn hiệu lực</Tag>| <Tag color="red">Hết hiệu lực</Tag>
@@ -188,7 +218,7 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Số lượng tầng: </b></h4>
+                                                <h4>Số lượng tầng: </h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>10 tầng</p>
@@ -196,7 +226,7 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Số lượng phòng: </b></h4>
+                                                <h4>Số lượng phòng: </h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p>50 phòng</p>
@@ -204,7 +234,7 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Số lượng phòng đã cho thuê: </b></h4>
+                                                <h4>Số lượng phòng đã cho thuê: </h4>
                                             </Col>
                                             <Col span={14}>
                                                 <Tag color="green">30/50 phòng</Tag> | <Tag color="red">50/50 phòng</Tag>
@@ -215,10 +245,11 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                             </Row>
                             <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                                 <Col span={12}>
-                                    <Card style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }} title={<Tag color="blue"><h3>Giá trị hợp đồng</h3></Tag>} bordered={false}>
+                                    <Card style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}
+                                        title={<Tag style={{ fontSize: '15px', color: 'black' }} color="blue"><DollarOutlined style={{ fontSize: '120%' }} /> Giá trị hợp đồng</Tag>} bordered={false}>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Giá thuê (VNĐ): </b></h4>
+                                                <h4>Giá thuê (VNĐ): </h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p><b>300.000.000đ</b></p>
@@ -226,7 +257,7 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Tiền cọc (VNĐ): </b></h4>
+                                                <h4>Tiền cọc (VNĐ): </h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p><b>50.000.000đ</b></p>
@@ -235,10 +266,11 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                                     </Card>
                                 </Col>
                                 <Col span={12}>
-                                    <Card style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }} title={<Tag color="blue"><h3>Dịch vụ chung của tòa nhà</h3></Tag>} bordered={false}>
+                                    <Card style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}
+                                        title={<Tag style={{ fontSize: '15px', color: 'black' }} color="blue"><GoldOutlined /> Dịch vụ sử dụng</Tag>} bordered={false}>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Dịch vụ điện: </b></h4>
+                                                <h4>Dịch vụ điện: </h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p><b>3.500đ</b></p>
@@ -246,7 +278,7 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4><b>Dịch vụ nước: </b></h4>
+                                                <h4>Dịch vụ nước: </h4>
                                             </Col>
                                             <Col span={14}>
                                                 <p><b>30.000đ</b></p>
@@ -256,12 +288,7 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                                 </Col>
                             </Row>
                         </Tabs.TabPane>
-                        <Tabs.TabPane tab="Tài sản đã bàn giao" key="2">
-                            <Row>
-                                <div style={{ overflow: 'auto' }}>
-                                    <h3><b>Thông tin các tài sản đã bàn giao </b></h3>
-                                </div>
-                            </Row>
+                        <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>Tài sản đã bàn giao</span>} key="2">
                             <Row>
                                 <Col span={24}>
                                     <Row>
@@ -279,11 +306,16 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                                     <Row>
                                         <Col span={3}>
                                             <FilterOutlined style={{ fontSize: '150%' }} />
-                                            <b>Loại tài sản:</b>
+                                            Loại tài sản:
                                         </Col>
                                         <Col span={21}>
                                             <Row>
-                                                <Checkbox.Group>
+                                                <Checkbox.Group options={listAssetType.map((obj, index) => { return obj.asset_type_show_name })}
+                                                    onChange={(checkedValues) => {
+                                                        dataFilter.asset_type_show_name = checkedValues;
+                                                        setFilterAssetType(dataFilter);
+                                                    }}
+                                                >
                                                 </Checkbox.Group>
                                             </Row>
                                         </Col>

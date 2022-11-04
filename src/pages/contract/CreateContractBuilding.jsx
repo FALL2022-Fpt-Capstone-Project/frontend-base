@@ -739,7 +739,16 @@ const CreateContractBuilding = () => {
                                                         ]}
                                                     >
                                                         <Select placeholder="Số lượng tầng">
-                                                            <Select.Option>1 tầng</Select.Option>
+                                                            <Select.Option value={1}>1 tầng</Select.Option>
+                                                            <Select.Option value={2}>2 tầng</Select.Option>
+                                                            <Select.Option value={3}>3 tầng</Select.Option>
+                                                            <Select.Option value={4}>4 tầng</Select.Option>
+                                                            <Select.Option value={5}>5 tầng</Select.Option>
+                                                            <Select.Option value={6}>6 tầng</Select.Option>
+                                                            <Select.Option value={7}>7 tầng</Select.Option>
+                                                            <Select.Option value={8}>8 tầng</Select.Option>
+                                                            <Select.Option value={9}>9 tầng</Select.Option>
+                                                            <Select.Option value={10}>10 tầng</Select.Option>
                                                         </Select>
                                                     </Form.Item>
                                                     <Form.Item
