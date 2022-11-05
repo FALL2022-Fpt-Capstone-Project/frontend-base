@@ -438,34 +438,34 @@ const CreateContractRenter = () => {
       ),
     },
   ];
-  formAddMem.setFieldsValue({
-    license_plates: "",
-    address: "",
-  });
-  const onFinishAddMem = (e) => {
-    const duplicate = dataMember.find(
-      (mem) =>
-        mem.name.toLowerCase().trim() === e.name.toLowerCase().trim() &&
-        mem.member_gender === e.member_gender &&
-        mem.identity_card.toLowerCase().trim() === e.identity_card.toLowerCase().trim()
-    );
 
-    if (!duplicate) {
-      setMemberId(e.member_id + 1);
-      setDataMember([...dataMember, e]);
-      message.success("Thêm mới thành viên thành công");
-      setIsAddMem(false);
-      formAddMem.setFieldsValue({
-        member_id: memberId,
-        name: "",
-        identity_card: "",
-        phone_number: "",
-        license_plates: "",
-        address: "",
-      });
+  const onFinishAddMem = (e) => {
+    if (dataMember.find((mem) => mem.phone_number.toLowerCase().trim() === e.phone_number.toLowerCase().trim())) {
+      if (dataMember.find((mem) => mem.identity_card.toLowerCase().trim() !== e.identity_card.toLowerCase().trim())) {
+        setIsAddMem(true);
+        message.error("Trùng số điện thoại");
+      } else {
+        setIsAddMem(true);
+        message.error("Trùng số điện thoại và CMND");
+      }
     } else {
-      setIsAddMem(true);
-      message.error("Thành viên đã tồn tại");
+      if (dataMember.find((mem) => mem.identity_card.toLowerCase().trim() === e.identity_card.toLowerCase().trim())) {
+        setIsAddMem(true);
+        message.error("Trùng số CMND");
+      } else {
+        setMemberId(e.member_id + 1);
+        setDataMember([...dataMember, e]);
+        message.success("Thêm mới thành viên thành công");
+        setIsAddMem(false);
+        formAddMem.setFieldsValue({
+          member_id: memberId,
+          name: "",
+          identity_card: "",
+          phone_number: "",
+          license_plates: "",
+          address: "",
+        });
+      }
     }
   };
   const onFinishFailAddMem = (e) => {
@@ -478,6 +478,7 @@ const CreateContractRenter = () => {
         mem.name.toLowerCase().trim() === e.name.toLowerCase().trim() &&
         mem.member_gender === e.member_gender &&
         mem.identity_card.toLowerCase().trim() === e.identity_card.toLowerCase().trim() &&
+        mem.phone_number.toLowerCase().trim() === e.phone_number.toLowerCase().trim() &&
         mem.license_plates.toLowerCase().trim() === e.license_plates.toLowerCase().trim() &&
         mem.address.toLowerCase().trim() === e.address.toLowerCase().trim()
     );
@@ -586,12 +587,14 @@ const CreateContractRenter = () => {
     asset_type_show_name: formAddAsset.asset_type,
     hand_over_asset_status: formAddAsset.asset_status,
   });
+
   const addAssetFinish = (e) => {
     setAssetId(e.asset_id - 1);
     const duplicate = dataAsset.find(
       (asset) => asset.asset_name.toLowerCase().trim() === e.asset_name.toLowerCase().trim()
     );
     if (!duplicate) {
+      console.log('in');
       setDataAsset([
         ...dataAsset,
         { ...e, hand_over_asset_date_delivery: new Date(e.hand_over_asset_date_delivery).toLocaleDateString() },
@@ -2025,7 +2028,7 @@ const CreateContractRenter = () => {
                       },
                     ]}
                   >
-                    <Input placeholder="CMND/CCCD" style={{ width: "100%" }} />
+                    <Input disabled placeholder="CMND/CCCD" style={{ width: "100%" }} />
                   </Form.Item>
                   <Form.Item
                     className="form-item"
