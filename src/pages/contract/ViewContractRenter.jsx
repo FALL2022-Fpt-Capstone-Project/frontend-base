@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 function ViewContractRenter({ openView, closeView, dataContract }) {
     const LIST_ASSET_TYPE = "manager/asset/type";
-    const APARTMENT_DATA_GROUP = "manager/group/get-group/1";
+    const APARTMENT_DATA_GROUP = "manager/contract/room/";
 
     const [dataAsset, setDataAsset] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -531,7 +531,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         </Col>
                                         <Col span={21}>
                                             <Row>
-                                                <Checkbox.Group options={listAssetType.map((obj, index) => { return obj.asset_type_show_name })}
+                                                <Checkbox.Group options={listAssetType?.map((obj, index) => { return obj.asset_type_show_name })}
                                                     onChange={(checkedValues) => {
                                                         dataFilter.asset_type_show_name = checkedValues;
                                                         setFilterAssetType(dataFilter);
@@ -548,7 +548,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                                 setFilterAssetType(filters);
                                                 setAssetStatus(filters)
                                             }}
-                                            dataSource={dataContract.list_hand_over_assets}
+                                            dataSource={dataContract?.list_hand_over_assets}
                                             columns={columns}
                                             scroll={{ x: 800, y: 600 }}
                                             loading={loading}

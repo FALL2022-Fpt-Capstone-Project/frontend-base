@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Input, Table, DatePicker, Select, Button, Row, Col, Tag, Tabs, Switch, Form } from "antd";
 import "./listContract.scss";
-import useAuth from "../../hooks/useAuth";
 import axios from "../../api/axios";
+import { useNavigate } from "react-router-dom";
 import { EditOutlined, SearchOutlined, EyeOutlined, UndoOutlined } from "@ant-design/icons";
 const { Search } = Input;
 const LIST_CONTRACT_URL = "manager/contract";
 const FILTER_CONTRACT_URL = "manager/contract/get-contract/1";
 const LIST_BUILDING_FILTER = "manager/group/all";
+const GET_CONTRACT = "manager/contract/room/";
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 const ListContractRenter = () => {
@@ -21,7 +22,11 @@ const ListContractRenter = () => {
   const [renterName, setRenterName] = useState("");
   const [endContract, setEndContract] = useState(false);
   const [duration, setDuration] = useState();
+  const [viewContract, setViewContract] = useState(false);
+  const [contractId, setContractId] = useState();
+  const [contractInfor, setContractInfor] = useState([]);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   const options = [];
   const formItemLayout = {
     labelCol: {
@@ -153,6 +158,25 @@ const ListContractRenter = () => {
     // setFullname("");
     // setRoles("");
     // setUsername("");
+  };
+  const getContractById = async (contractId) => {
+    let cookie = localStorage.getItem("Cookie");
+    await axios
+      .get(GET_CONTRACT + contractId, {
+        headers: {
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${cookie}`,
+        },
+        // withCredentials: true,
+      })
+      .then((res) => {
+        // console.log(res);
+        setContractInfor(res.data.body);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
   return (
     <div className="list-contract">
@@ -360,8 +384,20 @@ const ListContractRenter = () => {
             render: (_, record) => {
               return (
                 <>
-                  <EditOutlined style={{ fontSize: "20px", marginRight: "10px" }} />
-                  <EyeOutlined style={{ fontSize: "20px" }} />
+                  <EditOutlined
+                    style={{ fontSize: "20px", marginRight: "10px" }}
+                    onClick={() => {
+                      navigate(`/contract-renter/edit/${record.contract_id}`);
+                    }}
+                  />
+                  <EyeOutlined
+                    style={{ fontSize: "20px" }}
+                    onClick={() => {
+                      setViewContract(true);
+                      // setContractId(record.contract_id);
+                      getContractById(record.contract_id);
+                    }}
+                  />
                 </>
               );
             },
