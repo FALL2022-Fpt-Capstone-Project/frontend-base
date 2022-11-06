@@ -142,7 +142,14 @@ const ListStaff = () => {
     setLoading(true);
     const response = await axios
       .get(LIST_EMPLOYEE_URL, {
-        params: { name: full_name, userName: user_name, role: roles, deactivate: deactive },
+        params: {
+          name: full_name,
+          userName: user_name,
+          role: roles,
+          deactivate: deactive,
+          startDate: startDate,
+          endDate: endDate,
+        },
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${cookie}`,
@@ -183,7 +190,7 @@ const ListStaff = () => {
     setStartDate(startDate);
     setEndDate(endDate);
   };
-  const resetForm = () => {
+  const resetForm = async () => {
     form.resetFields();
     setDeactive("");
     setEndDate("");
@@ -191,6 +198,22 @@ const ListStaff = () => {
     setFullname("");
     setRoles("");
     setUsername("");
+    setLoading(true);
+    const response = await axios
+      .get(LIST_EMPLOYEE_URL, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie}`,
+        },
+      })
+      .then((res) => {
+        setDataSource(res.data.data);
+        console.log(res);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    setLoading(false);
   };
   return (
     <div className="list-staff">

@@ -5,8 +5,9 @@ import useAuth from "../../hooks/useAuth";
 import axios from "../../api/axios";
 import { EditOutlined, SearchOutlined, EyeOutlined, UndoOutlined } from "@ant-design/icons";
 const { Search } = Input;
-const LIST_CONTRACT_URL = "manager/contract/get-contract/1";
+const LIST_CONTRACT_URL = "manager/contract";
 const FILTER_CONTRACT_URL = "manager/contract/get-contract/1";
+const LIST_BUILDING_FILTER = "manager/group/all";
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 const ListContractRenter = () => {
@@ -16,10 +17,12 @@ const ListContractRenter = () => {
   const [endDate, setEndDate] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [CCCD, setCCCD] = useState("");
+  const [buildingFilter, setBuildingFilter] = useState("");
   const [renterName, setRenterName] = useState("");
   const [endContract, setEndContract] = useState(false);
   const [duration, setDuration] = useState();
   const [loading, setLoading] = useState(false);
+  const options = [];
   const formItemLayout = {
     labelCol: {
       xs: {
@@ -54,16 +57,46 @@ const ListContractRenter = () => {
         },
       })
       .then((res) => {
-        setDataSource(res.data.body);
-        console.log(res);
+        setDataSource(res.data.data);
+        console.log(res.data.data[0].listRenter);
       })
       .catch((error) => {
         console.log(error);
       });
     setLoading(false);
   };
+
+  useEffect(() => {
+    const getBuildingFilter = async () => {
+      setLoading(true);
+      const response = await axios
+        .get(LIST_BUILDING_FILTER, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cookie}`,
+          },
+        })
+        .then((res) => {
+          setBuildingFilter(res.data.data);
+          console.log(res);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      setLoading(false);
+    };
+    getBuildingFilter();
+  }, [cookie]);
+
+  for (let i = 0; i < buildingFilter.length; i++) {
+    options.push({
+      label: buildingFilter[i].group_name,
+      value: buildingFilter[i].group_id,
+    });
+  }
+
   const getFullDate = (date) => {
-    const dateAndTime = date.split("T");
+    const dateAndTime = date.split(" ");
 
     return dateAndTime[0].split("-").reverse().join("-");
   };
@@ -134,8 +167,8 @@ const ListContractRenter = () => {
               onFinish={getFilterContractRenter}
               style={{ width: "100%" }}
             >
-              <Row gutter={[16, 32]} style={{ marginBottom: "20px" }}>
-                <Col span={8}>
+              <Row gutter={[16, 32]} style={{ marginBottom: "20px", marginLeft: "20px" }}>
+                <Row>
                   <Form.Item name="full_name" style={{ width: "500px" }}>
                     <Col className="gutter-row" span={24}>
                       <Row>
@@ -153,16 +186,28 @@ const ListContractRenter = () => {
                     <Col className="gutter-row" span={24}>
                       <Row>
                         <label htmlFor="" style={{ marginBottom: "10px" }}>
-                          Tìm kiếm theo số CCCD/Số điện thoại
+                          Tìm kiếm theo số CCCD
                         </label>
                       </Row>
                       <Row>
-                        <Input placeholder="Nhập số CCCD/Số điện thoại" autoComplete="off" />
+                        <Input placeholder="Nhập số CCCD" autoComplete="off" />
                       </Row>
                     </Col>
                   </Form.Item>
-                </Col>
-                <Col span={8} offset={3}>
+                  <Form.Item name="user_name" style={{ width: "500px" }}>
+                    <Col className="gutter-row" span={24}>
+                      <Row>
+                        <label htmlFor="" style={{ marginBottom: "10px" }}>
+                          Tìm kiếm theo số điện thoại
+                        </label>
+                      </Row>
+                      <Row>
+                        <Input placeholder="Nhập số điện thoại" autoComplete="off" />
+                      </Row>
+                    </Col>
+                  </Form.Item>
+                </Row>
+                <Row>
                   <Form.Item name="date" style={{ width: "500px" }}>
                     <Col className="gutter-row" span={24}>
                       <Row>
@@ -171,28 +216,33 @@ const ListContractRenter = () => {
                         </label>
                       </Row>
                       <Row>
-                        <RangePicker format={"DD-MM-YYYY"} placeholder={["Từ", "Đến"]} onChange={dateChange} />
+                        <RangePicker
+                          format={"DD-MM-YYYY"}
+                          placeholder={["Từ", "Đến"]}
+                          onChange={dateChange}
+                          style={{ width: "500px" }}
+                        />
                       </Row>
                     </Col>
                   </Form.Item>
-                  <Col className="gutter-row" span={24}>
-                    <Row style={{ flexWrap: "nowrap", width: "700px" }}>
-                      <Form.Item name="user_name" style={{ width: "500px" }}>
-                        <Row>
-                          <label htmlFor="" style={{ marginBottom: "10px" }}>
-                            Tìm kiếm theo tên chung cư
-                          </label>
-                        </Row>
-                        <Row>
-                          <Select placeholder="Chọn chung cư"></Select>
-                        </Row>
-                      </Form.Item>
-                      <Form.Item name="deactive" style={{ width: "500px", marginTop: "30px" }}>
-                        <Switch /> <span>Hợp đồng đã kết thúc</span>
-                      </Form.Item>
-                    </Row>
-                  </Col>
-                </Col>
+                  <Form.Item name="user_name" style={{ width: "500px" }}>
+                    <Col className="gutter-row" span={24}>
+                      <Row>
+                        <label htmlFor="" style={{ marginBottom: "10px" }}>
+                          Tìm kiếm theo tên chung cư
+                        </label>
+                      </Row>
+                      <Row>
+                        <Select options={options} placeholder="Chọn chung cư"></Select>
+                      </Row>
+                    </Col>
+                  </Form.Item>
+                  <Form.Item name="deactive" style={{ width: "500px", marginTop: "30px" }}>
+                    <Col className="gutter-row" span={24}>
+                      <Switch /> <span>Hợp đồng đã kết thúc</span>
+                    </Col>
+                  </Form.Item>
+                </Row>
               </Row>
               <Row style={{ marginBottom: "20px" }}>
                 <Col offset={10}>
@@ -244,13 +294,18 @@ const ListContractRenter = () => {
             onFilter: (value, record) => {
               return (
                 String(record.contract_name).toLowerCase()?.includes(value.toLowerCase()) ||
-                String(record.renter_name).toLowerCase()?.includes(value.toLowerCase())
+                String(record.contract_name).toLowerCase()?.includes(value.toLowerCase())
               );
             },
           },
           {
+            title: "Tên chung cư",
+            dataIndex: "group_name",
+          },
+          {
             title: "Tên khách thuê",
-            dataIndex: "renter_name",
+            dataIndex: "list_renter",
+            render: (renter) => renter[0].renter_full_name,
           },
 
           {
@@ -280,7 +335,7 @@ const ListContractRenter = () => {
 
           {
             title: "Trạng thái hợp đồng",
-            dataIndex: "contract_is_disable",
+            dataIndex: "contractIsDisable",
             render: (_, record) => {
               let status;
               if (record.contract_is_disable === true) {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Input, Table, Select, DatePicker, Tag, Tabs, Button, Row, Col, Form } from "antd";
+import { Input, Table, Select, DatePicker, Tag, Tabs, Button, Row, Col, Form, Switch } from "antd";
 import { EyeOutlined, EditOutlined, SearchOutlined, UndoOutlined } from "@ant-design/icons";
 import useAuth from "../../hooks/useAuth";
 import axios from "../../api/axios";
@@ -75,10 +75,17 @@ const ListContractExpired = ({ duration }) => {
       <div>
         <Tabs defaultActiveKey="1">
           <Tabs.TabPane tab="Tìm kiếm nâng cao" key="1">
-            <Form {...formItemLayout} form={form} name="filterStaff" id="filterStaff" style={{ width: "100%" }}>
-              <Row gutter={[16, 32]} style={{ marginBottom: "20px" }}>
-                <Col span={8}>
-                  <Form.Item name="full_name" style={{ width: "500px" }}>
+            <Form
+              {...formItemLayout}
+              form={form}
+              name="filterStaff"
+              id="filterStaff"
+              // onFinish={getFilterContractRenter}
+              style={{ width: "100%" }}
+            >
+              <Row gutter={[16, 32]} style={{ marginBottom: "20px", marginLeft: "20px" }}>
+                <Row>
+                  <Form.Item name="full_name" style={{ width: "350px" }}>
                     <Col className="gutter-row" span={24}>
                       <Row>
                         <label htmlFor="" style={{ marginBottom: "10px" }}>
@@ -91,21 +98,33 @@ const ListContractExpired = ({ duration }) => {
                     </Col>
                   </Form.Item>
 
-                  <Form.Item name="user_name" style={{ width: "500px" }}>
+                  <Form.Item name="user_name" style={{ width: "350px" }}>
                     <Col className="gutter-row" span={24}>
                       <Row>
                         <label htmlFor="" style={{ marginBottom: "10px" }}>
-                          Tìm kiếm theo số CCCD/Số điện thoại
+                          Tìm kiếm theo số CCCD
                         </label>
                       </Row>
                       <Row>
-                        <Input placeholder="Nhập số CCCD/Số điện thoại" autoComplete="off" />
+                        <Input placeholder="Nhập số CCCD" autoComplete="off" />
                       </Row>
                     </Col>
                   </Form.Item>
-                </Col>
-                <Col span={8} offset={3}>
-                  <Form.Item name="date" style={{ width: "500px" }}>
+                  <Form.Item name="user_name" style={{ width: "350px" }}>
+                    <Col className="gutter-row" span={24}>
+                      <Row>
+                        <label htmlFor="" style={{ marginBottom: "10px" }}>
+                          Tìm kiếm theo số điện thoại
+                        </label>
+                      </Row>
+                      <Row>
+                        <Input placeholder="Nhập số điện thoại" autoComplete="off" />
+                      </Row>
+                    </Col>
+                  </Form.Item>
+                </Row>
+                <Row>
+                  <Form.Item name="date" style={{ width: "350px" }}>
                     <Col className="gutter-row" span={24}>
                       <Row>
                         <label htmlFor="" style={{ marginBottom: "10px" }}>
@@ -113,30 +132,39 @@ const ListContractExpired = ({ duration }) => {
                         </label>
                       </Row>
                       <Row>
-                        <RangePicker format={"DD-MM-YYYY"} placeholder={["Từ", "Đến"]} />
+                        <RangePicker
+                          format={"DD-MM-YYYY"}
+                          placeholder={["Từ", "Đến"]}
+                          // onChange={dateChange}
+                          style={{ width: "500px" }}
+                        />
                       </Row>
                     </Col>
                   </Form.Item>
-                  <Col className="gutter-row" span={24}>
-                    <Row style={{ flexWrap: "nowrap", width: "700px" }}>
-                      <Form.Item name="user_name" style={{ width: "500px" }}>
-                        <Row>
-                          <label htmlFor="" style={{ marginBottom: "10px" }}>
-                            Tìm kiếm theo chung cư
-                          </label>
-                        </Row>
-                        <Row>
-                          <Select></Select>
-                        </Row>
-                      </Form.Item>
-                    </Row>
-                  </Col>
-                </Col>
+                  <Form.Item name="user_name" style={{ width: "350px" }}>
+                    <Col className="gutter-row" span={24}>
+                      <Row>
+                        <label htmlFor="" style={{ marginBottom: "10px" }}>
+                          Tìm kiếm theo tên chung cư
+                        </label>
+                      </Row>
+                      <Row>
+                        <Select placeholder="Chọn chung cư"></Select>
+                      </Row>
+                    </Col>
+                  </Form.Item>
+                </Row>
               </Row>
               <Row style={{ marginBottom: "20px" }}>
                 <Col offset={10}>
                   <Row>
-                    <Button type="primary" icon={<SearchOutlined />} style={{ marginRight: "20px" }} htmlType="submit">
+                    <Button
+                      type="primary"
+                      icon={<SearchOutlined />}
+                      style={{ marginRight: "20px" }}
+                      // onClick={getFilterContractRenter}
+                      htmlType="submit"
+                    >
                       Tìm kiếm
                     </Button>
                     <Button icon={<UndoOutlined />} onClick={resetForm}>

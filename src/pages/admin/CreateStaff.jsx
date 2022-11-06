@@ -207,19 +207,20 @@ const CreateStaff = () => {
                   <Input autoComplete="off" />
                 </Form.Item>
                 <Form.Item name="gender" label="Giới tính" labelAlign="left" style={{ paddingLeft: "10px" }}>
-                  <Radio.Group onChange={genderChange} defaultValue={true}>
+                  <Radio.Group onChange={genderChange} defaultValue={true} style={{ marginLeft: "-9px" }}>
                     <Radio value={true}>Nam</Radio>
                     <Radio value={false}>Nữ</Radio>
                   </Radio.Group>
                 </Form.Item>
                 <Form.Item name="address_more_detail" label="Địa chỉ" labelAlign="left" style={{ paddingLeft: "10px" }}>
-                  <Input autoComplete="off" />
+                  <Input autoComplete="off" style={{ marginLeft: "-9px" }} />
                 </Form.Item>
                 <Form.Item name="roles" label="Vai trò" labelAlign="left" style={{ paddingLeft: "10px" }}>
                   <Select
                     defaultValue="staff"
                     style={{
                       width: 120,
+                      marginLeft: "-9px",
                     }}
                     onChange={roleChange}
                     options={options}

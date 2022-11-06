@@ -15,7 +15,7 @@ const { Content, Sider, Header } = Layout;
 const COUNT_CONTRACT_GROUP = "manager/contract/statistical/get-contract/1";
 
 const ContractRenter = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalNewOpen, setIsModalNewOpen] = useState(false);
   const [isModalOldOpen, setIsModalOldOpen] = useState(false);
   const [isModalEndOpen, setIsModalEndOpen] = useState(false);
@@ -30,6 +30,15 @@ const ContractRenter = () => {
     <Option value={6}>6 tháng</Option>,
     <Option value={12}>1 năm</Option>,
   ];
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
   const showModalNew = () => {
     setIsModalNewOpen(true);
   };
@@ -96,12 +105,7 @@ const ContractRenter = () => {
             }}
           >
             <div className="btn-contract">
-              <Button
-                icon={<PieChartOutlined />}
-                size="middle"
-                className="button-collapse"
-                onClick={() => setIsOpen(!isOpen)}
-              >
+              <Button icon={<PieChartOutlined />} size="middle" className="button-collapse" onClick={showModal}>
                 Thống kê hợp đồng
               </Button>
               <Button
@@ -114,7 +118,19 @@ const ContractRenter = () => {
                 Thêm hợp đồng
               </Button>
             </div>
-            {isOpen && (
+            <Modal
+              title="Thống kê hợp đồng"
+              open={isModalOpen}
+              onOk={handleOk}
+              onCancel={handleCancel}
+              cancelText={"Huỷ"}
+              footer={[
+                <Button key="back" onClick={handleCancel}>
+                  Quay lại
+                </Button>,
+              ]}
+              width={1200}
+            >
               <div className="contract-statistic">
                 <div className="contract-card">
                   <Row>
@@ -163,7 +179,7 @@ const ContractRenter = () => {
                       </Card>
                     </Col>
                     <Col span={6}>
-                      <label htmlFor="" style={{ margin: "75px 10px 0 20px", fontSize: "14px", display: "block" }}>
+                      <label htmlFor="" style={{ margin: "55px 10px 0 20px", fontSize: "14px", display: "block" }}>
                         Chọn thời gian thống kê dữ liệu hợp đồng
                       </label>
                       <Select
@@ -180,7 +196,8 @@ const ContractRenter = () => {
                   </Row>
                 </div>
               </div>
-            )}
+            </Modal>
+
             <div
               className="site-layout-background"
               style={{
@@ -198,6 +215,11 @@ const ContractRenter = () => {
             visible={isModalNewOpen}
             onOk={() => setIsModalNewOpen(false)}
             onCancel={() => setIsModalNewOpen(false)}
+            footer={[
+              <Button key="back" onClick={() => setIsModalNewOpen(false)}>
+                Quay lại
+              </Button>,
+            ]}
           >
             <ListContractRenterLatest duration={duration} />
           </Modal>
@@ -208,6 +230,11 @@ const ContractRenter = () => {
             visible={isModalOldOpen}
             onOk={() => setIsModalOldOpen(false)}
             onCancel={() => setIsModalOldOpen(false)}
+            footer={[
+              <Button key="back" onClick={() => setIsModalOldOpen(false)}>
+                Quay lại
+              </Button>,
+            ]}
           >
             <ListContractRenterAlmostExpired duration={duration} />
           </Modal>
@@ -218,6 +245,11 @@ const ContractRenter = () => {
             visible={isModalEndOpen}
             onOk={() => setIsModalEndOpen(false)}
             onCancel={() => setIsModalEndOpen(false)}
+            footer={[
+              <Button key="back" onClick={() => setIsModalEndOpen(false)}>
+                Quay lại
+              </Button>,
+            ]}
           >
             <ListContractExpired duration={duration} />
           </Modal>
