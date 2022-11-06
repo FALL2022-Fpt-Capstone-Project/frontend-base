@@ -9,7 +9,6 @@ const { Search } = Input;
 const LIST_CONTRACT_URL = "manager/contract";
 const FILTER_CONTRACT_URL = "manager/contract/get-contract/1";
 const LIST_BUILDING_FILTER = "manager/group/all";
-const GET_CONTRACT = "manager/contract/room/";
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 const ListContractRenter = () => {
@@ -24,7 +23,6 @@ const ListContractRenter = () => {
   const [endContract, setEndContract] = useState(false);
   const [duration, setDuration] = useState();
   const [viewContract, setViewContract] = useState(false);
-  const [contractId, setContractId] = useState();
   const [contractInfor, setContractInfor] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -64,14 +62,13 @@ const ListContractRenter = () => {
       })
       .then((res) => {
         setDataSource(res.data.data);
-        console.log(res.data.data[0].listRenter);
       })
       .catch((error) => {
         console.log(error);
       });
     setLoading(false);
   };
-
+  console.log(dataSource);
   useEffect(() => {
     const getBuildingFilter = async () => {
       setLoading(true);
@@ -160,25 +157,7 @@ const ListContractRenter = () => {
     // setRoles("");
     // setUsername("");
   };
-  const getContractById = async (contractId) => {
-    let cookie = localStorage.getItem("Cookie");
-    await axios
-      .get(GET_CONTRACT + contractId, {
-        headers: {
-          "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
-          Authorization: `Bearer ${cookie}`,
-        },
-        // withCredentials: true,
-      })
-      .then((res) => {
-        // console.log(res);
-        setContractInfor(res.data.body);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+
   return (
     <div className="list-contract">
       <div className="list-contract-search">
@@ -395,8 +374,7 @@ const ListContractRenter = () => {
                     style={{ fontSize: "20px" }}
                     onClick={() => {
                       setViewContract(true);
-                      // setContractId(record.contract_id);
-                      getContractById(record.contract_id);
+                      setContractInfor(record)
                     }}
                   />
                 </>

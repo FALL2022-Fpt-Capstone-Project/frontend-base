@@ -2,13 +2,12 @@ import { Button, Card, Checkbox, Col, Input, Modal, Row, Table, Tabs, Tag } from
 import React, { useState, useEffect } from 'react';
 import { ArrowRightOutlined, UserOutlined, FilterOutlined, AuditOutlined, DollarOutlined, GoldOutlined } from "@ant-design/icons";
 import axios from "../../api/axios";
+import moment from "moment";
 import { useNavigate } from "react-router-dom";
 
 const LIST_ASSET_TYPE = "manager/asset/type";
-const APARTMENT_DATA_GROUP = "manager/contract/room/";
 
 function ViewContractRenter({ openView, closeView, dataContract }) {
-    const [dataAsset, setDataAsset] = useState([]);
     const [loading, setLoading] = useState(false);
     const [searched, setSearched] = useState("");
     const [filterAssetType, setFilterAssetType] = useState([]);
@@ -27,9 +26,6 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
     const handleCancel = () => {
         closeView(false)
     };
-    useEffect(() => {
-        apartmentGroup();
-    }, []);
 
     const columns = [
         {
@@ -63,61 +59,27 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
         },
         {
             title: 'Thời gian',
-            dataIndex: 'hand_over_asset_date_delivery',
+            dataIndex: 'hand_over_date_delivery',
             key: 'asset_id',
-            render: (hand_over_asset_date_delivery) => {
-                return new Date(hand_over_asset_date_delivery).toLocaleDateString();
-            }
         },
-        {
-            title: 'Trạng thái',
-            dataIndex: 'hand_over_asset_status',
-            filters: [
-                { text: 'Tốt', value: true },
-                { text: 'Hỏng', value: false },
-            ],
-            filteredValue: assetStatus.hand_over_asset_status || null,
-            onFilter: (value, record) => record.hand_over_asset_status === value,
-            render: (status) => {
-                return (
-                    <>
-                        <Tag color={status ? "success" : "error"}>{status ? 'Tốt' : 'Hỏng'}</Tag>
-                    </>
-                )
-            }
-        },
+        // {
+        //     title: 'Trạng thái',
+        //     dataIndex: 'hand_over_asset_status',
+        //     filters: [
+        //         { text: 'Tốt', value: true },
+        //         { text: 'Hỏng', value: false },
+        //     ],
+        //     filteredValue: assetStatus.hand_over_asset_status || null,
+        //     onFilter: (value, record) => record.hand_over_asset_status === value,
+        //     render: (status) => {
+        //         return (
+        //             <>
+        //                 <Tag color={status ? "success" : "error"}>{status ? 'Tốt' : 'Hỏng'}</Tag>
+        //             </>
+        //         )
+        //     }
+        // },
     ];
-
-    const apartmentGroup = async () => {
-        let cookie = localStorage.getItem("Cookie");
-        setLoading(true);
-        await axios
-            .get(APARTMENT_DATA_GROUP, {
-                headers: {
-                    "Content-Type": "application/json",
-                    // "Access-Control-Allow-Origin": "*",
-                    Authorization: `Bearer ${cookie}`,
-                },
-                // withCredentials: true,
-            })
-            .then((res) => {
-                setDataAsset(res.data.body.list_hand_over_assets.map((obj, index) => [
-                    {
-                        asset_id: obj.asset_id,
-                        asset_name: obj.asset_name,
-                        asset_type: obj.asset_type,
-                        hand_over_asset_date_delivery: new Date(obj.hand_over_asset_date_delivery).toLocaleDateString(),
-                        asset_type_show_name: obj.asset_type_show_name,
-                        hand_over_asset_quantity: 1,
-                        hand_over_asset_status: obj.hand_over_asset_status,
-                    }
-                ][0]));
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-        setLoading(false);
-    }
 
     useEffect(() => {
         getAssetType();
@@ -135,15 +97,14 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                 // withCredentials: true,
             })
             .then((res) => {
-                setListAssetType(res.data.body);
+                setListAssetType(res.data.data);
             })
             .catch((error) => {
                 console.log(error);
             });
     };
-
-
-    // console.log(contractInfor);
+    const renterRepresent = dataContract?.list_renter?.find((obj, index) => obj.represent === true);
+    console.log(dataContract);
     return (
         <>
             <div>
@@ -171,7 +132,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                                 <h4>Họ và tên:</h4>
                                             </Col>
                                             <Col span={14}>
-                                                <p>{dataContract?.renter_name}</p>
+                                                <p>{renterRepresent?.renter_full_name}</p>
                                             </Col>
                                         </Row>
                                         <Row>
@@ -179,7 +140,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                                 <h4>Giới tính:</h4>
                                             </Col>
                                             <Col span={14}>
-                                                <p>Nam</p>
+                                                <p>{renterRepresent?.gender ? 'Nam' : 'Nữ'}</p>
                                             </Col>
                                         </Row>
                                         <Row>
@@ -187,15 +148,15 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                                 <h4>Số điện thoại:</h4>
                                             </Col>
                                             <Col span={14}>
-                                                <p>0345422402</p>
+                                                <p>{renterRepresent?.phone_number}</p>
                                             </Col>
                                         </Row>
                                         <Row>
                                             <Col span={10}>
-                                                <h4>CCCD/CMND:</h4>
+                                                <h4>CMND/CCCD:</h4>
                                             </Col>
                                             <Col span={14}>
-                                                <p>012345678911</p>
+                                                <p>{renterRepresent?.identity_number}</p>
                                             </Col>
                                         </Row>
                                         <Row>
@@ -203,7 +164,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                                 <h4>Email:</h4>
                                             </Col>
                                             <Col span={14}>
-                                                <p>example@gmail.com</p>
+                                                <p>{renterRepresent?.email}</p>
                                             </Col>
                                         </Row>
                                     </Card>
@@ -218,10 +179,18 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                             </>} bordered={false}>
                                         <Row>
                                             <Col span={10}>
+                                                <h4>Tên chung cư mini / căn hộ:</h4>
+                                            </Col>
+                                            <Col span={14}>
+                                                <p>{dataContract?.group_name}</p>
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col span={10}>
                                                 <h4>Phòng cho thuê:</h4>
                                             </Col>
                                             <Col span={14}>
-                                                <p>Tầng 2 phòng 201</p>
+                                                <p>Tầng {dataContract?.room?.room_floor} phòng {dataContract?.room?.room_name}</p>
                                             </Col>
                                         </Row>
                                         <Row>
@@ -237,7 +206,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                                 <h4>Ngày hợp đồng có hiệu lực:</h4>
                                             </Col>
                                             <Col span={14}>
-                                                <p>{new Date(dataContract?.contract_start_date).toLocaleDateString()}</p>
+                                                <p>{moment(dataContract?.contract_start_date).format('DD-MM-YYYY')}</p>
                                             </Col>
                                         </Row>
                                         <Row>
@@ -245,7 +214,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                                 <h4>Ngày kết thúc: </h4>
                                             </Col>
                                             <Col span={14}>
-                                                <p>{new Date(dataContract?.contract_end_date).toLocaleDateString()}</p>
+                                                <p>{moment(dataContract?.contract_end_date).format('DD-MM-YYYY')}</p>
                                             </Col>
                                         </Row>
                                         <Row>
@@ -253,7 +222,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                                 <h4>Trạng thái hợp đồng: </h4>
                                             </Col>
                                             <Col span={14}>
-                                                <Tag color="green">Còn hiệu lực</Tag>| <Tag color="red">Hết hiệu lực</Tag>
+                                                {!dataContract?.contract_is_disable ? <Tag color="green">Còn hiệu lực</Tag> : <Tag color="red">Hết hiệu lực</Tag>}
                                             </Col>
                                         </Row>
                                         <Row>
@@ -270,6 +239,14 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                             </Col>
                                             <Col span={14}>
                                                 <p>Ngày {dataContract?.contract_payment_cycle} hàng tháng</p>
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col span={10}>
+                                                <h4>Ghi chú:</h4>
+                                            </Col>
+                                            <Col span={14}>
+                                                <p>{dataContract?.note}</p>
                                             </Col>
                                         </Row>
                                     </Card>
@@ -304,7 +281,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         title={
                                             <Tag style={{ fontSize: '15px', color: 'black' }} color="blue"><GoldOutlined /> Dịch vụ sử dụng</Tag>
                                         } bordered={false}>
-                                        {dataContract?.list_hand_over_services?.map((obj, index) => {
+                                        {dataContract?.list_hand_over_general_service?.map((obj, index) => {
                                             return (
                                                 <Row>
                                                     <Col span={10}>
@@ -327,186 +304,72 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                 </div>
                             </Row>
                             <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                                <Col>
-                                    <Card
-                                        style={{
-                                            width: 300,
-                                        }}
-                                        cover={
-                                            <UserOutlined style={{ fontSize: '500%' }} />
-                                        }
-                                        bordered
-                                    >
-                                        <Row>
-                                            <Col span={10}>
-                                                <h4>Họ và tên: </h4>
+                                {dataContract?.list_renter?.filter((o, i) => o.represent === false)?.map((obj, index) => {
+                                    return (
+                                        <>
+                                            <Col>
+                                                <Card
+                                                    style={{
+                                                        width: 300,
+                                                    }}
+                                                    cover={
+                                                        <UserOutlined style={{ fontSize: '500%' }} />
+                                                    }
+                                                    bordered
+                                                >
+                                                    <Row>
+                                                        <Col span={10}>
+                                                            <h4>Họ và tên: </h4>
+                                                        </Col>
+                                                        <Col span={14}>
+                                                            <p>{obj?.renter_full_name}</p>
+                                                        </Col>
+                                                    </Row>
+                                                    <Row>
+                                                        <Col span={10}>
+                                                            <h4>Giới tính: </h4>
+                                                        </Col>
+                                                        <Col span={14}>
+                                                            <p>{obj?.gender ? 'Nam' : 'Nữ'}</p>
+                                                        </Col>
+                                                    </Row>
+                                                    <Row>
+                                                        <Col span={10}>
+                                                            <h4>Số điện thoại: </h4>
+                                                        </Col>
+                                                        <Col span={14}>
+                                                            <p>{obj?.phone_number}</p>
+                                                        </Col>
+                                                    </Row>
+                                                    <Row>
+                                                        <Col span={10}>
+                                                            <h4>CMND/CCCD: </h4>
+                                                        </Col>
+                                                        <Col span={14}>
+                                                            <p>{obj?.identity_number}</p>
+                                                        </Col>
+                                                    </Row>
+                                                    <Row>
+                                                        <Col span={10}>
+                                                            <h4>Địa chỉ: </h4>
+                                                        </Col>
+                                                        <Col span={14}>
+                                                            <p>Hữu Quan, Dương Quan, Thủy Nguyên, Hải Phòng</p>
+                                                        </Col>
+                                                    </Row>
+                                                    <Row>
+                                                        <Col span={10}>
+                                                            <h4>Biển số xe: </h4>
+                                                        </Col>
+                                                        <Col span={14}>
+                                                            <p>{obj?.license_plates}</p>
+                                                        </Col>
+                                                    </Row>
+                                                </Card>
                                             </Col>
-                                            <Col span={14}>
-                                                <p>Nguyễn Đức Pháp</p>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col span={10}>
-                                                <h4>Giới tính: </h4>
-                                            </Col>
-                                            <Col span={14}>
-                                                <p>Nam</p>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col span={10}>
-                                                <h4>Số điện thoại: </h4>
-                                            </Col>
-                                            <Col span={14}>
-                                                <p>0123456789</p>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col span={10}>
-                                                <h4>CCCD/CMND: </h4>
-                                            </Col>
-                                            <Col span={14}>
-                                                <p>012345678911</p>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col span={10}>
-                                                <h4>Địa chỉ: </h4>
-                                            </Col>
-                                            <Col span={14}>
-                                                <p>Hữu Quan, Dương Quan, Thủy Nguyên, Hải Phòng</p>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col span={10}>
-                                                <h4>Biển số xe: </h4>
-                                            </Col>
-                                            <Col span={14}>
-                                                <p>16P1-7433</p>
-                                            </Col>
-                                        </Row>
-                                    </Card>
-                                </Col>
-                                <Col>
-                                    <Card
-                                        style={{
-                                            width: 300,
-                                        }}
-                                        cover={
-                                            <UserOutlined style={{ fontSize: '500%' }} />
-                                        }
-                                        bordered
-                                    >
-                                        <Row>
-                                            <Col span={10}>
-                                                <h4>Họ và tên: </h4>
-                                            </Col>
-                                            <Col span={14}>
-                                                <p>Nguyễn Đức Pháp</p>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col span={10}>
-                                                <h4>Giới tính: </h4>
-                                            </Col>
-                                            <Col span={14}>
-                                                <p>Nam</p>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col span={10}>
-                                                <h4>Số điện thoại: </h4>
-                                            </Col>
-                                            <Col span={14}>
-                                                <p>0123456789</p>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col span={10}>
-                                                <h4>CCCD/CMND: </h4>
-                                            </Col>
-                                            <Col span={14}>
-                                                <p>012345678911</p>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col span={10}>
-                                                <h4>Địa chỉ: </h4>
-                                            </Col>
-                                            <Col span={14}>
-                                                <p>Hữu Quan, Dương Quan, Thủy Nguyên, Hải Phòng</p>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col span={10}>
-                                                <h4>Biển số xe: </h4>
-                                            </Col>
-                                            <Col span={14}>
-                                                <p>16P1-7433</p>
-                                            </Col>
-                                        </Row>
-                                    </Card>
-                                </Col>
-                                <Col>
-                                    <Card
-                                        style={{
-                                            width: 300,
-                                        }}
-                                        cover={
-                                            <UserOutlined style={{ fontSize: '500%' }} />
-                                        }
-                                        bordered
-                                    >
-                                        <Row>
-                                            <Col span={10}>
-                                                <h4>Họ và tên: </h4>
-                                            </Col>
-                                            <Col span={14}>
-                                                <p>Nguyễn Đức Pháp</p>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col span={10}>
-                                                <h4>Giới tính: </h4>
-                                            </Col>
-                                            <Col span={14}>
-                                                <p>Nam</p>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col span={10}>
-                                                <h4>Số điện thoại: </h4>
-                                            </Col>
-                                            <Col span={14}>
-                                                <p>0123456789</p>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col span={10}>
-                                                <h4>CCCD/CMND: </h4>
-                                            </Col>
-                                            <Col span={14}>
-                                                <p>012345678911</p>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col span={10}>
-                                                <h4>Địa chỉ: </h4>
-                                            </Col>
-                                            <Col span={14}>
-                                                <p>Hữu Quan, Dương Quan, Thủy Nguyên, Hải Phòng</p>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col span={10}>
-                                                <h4>Biển số xe: </h4>
-                                            </Col>
-                                            <Col span={14}>
-                                                <p>16P1-7433</p>
-                                            </Col>
-                                        </Row>
-                                    </Card>
-                                </Col>
+                                        </>
+                                    )
+                                })}
                             </Row>
                         </Tabs.TabPane>
                         <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>Tài sản đã bàn giao</span>} key="3">
@@ -514,7 +377,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                 <Col span={24}>
                                     <Row>
                                         <Col span={8}>
-                                            <Input.Search placeholder="Nhập tên tài sản để tìm kiếm" style={{ marginBottom: 8 }}
+                                            <Input.Search placeholder="Nhập tên tài sản để tìm kiếm" style={{ marginBottom: 8, width: 300 }}
                                                 onSearch={(e) => {
                                                     setSearched(e);
                                                 }}
@@ -548,7 +411,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                                 setFilterAssetType(filters);
                                                 setAssetStatus(filters)
                                             }}
-                                            dataSource={dataContract?.list_hand_over_assets}
+                                            dataSource={dataContract?.list_hand_over_asset}
                                             columns={columns}
                                             scroll={{ x: 800, y: 600 }}
                                             loading={loading}
