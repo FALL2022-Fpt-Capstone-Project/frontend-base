@@ -4,10 +4,10 @@ import { ArrowRightOutlined, UserOutlined, FilterOutlined, AuditOutlined, Dollar
 import axios from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 
-function ViewContractRenter({ openView, closeView, dataContract }) {
-    const LIST_ASSET_TYPE = "manager/asset/type";
-    const APARTMENT_DATA_GROUP = "manager/contract/room/";
+const LIST_ASSET_TYPE = "manager/asset/type";
+const APARTMENT_DATA_GROUP = "manager/contract/room/";
 
+function ViewContractRenter({ openView, closeView, dataContract }) {
     const [dataAsset, setDataAsset] = useState([]);
     const [loading, setLoading] = useState(false);
     const [searched, setSearched] = useState("");
@@ -147,7 +147,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
     return (
         <>
             <div>
-                <Modal title={<h2>{dataContract.contract_name}</h2>} width={1200} open={openView} onOk={handleOk} onCancel={handleCancel}
+                <Modal title={<h2>{dataContract?.contract_name}</h2>} width={1200} open={openView} onOk={handleOk} onCancel={handleCancel}
                     footer={[
                         <Button key="back" onClick={() => {
                             closeView(false)
@@ -171,7 +171,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                                 <h4>Họ và tên:</h4>
                                             </Col>
                                             <Col span={14}>
-                                                <p>{dataContract.renter_name}</p>
+                                                <p>{dataContract?.renter_name}</p>
                                             </Col>
                                         </Row>
                                         <Row>
@@ -237,7 +237,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                                 <h4>Ngày hợp đồng có hiệu lực:</h4>
                                             </Col>
                                             <Col span={14}>
-                                                <p>{new Date(dataContract.contract_start_date).toLocaleDateString()}</p>
+                                                <p>{new Date(dataContract?.contract_start_date).toLocaleDateString()}</p>
                                             </Col>
                                         </Row>
                                         <Row>
@@ -245,7 +245,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                                 <h4>Ngày kết thúc: </h4>
                                             </Col>
                                             <Col span={14}>
-                                                <p>{new Date(dataContract.contract_end_date).toLocaleDateString()}</p>
+                                                <p>{new Date(dataContract?.contract_end_date).toLocaleDateString()}</p>
                                             </Col>
                                         </Row>
                                         <Row>
@@ -261,7 +261,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                                 <h4>Chu kỳ thanh toán:</h4>
                                             </Col>
                                             <Col span={14}>
-                                                <p>{dataContract.contract_bill_cycle} tháng 1 lần</p>
+                                                <p>{dataContract?.contract_bill_cycle} tháng 1 lần</p>
                                             </Col>
                                         </Row>
                                         <Row>
@@ -269,7 +269,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                                 <h4>Thời gian thu tiền:</h4>
                                             </Col>
                                             <Col span={14}>
-                                                <p>Ngày {dataContract.contract_payment_cycle} hàng tháng</p>
+                                                <p>Ngày {dataContract?.contract_payment_cycle} hàng tháng</p>
                                             </Col>
                                         </Row>
                                     </Card>
@@ -304,7 +304,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         title={
                                             <Tag style={{ fontSize: '15px', color: 'black' }} color="blue"><GoldOutlined /> Dịch vụ sử dụng</Tag>
                                         } bordered={false}>
-                                        {dataContract.list_hand_over_services?.map((obj, index) => {
+                                        {dataContract?.list_hand_over_services?.map((obj, index) => {
                                             return (
                                                 <Row>
                                                     <Col span={10}>
@@ -561,7 +561,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                         </Tabs.TabPane>
                     </Tabs>
                     <Button onClick={() => {
-                        navigate(`/contract-renter/edit/${dataContract.contract_id}`);
+                        navigate(`/contract-renter/edit/${dataContract?.contract_id}`);
                     }} style={{ marginTop: '1%' }} type='primary' icon={<ArrowRightOutlined />}> Chỉnh sửa thông tin hợp đồng</Button>
                 </Modal>
             </div>

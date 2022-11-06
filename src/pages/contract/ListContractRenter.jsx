@@ -4,6 +4,7 @@ import "./listContract.scss";
 import axios from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 import { EditOutlined, SearchOutlined, EyeOutlined, UndoOutlined } from "@ant-design/icons";
+import ViewContractRenter from "./ViewContractRenter";
 const { Search } = Input;
 const LIST_CONTRACT_URL = "manager/contract";
 const FILTER_CONTRACT_URL = "manager/contract/get-contract/1";
@@ -406,6 +407,7 @@ const ListContractRenter = () => {
         pagination={{ pageSize: 5 }}
         loading={loading}
       />
+      <ViewContractRenter openView={viewContract} closeView={setViewContract} dataContract={contractInfor} />
     </div>
   );
 };
