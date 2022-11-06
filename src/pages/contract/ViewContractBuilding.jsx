@@ -353,7 +353,7 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                     <Col span={21}>
                       <Row>
                         <Checkbox.Group
-                          options={listAssetType.map((obj, index) => {
+                          options={listAssetType?.map((obj, index) => {
                             return obj.asset_type_show_name;
                           })}
                           onChange={(checkedValues) => {
