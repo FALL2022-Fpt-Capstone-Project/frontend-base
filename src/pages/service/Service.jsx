@@ -378,6 +378,11 @@ function Service(props) {
               }}
             >
               <Row>
+                <Col span={6} offset={18}>
+                  Chọn chung cư mini / căn hộ
+                </Col>
+              </Row>
+              <Row>
                 <Col span={14}>
                   <Button
                     type="primary"
@@ -407,7 +412,7 @@ function Service(props) {
                     style={{
                       width: '100%',
                     }}
-                    placeholder="Tìm và chọn chung cư / căn hộ mini"
+                    placeholder="Tìm và chọn chung cư mini / căn hộ "
                     optionFilterProp="children"
                     filterOption={(input, option) => (option?.label.toLowerCase().trim() ?? '').includes(input.toLocaleLowerCase().trim())}
                     filterSort={(optionA, optionB) =>

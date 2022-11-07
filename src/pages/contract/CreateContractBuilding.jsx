@@ -695,7 +695,7 @@ const CreateContractBuilding = () => {
                                                                 });
                                                             }}
                                                         >
-                                                            {contract_duration.map((obj, index) => {
+                                                            {contract_duration?.map((obj, index) => {
                                                                 return <Option value={obj.contractTermValue}>{obj.contractTermName}</Option>;
                                                             })}
                                                         </Select>
@@ -775,7 +775,7 @@ const CreateContractBuilding = () => {
                                                             setSelectFloorNumber(e);
                                                             setDisplayFloor(false);
                                                         }} placeholder="Số lượng tầng">
-                                                            {floorNumber.map((obj, index) => {
+                                                            {floorNumber?.map((obj, index) => {
                                                                 return <Select.Option value={obj.value}>{obj.name}</Select.Option>
                                                             })}
                                                         </Select>
@@ -840,7 +840,7 @@ const CreateContractBuilding = () => {
                                                                 </Col>
                                                             </Row>
                                                             <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                                                                {apartmentFloor.map((obj, index) => {
+                                                                {apartmentFloor?.map((obj, index) => {
                                                                     return (
                                                                         <>
                                                                             <Col>
@@ -1125,7 +1125,7 @@ const CreateContractBuilding = () => {
                                                             <FilterOutlined style={{ fontSize: "150%" }} />
                                                             <p><b>Loại tài sản: </b></p>
                                                             <Checkbox.Group style={{ marginLeft: '1%' }}
-                                                                options={listAssetType.map((obj, index) => {
+                                                                options={listAssetType?.map((obj, index) => {
                                                                     return obj.asset_type_show_name;
                                                                 })}
                                                                 onChange={(checkedValues) => {
@@ -1340,7 +1340,7 @@ const CreateContractBuilding = () => {
                                         ]}
                                     >
                                         <Select placeholder="Chọn loại tài sản">
-                                            {listAssetType.map((obj, index) => {
+                                            {listAssetType?.map((obj, index) => {
                                                 return (
                                                     <Select.Option value={obj.asset_type_show_name}>{obj.asset_type_show_name}</Select.Option>
                                                 );
@@ -1488,7 +1488,7 @@ const CreateContractBuilding = () => {
                                         ]}
                                     >
                                         <Select placeholder={"Loại tài sản"}>
-                                            {listAssetType.map((obj, index) => {
+                                            {listAssetType?.map((obj, index) => {
                                                 return (
                                                     <Select.Option value={obj.asset_type_show_name}>{obj.asset_type_show_name}</Select.Option>
                                                 );
