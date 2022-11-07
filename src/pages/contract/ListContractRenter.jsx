@@ -116,7 +116,7 @@ const ListContractRenter = () => {
         params: {
           phoneNumber: phoneNumber,
           renterName: renterName,
-          endContract: endContract,
+          isDisable: endContract,
           startDate: startDate,
           endDate: endDate,
           identity: identity,
@@ -305,7 +305,7 @@ const ListContractRenter = () => {
                   </Form.Item>
                   <Form.Item name="deactive" style={{ width: "500px", marginTop: "30px" }}>
                     <Col className="gutter-row" span={24}>
-                      <Switch /> <span>Hợp đồng đã kết thúc</span>
+                      <Switch onChange={endContractChange} /> <span>Hợp đồng đã kết thúc</span>
                     </Col>
                   </Form.Item>
                 </Row>

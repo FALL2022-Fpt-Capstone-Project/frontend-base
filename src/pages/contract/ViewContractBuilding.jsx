@@ -83,7 +83,7 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
       onFilter: (value, record) => record.asset_type_show_name.indexOf(value) === 0,
     },
     {
-      title: "Thời gian",
+      title: "Ngày bàn giao",
       dataIndex: "hand_over_asset_date_delivery",
       key: "asset_id",
       render: (hand_over_asset_date_delivery) => {

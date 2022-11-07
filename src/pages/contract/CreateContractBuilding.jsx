@@ -142,7 +142,7 @@ const CreateContractBuilding = () => {
       onFilter: (value, record) => record.asset_type_show_name.indexOf(value) === 0,
     },
     {
-      title: "Thời gian",
+      title: "Ngày bàn giao",
       dataIndex: "hand_over_asset_date_delivery",
       key: "asset_id",
     },
@@ -1198,21 +1198,21 @@ const CreateContractBuilding = () => {
                         </Row>
                       </Col>
                     </Row>
-                    <Row>
-                      <p>
-                        <i>
-                          <b>Lưu ý:</b>
-                          <br />- Cột <b>"thời gian"</b>: trong bảng hiển thị là tính từ thời gian đó tới thời điểm hiện
-                          tại thì tài sản có trạng thái <b>"Tốt"</b> hoặc <b>"Hỏng"</b>. <br />- Trong trường hợp bàn
-                          giao với khách thuê, tài sản ở thời điểm bàn giao <b>"trạng thái"</b> không như trong bảng
-                          hiển thị. Cần cập nhập để hệ thống ghi nhận trạng thái của tài sản ở thời điểm hiện tại.
-                          <br />
-                        </i>
-                      </p>
-                    </Row>
-                    <Row>
-                      <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
-                    </Row>
+                    {/* <Row>
+                                            <p>
+                                                <i>
+                                                    <b>Lưu ý:</b>
+                                                    <br />- Cột <b>"thời gian"</b>: trong bảng hiển thị là tính từ thời gian đó tới thời điểm hiện
+                                                    tại thì tài sản có trạng thái <b>"Tốt"</b> hoặc <b>"Hỏng"</b>. <br />- Trong trường hợp bàn
+                                                    giao với khách thuê, tài sản ở thời điểm bàn giao <b>"trạng thái"</b> không như trong bảng
+                                                    hiển thị. Cần cập nhập để hệ thống ghi nhận trạng thái của tài sản ở thời điểm hiện tại.
+                                                    <br />
+                                                </i>
+                                            </p>
+                                        </Row>
+                                        <Row>
+                                            <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
+                                        </Row> */}
                   </Tabs.TabPane>
                 </Tabs>
               </Form>
