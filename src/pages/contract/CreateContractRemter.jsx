@@ -170,7 +170,7 @@ const CreateContractRenter = () => {
       onFilter: (value, record) => record.asset_type_show_name.indexOf(value) === 0,
     },
     {
-      title: "Thời gian",
+      title: "Ngày bàn giao",
       dataIndex: "hand_over_asset_date_delivery",
       key: "asset_id",
     },
@@ -1568,7 +1568,7 @@ const CreateContractRenter = () => {
                         </Row>
                       </Col>
                     </Row>
-                    <Row>
+                    {/* <Row>
                       <p>
                         <i>
                           <b>Lưu ý:</b>
@@ -1582,7 +1582,7 @@ const CreateContractRenter = () => {
                     </Row>
                     <Row>
                       <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
-                    </Row>
+                    </Row> */}
                   </Tabs.TabPane>
                 </Tabs>
               </Form>

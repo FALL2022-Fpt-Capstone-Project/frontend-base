@@ -61,13 +61,12 @@ function Service(props) {
       });
     setLoading(false);
   };
-  console.log(dataApartmentServiceGeneral);
   useEffect(() => {
     apartmentGroup();
     getListServiceBasic();
     getListServiceCaculMethod();
   }, []);
-  // console.log(groupIdDefault);
+  console.log(dataApartmentServiceGeneral);
   const apartmentGroup = async () => {
     setLoading(true);
     await axios
@@ -105,7 +104,7 @@ function Service(props) {
       });
     setLoading(false);
   };
-  // console.log(listServiceName);
+
   const getListServiceCaculMethod = async () => {
     setLoading(true);
     await axios
@@ -124,19 +123,18 @@ function Service(props) {
     setLoading(false);
   };
 
-  // console.log(serviceCalCuMethod);
-
   const columnServiceGeneral = [
     {
       title: "Tên dịch vụ",
       dataIndex: "service_show_name",
       key: "general_service_id",
-      defaultSortOrder: "descend",
     },
     {
       title: "Đơn giá (VNĐ)",
       dataIndex: "service_price",
       key: "general_service_id",
+      defaultSortOrder: 'ascend',
+      sorter: (a, b) => a.service_price - b.service_price,
       render: (price) => {
         return (
           <span style={{ fontWeight: "bold" }}>
@@ -163,6 +161,7 @@ function Service(props) {
           <>
             <EditOutlined
               onClick={() => {
+                console.log(record);
                 setEditServiceGeneral(true);
                 formEditSerivce.setFieldsValue({
                   general_service_id: record.general_service_id,
@@ -252,11 +251,10 @@ function Service(props) {
   };
 
   const onFinishEditService = async (e) => {
-    console.log({ ...e, contract_id: groupIdSelect });
     setLoading(true);
     let cookie = localStorage.getItem("Cookie");
     await axios
-      .post(UPDATE_SERVICE + e.service_id, { ...e, contract_id: groupIdSelect }, {
+      .put(UPDATE_SERVICE + e.general_service_id, { ...e, contract_id: groupIdSelect }, {
         headers: {
           "Content-Type": "application/json",
           // "Access-Control-Allow-Origin": "*",
@@ -447,7 +445,7 @@ function Service(props) {
                 </Col>
               </Row>
               <Modal
-                title={"Thêm dịch vụ mới "}
+                title={"Thêm dịch vụ mới chung cư "}
                 visible={addServiceGeneral}
                 onCancel={() => {
                   setAddServiceGeneral(false);
@@ -605,6 +603,7 @@ function Service(props) {
                   size={"default"}
                   id="edit-service"
                 >
+                  <Form.Item className="form-item" name="general_service_id" style={{ display: 'none' }}></Form.Item>
                   <Form.Item
                     className="form-item"
                     name="service_id"
