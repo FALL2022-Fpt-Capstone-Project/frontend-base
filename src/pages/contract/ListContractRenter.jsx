@@ -68,7 +68,8 @@ const ListContractRenter = () => {
       });
     setLoading(false);
   };
-  console.log(dataSource);
+  // console.log(dataSource);
+
   useEffect(() => {
     const getBuildingFilter = async () => {
       setLoading(true);

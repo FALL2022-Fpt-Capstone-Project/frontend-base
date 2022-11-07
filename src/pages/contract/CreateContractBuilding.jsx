@@ -130,7 +130,7 @@ const CreateContractBuilding = () => {
             key: "asset_id",
         },
         {
-            title: "Loại",
+            title: "Nhóm tài sản",
             dataIndex: "asset_type_show_name",
             filters: [
                 { text: "Phòng ngủ", value: "Phòng ngủ" },
@@ -1123,7 +1123,7 @@ const CreateContractBuilding = () => {
                                                     <Col span={22}>
                                                         <Row>
                                                             <FilterOutlined style={{ fontSize: "150%" }} />
-                                                            <p><b>Loại tài sản: </b></p>
+                                                            <p><b>Nhóm tài sản: </b></p>
                                                             <Checkbox.Group style={{ marginLeft: '1%' }}
                                                                 options={listAssetType?.map((obj, index) => {
                                                                     return obj.asset_type_show_name;
@@ -1329,17 +1329,17 @@ const CreateContractBuilding = () => {
                                         labelCol={{ span: 24 }}
                                         label={
                                             <span>
-                                                <b>Loại tài sản: </b>
+                                                <b>Nhóm tài sản: </b>
                                             </span>
                                         }
                                         rules={[
                                             {
                                                 required: true,
-                                                message: "Vui lòng chọn loại tài sản",
+                                                message: "Vui lòng chọn nhóm tài sản",
                                             },
                                         ]}
                                     >
-                                        <Select placeholder="Chọn loại tài sản">
+                                        <Select placeholder="Chọn nhóm tài sản">
                                             {listAssetType?.map((obj, index) => {
                                                 return (
                                                     <Select.Option value={obj.asset_type_show_name}>{obj.asset_type_show_name}</Select.Option>
@@ -1477,17 +1477,17 @@ const CreateContractBuilding = () => {
                                         labelCol={{ span: 24 }}
                                         label={
                                             <span>
-                                                <b>Loại tài sản: </b>
+                                                <b>Nhóm tài sản: </b>
                                             </span>
                                         }
                                         rules={[
                                             {
                                                 required: true,
-                                                message: "Vui lòng chọn loại tài sản",
+                                                message: "Vui lòng chọn Nhóm tài sản",
                                             },
                                         ]}
                                     >
-                                        <Select placeholder={"Loại tài sản"}>
+                                        <Select placeholder={"Nhóm tài sản"}>
                                             {listAssetType?.map((obj, index) => {
                                                 return (
                                                     <Select.Option value={obj.asset_type_show_name}>{obj.asset_type_show_name}</Select.Option>

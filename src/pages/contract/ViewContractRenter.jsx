@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 const LIST_ASSET_TYPE = "manager/asset/type";
 
 function ViewContractRenter({ openView, closeView, dataContract }) {
+    console.log(dataContract);
     const [loading, setLoading] = useState(false);
     const [searched, setSearched] = useState("");
     const [filterAssetType, setFilterAssetType] = useState([]);
@@ -45,7 +46,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
             key: 'asset_id',
         },
         {
-            title: 'Loại',
+            title: 'Nhóm tài sản',
             dataIndex: 'asset_type_show_name',
             filters: [
                 { text: 'Phòng ngủ', value: 'Phòng ngủ' },
@@ -124,7 +125,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                         title={
                                             <>
                                                 <Tag style={{ fontSize: '15px', color: 'black' }} color="blue">
-                                                    <UserOutlined style={{ fontSize: '120%' }} /> Thông tin khách thuê
+                                                    <UserOutlined style={{ fontSize: '120%' }} /> Thông tin người đại diện
                                                 </Tag>
                                             </>} bordered={false}>
                                         <Row>
@@ -222,7 +223,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                                 <h4>Trạng thái hợp đồng: </h4>
                                             </Col>
                                             <Col span={14}>
-                                                {!dataContract?.contract_is_disable ? <Tag color="green">Còn hiệu lực</Tag> : <Tag color="red">Hết hiệu lực</Tag>}
+                                                {!dataContract?.contract_is_disable ? <Tag color="green">Hợp đồng còn hiệu lực</Tag> : <Tag color="red">Hợp đồng hết hiệu lực</Tag>}
                                             </Col>
                                         </Row>
                                         <Row>
@@ -300,7 +301,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                         <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>Thành viên trong phòng</span>} key="2">
                             <Row>
                                 <div style={{ overflow: 'auto' }}>
-                                    <h3>Số lượng thành viên trong phòng: (3/4)</h3>
+                                    <h3>Số lượng thành viên trong phòng: ({dataContract?.list_renter?.length - 1}/{dataContract?.room?.room_limit_people - 1})</h3>
                                 </div>
                             </Row>
                             <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
@@ -390,7 +391,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                     <Row>
                                         <Col span={3}>
                                             <FilterOutlined style={{ fontSize: '150%' }} />
-                                            Loại tài sản:
+                                            Nhóm tài sản:
                                         </Col>
                                         <Col span={21}>
                                             <Row>
