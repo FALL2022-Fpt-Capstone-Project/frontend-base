@@ -23,7 +23,7 @@ const ContractRenter = () => {
   const [countAlmostExpired, setcountAlmostExpired] = useState("");
   const [countLatest, setcountLatest] = useState("");
   const [countExpired, setcountExpired] = useState("");
-  const { auth } = useAuth();
+  const [collapsed, setCollapsed] = useState(false);
   const children = [
     <Option value={1}>1 tháng</Option>,
     <Option value={4}>4 tháng</Option>,
@@ -85,7 +85,7 @@ const ContractRenter = () => {
           minHeight: "100vh",
         }}
       >
-        <Sider width={250}>
+        <Sider width={250} collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
           <p className="sider-title">QUẢN LÝ CHUNG CƯ MINI</p>
           <Sidebar />
         </Sider>
@@ -143,7 +143,8 @@ const ContractRenter = () => {
                           height: 130,
                         }}
                       >
-                        <span>{countLatest} hợp đồng</span>
+                        {/* <span>{countLatest} hợp đồng</span> */}
+                        <span>5 hợp đồng</span>
                         <Button type="primary" onClick={showModalNew} style={{ marginLeft: "10px" }}>
                           Xem chi tiết
                         </Button>
@@ -157,7 +158,8 @@ const ContractRenter = () => {
                           height: 130,
                         }}
                       >
-                        <span>{countAlmostExpired} hợp đồng</span>
+                        {/* <span>{countAlmostExpired} hợp đồng</span> */}
+                        <span>0 hợp đồng</span>
                         <Button type="primary" onClick={showModalOld} style={{ marginLeft: "10px" }}>
                           Xem chi tiết
                         </Button>
@@ -172,7 +174,8 @@ const ContractRenter = () => {
                           height: 130,
                         }}
                       >
-                        <span>{countExpired} hợp đồng</span>
+                        {/* <span>{countExpired} hợp đồng</span> */}
+                        <span>2 hợp đồng</span>
                         <Button type="primary" onClick={showModalEnd} style={{ marginLeft: "10px" }}>
                           Xem chi tiết
                         </Button>
