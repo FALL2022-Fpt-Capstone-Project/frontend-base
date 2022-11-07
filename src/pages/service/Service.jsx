@@ -1,19 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import "./service.scss";
-import {
-  Button,
-  Col,
-  Layout,
-  Modal,
-  Row,
-  Table,
-  Form,
-  InputNumber,
-  Select,
-  notification,
-  message,
-} from "antd";
+import { Button, Col, Layout, Modal, Row, Table, Form, InputNumber, Select, notification, message } from "antd";
 import { PlusCircleOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import axios from "../../api/axios";
 import TextArea from "antd/lib/input/TextArea";
@@ -133,7 +121,7 @@ function Service(props) {
       title: "Đơn giá (VNĐ)",
       dataIndex: "service_price",
       key: "general_service_id",
-      defaultSortOrder: 'ascend',
+      defaultSortOrder: "ascend",
       sorter: (a, b) => a.service_price - b.service_price,
       render: (price) => {
         return (
@@ -254,14 +242,18 @@ function Service(props) {
     setLoading(true);
     let cookie = localStorage.getItem("Cookie");
     await axios
-      .put(UPDATE_SERVICE + e.general_service_id, { ...e, contract_id: groupIdSelect }, {
-        headers: {
-          "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
-          Authorization: `Bearer ${cookie}`,
-        },
-        // withCredentials: true,
-      })
+      .put(
+        UPDATE_SERVICE + e.general_service_id,
+        { ...e, contract_id: groupIdSelect },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            // "Access-Control-Allow-Origin": "*",
+            Authorization: `Bearer ${cookie}`,
+          },
+          // withCredentials: true,
+        }
+      )
       .then((res) => {
         console.log(res);
         notification.success({
@@ -384,7 +376,7 @@ function Service(props) {
                 <Col span={14}>
                   <Button
                     type="primary"
-                    style={{ marginBottom: "1%", marginRight: '1%', float: "left" }}
+                    style={{ marginBottom: "1%", marginRight: "1%", float: "left" }}
                     icon={<PlusCircleOutlined style={{ fontSize: 15 }} />}
                     onClick={onQuickAdd}
                   >
@@ -408,20 +400,22 @@ function Service(props) {
                     defaultValue={groupIdDefault}
                     showSearch
                     style={{
-                      width: '100%',
+                      width: "100%",
                     }}
                     placeholder="Tìm và chọn chung cư mini / căn hộ "
                     optionFilterProp="children"
-                    filterOption={(input, option) => (option?.label.toLowerCase().trim() ?? '').includes(input.toLocaleLowerCase().trim())}
+                    filterOption={(input, option) =>
+                      (option?.label.toLowerCase().trim() ?? "").includes(input.toLocaleLowerCase().trim())
+                    }
                     filterSort={(optionA, optionB) =>
-                      (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                      (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())
                     }
                     onChange={(e) => {
                       apartmentGroupById(e);
                       setGroupIdSelect(e);
                     }}
                     options={dataApartmentGroup?.map((obj, index) => {
-                      return { value: obj.group_id, label: obj.group_name }
+                      return { value: obj.group_id, label: obj.group_name };
                     })}
                   />
                 </Col>
@@ -429,7 +423,10 @@ function Service(props) {
               <Row>
                 <Col>
                   <p>
-                    <i><b>Thêm mới nhanh</b> các dịch vụ cơ bản (điện, nước, internet, xe) giúp việc nhập dữ liệu nhanh hơn</i>
+                    <i>
+                      <b>Thêm mới nhanh</b> các dịch vụ cơ bản (điện, nước, internet, xe) giúp việc nhập dữ liệu nhanh
+                      hơn
+                    </i>
                   </p>
                 </Col>
               </Row>
@@ -603,7 +600,7 @@ function Service(props) {
                   size={"default"}
                   id="edit-service"
                 >
-                  <Form.Item className="form-item" name="general_service_id" style={{ display: 'none' }}></Form.Item>
+                  <Form.Item className="form-item" name="general_service_id" style={{ display: "none" }}></Form.Item>
                   <Form.Item
                     className="form-item"
                     name="service_id"
@@ -620,10 +617,7 @@ function Service(props) {
                       },
                     ]}
                   >
-                    <Select
-                      placeholder="Chọn dịch vụ"
-                      optionFilterProp="children"
-                    >
+                    <Select placeholder="Chọn dịch vụ" optionFilterProp="children">
                       {listServiceName.map((obj, index) => {
                         return <Select.Option value={obj.id}>{obj.service_show_name}</Select.Option>;
                       })}

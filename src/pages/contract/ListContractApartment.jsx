@@ -1,20 +1,34 @@
 import React, { useEffect, useState } from "react";
 
-import { Input, Table, Tag, Row, Checkbox, Tabs, Col, InputNumber, Select, DatePicker, Button, Slider, Switch, Form } from "antd";
+import {
+  Input,
+  Table,
+  Tag,
+  Row,
+  Checkbox,
+  Tabs,
+  Col,
+  InputNumber,
+  Select,
+  DatePicker,
+  Button,
+  Slider,
+  Switch,
+  Form,
+} from "antd";
 import { EyeTwoTone, EditOutlined, FilterOutlined, SearchOutlined, UndoOutlined } from "@ant-design/icons";
 import axios from "../../api/axios";
 import ViewContractBuilding from "./ViewContractBuilding";
-import moment from 'moment';
-
+import moment from "moment";
 
 const { Search } = Input;
 const LIST_CONTRACT_APARTMENT_URL = "";
 const { Column, ColumnGroup } = Table;
 const style = {
-  margin: '5% 0'
-}
+  margin: "5% 0",
+};
 const APARTMENT_DATA_GROUP = "/manager/group/all";
-const dateFormat = 'DD/MM/YYYY';
+const dateFormat = "DD/MM/YYYY";
 
 const ListContractApartment = () => {
   const { RangePicker } = DatePicker;
@@ -78,7 +92,7 @@ const ListContractApartment = () => {
   const data = [
     {
       key: "1",
-      ownerName: 'Antony',
+      ownerName: "Antony",
       apartmentName: "Trọ xanh",
       startDate: moment().format(dateFormat),
       endDate: moment().format(dateFormat),
@@ -87,11 +101,11 @@ const ListContractApartment = () => {
       depositValue: 100000000,
       numberOfFloor: 10,
       numberOfRoom: 100,
-      roomStatus: "Đã hết phòng"
+      roomStatus: "Đã hết phòng",
     },
     {
       key: "2",
-      ownerName: 'Harry mac hai',
+      ownerName: "Harry mac hai",
       apartmentName: "Trọ sạch",
       startDate: moment().format(dateFormat),
       endDate: moment().format(dateFormat),
@@ -100,11 +114,11 @@ const ListContractApartment = () => {
       depositValue: 100000000,
       numberOfFloor: 10,
       numberOfRoom: 100,
-      roomStatus: "Đang trống"
+      roomStatus: "Đang trống",
     },
     {
       key: "3",
-      ownerName: 'Fred',
+      ownerName: "Fred",
       apartmentName: "Trọ đẹp",
       startDate: moment().format(dateFormat),
       endDate: moment().format(dateFormat),
@@ -113,8 +127,7 @@ const ListContractApartment = () => {
       depositValue: 100000000,
       numberOfFloor: 10,
       numberOfRoom: 100,
-      roomStatus: "Đang trống"
-
+      roomStatus: "Đang trống",
     },
   ];
 
@@ -126,7 +139,7 @@ const ListContractApartment = () => {
             <Col>
               <Search
                 placeholder="Nhập tên người cho thuê để tìm kiếm"
-                style={{ marginBottom: '3%', width: 400 }}
+                style={{ marginBottom: "3%", width: 400 }}
                 onSearch={(value) => {
                   setTextSearch(value);
                 }}
@@ -146,13 +159,11 @@ const ListContractApartment = () => {
             // onFinish={getFilterContractRenter}
             style={{ width: "100%" }}
           >
-            <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32, }} >
+            <Row gutter={[16]}>
               <Col span={6}>
                 <Form.Item name="full_name">
                   <Row style={style}>
-                    <label>
-                      Tìm kiếm theo tên người cho thuê
-                    </label>
+                    <label>Tìm kiếm theo tên người cho thuê</label>
                   </Row>
                   <Row>
                     <Input placeholder="Nhập tên khách thuê" autoComplete="off" />
@@ -162,9 +173,7 @@ const ListContractApartment = () => {
               <Col span={6} offset={2}>
                 <Form.Item name="user_name">
                   <Row style={style}>
-                    <label>
-                      Tìm kiếm theo số CCCD
-                    </label>
+                    <label>Tìm kiếm theo số CCCD</label>
                   </Row>
                   <Row>
                     <Input placeholder="Nhập số CCCD" autoComplete="off" />
@@ -174,9 +183,7 @@ const ListContractApartment = () => {
               <Col span={6} offset={2}>
                 <Form.Item name="user_name">
                   <Row style={style}>
-                    <label>
-                      Tìm kiếm theo số điện thoại
-                    </label>
+                    <label>Tìm kiếm theo số điện thoại</label>
                   </Row>
                   <Row>
                     <Input placeholder="Nhập số điện thoại" autoComplete="off" />
@@ -184,13 +191,11 @@ const ListContractApartment = () => {
                 </Form.Item>
               </Col>
             </Row>
-            <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+            <Row>
               <Col span={6}>
                 <Form.Item name="date">
                   <Row style={style}>
-                    <label>
-                      Ngày bắt đầu lập hợp đồng
-                    </label>
+                    <label>Ngày bắt đầu lập hợp đồng</label>
                   </Row>
                   <Row>
                     <RangePicker
@@ -205,25 +210,26 @@ const ListContractApartment = () => {
               <Col span={6} offset={2}>
                 <Form.Item name="user_name">
                   <Row style={style}>
-                    <label>
-                      Tìm kiếm theo tên chung cư
-                    </label>
+                    <label>Tìm kiếm theo tên chung cư</label>
                   </Row>
                   <Row>
                     <Select
                       showSearch
                       optionFilterProp="children"
-                      filterOption={(input, option) => (option?.label.toLowerCase().trim() ?? '').includes(input.toLocaleLowerCase().trim())}
+                      filterOption={(input, option) =>
+                        (option?.label.toLowerCase().trim() ?? "").includes(input.toLocaleLowerCase().trim())
+                      }
                       filterSort={(optionA, optionB) =>
-                        (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                        (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())
                       }
                       onChange={(e) => {
                         console.log(e);
                       }}
                       options={dataApartmentGroup?.map((obj, index) => {
-                        return { value: obj.group_id, label: obj.group_name }
+                        return { value: obj.group_id, label: obj.group_name };
                       })}
-                      placeholder="Chọn chung cư"></Select>
+                      placeholder="Chọn chung cư"
+                    ></Select>
                   </Row>
                 </Form.Item>
               </Col>
@@ -243,14 +249,15 @@ const ListContractApartment = () => {
                 <Button
                   type="primary"
                   icon={<SearchOutlined />}
-                  style={{ margin: '5% 1% 5% 0%' }}
+                  style={{ margin: "5% 1% 5% 0%" }}
                   // onClick={getFilterContractRenter}
                   htmlType="submit"
                 >
                   Tìm kiếm
                 </Button>
-                <Button icon={<UndoOutlined />}
-                // onClick={resetForm}
+                <Button
+                  icon={<UndoOutlined />}
+                  // onClick={resetForm}
                 >
                   Đặt lại
                 </Button>
@@ -264,12 +271,22 @@ const ListContractApartment = () => {
         <Column title="Tên chung cư" dataIndex="apartmentName" key="key" />
         <Column title="Ngày lập hợp đồng" dataIndex="startDate" key="key" />
         <Column title="Ngày kết thúc" dataIndex="endDate" key="key" />
-        <Column title="Giá thuê" dataIndex="contractValue" key="key" render={(value) => {
-          return <b>{value.toLocaleString("vn") + " đ"}</b>;
-        }} />
-        <Column title="Số tiền cọc" dataIndex="depositValue" key="key" render={(value) => {
-          return <b>{value.toLocaleString("vn") + " đ"}</b>;
-        }} />
+        <Column
+          title="Giá thuê"
+          dataIndex="contractValue"
+          key="key"
+          render={(value) => {
+            return <b>{value.toLocaleString("vn") + " đ"}</b>;
+          }}
+        />
+        <Column
+          title="Số tiền cọc"
+          dataIndex="depositValue"
+          key="key"
+          render={(value) => {
+            return <b>{value.toLocaleString("vn") + " đ"}</b>;
+          }}
+        />
         <Column title="Số lượng tầng" dataIndex="numberOfFloor" key="key" />
         <Column title="Số lượng phòng" dataIndex="numberOfRoom" key="key" />
         <Column
@@ -277,7 +294,7 @@ const ListContractApartment = () => {
           dataIndex="statusContract"
           key="key"
           render={(statusContract) => {
-            return <Tag color="success">{statusContract}</Tag>
+            return <Tag color="success">{statusContract}</Tag>;
           }}
         />
         <Column
@@ -287,9 +304,12 @@ const ListContractApartment = () => {
             return (
               <>
                 <EditOutlined style={{ fontSize: "20px", marginRight: "10px" }} />
-                <EyeTwoTone style={{ fontSize: "20px" }} onClick={() => {
-                  setViewContract(true);
-                }} />
+                <EyeTwoTone
+                  style={{ fontSize: "20px" }}
+                  onClick={() => {
+                    setViewContract(true);
+                  }}
+                />
               </>
             );
           }}

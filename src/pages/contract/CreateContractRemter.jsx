@@ -11,7 +11,7 @@ import {
   UserOutlined,
   AuditOutlined,
   DollarOutlined,
-  CheckCircleTwoTone
+  CheckCircleTwoTone,
 } from "@ant-design/icons";
 import moment from "moment";
 import {
@@ -32,7 +32,7 @@ import {
   Checkbox,
   InputNumber,
   message,
-  notification
+  notification,
 } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import { useNavigate } from "react-router-dom";
@@ -42,7 +42,6 @@ const LIST_OLD_RENTER = "/manager/renter";
 const LIST_ASSET_TYPE = "manager/asset/type";
 const APARTMENT_DATA_GROUP = "/manager/group/all";
 const ADD_NEW_CONTRACT = "/manager/contract/room/add";
-
 
 const CreateContractRenter = () => {
   const dateFormatList = ["DD-MM-YYYY", "YYYY-MM-DD"];
@@ -291,7 +290,7 @@ const CreateContractRenter = () => {
       title: "CMND/CCCD",
       dataIndex: "identity_number",
       key: "identity_number",
-      with: 250
+      with: 250,
     },
     {
       title: "Họ và tên",
@@ -299,11 +298,13 @@ const CreateContractRenter = () => {
       key: "renter_full_name",
       filteredValue: [searched],
       onFilter: (value, record) => {
-        return String(record.renter_full_name).toLowerCase()?.includes(value.toLowerCase()) ||
+        return (
+          String(record.renter_full_name).toLowerCase()?.includes(value.toLowerCase()) ||
           String(record.phone_number).toLowerCase()?.includes(value.toLowerCase()) ||
-          String(record.identity_number).toLowerCase()?.includes(value.toLowerCase());
+          String(record.identity_number).toLowerCase()?.includes(value.toLowerCase())
+        );
       },
-      width: 200
+      width: 200,
     },
     {
       title: "Giới tính",
@@ -316,22 +317,22 @@ const CreateContractRenter = () => {
       filteredValue: oldRenterGender.gender || null,
       onFilter: (value, record) => record.gender === value,
       render: (gender) => {
-        return <span>{gender ? 'Nam' : 'Nữ'}</span>
+        return <span>{gender ? "Nam" : "Nữ"}</span>;
       },
-      width: 120
+      width: 120,
     },
     {
       title: "Số điện thoại",
       dataIndex: "phone_number",
       key: "phone_number",
-      width: 130
+      width: 130,
     },
     {
       title: "Email",
       dataIndex: "email",
       key: "email",
-      width: 350
-    }
+      width: 350,
+    },
   ];
   const onAdd = (record) => {
     setisAdd(true);
@@ -444,7 +445,7 @@ const CreateContractRenter = () => {
   ];
 
   const onFinishAddMem = (e) => {
-    if (dataMember.length < (roomSelect?.room_limit_people - 1)) {
+    if (dataMember.length < roomSelect?.room_limit_people - 1) {
       if (dataMember.find((mem) => mem.phone_number.toLowerCase().trim() === e.phone_number.toLowerCase().trim())) {
         if (dataMember.find((mem) => mem.identity_card.toLowerCase().trim() !== e.identity_card.toLowerCase().trim())) {
           setIsAddMem(true);
@@ -492,8 +493,13 @@ const CreateContractRenter = () => {
         mem.address.toLowerCase().trim() === e.address.toLowerCase().trim()
     );
 
-    if (dataMember.find((mem) => mem.phone_number.toLowerCase().trim() === e.phone_number.toLowerCase().trim() &&
-      mem.identity_card.toLowerCase().trim() !== e.identity_card.toLowerCase().trim())) {
+    if (
+      dataMember.find(
+        (mem) =>
+          mem.phone_number.toLowerCase().trim() === e.phone_number.toLowerCase().trim() &&
+          mem.identity_card.toLowerCase().trim() !== e.identity_card.toLowerCase().trim()
+      )
+    ) {
       setIsEditMem(true);
       message.error("Trùng số điện thoại");
     } else if (duplicate) {
@@ -536,8 +542,9 @@ const CreateContractRenter = () => {
   const [roomStatus, setRoomStatus] = useState(true);
   const [floorStatus, setFloorStatus] = useState(true);
 
-
-  const getListFloor = dataApartmentGroupSelect?.list_rooms?.filter((obj, index) => obj.contract_id === null)?.map((o, i) => o.room_floor);
+  const getListFloor = dataApartmentGroupSelect?.list_rooms
+    ?.filter((obj, index) => obj.contract_id === null)
+    ?.map((o, i) => o.room_floor);
   const floors = getListFloor?.filter((obj, index) => getListFloor.indexOf(obj) === index);
 
   const [room, setRoom] = useState([]);
@@ -545,10 +552,17 @@ const CreateContractRenter = () => {
 
   const onFinish = async (e) => {
     const listServiceOfBuilding = Object.values(e.serviceIndexInForm);
-    listServiceOfBuilding.push({ general_service_id: dataApartmentGroupSelect.list_general_service.map((obj, index) => obj.general_service_id) });
-    const list_general_service = listServiceOfBuilding.map((obj, index) => {
-      return { ...obj, general_service_id: listServiceOfBuilding[listServiceOfBuilding.length - 1].general_service_id[index] }
-    }).filter((o, i) => i !== listServiceOfBuilding.length - 1);
+    listServiceOfBuilding.push({
+      general_service_id: dataApartmentGroupSelect.list_general_service.map((obj, index) => obj.general_service_id),
+    });
+    const list_general_service = listServiceOfBuilding
+      .map((obj, index) => {
+        return {
+          ...obj,
+          general_service_id: listServiceOfBuilding[listServiceOfBuilding.length - 1].general_service_id[index],
+        };
+      })
+      .filter((o, i) => i !== listServiceOfBuilding.length - 1);
 
     // console.log(
     //   JSON.stringify({
@@ -570,8 +584,8 @@ const CreateContractRenter = () => {
         {
           ...e,
           list_general_service: list_general_service,
-          contract_end_date: e.contract_end_date.format('YYYY-MM-DD'),
-          contract_start_date: e.contract_start_date.format('YYYY-MM-DD'),
+          contract_end_date: e.contract_end_date.format("YYYY-MM-DD"),
+          contract_start_date: e.contract_start_date.format("YYYY-MM-DD"),
         },
         {
           headers: {
@@ -609,13 +623,14 @@ const CreateContractRenter = () => {
   const addAssetFinish = (e) => {
     setAssetId(e.asset_id - 1);
     const duplicate = dataAsset.find(
-      (asset) => asset.asset_name.toLowerCase().trim() === e.asset_name.toLowerCase().trim() &&
-        asset.hand_over_asset_date_delivery === moment(e.hand_over_asset_date_delivery).format('DD-MM-YYYY')
+      (asset) =>
+        asset.asset_name.toLowerCase().trim() === e.asset_name.toLowerCase().trim() &&
+        asset.hand_over_asset_date_delivery === moment(e.hand_over_asset_date_delivery).format("DD-MM-YYYY")
     );
     if (!duplicate) {
       setDataAsset([
         ...dataAsset,
-        { ...e, hand_over_asset_date_delivery: moment(e.hand_over_asset_date_delivery).format('DD-MM-YYYY') },
+        { ...e, hand_over_asset_date_delivery: moment(e.hand_over_asset_date_delivery).format("DD-MM-YYYY") },
       ]);
       createAssetForm.setFieldsValue({
         asset_id: assetId,
@@ -642,7 +657,7 @@ const CreateContractRenter = () => {
       (asset) =>
         asset.asset_name.toLowerCase().trim() === e.asset_name.toLowerCase().trim() &&
         asset.asset_type_show_name === e.asset_type_show_name &&
-        asset.hand_over_asset_date_delivery === moment(e.hand_over_asset_date_delivery).format('DD-MM-YYYY') &&
+        asset.hand_over_asset_date_delivery === moment(e.hand_over_asset_date_delivery).format("DD-MM-YYYY") &&
         asset.hand_over_asset_quantity === e.hand_over_asset_quantity
       // asset.hand_over_asset_status === e.hand_over_asset_status
     );
@@ -653,7 +668,7 @@ const CreateContractRenter = () => {
           if (asset.asset_id === e.asset_id) {
             return {
               ...e,
-              hand_over_asset_date_delivery: moment(e.hand_over_asset_date_delivery).format('DD-MM-YYYY'),
+              hand_over_asset_date_delivery: moment(e.hand_over_asset_date_delivery).format("DD-MM-YYYY"),
             };
           } else {
             return asset;
@@ -681,7 +696,7 @@ const CreateContractRenter = () => {
       renter_gender: genderChange,
       contract_bill_cycle: contractBillCycle,
       contract_payment_cycle: paymentCircle,
-      note: ""
+      note: "",
     });
     setOldRenterGender({ ...oldRenterGender, gender: [true, false] });
     createAssetForm.setFieldsValue({
@@ -691,7 +706,7 @@ const CreateContractRenter = () => {
       asset_type_show_name: formAddAsset.asset_type,
       // hand_over_asset_status: formAddAsset.asset_status,
     });
-  }
+  };
 
   form.setFieldsValue({
     // group_id: dataApartmentGroupSelect?.group_id,
@@ -704,9 +719,19 @@ const CreateContractRenter = () => {
     try {
       if (changeTab === "1") {
         await form.validateFields([
-          'contract_name', 'renter_name', 'renter_gender', 'renter_phone_number', 'renter_identity_card', 'room_floor',
-          'room_id', 'contract_start_date', 'contract_bill_cycle', 'contract_payment_cycle', 'contract_price', 'contract_deposit',
-          'contract_end_date'
+          "contract_name",
+          "renter_name",
+          "renter_gender",
+          "renter_phone_number",
+          "renter_identity_card",
+          "room_floor",
+          "room_id",
+          "contract_start_date",
+          "contract_bill_cycle",
+          "contract_payment_cycle",
+          "contract_price",
+          "contract_deposit",
+          "contract_end_date",
         ]);
         setDisplayFinish([...displayFinish, 1]);
       } else {
@@ -798,19 +823,34 @@ const CreateContractRenter = () => {
                 id="create-contract"
               >
                 <Tabs activeKey={changeTab} defaultActiveKey="1">
-                  <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>1. Thông tin chung {displayFinish.find((obj, index) => obj === 1) ? <CheckCircleTwoTone style={{ fontSize: '130%' }} twoToneColor="#52c41a" /> : ''}</span>} key="1">
+                  <Tabs.TabPane
+                    tab={
+                      <span style={{ fontSize: "17px" }}>
+                        1. Thông tin chung{" "}
+                        {displayFinish.find((obj, index) => obj === 1) ? (
+                          <CheckCircleTwoTone style={{ fontSize: "130%" }} twoToneColor="#52c41a" />
+                        ) : (
+                          ""
+                        )}
+                      </span>
+                    }
+                    key="1"
+                  >
                     <Row>
                       <Col span={8}>
                         <Row>
                           <Tag color="blue" style={{ wordBreak: "break-all", whiteSpace: "normal", height: "auto" }}>
                             <h3>
-                              <UserOutlined style={{ fontSize: '130%' }} /><span style={{ fontSize: '15px' }}><b>Thông tin về khách thuê </b></span>
+                              <UserOutlined style={{ fontSize: "130%" }} />
+                              <span style={{ fontSize: "15px" }}>
+                                <b>Thông tin về khách thuê </b>
+                              </span>
                             </h3>
                           </Tag>
                         </Row>
                         <Row>
                           <Button
-                            style={{ marginTop: '1%', wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}
+                            style={{ marginTop: "1%", wordBreak: "break-all", whiteSpace: "normal", height: "auto" }}
                             type="primary"
                             size="default"
                             onClick={() => {
@@ -822,7 +862,9 @@ const CreateContractRenter = () => {
                         </Row>
                         <Row>
                           <Col>
-                            <p><i>Lấy thông tin khách thuê của tất cả tòa nhà để việc nhập dữ liệu nhanh hơn</i></p>
+                            <p>
+                              <i>Lấy thông tin khách thuê của tất cả tòa nhà để việc nhập dữ liệu nhanh hơn</i>
+                            </p>
                           </Col>
                         </Row>
                         <Form.Item
@@ -953,7 +995,10 @@ const CreateContractRenter = () => {
                       <Col span={8}>
                         <Tag color="blue" style={{ wordBreak: "break-all", whiteSpace: "normal", height: "auto" }}>
                           <h3>
-                            <AuditOutlined style={{ fontSize: '130%' }} /> <span style={{ fontSize: '15px' }}><b>Thông tin về hợp đồng </b></span>
+                            <AuditOutlined style={{ fontSize: "130%" }} />{" "}
+                            <span style={{ fontSize: "15px" }}>
+                              <b>Thông tin về hợp đồng </b>
+                            </span>
                           </h3>
                         </Tag>
                         <Form.Item
@@ -972,30 +1017,44 @@ const CreateContractRenter = () => {
                             },
                           ]}
                         >
-                          <Select onChange={(e) => {
-                            form.setFieldsValue({ room_floor: "", room_id: "", contract_price: 0, contract_deposit: 0, serviceIndexInForm: null });
-                            setRoomStatus(true);
-                            setDataApartmentGroupSelect(dataApartmentGroup.find((obj, index) => obj.group_id === e));
-                            setDataAsset(
-                              dataApartmentGroup.find((obj, index) => obj.group_id === e)?.list_hand_over_assets?.map(
-                                (obj, index) =>
-                                  [
-                                    {
-                                      asset_id: obj.asset_id,
-                                      asset_name: obj.asset_name,
-                                      asset_type: obj.asset_type,
-                                      hand_over_asset_date_delivery: moment(obj.hand_over_date_delivery, dateFormatList)._i,
-                                      asset_type_show_name: obj.asset_type_show_name,
-                                      hand_over_asset_quantity: 1,
-                                      // hand_over_asset_status: obj.hand_over_asset_status,
-                                    },
-                                  ][0]
-                              )
-                            );
-                            setFloorStatus(false);
-                          }} placeholder="Chọn tòa nhà">
+                          <Select
+                            onChange={(e) => {
+                              form.setFieldsValue({
+                                room_floor: "",
+                                room_id: "",
+                                contract_price: 0,
+                                contract_deposit: 0,
+                                serviceIndexInForm: null,
+                              });
+                              setRoomStatus(true);
+                              setDataApartmentGroupSelect(dataApartmentGroup.find((obj, index) => obj.group_id === e));
+                              setDataAsset(
+                                dataApartmentGroup
+                                  .find((obj, index) => obj.group_id === e)
+                                  ?.list_hand_over_assets?.map(
+                                    (obj, index) =>
+                                      [
+                                        {
+                                          asset_id: obj.asset_id,
+                                          asset_name: obj.asset_name,
+                                          asset_type: obj.asset_type,
+                                          hand_over_asset_date_delivery: moment(
+                                            obj.hand_over_date_delivery,
+                                            dateFormatList
+                                          )._i,
+                                          asset_type_show_name: obj.asset_type_show_name,
+                                          hand_over_asset_quantity: 1,
+                                          // hand_over_asset_status: obj.hand_over_asset_status,
+                                        },
+                                      ][0]
+                                  )
+                              );
+                              setFloorStatus(false);
+                            }}
+                            placeholder="Chọn tòa nhà"
+                          >
                             {dataApartmentGroup?.map((obj, index) => {
-                              return <Select.Option value={obj.group_id}>{obj.group_name}</Select.Option>
+                              return <Select.Option value={obj.group_id}>{obj.group_name}</Select.Option>;
                             })}
                           </Select>
                         </Form.Item>
@@ -1061,14 +1120,16 @@ const CreateContractRenter = () => {
                         >
                           <Select
                             showSearch
-                            filterOption={(input, option) => (option?.children ?? '').includes(input)}
+                            filterOption={(input, option) => (option?.children ?? "").includes(input)}
                             placeholder="Chọn phòng"
                             disabled={roomStatus}
                             onChange={(e) => {
                               setRoomSelect(dataApartmentGroupSelect?.list_rooms?.find((obj) => obj.room_id === e));
                               form.setFieldsValue({
-                                contract_price: dataApartmentGroupSelect?.list_rooms?.find((obj) => obj.room_id === e).room_price,
-                                contract_deposit: dataApartmentGroupSelect?.list_rooms?.find((obj) => obj.room_id === e).room_price
+                                contract_price: dataApartmentGroupSelect?.list_rooms?.find((obj) => obj.room_id === e)
+                                  .room_price,
+                                contract_deposit: dataApartmentGroupSelect?.list_rooms?.find((obj) => obj.room_id === e)
+                                  .room_price,
                               });
                             }}
                           >
@@ -1092,12 +1153,12 @@ const CreateContractRenter = () => {
                               <b>Thời hạn hợp đồng (ít nhất 1 tháng): </b>
                             </span>
                           }
-                        // rules={[
-                        //   {
-                        //     required: true,
-                        //     message: "Vui lòng chọn thời hạn hợp đồng",
-                        //   },
-                        // ]}
+                          // rules={[
+                          //   {
+                          //     required: true,
+                          //     message: "Vui lòng chọn thời hạn hợp đồng",
+                          //   },
+                          // ]}
                         >
                           <Select
                             placeholder="Thời hạn hợp đồng"
@@ -1231,7 +1292,10 @@ const CreateContractRenter = () => {
                         <Row>
                           <Tag color="blue" style={{ wordBreak: "break-all", whiteSpace: "normal", height: "auto" }}>
                             <h3>
-                              <DollarOutlined style={{ fontSize: '130%' }} /> <span style={{ fontSize: '15px' }}><b> Thông tin giá trị hợp đồng </b></span>
+                              <DollarOutlined style={{ fontSize: "130%" }} />{" "}
+                              <span style={{ fontSize: "15px" }}>
+                                <b> Thông tin giá trị hợp đồng </b>
+                              </span>
                             </h3>
                           </Tag>
                           <Form.Item
@@ -1309,12 +1373,29 @@ const CreateContractRenter = () => {
                     </p>
                     <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
                   </Tabs.TabPane>
-                  <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>2. Dịch vụ {displayFinish.find((obj, index) => obj === 2) ? <CheckCircleTwoTone style={{ fontSize: '130%' }} twoToneColor="#52c41a" /> : ''}</span>} key="2">
+                  <Tabs.TabPane
+                    tab={
+                      <span style={{ fontSize: "17px" }}>
+                        2. Dịch vụ{" "}
+                        {displayFinish.find((obj, index) => obj === 2) ? (
+                          <CheckCircleTwoTone style={{ fontSize: "130%" }} twoToneColor="#52c41a" />
+                        ) : (
+                          ""
+                        )}
+                      </span>
+                    }
+                    key="2"
+                  >
                     <Row>
                       <Col span={23}>
                         <Form.Item className="form-item" name="list_general_service" labelCol={{ span: 24 }}>
                           <h3>
-                            <b>Thông tin về dịch vụ sử dụng {dataApartmentGroupSelect?.group_name !== undefined ? dataApartmentGroupSelect?.group_name + " " : ''}</b>
+                            <b>
+                              Thông tin về dịch vụ sử dụng{" "}
+                              {dataApartmentGroupSelect?.group_name !== undefined
+                                ? dataApartmentGroupSelect?.group_name + " "
+                                : ""}
+                            </b>
                           </h3>
                         </Form.Item>
                       </Col>
@@ -1391,51 +1472,57 @@ const CreateContractRenter = () => {
                             </>
                           );
                         })} */}
-                        {
-                          dataApartmentGroupSelect.list_general_service?.map((obj, index) => {
-                            return (
-                              <>
-                                <Form.Item
-                                  className="form-item"
-                                  labelCol={{ span: 24 }}
-                                  name={['serviceIndexInForm', `${index}`, 'hand_over_service_index']}
-                                  label={
-                                    <h4>
-                                      {obj.service_show_name}{" "}
-                                      <b>
-                                        (
-                                        {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
-                                          obj.service_price
-                                        )}
-                                        )
-                                      </b>
-                                    </h4>
+                        {dataApartmentGroupSelect.list_general_service?.map((obj, index) => {
+                          return (
+                            <>
+                              <Form.Item
+                                className="form-item"
+                                labelCol={{ span: 24 }}
+                                name={["serviceIndexInForm", `${index}`, "hand_over_service_index"]}
+                                label={
+                                  <h4>
+                                    {obj.service_show_name}{" "}
+                                    <b>
+                                      (
+                                      {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
+                                        obj.service_price
+                                      )}
+                                      )
+                                    </b>
+                                  </h4>
+                                }
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: `Vui lòng không để trống`,
+                                  },
+                                ]}
+                              >
+                                <InputNumber
+                                  controls={false}
+                                  placeholder={
+                                    String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
+                                      ? "Nhập chỉ số hiện tại"
+                                      : "Số " +
+                                        obj.service_type_name +
+                                        " / " +
+                                        obj.service_price.toLocaleString("vn-VN", {
+                                          style: "currency",
+                                          currency: "VND",
+                                        })
                                   }
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: `Vui lòng không để trống`,
-                                    },
-                                  ]}>
-                                  <InputNumber
-                                    controls={false}
-                                    placeholder={
-                                      String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
-                                        ? "Nhập chỉ số hiện tại"
-                                        : "Số " + obj.service_type_name + " / " + obj.service_price.toLocaleString('vn-VN', { style: 'currency', currency: 'VND' })
-                                    }
-                                    addonAfter={
-                                      String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
-                                        ? "Chỉ số hiện tại"
-                                        : obj.service_type_name
-                                    }
-                                    style={{ width: "100%" }}
-                                    min={0} />
-                                </Form.Item>
-                              </>
-                            )
-                          })
-                        }
+                                  addonAfter={
+                                    String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
+                                      ? "Chỉ số hiện tại"
+                                      : obj.service_type_name
+                                  }
+                                  style={{ width: "100%" }}
+                                  min={0}
+                                />
+                              </Form.Item>
+                            </>
+                          );
+                        })}
                       </Col>
                     </Row>
                     <Row>
@@ -1464,7 +1551,19 @@ const CreateContractRenter = () => {
                       <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
                     </Row>
                   </Tabs.TabPane>
-                  <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>3. Thành viên {displayFinish.find((obj, index) => obj === 3) ? <CheckCircleTwoTone style={{ fontSize: '130%' }} twoToneColor="#52c41a" /> : ''}</span>} key="3">
+                  <Tabs.TabPane
+                    tab={
+                      <span style={{ fontSize: "17px" }}>
+                        3. Thành viên{" "}
+                        {displayFinish.find((obj, index) => obj === 3) ? (
+                          <CheckCircleTwoTone style={{ fontSize: "130%" }} twoToneColor="#52c41a" />
+                        ) : (
+                          ""
+                        )}
+                      </span>
+                    }
+                    key="3"
+                  >
                     <Row>
                       <Col span={23}>
                         <Form.Item className="form-item" name="list_renter" labelCol={{ span: 24 }}>
@@ -1472,7 +1571,8 @@ const CreateContractRenter = () => {
                             <b>
                               Thông tin về thành viên
                               {roomSelect?.room_name === undefined ? "" : " phòng " + roomSelect?.room_name}
-                            </b> (Số lượng: {dataMember.length}/{roomSelect?.room_limit_people - 1})
+                            </b>{" "}
+                            (Số lượng: {dataMember.length}/{roomSelect?.room_limit_people - 1})
                           </h3>
                         </Form.Item>
                       </Col>
@@ -1497,7 +1597,19 @@ const CreateContractRenter = () => {
                       ></Table>
                     </Row>
                   </Tabs.TabPane>
-                  <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>4. Tài sản {displayFinish.find((obj, index) => obj === 4) ? <CheckCircleTwoTone style={{ fontSize: '130%' }} twoToneColor="#52c41a" /> : ''}</span>} key="4">
+                  <Tabs.TabPane
+                    tab={
+                      <span style={{ fontSize: "17px" }}>
+                        4. Tài sản{" "}
+                        {displayFinish.find((obj, index) => obj === 4) ? (
+                          <CheckCircleTwoTone style={{ fontSize: "130%" }} twoToneColor="#52c41a" />
+                        ) : (
+                          ""
+                        )}
+                      </span>
+                    }
+                    key="4"
+                  >
                     <Row>
                       <Col span={24}>
                         <Form.Item className="form-item" name="list_hand_over_assets" labelCol={{ span: 24 }}>
@@ -1505,7 +1617,9 @@ const CreateContractRenter = () => {
                             <h3>
                               <b>
                                 Thông tin tài sản bàn giao{" "}
-                                {dataApartmentGroupSelect?.group_name !== undefined ? dataApartmentGroupSelect?.group_name + " " : ''}
+                                {dataApartmentGroupSelect?.group_name !== undefined
+                                  ? dataApartmentGroupSelect?.group_name + " "
+                                  : ""}
                                 {floorRoom?.room_floor !== undefined ? "tầng " + floorRoom?.room_floor : ""}{" "}
                                 {roomSelect?.room_name === undefined ? "" : "phòng " + roomSelect?.room_name}
                               </b>
@@ -1549,7 +1663,7 @@ const CreateContractRenter = () => {
                               onClick={() => {
                                 setAddAssetInRoom(true);
                               }}
-                              style={{ fontSize: 36, color: "#1890ff", float: "right", marginBottom: '10%' }}
+                              style={{ fontSize: 36, color: "#1890ff", float: "right", marginBottom: "10%" }}
                             />
                           </Col>
                         </Row>
@@ -1626,10 +1740,7 @@ const CreateContractRenter = () => {
                 }}
                 onOk={onOk}
                 footer={[
-                  <Button
-                    key="back"
-                    onClick={resetAdd}
-                  >
+                  <Button key="back" onClick={resetAdd}>
                     Đóng
                   </Button>,
                   <Button type="primary" onClick={onOk}>
@@ -1638,11 +1749,11 @@ const CreateContractRenter = () => {
                 ]}
                 width={1100}
               >
-                <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32, }}>
+                <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                   <Col span={12}>
                     <Input.Search
                       placeholder="Nhập tên, SĐT hoặc số CMND để tìm kiếm"
-                      style={{ marginBottom: '5%', width: '100%' }}
+                      style={{ marginBottom: "5%", width: "100%" }}
                       onSearch={(e) => {
                         setSearched(e);
                       }}
@@ -1653,8 +1764,16 @@ const CreateContractRenter = () => {
                   </Col>
                   <Col span={12}>
                     <span>Giới tính: </span>
-                    <Checkbox.Group defaultValue={[true, false]} onChange={(e) => { setOldRenterGender({ ...oldRenterGender, gender: e }) }}
-                      options={[{ label: 'Nam', value: true }, { label: 'Nữ', value: false }]}></Checkbox.Group>
+                    <Checkbox.Group
+                      defaultValue={[true, false]}
+                      onChange={(e) => {
+                        setOldRenterGender({ ...oldRenterGender, gender: e });
+                      }}
+                      options={[
+                        { label: "Nam", value: true },
+                        { label: "Nữ", value: false },
+                      ]}
+                    ></Checkbox.Group>
                   </Col>
                 </Row>
                 <Form
@@ -1709,7 +1828,7 @@ const CreateContractRenter = () => {
                   </Button>,
                   <Button htmlType="submit" key="submit" form="create-asset" type="primary">
                     Lưu
-                  </Button>
+                  </Button>,
                 ]}
               >
                 <Form
@@ -1858,7 +1977,7 @@ const CreateContractRenter = () => {
                   </Button>,
                   <Button htmlType="submit" key="submit" form="edit-asset" type="primary">
                     Lưu
-                  </Button>
+                  </Button>,
                 ]}
               >
                 <Form
@@ -1986,7 +2105,11 @@ const CreateContractRenter = () => {
                 </Form>
               </Modal>
               <Modal
-                title={roomSelect?.room_name === undefined ? "Thêm thành viên " : "Thêm thành viên vào Phòng " + roomSelect?.room_name}
+                title={
+                  roomSelect?.room_name === undefined
+                    ? "Thêm thành viên "
+                    : "Thêm thành viên vào Phòng " + roomSelect?.room_name
+                }
                 open={isAddMem}
                 onOk={() => {
                   setIsAddMem(false);

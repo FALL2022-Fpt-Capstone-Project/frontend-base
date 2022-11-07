@@ -16,6 +16,7 @@ const ListStaff = () => {
   const [roleInfo, setRoleInfo] = useState("");
   const [full_name, setFullname] = useState("");
   const [user_name, setUsername] = useState("");
+  const [phone_number, setPhonenumber] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [user, setUser] = useState([]);
@@ -137,6 +138,7 @@ const ListStaff = () => {
       deactive: deactive,
       startDate: startDate,
       endDate: endDate,
+      phoneNumber: phone_number,
     };
 
     setLoading(true);
@@ -149,6 +151,7 @@ const ListStaff = () => {
           deactivate: deactive,
           startDate: startDate,
           endDate: endDate,
+          phoneNumber: phone_number,
         },
         headers: {
           "Content-Type": "application/json",
@@ -176,6 +179,9 @@ const ListStaff = () => {
   };
   const usernameChange = (e) => {
     setUsername(e.target.value);
+  };
+  const phonenumberChange = (e) => {
+    setPhonenumber(e.target.value);
   };
   const getFullDate = (date) => {
     const dateAndTime = date.split(" ");
@@ -219,7 +225,19 @@ const ListStaff = () => {
     <div className="list-staff">
       <div className="list-staff-search">
         <Tabs defaultActiveKey="1">
-          <Tabs.TabPane tab="Tìm kiếm nâng cao" key="1">
+          <Tabs.TabPane tab="Tìm kiếm nhanh" key="1">
+            <Search
+              placeholder="Tìm kiếm theo tên nhân viên, tên đăng nhập, số điện thoại"
+              style={{ marginBottom: 8, width: 400, padding: "10px 0" }}
+              onSearch={(value) => {
+                setTextSearch(value);
+              }}
+              onChange={(e) => {
+                setTextSearch(e.target.value);
+              }}
+            />
+          </Tabs.TabPane>
+          <Tabs.TabPane tab="Tìm kiếm nâng cao" key="2">
             <Form
               {...formItemLayout}
               form={form}
@@ -228,10 +246,10 @@ const ListStaff = () => {
               onFinish={getFilterEmployees}
               style={{ width: "100%" }}
             >
-              <Row gutter={[16, 32]} style={{ marginBottom: "20px" }}>
-                <Col span={8}>
-                  <Form.Item name="full_name" style={{ width: "500px" }}>
-                    <Col className="gutter-row" span={24} style={{ marginBottom: "30px" }}>
+              <Row gutter={[16]} style={{ marginBottom: "20px" }}>
+                <Row span={8}>
+                  <Form.Item name="full_name" style={{ width: "500px", marginBottom: 0 }}>
+                    <Col className="gutter-row" span={24} style={{ marginBottom: "15px" }}>
                       <Row>
                         <label htmlFor="" style={{ marginBottom: "10px" }}>
                           Tìm kiếm theo tên nhân viên
@@ -254,10 +272,22 @@ const ListStaff = () => {
                       </Row>
                     </Col>
                   </Form.Item>
-                </Col>
-                <Col span={8} offset={3}>
+                  <Form.Item name="phone_number" style={{ width: "500px" }}>
+                    <Col className="gutter-row" span={24}>
+                      <Row>
+                        <label htmlFor="" style={{ marginBottom: "10px" }}>
+                          Tìm kiếm theo số điện thoại
+                        </label>
+                      </Row>
+                      <Row>
+                        <Input placeholder="Nhập số điện thoại" onChange={phonenumberChange} autoComplete="off" />
+                      </Row>
+                    </Col>
+                  </Form.Item>
+                </Row>
+                <Row>
                   <Form.Item name="date" style={{ width: "500px" }}>
-                    <Col className="gutter-row" span={24} style={{ marginBottom: "30px" }}>
+                    <Col className="gutter-row" span={24} style={{ marginBottom: "15px" }}>
                       <Row>
                         <label htmlFor="" style={{ marginBottom: "10px" }}>
                           Ngày bắt đầu làm việc
@@ -268,17 +298,15 @@ const ListStaff = () => {
                       </Row>
                     </Col>
                   </Form.Item>
-
-                  <Col className="gutter-row" span={24}>
-                    <Row>
-                      <label htmlFor="" style={{ marginBottom: "10px" }}>
-                        Tìm kiếm theo chức vụ
-                      </label>
-                    </Row>
-                    <Row style={{ flexWrap: "nowrap", width: "700px" }}>
-                      <Form.Item name="role">
+                  <Form.Item name="role" style={{ width: "250px" }}>
+                    <Col className="gutter-row" span={24}>
+                      <Row>
+                        <label htmlFor="" style={{ marginBottom: "10px" }}>
+                          Tìm kiếm theo chức vụ
+                        </label>
+                      </Row>
+                      <Row style={{ flexWrap: "nowrap", width: "700px" }}>
                         <Select
-                          // defaultValue="a1"
                           onChange={roleChange}
                           style={{
                             width: 150,
@@ -287,13 +315,15 @@ const ListStaff = () => {
                           options={options}
                           placeholder="Chọn chức vụ"
                         />
-                      </Form.Item>
-                      <Form.Item name="deactive" style={{ width: "500px" }}>
-                        <Switch onChange={deactiveChange} /> <span>Nhân viên đã nghỉ việc</span>
-                      </Form.Item>
-                    </Row>
-                  </Col>
-                </Col>
+                      </Row>
+                    </Col>
+                  </Form.Item>
+                  <Form.Item name="deactive" style={{ width: "500px", marginTop: "30px" }}>
+                    <Col className="gutter-row" span={24}>
+                      <Switch onChange={deactiveChange} /> <span>Nhân viên đã nghỉ việc</span>
+                    </Col>
+                  </Form.Item>
+                </Row>
               </Row>
               <Row style={{ marginBottom: "20px" }}>
                 <Col offset={10}>
@@ -314,18 +344,6 @@ const ListStaff = () => {
                 </Col>
               </Row>
             </Form>
-          </Tabs.TabPane>
-          <Tabs.TabPane tab="Tìm kiếm nhanh" key="2">
-            <Search
-              placeholder="Tìm kiếm theo tên nhân viên, tên đăng nhập, số điện thoại"
-              style={{ marginBottom: 8, width: 400, padding: "10px 0" }}
-              onSearch={(value) => {
-                setTextSearch(value);
-              }}
-              onChange={(e) => {
-                setTextSearch(e.target.value);
-              }}
-            />
           </Tabs.TabPane>
         </Tabs>
       </div>

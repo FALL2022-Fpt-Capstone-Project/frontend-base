@@ -5,12 +5,15 @@ import useAuth from "../../hooks/useAuth";
 import axios from "../../api/axios";
 const { Search } = Input;
 const LIST_CONTRACT_LATEST_URL = "manager/contract/get-contract/1";
+const LIST_BUILDING_FILTER = "manager/group/all";
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 const ListContractRenterLatest = ({ duration }) => {
   const [dataSource, setDataSource] = useState([]);
   const [textSearch, setTextSearch] = useState("");
+  const [buildingFilter, setBuildingFilter] = useState("");
   const [loading, setLoading] = useState(false);
+  const options = [];
   const formItemLayout = {
     labelCol: {
       xs: {
@@ -54,6 +57,34 @@ const ListContractRenterLatest = ({ duration }) => {
   }, [duration]);
   const { auth } = useAuth();
   let cookie = localStorage.getItem("Cookie");
+  useEffect(() => {
+    const getBuildingFilter = async () => {
+      setLoading(true);
+      const response = await axios
+        .get(LIST_BUILDING_FILTER, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cookie}`,
+          },
+        })
+        .then((res) => {
+          setBuildingFilter(res.data.data);
+          console.log(res);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      setLoading(false);
+    };
+    getBuildingFilter();
+  }, [cookie]);
+
+  for (let i = 0; i < buildingFilter.length; i++) {
+    options.push({
+      label: buildingFilter[i].group_name,
+      value: buildingFilter[i].group_id,
+    });
+  }
 
   const getFullDate = (date) => {
     const dateAndTime = date.split("T");
@@ -82,7 +113,7 @@ const ListContractRenterLatest = ({ duration }) => {
               // onFinish={getFilterContractRenter}
               style={{ width: "100%" }}
             >
-              <Row gutter={[16, 32]} style={{ marginBottom: "20px", marginLeft: "20px" }}>
+              <Row gutter={[16]} style={{ marginBottom: "20px", marginLeft: "20px" }}>
                 <Row>
                   <Form.Item name="full_name" style={{ width: "350px" }}>
                     <Col className="gutter-row" span={24}>
@@ -148,7 +179,7 @@ const ListContractRenterLatest = ({ duration }) => {
                         </label>
                       </Row>
                       <Row>
-                        <Select placeholder="Chọn chung cư"></Select>
+                        <Select options={options} placeholder="Chọn chung cư"></Select>
                       </Row>
                     </Col>
                   </Form.Item>
