@@ -195,7 +195,7 @@ const UpdateStaff = () => {
                 style={{ paddingLeft: "10px" }}
                 labelAlign="left"
               >
-                <Input.Password onChange={(e) => setPassword(e.target.value)} />
+                <Input.Password onChange={(e) => setPassword(e.target.value)} style={{ marginLeft: "-9px" }} />
               </Form.Item>
               <Form.Item
                 name="comfirmPassword"
@@ -215,7 +215,7 @@ const UpdateStaff = () => {
                 style={{ paddingLeft: "10px" }}
                 labelAlign="left"
               >
-                <Input.Password />
+                <Input.Password style={{ marginLeft: "-9px" }} />
               </Form.Item>
               <Form.Item
                 name="phone_number"
@@ -235,13 +235,17 @@ const UpdateStaff = () => {
                 <Input onChange={(e) => setPhoneNumber(e.target.value)} value={phone_number} />
               </Form.Item>
               <Form.Item name="gender" label="Giới tính" style={{ paddingLeft: "10px" }} labelAlign="left">
-                <Radio.Group onChange={genderChange} defaultValue={gender}>
+                <Radio.Group onChange={genderChange} defaultValue={gender} style={{ marginLeft: "-9px" }}>
                   <Radio value={true}>Nam</Radio>
                   <Radio value={false}>Nữ</Radio>
                 </Radio.Group>
               </Form.Item>
               <Form.Item name="address_more_detail" label="Địa chỉ" style={{ paddingLeft: "10px" }} labelAlign="left">
-                <Input onChange={(e) => setAddress_more_detail(e.target.value)} value={address_more_detail} />
+                <Input
+                  onChange={(e) => setAddress_more_detail(e.target.value)}
+                  value={address_more_detail}
+                  style={{ marginLeft: "-9px" }}
+                />
               </Form.Item>
 
               <Form.Item name="roles" label="Vai trò" style={{ paddingLeft: "10px" }} labelAlign="left">
@@ -249,6 +253,7 @@ const UpdateStaff = () => {
                   defaultValue={roles}
                   style={{
                     width: 120,
+                    marginLeft: "-9px",
                   }}
                   onChange={(value) => roleChange(value)}
                 >
@@ -262,7 +267,7 @@ const UpdateStaff = () => {
                 style={{ paddingLeft: "10px" }}
                 labelAlign="left"
               >
-                <Switch checked={deactivate} onChange={deactivateChange} />
+                <Switch checked={deactivate} onChange={deactivateChange} style={{ marginLeft: "-9px" }} />
               </Form.Item>
               {roleInfo === "ROLE_ADMIN" ? (
                 <NavLink to="/manage-admin">

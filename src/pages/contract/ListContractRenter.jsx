@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Input, Table, DatePicker, Select, Button, Row, Col, Tag, Tabs, Switch, Form } from "antd";
+import { Input, Table, DatePicker, Select, Button, Row, Col, Tag, Tabs, Switch, Form, Tooltip } from "antd";
 import "./listContract.scss";
-import useAuth from "../../hooks/useAuth";
 import axios from "../../api/axios";
+import { useNavigate } from "react-router-dom";
 import { EditOutlined, SearchOutlined, EyeOutlined, UndoOutlined } from "@ant-design/icons";
+import ViewContractRenter from "./ViewContractRenter";
 const { Search } = Input;
-const LIST_CONTRACT_URL = "manager/contract/get-contract/1";
-const FILTER_CONTRACT_URL = "manager/contract/get-contract/1";
+const LIST_CONTRACT_URL = "manager/contract";
+const LIST_BUILDING_FILTER = "manager/group/all";
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 const ListContractRenter = () => {
@@ -15,11 +16,17 @@ const ListContractRenter = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [CCCD, setCCCD] = useState("");
+  const [identity, setIdentity] = useState("");
+  const [buildingFilter, setBuildingFilter] = useState("");
   const [renterName, setRenterName] = useState("");
+  const [building, setBuilding] = useState("");
   const [endContract, setEndContract] = useState(false);
   const [duration, setDuration] = useState();
+  const [viewContract, setViewContract] = useState(false);
+  const [contractInfor, setContractInfor] = useState([]);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const options = [];
   const formItemLayout = {
     labelCol: {
       xs: {
@@ -54,16 +61,43 @@ const ListContractRenter = () => {
         },
       })
       .then((res) => {
-        setDataSource(res.data.body);
-        console.log(res);
+        setDataSource(res.data.data);
       })
       .catch((error) => {
         console.log(error);
       });
     setLoading(false);
   };
+  useEffect(() => {
+    const getBuildingFilter = async () => {
+      setLoading(true);
+      const response = await axios
+        .get(LIST_BUILDING_FILTER, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cookie}`,
+          },
+        })
+        .then((res) => {
+          setBuildingFilter(res.data.data);
+          console.log(res);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      setLoading(false);
+    };
+    getBuildingFilter();
+  }, [cookie]);
+  for (let i = 0; i < buildingFilter.length; i++) {
+    options.push({
+      label: buildingFilter[i].group_name,
+      value: buildingFilter[i].group_id,
+    });
+  }
+
   const getFullDate = (date) => {
-    const dateAndTime = date.split("T");
+    const dateAndTime = date.split(" ");
 
     return dateAndTime[0].split("-").reverse().join("-");
   };
@@ -76,23 +110,31 @@ const ListContractRenter = () => {
     setEndDate(endDate);
   };
   const getFilterContractRenter = async () => {
-    // setLoading(true);
-    // const response = await axios
-    //   .get(FILTER_CONTRACT_URL, {
-    //     params: { duration: duration },
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //       Authorization: `Bearer ${cookie}`,
-    //     },
-    //   })
-    //   .then((res) => {
-    //     setDataSource(res.data.body);
-    //     console.log(res);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
-    // setLoading(false);
+    setLoading(true);
+    const response = await axios
+      .get(LIST_CONTRACT_URL, {
+        params: {
+          phoneNumber: phoneNumber,
+          renterName: renterName,
+          isDisable: endContract,
+          startDate: startDate,
+          endDate: endDate,
+          identity: identity,
+          groupId: building,
+        },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie}`,
+        },
+      })
+      .then((res) => {
+        setDataSource(res.data.data);
+        console.log(res);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    setLoading(false);
     console.log(filterContract);
   };
   const durationChange = (value) => {
@@ -100,32 +142,89 @@ const ListContractRenter = () => {
   };
   const filterContract = {
     phoneNumber: phoneNumber,
-    renter_name: renterName,
+    renterName: renterName,
     endContract: endContract,
     startDate: startDate,
     endDate: endDate,
+    identity: identity,
+    groupId: building,
   };
 
   const renterNameChange = (e) => {
     setRenterName(e.target.value);
   };
+  const phoneNumberChange = (e) => {
+    setPhoneNumber(e.target.value);
+  };
+  const identityChange = (e) => {
+    setIdentity(e.target.value);
+  };
+  const buildingChange = (value) => {
+    setBuilding(value);
+  };
   const endContractChange = (value) => {
     setEndContract(value);
   };
-  const resetForm = () => {
+  const resetForm = async () => {
     form.resetFields();
-    // setDeactive("");
-    // setEndDate("");
-    // setStartDate("");
-    // setFullname("");
-    // setRoles("");
-    // setUsername("");
+    setRenterName("");
+    setPhoneNumber("");
+    setIdentity("");
+    setBuilding("");
+    setEndContract(false);
+    setLoading(true);
+    const response = await axios
+      .get(LIST_BUILDING_FILTER, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie}`,
+        },
+      })
+      .then((res) => {
+        setBuildingFilter(res.data.data);
+        console.log(res);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    setLoading(false);
   };
+  // const getContractById = async (contractId) => {
+  //   let cookie = localStorage.getItem("Cookie");
+  //   await axios
+  //     .get(GET_CONTRACT + contractId, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         // "Access-Control-Allow-Origin": "*",
+  //         Authorization: `Bearer ${cookie}`,
+  //       },
+  //       // withCredentials: true,
+  //     })
+  //     .then((res) => {
+  //       // console.log(res);
+  //       setContractInfor(res.data.data);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // };
   return (
     <div className="list-contract">
       <div className="list-contract-search">
         <Tabs defaultActiveKey="1">
-          <Tabs.TabPane tab="Tìm kiếm nâng cao" key="1">
+          <Tabs.TabPane tab="Tìm kiếm nhanh" key="1">
+            <Search
+              placeholder="Tìm kiếm theo tên hợp đồng, tên khách thuê"
+              style={{ marginBottom: 8, width: 400, padding: "10px 0" }}
+              onSearch={(value) => {
+                setTextSearch(value);
+              }}
+              onChange={(e) => {
+                setTextSearch(e.target.value);
+              }}
+            />
+          </Tabs.TabPane>
+          <Tabs.TabPane tab="Tìm kiếm nâng cao" key="2">
             <Form
               {...formItemLayout}
               form={form}
@@ -134,35 +233,47 @@ const ListContractRenter = () => {
               onFinish={getFilterContractRenter}
               style={{ width: "100%" }}
             >
-              <Row gutter={[16, 32]} style={{ marginBottom: "20px" }}>
-                <Col span={8}>
-                  <Form.Item name="full_name" style={{ width: "500px" }}>
-                    <Col className="gutter-row" span={24}>
+              <Row gutter={[16]} style={{ marginBottom: "20px", marginLeft: "20px" }}>
+                <Row>
+                  <Form.Item name="renterName" style={{ width: "500px", marginBottom: 0 }}>
+                    <Col className="gutter-row" xs={{ span: 24 }} lg={{ span: 24 }}>
                       <Row>
                         <label htmlFor="" style={{ marginBottom: "10px" }}>
                           Tìm kiếm theo tên khách thuê
                         </label>
                       </Row>
                       <Row>
-                        <Input placeholder="Nhập tên khách thuê" autoComplete="off" />
+                        <Input placeholder="Nhập tên khách thuê" autoComplete="off" onChange={renterNameChange} />
                       </Row>
                     </Col>
                   </Form.Item>
 
-                  <Form.Item name="user_name" style={{ width: "500px" }}>
+                  <Form.Item name="identity" style={{ width: "500px" }}>
                     <Col className="gutter-row" span={24}>
                       <Row>
                         <label htmlFor="" style={{ marginBottom: "10px" }}>
-                          Tìm kiếm theo số CCCD/Số điện thoại
+                          Tìm kiếm theo số CCCD
                         </label>
                       </Row>
                       <Row>
-                        <Input placeholder="Nhập số CCCD/Số điện thoại" autoComplete="off" />
+                        <Input placeholder="Nhập số CCCD" autoComplete="off" onChange={identityChange} />
                       </Row>
                     </Col>
                   </Form.Item>
-                </Col>
-                <Col span={8} offset={3}>
+                  <Form.Item name="phoneNumber" style={{ width: "500px" }}>
+                    <Col className="gutter-row" span={24}>
+                      <Row>
+                        <label htmlFor="" style={{ marginBottom: "10px" }}>
+                          Tìm kiếm theo số điện thoại
+                        </label>
+                      </Row>
+                      <Row>
+                        <Input placeholder="Nhập số điện thoại" autoComplete="off" onChange={phoneNumberChange} />
+                      </Row>
+                    </Col>
+                  </Form.Item>
+                </Row>
+                <Row>
                   <Form.Item name="date" style={{ width: "500px" }}>
                     <Col className="gutter-row" span={24}>
                       <Row>
@@ -171,28 +282,33 @@ const ListContractRenter = () => {
                         </label>
                       </Row>
                       <Row>
-                        <RangePicker format={"DD-MM-YYYY"} placeholder={["Từ", "Đến"]} onChange={dateChange} />
+                        <RangePicker
+                          format={"DD-MM-YYYY"}
+                          placeholder={["Từ", "Đến"]}
+                          onChange={dateChange}
+                          style={{ width: "500px" }}
+                        />
                       </Row>
                     </Col>
                   </Form.Item>
-                  <Col className="gutter-row" span={24}>
-                    <Row style={{ flexWrap: "nowrap", width: "700px" }}>
-                      <Form.Item name="user_name" style={{ width: "500px" }}>
-                        <Row>
-                          <label htmlFor="" style={{ marginBottom: "10px" }}>
-                            Tìm kiếm theo tên chung cư
-                          </label>
-                        </Row>
-                        <Row>
-                          <Select placeholder="Chọn chung cư"></Select>
-                        </Row>
-                      </Form.Item>
-                      <Form.Item name="deactive" style={{ width: "500px", marginTop: "30px" }}>
-                        <Switch /> <span>Hợp đồng đã kết thúc</span>
-                      </Form.Item>
-                    </Row>
-                  </Col>
-                </Col>
+                  <Form.Item name="groupId" style={{ width: "500px" }}>
+                    <Col className="gutter-row" span={24}>
+                      <Row>
+                        <label htmlFor="" style={{ marginBottom: "10px" }}>
+                          Tìm kiếm theo tên chung cư
+                        </label>
+                      </Row>
+                      <Row>
+                        <Select options={options} placeholder="Chọn chung cư" onChange={buildingChange}></Select>
+                      </Row>
+                    </Col>
+                  </Form.Item>
+                  <Form.Item name="deactive" style={{ width: "500px", marginTop: "30px" }}>
+                    <Col className="gutter-row" span={24}>
+                      <Switch onChange={endContractChange} /> <span>Hợp đồng đã kết thúc</span>
+                    </Col>
+                  </Form.Item>
+                </Row>
               </Row>
               <Row style={{ marginBottom: "20px" }}>
                 <Col offset={10}>
@@ -214,18 +330,6 @@ const ListContractRenter = () => {
               </Row>
             </Form>
           </Tabs.TabPane>
-          <Tabs.TabPane tab="Tìm kiếm nhanh" key="2">
-            <Search
-              placeholder="Tìm kiếm theo tên hợp đồng, tên khách thuê"
-              style={{ marginBottom: 8, width: 400, padding: "10px 0" }}
-              onSearch={(value) => {
-                setTextSearch(value);
-              }}
-              onChange={(e) => {
-                setTextSearch(e.target.value);
-              }}
-            />
-          </Tabs.TabPane>
         </Tabs>
       </div>
       <Table
@@ -244,13 +348,18 @@ const ListContractRenter = () => {
             onFilter: (value, record) => {
               return (
                 String(record.contract_name).toLowerCase()?.includes(value.toLowerCase()) ||
-                String(record.renter_name).toLowerCase()?.includes(value.toLowerCase())
+                String(record.list_renter).toLowerCase()?.includes(value.toLowerCase())
               );
             },
           },
           {
+            title: "Tên chung cư",
+            dataIndex: "group_name",
+          },
+          {
             title: "Tên khách thuê",
-            dataIndex: "renter_name",
+            dataIndex: "list_renter",
+            render: (renter) => renter[0].renter_full_name,
           },
 
           {
@@ -280,7 +389,7 @@ const ListContractRenter = () => {
 
           {
             title: "Trạng thái hợp đồng",
-            dataIndex: "contract_is_disable",
+            dataIndex: "contractIsDisable",
             render: (_, record) => {
               let status;
               if (record.contract_is_disable === true) {
@@ -305,8 +414,26 @@ const ListContractRenter = () => {
             render: (_, record) => {
               return (
                 <>
-                  <EditOutlined style={{ fontSize: "20px", marginRight: "10px" }} />
-                  <EyeOutlined style={{ fontSize: "20px" }} />
+                  <Tooltip title="Chỉnh sửa">
+                    <EditOutlined
+                      style={{ fontSize: "20px", marginRight: "10px", color: "#46a6ff" }}
+                      onClick={() => {
+                        navigate(`/contract-renter/edit/${record.contract_id}`);
+                      }}
+                    />
+                  </Tooltip>
+                  <Tooltip title="Xem">
+                    <EyeOutlined
+                      style={{ fontSize: "20px", color: "#46a6ff" }}
+                      onClick={() => {
+                        setViewContract(true);
+                        // setContractId(record.contract_id);
+                        // getContractById(record.contract_id);
+                        //   setViewContract(true);
+                        setContractInfor(record);
+                      }}
+                    />
+                  </Tooltip>
                 </>
               );
             },
@@ -315,6 +442,7 @@ const ListContractRenter = () => {
         pagination={{ pageSize: 5 }}
         loading={loading}
       />
+      <ViewContractRenter openView={viewContract} closeView={setViewContract} dataContract={contractInfor} />
     </div>
   );
 };
