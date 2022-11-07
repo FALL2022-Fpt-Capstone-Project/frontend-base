@@ -144,7 +144,7 @@ const ContractRenter = () => {
                         }}
                       >
                         {/* <span>{countLatest} hợp đồng</span> */}
-                        <span>5 hợp đồng</span>
+                        <span>7 hợp đồng</span>
                         <Button type="primary" onClick={showModalNew} style={{ marginLeft: "10px" }}>
                           Xem chi tiết
                         </Button>

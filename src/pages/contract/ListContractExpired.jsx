@@ -115,7 +115,7 @@ const ListContractExpired = ({ duration }) => {
               // onFinish={getFilterContractRenter}
               style={{ width: "100%" }}
             >
-              <Row gutter={[16, 32]} style={{ marginBottom: "20px", marginLeft: "20px" }}>
+              <Row gutter={[16]} style={{ marginBottom: "20px", marginLeft: "20px" }}>
                 <Row>
                   <Form.Item name="full_name" style={{ width: "350px" }}>
                     <Col className="gutter-row" span={24}>

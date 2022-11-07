@@ -13,8 +13,8 @@ import {
   DatePicker,
   Button,
   Slider,
-  Form,
   Switch,
+  Form,
 } from "antd";
 import { EyeTwoTone, EditOutlined, FilterOutlined, SearchOutlined, UndoOutlined } from "@ant-design/icons";
 import axios from "../../api/axios";
@@ -23,61 +23,46 @@ import moment from "moment";
 
 const { Search } = Input;
 const LIST_CONTRACT_APARTMENT_URL = "";
-const LIST_BUILDING_FILTER = "manager/group/all";
-
 const { Column, ColumnGroup } = Table;
+const style = {
+  margin: "5% 0",
+};
+const APARTMENT_DATA_GROUP = "/manager/group/all";
+const dateFormat = "DD/MM/YYYY";
 
 const ListContractApartment = () => {
-  const dateFormat = "DD/MM/YYYY";
   const { RangePicker } = DatePicker;
   const [dataSource, setDataSource] = useState([]);
   const [textSearch, setTextSearch] = useState("");
   const [loading, setLoading] = useState(false);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [buildingFilter, setBuildingFilter] = useState("");
   const [viewContract, setViewContract] = useState(false);
-  const options = [];
-  const [price, setPrice] = useState({ min: 0, max: 10000000000 });
+  const [dataApartmentGroup, setDataApartmentGroup] = useState([]);
   const dateTimeSelect = [];
-  for (let i = 1; i < 17; i++) {
-    if (i < 12) {
-      dateTimeSelect.push({
-        id: i,
-        timeName: `${i} tháng`,
-        timeValue: i,
-      });
-    } else {
-      dateTimeSelect.push({
-        id: i,
-        timeName: `${i % 11} năm`,
-        timeValue: (i % 11) * 12,
-      });
-    }
-  }
-  const formItemLayout = {
-    labelCol: {
-      xs: {
-        span: 24,
-      },
-      sm: {
-        span: 8,
-      },
-    },
-    wrapperCol: {
-      xs: {
-        span: 24,
-      },
-      sm: {
-        span: 16,
-      },
-    },
-  };
-  const [form] = Form.useForm();
+  let cookie = localStorage.getItem("Cookie");
+
   useEffect(() => {
     getAllContractExpired();
+    apartmentGroup();
   }, []);
-  let cookie = localStorage.getItem("Cookie");
+
+  const apartmentGroup = async () => {
+    setLoading(true);
+    await axios
+      .get(APARTMENT_DATA_GROUP, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie}`,
+        },
+      })
+      .then((res) => {
+        setDataApartmentGroup(res.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    setLoading(false);
+  };
+
   const getAllContractExpired = async () => {
     setLoading(true);
     const response = await axios
@@ -99,47 +84,10 @@ const ListContractApartment = () => {
       });
     setLoading(false);
   };
-
-  useEffect(() => {
-    const getBuildingFilter = async () => {
-      setLoading(true);
-      const response = await axios
-        .get(LIST_BUILDING_FILTER, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${cookie}`,
-          },
-        })
-        .then((res) => {
-          setBuildingFilter(res.data.data);
-          console.log(res);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-      setLoading(false);
-    };
-    getBuildingFilter();
-  }, [cookie]);
-  for (let i = 0; i < buildingFilter.length; i++) {
-    options.push({
-      label: buildingFilter[i].group_name,
-      value: buildingFilter[i].group_id,
-    });
-  }
-
   const getFullDate = (date) => {
-    const dateAndTime = date.split(" ");
+    const dateAndTime = date.split("T");
 
     return dateAndTime[0].split("-").reverse().join("-");
-  };
-  const dateChange = (value, dateString) => {
-    let [day1, month1, year1] = dateString[0].split("-");
-    let startDate = `${year1}-${month1}-${day1}`;
-    let [day2, month2, year2] = dateString[1].split("-");
-    let endDate = `${year2}-${month2}-${day2}`;
-    setStartDate(startDate);
-    setEndDate(endDate);
   };
   const data = [
     {
@@ -148,7 +96,7 @@ const ListContractApartment = () => {
       apartmentName: "Trọ xanh",
       startDate: moment().format(dateFormat),
       endDate: moment().format(dateFormat),
-      statusContract: "Hợp đồng còn hiệu lực",
+      statusContract: "Còn hiệu lực",
       contractValue: 100000000,
       depositValue: 100000000,
       numberOfFloor: 10,
@@ -158,10 +106,10 @@ const ListContractApartment = () => {
     {
       key: "2",
       ownerName: "Harry mac hai",
-      apartmentName: "Young and Happy",
+      apartmentName: "Trọ sạch",
       startDate: moment().format(dateFormat),
       endDate: moment().format(dateFormat),
-      statusContract: "Hợp đồng còn hiệu lực",
+      statusContract: "Còn hiệu lực",
       contractValue: 100000000,
       depositValue: 100000000,
       numberOfFloor: 10,
@@ -171,10 +119,10 @@ const ListContractApartment = () => {
     {
       key: "3",
       ownerName: "Fred",
-      apartmentName: "Trọ của Pháp",
+      apartmentName: "Trọ đẹp",
       startDate: moment().format(dateFormat),
       endDate: moment().format(dateFormat),
-      statusContract: "Hợp đồng còn hiệu lực",
+      statusContract: "Còn hiệu lực",
       contractValue: 100000000,
       depositValue: 100000000,
       numberOfFloor: 10,
@@ -182,22 +130,7 @@ const ListContractApartment = () => {
       roomStatus: "Đang trống",
     },
   ];
-  const onChangePrice = (value) => {
-    if (value[0] < value[1]) {
-      setPrice({ min: value[0], max: value[1] });
-    }
-  };
 
-  const onChangeMin = (value) => {
-    if (price.max > value) {
-      setPrice({ min: value });
-    }
-  };
-  const onChangeMax = (value) => {
-    if (price.min < value) {
-      setPrice({ max: value });
-    }
-  };
   return (
     <div>
       <Tabs defaultActiveKey="1">
@@ -205,7 +138,7 @@ const ListContractApartment = () => {
           <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
             <Col>
               <Search
-                placeholder="Nhập tên chung cư/căn hộ để tìm kiếm"
+                placeholder="Nhập tên người cho thuê để tìm kiếm"
                 style={{ marginBottom: "3%", width: 400 }}
                 onSearch={(value) => {
                   setTextSearch(value);
@@ -219,104 +152,115 @@ const ListContractApartment = () => {
         </Tabs.TabPane>
         <Tabs.TabPane tab="Tìm kiếm nâng cao" key="2">
           <Form
-            {...formItemLayout}
-            form={form}
+            // {...formItemLayout}
+            // form={form}
             name="filterStaff"
             id="filterStaff"
             // onFinish={getFilterContractRenter}
             style={{ width: "100%" }}
           >
-            <Row gutter={[16]} style={{ marginBottom: "20px", marginLeft: "20px" }}>
-              <Row>
-                <Form.Item name="renterName" style={{ width: "500px", marginBottom: 0 }}>
-                  <Col className="gutter-row" xs={{ span: 24 }} lg={{ span: 24 }}>
-                    <Row>
-                      <label htmlFor="" style={{ marginBottom: "10px" }}>
-                        Tìm kiếm theo tên người cho thuê
-                      </label>
-                    </Row>
-                    <Row>
-                      <Input placeholder="Nhập tên người cho thuê" autoComplete="off" />
-                    </Row>
-                  </Col>
+            <Row gutter={[16]}>
+              <Col span={6}>
+                <Form.Item name="full_name">
+                  <Row style={style}>
+                    <label>Tìm kiếm theo tên người cho thuê</label>
+                  </Row>
+                  <Row>
+                    <Input placeholder="Nhập tên khách thuê" autoComplete="off" />
+                  </Row>
                 </Form.Item>
-
-                {/* <Form.Item name="identity" style={{ width: "500px" }}>
-                    <Col className="gutter-row" span={24}>
-                      <Row>
-                        <label htmlFor="" style={{ marginBottom: "10px" }}>
-                          Tìm kiếm theo số CCCD
-                        </label>
-                      </Row>
-                      <Row>
-                        <Input placeholder="Nhập số CCCD" autoComplete="off" />
-                      </Row>
-                    </Col>
-                  </Form.Item> */}
-                <Form.Item name="phoneNumber" style={{ width: "500px" }}>
-                  <Col className="gutter-row" span={24}>
-                    <Row>
-                      <label htmlFor="" style={{ marginBottom: "10px" }}>
-                        Tìm kiếm theo số điện thoại
-                      </label>
-                    </Row>
-                    <Row>
-                      <Input placeholder="Nhập số điện thoại" autoComplete="off" />
-                    </Row>
-                  </Col>
+              </Col>
+              <Col span={6} offset={2}>
+                <Form.Item name="user_name">
+                  <Row style={style}>
+                    <label>Tìm kiếm theo số CCCD</label>
+                  </Row>
+                  <Row>
+                    <Input placeholder="Nhập số CCCD" autoComplete="off" />
+                  </Row>
                 </Form.Item>
-              </Row>
-              <Row>
-                <Form.Item name="date" style={{ width: "500px" }}>
-                  <Col className="gutter-row" span={24}>
-                    <Row>
-                      <label htmlFor="" style={{ marginBottom: "10px" }}>
-                        Ngày bắt đầu lập hợp đồng
-                      </label>
-                    </Row>
-                    <Row>
-                      <RangePicker
-                        format={"DD-MM-YYYY"}
-                        placeholder={["Từ", "Đến"]}
-                        onChange={dateChange}
-                        style={{ width: "500px" }}
-                      />
-                    </Row>
-                  </Col>
+              </Col>
+              <Col span={6} offset={2}>
+                <Form.Item name="user_name">
+                  <Row style={style}>
+                    <label>Tìm kiếm theo số điện thoại</label>
+                  </Row>
+                  <Row>
+                    <Input placeholder="Nhập số điện thoại" autoComplete="off" />
+                  </Row>
                 </Form.Item>
-                <Form.Item name="groupId" style={{ width: "500px" }}>
-                  <Col className="gutter-row" span={24}>
-                    <Row>
-                      <label htmlFor="" style={{ marginBottom: "10px" }}>
-                        Tìm kiếm theo tên chung cư
-                      </label>
-                    </Row>
-                    <Row>
-                      <Select options={options} placeholder="Chọn chung cư"></Select>
-                    </Row>
-                  </Col>
-                </Form.Item>
-                <Form.Item name="deactive" style={{ width: "500px", marginTop: "30px" }}>
-                  <Col className="gutter-row" span={24}>
-                    <Switch /> <span>Hợp đồng đã kết thúc</span>
-                  </Col>
-                </Form.Item>
-              </Row>
+              </Col>
             </Row>
-            <Row style={{ marginBottom: "20px" }}>
-              <Col offset={10}>
-                <Row>
-                  <Button
-                    type="primary"
-                    icon={<SearchOutlined />}
-                    style={{ marginRight: "20px" }}
-                    // onClick={getFilterContractRenter}
-                    htmlType="submit"
-                  >
-                    Tìm kiếm
-                  </Button>
-                  <Button icon={<UndoOutlined />}>Đặt lại</Button>
-                </Row>
+            <Row>
+              <Col span={6}>
+                <Form.Item name="date">
+                  <Row style={style}>
+                    <label>Ngày bắt đầu lập hợp đồng</label>
+                  </Row>
+                  <Row>
+                    <RangePicker
+                      format={"DD-MM-YYYY"}
+                      placeholder={["Từ", "Đến"]}
+                      // onChange={dateChange}
+                      style={{ width: "100%" }}
+                    />
+                  </Row>
+                </Form.Item>
+              </Col>
+              <Col span={6} offset={2}>
+                <Form.Item name="user_name">
+                  <Row style={style}>
+                    <label>Tìm kiếm theo tên chung cư</label>
+                  </Row>
+                  <Row>
+                    <Select
+                      showSearch
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        (option?.label.toLowerCase().trim() ?? "").includes(input.toLocaleLowerCase().trim())
+                      }
+                      filterSort={(optionA, optionB) =>
+                        (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())
+                      }
+                      onChange={(e) => {
+                        console.log(e);
+                      }}
+                      options={dataApartmentGroup?.map((obj, index) => {
+                        return { value: obj.group_id, label: obj.group_name };
+                      })}
+                      placeholder="Chọn chung cư"
+                    ></Select>
+                  </Row>
+                </Form.Item>
+              </Col>
+              <Col span={6} offset={2}>
+                <Form.Item name="deactive">
+                  <Row style={style}>
+                    <label>Hợp đồng đã kết thúc</label>
+                  </Row>
+                  <Row>
+                    <Switch />
+                  </Row>
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={14} offset={10}>
+                <Button
+                  type="primary"
+                  icon={<SearchOutlined />}
+                  style={{ margin: "5% 1% 5% 0%" }}
+                  // onClick={getFilterContractRenter}
+                  htmlType="submit"
+                >
+                  Tìm kiếm
+                </Button>
+                <Button
+                  icon={<UndoOutlined />}
+                  // onClick={resetForm}
+                >
+                  Đặt lại
+                </Button>
               </Col>
             </Row>
           </Form>
@@ -324,7 +268,7 @@ const ListContractApartment = () => {
       </Tabs>
       <Table dataSource={data} scroll={{ x: 1600, y: 600 }} bordered>
         <Column title="Tên người cho thuê" dataIndex="ownerName" key="key" />
-        <Column title="Tên chung cư mini/căn hộ" dataIndex="apartmentName" key="key" />
+        <Column title="Tên chung cư" dataIndex="apartmentName" key="key" />
         <Column title="Ngày lập hợp đồng" dataIndex="startDate" key="key" />
         <Column title="Ngày kết thúc" dataIndex="endDate" key="key" />
         <Column
