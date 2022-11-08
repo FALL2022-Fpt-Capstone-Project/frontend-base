@@ -199,7 +199,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                                 <h4>Thời hạn hợp đồng:</h4>
                                             </Col>
                                             <Col span={14}>
-                                                <p>1 tháng</p>
+                                                <p>{dataContract?.contract_term < 12 ? dataContract?.contract_term + ' tháng' : dataContract?.contract_term % 11 + ' năm ' + dataContract?.contract_term % 12 + ' tháng'} </p>
                                             </Col>
                                         </Row>
                                         <Row>

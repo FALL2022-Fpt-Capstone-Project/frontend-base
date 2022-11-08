@@ -52,7 +52,7 @@ const App = () => {
           <Route path="contract-renter/create" element={<CreateContractRenter />} />
         </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
-          <Route path="contract-renter/edit/:contract_id" element={<EditContractRenter />} />
+          <Route path="contract-renter/edit/:contract_id/group/:group_id" element={<EditContractRenter />} />
         </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
           <Route path="contract-apartment/create" element={<CreateContractBuilding />} />

@@ -299,9 +299,9 @@ const CreateContractRenter = () => {
       filteredValue: [searched],
       onFilter: (value, record) => {
         return (
-          String(record.renter_full_name).toLowerCase()?.includes(value.toLowerCase()) ||
-          String(record.phone_number).toLowerCase()?.includes(value.toLowerCase()) ||
-          String(record.identity_number).toLowerCase()?.includes(value.toLowerCase())
+          String(record.renter_full_name.trim()).toLowerCase()?.includes(value.trim().toLowerCase()) ||
+          String(record.phone_number.trim()).toLowerCase()?.includes(value.trim().toLowerCase()) ||
+          String(record.identity_number.trim()).toLowerCase()?.includes(value.trim().toLowerCase())
         );
       },
       width: 200,
@@ -392,10 +392,10 @@ const CreateContractRenter = () => {
     },
     {
       title: "Giới tính",
-      dataIndex: "member_gender",
+      dataIndex: "gender",
       key: "member_id",
-      render: (member_gender) => {
-        return member_gender ? "Nam" : "Nữ";
+      render: (gender) => {
+        return gender ? "Nam" : "Nữ";
       },
     },
     {
@@ -415,7 +415,7 @@ const CreateContractRenter = () => {
     },
     {
       title: "Địa chỉ",
-      dataIndex: "address",
+      dataIndex: "address_more_detail",
       key: "member_id",
     },
 
@@ -429,12 +429,12 @@ const CreateContractRenter = () => {
               setIsEditMem(true);
               formEditMem.setFieldsValue({
                 member_id: record.member_id,
-                member_gender: record.member_gender,
+                gender: record.gender,
                 name: record.name,
                 identity_card: record.identity_card,
                 phone_number: record.phone_number,
                 license_plates: record.license_plates,
-                address: record.address,
+                address_more_detail: record.address_more_detail,
               });
             }}
           />
@@ -469,7 +469,7 @@ const CreateContractRenter = () => {
             identity_card: "",
             phone_number: "",
             license_plates: "",
-            address: "",
+            address_more_detail: "",
           });
         }
       }
@@ -486,11 +486,11 @@ const CreateContractRenter = () => {
     const duplicate = dataMember.find(
       (mem) =>
         mem.name.toLowerCase().trim() === e.name.toLowerCase().trim() &&
-        mem.member_gender === e.member_gender &&
+        mem.gender === e.gender &&
         mem.identity_card.toLowerCase().trim() === e.identity_card.toLowerCase().trim() &&
         mem.phone_number.toLowerCase().trim() === e.phone_number.toLowerCase().trim() &&
         mem.license_plates.toLowerCase().trim() === e.license_plates.toLowerCase().trim() &&
-        mem.address.toLowerCase().trim() === e.address.toLowerCase().trim()
+        mem.address_more_detail.toLowerCase().trim() === e.address_more_detail.toLowerCase().trim()
     );
 
     if (
@@ -567,6 +567,7 @@ const CreateContractRenter = () => {
     // console.log(
     //   JSON.stringify({
     //     ...e,
+    // list_general_service: list_general_service,
     //     contract_end_date: e.contract_end_date.format('YYYY-MM-DD'),
     //     contract_start_date: e.contract_start_date.format('YYYY-MM-DD'),
     //   })
@@ -1153,12 +1154,12 @@ const CreateContractRenter = () => {
                               <b>Thời hạn hợp đồng (ít nhất 1 tháng): </b>
                             </span>
                           }
-                          // rules={[
-                          //   {
-                          //     required: true,
-                          //     message: "Vui lòng chọn thời hạn hợp đồng",
-                          //   },
-                          // ]}
+                        // rules={[
+                        //   {
+                        //     required: true,
+                        //     message: "Vui lòng chọn thời hạn hợp đồng",
+                        //   },
+                        // ]}
                         >
                           <Select
                             placeholder="Thời hạn hợp đồng"
@@ -1504,12 +1505,12 @@ const CreateContractRenter = () => {
                                     String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
                                       ? "Nhập chỉ số hiện tại"
                                       : "Số " +
-                                        obj.service_type_name +
-                                        " / " +
-                                        obj.service_price.toLocaleString("vn-VN", {
-                                          style: "currency",
-                                          currency: "VND",
-                                        })
+                                      obj.service_type_name +
+                                      " / " +
+                                      obj.service_price.toLocaleString("vn-VN", {
+                                        style: "currency",
+                                        currency: "VND",
+                                      })
                                   }
                                   addonAfter={
                                     String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
@@ -1582,7 +1583,7 @@ const CreateContractRenter = () => {
                           onClick={() => {
                             setIsAddMem(true);
                             formAddMem.setFieldsValue({
-                              member_gender: true,
+                              gender: true,
                               member_id: memberId,
                             });
                           }}
@@ -1616,7 +1617,7 @@ const CreateContractRenter = () => {
                           <p>
                             <h3>
                               <b>
-                                Thông tin tài sản bàn giao{" "}
+                                Thông tin tài sản bàn giao tòa {" "}
                                 {dataApartmentGroupSelect?.group_name !== undefined
                                   ? dataApartmentGroupSelect?.group_name + " "
                                   : ""}
@@ -2160,7 +2161,7 @@ const CreateContractRenter = () => {
                   </Form.Item>
                   <Form.Item
                     className="form-item"
-                    name="member_gender"
+                    name="gender"
                     labelCol={{ span: 24 }}
                     label={
                       <span>
@@ -2233,7 +2234,7 @@ const CreateContractRenter = () => {
                   </Form.Item>
                   <Form.Item
                     className="form-item"
-                    name="address"
+                    name="address_more_detail"
                     labelCol={{ span: 24 }}
                     label={
                       <span>
@@ -2302,7 +2303,7 @@ const CreateContractRenter = () => {
                   </Form.Item>
                   <Form.Item
                     className="form-item"
-                    name="member_gender"
+                    name="gender"
                     labelCol={{ span: 24 }}
                     label={
                       <span>
@@ -2375,7 +2376,7 @@ const CreateContractRenter = () => {
                   </Form.Item>
                   <Form.Item
                     className="form-item"
-                    name="address"
+                    name="address_more_detail"
                     labelCol={{ span: 24 }}
                     label={
                       <span>
