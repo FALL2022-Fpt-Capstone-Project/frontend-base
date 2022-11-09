@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import "./contract.scss";
-import { PlusOutlined, PieChartOutlined } from "@ant-design/icons";
+import { PlusCircleOutlined, PieChartOutlined } from "@ant-design/icons";
 import { Button, Layout, Card, Modal, Select, Row, Col } from "antd";
 import ListContractRenter from "./ListContractRenter";
 import ListContractExpired from "./ListContractExpired";
@@ -11,7 +11,9 @@ import axios from "../../api/axios";
 import useAuth from "../../hooks/useAuth";
 const { Option } = Select;
 const { Content, Sider, Header } = Layout;
-
+const fontSize = {
+  fontSize: 15
+}
 const COUNT_CONTRACT_GROUP = "manager/contract/statistical/get-contract/1";
 
 const ContractRenter = () => {
@@ -83,6 +85,7 @@ const ContractRenter = () => {
       <Layout
         style={{
           minHeight: "100vh",
+          minWidth: "100vh"
         }}
       >
         <Sider width={250} collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
@@ -92,9 +95,6 @@ const ContractRenter = () => {
         <Layout className="site-layout">
           <Header
             className="layout-header"
-            style={{
-              margin: "0 16px",
-            }}
           >
             <p className="header-title">Quản lý hợp đồng khách thuê</p>
           </Header>
@@ -105,12 +105,12 @@ const ContractRenter = () => {
             }}
           >
             <div className="btn-contract">
-              <Button icon={<PieChartOutlined />} size="middle" className="button-collapse" onClick={showModal}>
+              <Button icon={<PieChartOutlined style={fontSize} />} size="middle" className="button-collapse" onClick={showModal}>
                 Thống kê hợp đồng
               </Button>
               <Button
                 type="primary"
-                icon={<PlusOutlined />}
+                icon={<PlusCircleOutlined style={fontSize} />}
                 size="middle"
                 className="button-add"
                 href="/contract-renter/create"

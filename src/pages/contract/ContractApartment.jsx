@@ -2,11 +2,13 @@ import React from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import "./contract.scss";
 import { Button, Layout } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusCircleOutlined } from "@ant-design/icons";
 import ListContractApartment from "./ListContractApartment";
 import "./contract.scss";
 const { Content, Sider, Header } = Layout;
-
+const fontSize = {
+  fontSize: 15
+}
 const ContractApartment = () => {
   return (
     <div className="contract">
@@ -33,7 +35,7 @@ const ContractApartment = () => {
             <div className="btn-contract">
               <Button
                 type="primary"
-                icon={<PlusOutlined />}
+                icon={<PlusCircleOutlined style={fontSize} />}
                 size="middle"
                 className="button-add"
                 href="/contract-apartment/create"

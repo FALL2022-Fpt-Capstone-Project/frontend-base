@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Layout } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusCircleOutlined } from "@ant-design/icons";
 import Sidebar from "../../components/sidebar/Sidebar";
 import "./admin.scss";
 import ListStaff from "./ListStaff";
@@ -38,7 +38,7 @@ const Admin = () => {
             >
               <div>
                 <Link to="/create-staff">
-                  <Button type="primary" icon={<PlusOutlined />} size="middle" className="button-add">
+                  <Button type="primary" icon={<PlusCircleOutlined style={{ fontSize: 15 }} />} size="middle" className="button-add">
                     Tạo mới
                   </Button>
                 </Link>

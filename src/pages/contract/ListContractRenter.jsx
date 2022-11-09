@@ -68,6 +68,7 @@ const ListContractRenter = () => {
       });
     setLoading(false);
   };
+
   useEffect(() => {
     const getBuildingFilter = async () => {
       setLoading(true);
@@ -311,8 +312,8 @@ const ListContractRenter = () => {
                 </Row>
               </Row>
               <Row style={{ marginBottom: "20px" }}>
-                <Col offset={10}>
-                  <Row>
+                <Col span={24}>
+                  <Row justify="center">
                     <Button
                       type="primary"
                       icon={<SearchOutlined />}
@@ -335,6 +336,7 @@ const ListContractRenter = () => {
       <Table
         bordered
         dataSource={dataSource}
+        scroll={{ x: 1500, y: 600 }}
         columns={[
           // {
           //   title: 'STT',
@@ -359,7 +361,7 @@ const ListContractRenter = () => {
           {
             title: "Tên khách thuê",
             dataIndex: "list_renter",
-            render: (renter) => renter[0].renter_full_name,
+            render: (renter) => renter[0]?.renter_full_name,
           },
 
           {

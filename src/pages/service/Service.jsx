@@ -24,10 +24,10 @@ function Service(props) {
   const [dataApartmentServiceGeneral, setDataApartmentServiceGeneral] = useState([]);
   const [serviceCalCuMethod, setServiceCalCuMethod] = useState([]);
   const [listServiceName, setListServiceName] = useState([]);
-  const [groupIdDefault, setGroupIdDefault] = useState();
   const [groupIdSelect, setGroupIdSelect] = useState();
   const [formAddSerivce] = Form.useForm();
   const [formEditSerivce] = Form.useForm();
+  const [selectDefault] = Form.useForm();
   let cookie = localStorage.getItem("Cookie");
 
   const apartmentGroupById = async (groupId) => {
@@ -49,12 +49,13 @@ function Service(props) {
       });
     setLoading(false);
   };
+
   useEffect(() => {
     apartmentGroup();
     getListServiceBasic();
     getListServiceCaculMethod();
   }, []);
-  console.log(dataApartmentServiceGeneral);
+
   const apartmentGroup = async () => {
     setLoading(true);
     await axios
@@ -67,7 +68,7 @@ function Service(props) {
       .then((res) => {
         setDataApartmentGroup(res.data.data);
         apartmentGroupById(res.data.data[0].group_id);
-        setGroupIdDefault(res.data.data[0].group_id);
+        selectDefault.setFieldsValue({ selectApartment: res.data.data[0].group_id });
       })
       .catch((error) => {
         console.log(error);
@@ -396,35 +397,38 @@ function Service(props) {
                                     </Button> */}
                 </Col>
                 <Col span={6} offset={4}>
-                  <Select
-                    defaultValue={groupIdDefault}
-                    showSearch
-                    style={{
-                      width: "100%",
-                    }}
-                    placeholder="Tìm và chọn chung cư mini / căn hộ "
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label.toLowerCase().trim() ?? "").includes(input.toLocaleLowerCase().trim())
-                    }
-                    filterSort={(optionA, optionB) =>
-                      (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())
-                    }
-                    onChange={(e) => {
-                      apartmentGroupById(e);
-                      setGroupIdSelect(e);
-                    }}
-                    options={dataApartmentGroup?.map((obj, index) => {
-                      return { value: obj.group_id, label: obj.group_name };
-                    })}
-                  />
+                  <Form form={selectDefault}>
+                    <Form.Item name="selectApartment">
+                      <Select
+                        showSearch
+                        style={{
+                          width: "100%",
+                        }}
+                        placeholder="Tìm và chọn chung cư mini / căn hộ "
+                        optionFilterProp="children"
+                        filterOption={(input, option) =>
+                          (option?.label.toLowerCase().trim() ?? "").includes(input.toLocaleLowerCase().trim())
+                        }
+                        filterSort={(optionA, optionB) =>
+                          (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())
+                        }
+                        onChange={(e) => {
+                          apartmentGroupById(e);
+                          setGroupIdSelect(e);
+                        }}
+                        options={dataApartmentGroup?.map((obj, index) => {
+                          return { value: obj.group_id, label: obj.group_name };
+                        })}
+                      />
+                    </Form.Item>
+                  </Form>
                 </Col>
               </Row>
               <Row>
                 <Col>
                   <p>
                     <i>
-                      <b>Thêm mới nhanh</b> các dịch vụ cơ bản (điện, nước, internet, xe) giúp việc nhập dữ liệu nhanh
+                      <b>Thêm mới nhanh: </b> các dịch vụ cơ bản (điện, nước, internet, xe) giúp việc nhập dữ liệu nhanh
                       hơn
                     </i>
                   </p>
