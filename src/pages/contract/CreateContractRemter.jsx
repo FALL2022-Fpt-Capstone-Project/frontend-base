@@ -1384,31 +1384,28 @@ const CreateContractRenter = () => {
                                 min={0}
                               />
                             </Form.Item>
+                            <Row>
+                              <p>
+                                <i>
+                                  <b>Lưu ý:</b>
+                                  <br />
+                                  <b>- Chu kỳ thanh toán: </b> nếu bạn thu tiền 1 lần vào cuối tháng
+                                  thì bạn chọn là kỳ 30. Trường hợp có số lượng phòng nhiều, chia làm 2 đợt thu,
+                                  bạn dựa vào ngày vào của khách, ví dụ: vào từ ngày 1 đến 15 của tháng thì
+                                  gán kỳ 15; nếu vào từ ngày 16 đến 31 của tháng thì gán kỳ 30. Khi tính tiền phòng bạn sẽ tính
+                                  tiền theo kỳ.
+                                  <br />
+                                  <b>- Chu kỳ tính tiền: </b> là số tháng được tính trên mỗi hóa đơn.
+                                  <br />
+                                </i>
+                              </p>
+                              <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
+                            </Row>
                           </Card>
+
                         </Col>
                       </Row>
                     </div>
-                    <Row>
-                    </Row>
-                    <p>
-                      <i>
-                        <b>Lưu ý:</b>
-                        <br />
-                        - Kỳ thanh toán tùy thuộc vào từng khu nhà trọ, nếu khu trọ bạn thu tiền 1 lần vào cuối tháng
-                        thì bạn chọn là kỳ 30. Trường hợp khu nhà trọ bạn có số lượng phòng nhiều, chia làm 2 đợt thu,
-                        bạn dựa vào ngày vào của khách để gán kỳ cho phù hợp, ví dụ: vào từ ngày 1 đến 15 của tháng thì
-                        gán kỳ 15; nếu vào từ ngày 16 đến 31 của tháng thì gán kỳ 30. Khi tính tiền phòng bạn sẽ tính
-                        tiền theo kỳ.
-                        <br />
-                        - Tiền đặt cọc sẽ không tính vào doanh thu ở các báo cáo và thống kê doanh thu. Nếu bạn muốn
-                        tính vào doanh thu bạn ghi nhận vào trong phần thu/chi khác (phát sinh). Tiền đặt cọc sẽ được
-                        trừ ra khi tính tiền trả phòng.
-                        <br />
-                        - Chu kỳ tính tiền: là số tháng được tính trên mỗi hóa đơn.
-                        <br />
-                      </i>
-                    </p>
-                    <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
                   </Tabs.TabPane>
                   <Tabs.TabPane
                     tab={

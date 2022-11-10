@@ -7,15 +7,25 @@ import { useNavigate } from "react-router-dom";
 
 const LIST_ASSET_TYPE = "manager/asset/type";
 const cardTop = {
-    height: 450
+    height: 450,
+    border: '1px solid #C0C0C0',
+    borderRadius: '10px'
 };
 
 const cardBellow = {
     height: 300,
-    marginTop: '2%'
+    marginTop: '2%',
+    border: '1px solid #C0C0C0',
+    borderRadius: '10px'
+}
+const memeber = {
+    border: '1px solid #C0C0C0',
+    borderRadius: '10px',
+    width: 300
 }
 
 function ViewContractRenter({ openView, closeView, dataContract }) {
+    // console.log(dataContract);
     const [loading, setLoading] = useState(false);
     const [searched, setSearched] = useState("");
     const [filterAssetType, setFilterAssetType] = useState([]);
@@ -339,9 +349,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                             <>
                                                 <Col>
                                                     <Card
-                                                        style={{
-                                                            width: 300,
-                                                        }}
+                                                        style={memeber}
                                                         cover={
                                                             <UserOutlined style={{ fontSize: '500%' }} />
                                                         }
@@ -384,7 +392,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                                                 <h4>Địa chỉ: </h4>
                                                             </Col>
                                                             <Col span={14}>
-                                                                <p>Hữu Quan, Dương Quan, Thủy Nguyên, Hải Phòng</p>
+                                                                <p>{obj?.address?.address_more_details}</p>
                                                             </Col>
                                                         </Row>
                                                         <Row>

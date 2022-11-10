@@ -24,10 +24,12 @@ import {
   DeleteOutlined
 } from "@ant-design/icons";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AddRoom from "./AddRoom";
 import AddRoomAuto from "./AddRoomAuto";
+import RoomDetail from "./RoomDetail";
 const style = {
-  marginBottom: "5%",
+  marginBottom: "3%",
 };
 const textSize = {
   fontSize: 15
@@ -41,6 +43,9 @@ function ListRoom(props) {
   const [form] = Form.useForm();
   const [addRoom, setAddRoom] = useState(false);
   const [addRoomAuto, setAddRoomAuto] = useState(false);
+  const [roomDetail, setSetRoomDetail] = useState(false);
+  const navigate = useNavigate();
+
   const onClickAddRoom = (e) => {
     setAddRoom(true);
   }
@@ -75,7 +80,7 @@ function ListRoom(props) {
   ];
   const options = [
     {
-      label: "Chọn tất cả",
+      label: "Tất cả chung cư",
       value: 1,
     },
     {
@@ -177,10 +182,10 @@ function ListRoom(props) {
         return (
           <>
             <Tooltip title="Xem chi tiết">
-              <EyeOutlined style={iconSize} />
+              <EyeOutlined onClick={() => { setSetRoomDetail(true) }} style={iconSize} />
             </Tooltip>
             <Tooltip title="Lập hợp đồng phòng">
-              <AuditOutlined style={iconSize} />
+              <AuditOutlined onClick={() => { navigate(`/contract-renter/create`) }} style={iconSize} />
             </Tooltip>
             <Tooltip title="Xóa phòng">
               <DeleteOutlined style={{ fontSize: '130%', color: 'red' }} />
@@ -251,7 +256,7 @@ function ListRoom(props) {
                 <span style={textSize}>Tổng số phòng: </span>
               </>
             }
-            value={50}
+            value={0}
           />
         </Col>
         <Col span={8}>
@@ -262,7 +267,7 @@ function ListRoom(props) {
                 {/* <Button icon={<ArrowRightOutlined />} style={{ borderRadius: "50%" }}></Button> */}
               </>
             }
-            value={10}
+            value={0}
           />
         </Col>
         <Col span={8}>
@@ -272,7 +277,7 @@ function ListRoom(props) {
                 <span style={textSize}>Tổng số tiền phòng: </span>
               </>
             }
-            value={100000000}
+            value={0}
           />
         </Col>
       </Row>
@@ -280,12 +285,8 @@ function ListRoom(props) {
       <Tabs defaultActiveKey="1" style={{ marginBottom: "1%" }}>
         <Tabs.TabPane tab="Tìm kiếm nhanh" key="1">
           <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-            <Col span={24}>
-              <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                <Col span={24}>
-                  <Input.Search placeholder="Nhập tên phòng để tìm kiếm" style={{ marginBottom: 8, width: 400 }} />
-                </Col>
-              </Row>
+            <Col xs={24} sm={12} xl={8} span={8}>
+              <Input.Search placeholder="Nhập tên phòng để tìm kiếm" />
             </Col>
           </Row>
         </Tabs.TabPane>
@@ -369,9 +370,15 @@ function ListRoom(props) {
           </Row>
         </Tabs.TabPane>
       </Tabs>
-      <Table bordered dataSource={dataSource} columns={columns} scroll={{ x: 1200, y: 600 }}></Table>
+      <Table
+        bordered
+        dataSource={dataSource}
+        columns={columns}
+        scroll={{ x: 1200, y: 600 }}>
+      </Table>
       <AddRoom visible={addRoom} close={setAddRoom} />
       <AddRoomAuto visible={addRoomAuto} close={setAddRoomAuto} />
+      <RoomDetail visible={roomDetail} close={setSetRoomDetail} />
     </div>
   );
 }

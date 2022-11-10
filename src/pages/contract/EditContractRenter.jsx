@@ -46,9 +46,6 @@ const ADD_RENTER = "manager/renter/add";
 const DELETE_RENTER = "manager/renter/remove/";
 const UPDATE_RENTER = "manager/renter/update/"
 const UPDATE_CONTRACT_RENTER = "manager/contract/room/update/";
-const ADD_ASSET = "manager/asset/add";
-const UPDATE_ASSET = "manager/asset/update/";
-const DELETE_ASSET = "manager/asset/delete/"
 const cardHeight = {
   height: 850
 }
@@ -111,7 +108,7 @@ const EditContractRenter = () => {
   const [assetId, setAssetId] = useState(-1);
   const [changeTab, setChangeTab] = useState("1");
   const [visibleSubmit, setVisibleSubmit] = useState(false);
-  const [contractStartDate, setContractStartDate] = useState(moment());
+  const [contractStartDate, setContractStartDate] = useState();
   const [contractDuration, setContractDuration] = useState();
   const [contractBillCycle, setContractBillCycle] = useState(1);
   const [displayFinish, setDisplayFinish] = useState([]);
@@ -176,6 +173,8 @@ const EditContractRenter = () => {
         }).filter((o, i) => o.represent === false));
         setRoom(listRoom);
         setRoomSelect(listRoom.find((obj, index) => obj.room_id === res.data.data?.room_id));
+        setContractStartDate(moment(res.data.data?.contract_start_date));
+        setContractDuration(res.data.data?.contract_term);
         form.setFieldsValue({
           contract_name: res.data.data?.contract_name,
           renter_name: res.data.data?.list_renter?.find((obj, index) => obj.represent === true)?.renter_full_name,
@@ -199,7 +198,6 @@ const EditContractRenter = () => {
           contract_deposit: res.data.data?.contract_deposit,
           serviceIndexInForm: Object.assign({}, res.data.data.list_hand_over_general_service?.map((obj, index) => { return { hand_over_service_index: obj.hand_over_general_service_index } }))
         });
-
       })
       .catch((error) => {
         console.log(error);
@@ -276,10 +274,9 @@ const EditContractRenter = () => {
                 editAssetForm.setFieldsValue({
                   asset_id: record.asset_id,
                   asset_name: record.asset_name,
-                  hand_over_asset_date_delivery:
-                    record.hand_over_asset_date_delivery !== null
-                      ? moment(record.hand_over_asset_date_delivery, dateFormatList)
-                      : "",
+                  hand_over_asset_date_delivery: record.hand_over_date_delivery !== null
+                    ? moment(record.hand_over_date_delivery, dateFormatList)
+                    : "",
                   hand_over_asset_quantity: record.hand_over_asset_quantity,
                   asset_type_show_name: record.asset_type_show_name,
                   // hand_over_asset_status: record.hand_over_asset_status,
@@ -495,7 +492,7 @@ const EditContractRenter = () => {
       address_more_detail: dataMem.address,
       represent: false,
     }
-    console.log(JSON.stringify(data));
+    // console.log(JSON.stringify(data));
     setLoading(true);
     await axios
       .put(UPDATE_RENTER + dataMem.member_id, data, {
@@ -625,6 +622,7 @@ const EditContractRenter = () => {
         }
       })
     };
+    console.log(JSON.stringify(data));
     await axios
       .put(
         UPDATE_CONTRACT_RENTER + contract_id,
@@ -778,7 +776,7 @@ const EditContractRenter = () => {
     // list_general_service: listGeneralService,
     list_hand_over_assets: dataAsset,
   });
-  console.log(dataMember);
+
   const onNext = async () => {
     try {
       if (changeTab === "1") {
@@ -825,7 +823,6 @@ const EditContractRenter = () => {
     }
   };
   // console.log(dataApartmentGroupSelect);
-
   return (
     <div className="contract">
       <Layout
@@ -1032,7 +1029,7 @@ const EditContractRenter = () => {
                                 </span>
                               }
                             >
-                              <TextArea rows={6} placeholder="Ghi chú" value={""} />
+                              <Input.TextArea maxLength={200} rows={6} placeholder="Ghi chú" value={""} />
                             </Form.Item>
                           </Card>
                         </Col>
@@ -1081,6 +1078,7 @@ const EditContractRenter = () => {
                               ]}
                             >
                               <Select
+                                disabled
                                 onChange={(e) => {
                                   form.setFieldsValue({
                                     room_floor: "",
@@ -1136,14 +1134,16 @@ const EditContractRenter = () => {
                               ]}
                             >
                               <Select
+                                disabled
                                 placeholder="Chọn tầng"
                                 optionFilterProp="children"
                                 onChange={(e) => {
-                                  setRoom(
-                                    dataApartmentGroupSelect?.list_rooms?.filter(
-                                      (data) => data.room_floor === e && data.contract_id === null
-                                    )
+                                  const listRoom = dataApartmentGroupSelect?.list_rooms?.filter(
+                                    (data) => data.room_floor === e && data.contract_id === null
                                   );
+                                  listRoom.push(dataContractById?.list_room?.find((obj, index) => obj.contract_id === parseInt(contract_id)));
+
+                                  setRoom(listRoom);
                                   setFloorRoom((pre) => {
                                     return { ...pre, room_floor: e };
                                   });
@@ -1178,6 +1178,7 @@ const EditContractRenter = () => {
                               ]}
                             >
                               <Select
+                                disabled
                                 showSearch
                                 filterOption={(input, option) => (option?.children ?? "").includes(input)}
                                 placeholder="Chọn phòng"
@@ -1195,7 +1196,7 @@ const EditContractRenter = () => {
                                 {room?.map((obj, index) => {
                                   return (
                                     <Select.Option key={index} value={obj.room_id}>
-                                      {obj.room_name}
+                                      {dataContractById?.room?.id === obj.room_id ? obj.room_name + ' (Phòng đang ở)' : obj.room_name}
                                     </Select.Option>
                                   );
                                 })}
@@ -1408,29 +1409,27 @@ const EditContractRenter = () => {
                                 min={0}
                               />
                             </Form.Item>
+                            <Row>
+                              <p>
+                                <i>
+                                  <b>Lưu ý:</b>
+                                  <br />
+                                  <b>- Chu kỳ thanh toán: </b> nếu bạn thu tiền 1 lần vào cuối tháng
+                                  thì bạn chọn là kỳ 30. Trường hợp có số lượng phòng nhiều, chia làm 2 đợt thu,
+                                  bạn dựa vào ngày vào của khách, ví dụ: vào từ ngày 1 đến 15 của tháng thì
+                                  gán kỳ 15; nếu vào từ ngày 16 đến 31 của tháng thì gán kỳ 30. Khi tính tiền phòng bạn sẽ tính
+                                  tiền theo kỳ.
+                                  <br />
+                                  <b>- Chu kỳ tính tiền: </b> là số tháng được tính trên mỗi hóa đơn.
+                                  <br />
+                                </i>
+                              </p>
+                              <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
+                            </Row>
                           </Card>
                         </Col>
                       </Row>
                     </div>
-                    <p>
-                      <i>
-                        <b>Lưu ý:</b>
-                        <br />
-                        - Kỳ thanh toán tùy thuộc vào từng khu nhà trọ, nếu khu trọ bạn thu tiền 1 lần vào cuối tháng
-                        thì bạn chọn là kỳ 30. Trường hợp khu nhà trọ bạn có số lượng phòng nhiều, chia làm 2 đợt thu,
-                        bạn dựa vào ngày vào của khách để gán kỳ cho phù hợp, ví dụ: vào từ ngày 1 đến 15 của tháng thì
-                        gán kỳ 15; nếu vào từ ngày 16 đến 31 của tháng thì gán kỳ 30. Khi tính tiền phòng bạn sẽ tính
-                        tiền theo kỳ.
-                        <br />
-                        - Tiền đặt cọc sẽ không tính vào doanh thu ở các báo cáo và thống kê doanh thu. Nếu bạn muốn
-                        tính vào doanh thu bạn ghi nhận vào trong phần thu/chi khác (phát sinh). Tiền đặt cọc sẽ được
-                        trừ ra khi tính tiền trả phòng.
-                        <br />
-                        - Chu kỳ tính tiền: là số tháng được tính trên mỗi hóa đơn.
-                        <br />
-                      </i>
-                    </p>
-                    <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
                   </Tabs.TabPane>
                   <Tabs.TabPane
                     tab={
@@ -1491,7 +1490,7 @@ const EditContractRenter = () => {
                                   controls={false}
                                   placeholder={
                                     String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
-                                      ? "Nhập chỉ số hiện tại"
+                                      ? "Nhập chỉ số"
                                       : "Số " +
                                       obj.service_type_name +
                                       " / " +
@@ -1502,7 +1501,7 @@ const EditContractRenter = () => {
                                   }
                                   addonAfter={
                                     String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
-                                      ? "Chỉ số hiện tại"
+                                      ? "Chỉ số "
                                       : obj.service_type_name
                                   }
                                   style={{ width: "100%" }}
@@ -1513,6 +1512,9 @@ const EditContractRenter = () => {
                           );
                         })}
                       </Col>
+                    </Row>
+                    <Row>
+                      <p><i>Các thông tin dịch vụ trên đã được ghi nhận : <b>{moment(dataContractById?.contract_start_date).format('DD-MM-YYYY')}</b></i></p>
                     </Row>
                     <Row>
                       <Col span={24}>

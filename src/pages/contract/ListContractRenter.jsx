@@ -209,6 +209,7 @@ const ListContractRenter = () => {
   //       console.log(error);
   //     });
   // };
+  console.log(dataSource);
   return (
     <div className="list-contract">
       <div className="list-contract-search">
@@ -361,7 +362,9 @@ const ListContractRenter = () => {
           {
             title: "Tên khách thuê",
             dataIndex: "list_renter",
-            render: (renter) => renter[0]?.renter_full_name,
+            render: (list_renter) => {
+              return list_renter?.find((obj, index) => obj?.represent === true)?.renter_full_name
+            },
           },
 
           {
