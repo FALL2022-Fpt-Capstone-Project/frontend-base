@@ -2,11 +2,14 @@ import React from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import "./contract.scss";
 import { Button, Layout } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusCircleOutlined } from "@ant-design/icons";
 import ListContractApartment from "./ListContractApartment";
 import "./contract.scss";
+import Breadcrumbs from "../../components/BreadCrumb ";
 const { Content, Sider, Header } = Layout;
-
+const fontSize = {
+  fontSize: 15
+}
 const ContractApartment = () => {
   return (
     <div className="contract">
@@ -22,7 +25,7 @@ const ContractApartment = () => {
         </Sider>
         <Layout className="site-layout">
           <Header className="layout-header">
-            <p className="header-title">Quản lý hợp đồng chung cư mini/căn hộ</p>
+            <p className="header-title">Quản lý hợp đồng đi thuê</p>
           </Header>
           <Content
             className="layout-content"
@@ -30,10 +33,11 @@ const ContractApartment = () => {
               margin: "10px 16px",
             }}
           >
+            <Breadcrumbs />
             <div className="btn-contract">
               <Button
                 type="primary"
-                icon={<PlusOutlined />}
+                icon={<PlusCircleOutlined style={fontSize} />}
                 size="middle"
                 className="button-add"
                 href="/contract-apartment/create"

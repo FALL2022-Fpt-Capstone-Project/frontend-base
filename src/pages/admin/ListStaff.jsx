@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Input, Table, Select, DatePicker, Tag, Row, Col, Button, Tabs, Form, Modal, Switch, Tooltip } from "antd";
 import axios from "../../api/axios";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import "./listStaff.scss";
 import { EditOutlined, EyeOutlined, SearchOutlined, UndoOutlined } from "@ant-design/icons";
 const { Search } = Input;
@@ -221,6 +221,10 @@ const ListStaff = () => {
       });
     setLoading(false);
   };
+  const location = useLocation();
+  const pathSnippets = location.pathname.split("/").filter((i) => i);
+
+  console.log(pathSnippets);
   return (
     <div className="list-staff">
       <div className="list-staff-search">
@@ -320,7 +324,8 @@ const ListStaff = () => {
                   </Form.Item>
                   <Form.Item name="deactive" style={{ width: "500px", marginTop: "30px" }}>
                     <Col className="gutter-row" span={24}>
-                      <Switch onChange={deactiveChange} /> <span>Nhân viên đã nghỉ việc</span>
+                      <Switch onChange={deactiveChange} />{" "}
+                      {deactive ? <span>Nhân viên đã nghỉ việc</span> : <span>Nhân viên đang việc</span>}
                     </Col>
                   </Form.Item>
                 </Row>
@@ -432,7 +437,7 @@ const ListStaff = () => {
               return (
                 <>
                   <Tooltip title="Chỉnh sửa">
-                    <NavLink to={`/update-staff/${record.account_id}`}>
+                    <NavLink to={`/manage-staff/update-staff/${record.account_id}`}>
                       <EditOutlined style={{ fontSize: "20px", marginRight: "10px" }} />
                     </NavLink>
                   </Tooltip>
@@ -546,7 +551,7 @@ const ListStaff = () => {
         </div>
         <div style={{ marginLeft: "3%" }}>
           <Button onClick={handleCancel}>Quay lại</Button>
-          <NavLink to={`/update-staff/${id}`}>
+          <NavLink to={`/manage-staff/update-staff/${id}`}>
             <Button
               type="primary"
               icon={<EditOutlined />}

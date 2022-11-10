@@ -64,11 +64,7 @@ const DetailStaff = () => {
           >
             <p className="header-title">Thông tin cá nhân</p>
           </Header>
-          <Content
-            style={{
-              margin: "10px 16px",
-            }}
-          >
+          <Content className="layout-content">
             <Button type="primary" onClick={showModal}>
               Open Modal
             </Button>
@@ -245,13 +241,13 @@ const DetailStaff = () => {
 
             <div style={{ marginLeft: "3%" }}>
               {checkRole === "ROLE_ADMIN" ? (
-                <Link to="/manage-admin">
+                <Link to="/manage-staff">
                   <Button>Quay lại</Button>
                 </Link>
               ) : (
                 <Button onClick={goBack}>Quay lại</Button>
               )}
-              <NavLink to={`/update-staff/${id}`}>
+              <NavLink to={`/manage-staff/update-staff/${id}`}>
                 <Button
                   type="primary"
                   icon={<EditOutlined />}

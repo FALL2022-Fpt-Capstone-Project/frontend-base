@@ -1,7 +1,7 @@
-import { Button, Form, Input, InputNumber, Modal, Select } from 'antd';
+import { Button, Col, Form, Input, InputNumber, Modal, Row, Select } from 'antd';
 import React, { useState } from 'react';
 
-function AddRoom({ visible, close, data }) {
+function AddRoomAuto({ visible, close, data }) {
 
     const onFinish = (e) => {
         close(false);
@@ -12,7 +12,7 @@ function AddRoom({ visible, close, data }) {
     return (
         <>
             <Modal
-                title="Thêm mới phòng"
+                title="Thêm mới phòng tự động"
                 open={visible}
                 onOk={() => {
                     close(false);
@@ -75,7 +75,7 @@ function AddRoom({ visible, close, data }) {
                         labelCol={{ span: 24 }}
                         label={
                             <span>
-                                <b>Chọn tầng: </b>
+                                <b>Số lượng tầng: </b>
                             </span>
                         }
                         rules={[
@@ -86,6 +86,7 @@ function AddRoom({ visible, close, data }) {
                         ]}
                     >
                         <Select
+                            disabled
                             placeholder="Chọn tầng"
                             options={[]}
                         />
@@ -96,25 +97,80 @@ function AddRoom({ visible, close, data }) {
                         labelCol={{ span: 24 }}
                         label={
                             <span>
-                                <b>Tên phòng : </b>
+                                <b>Số lượng phòng: </b>
                             </span>
                         }
                         rules={[
                             {
                                 required: true,
-                                message: "Vui lòng nhập tên phòng",
+                                message: "Vui lòng só lượng phòng",
                             },
                         ]}
                     >
-                        <Input placeholder='Nhập tên phòng' />
+                        <InputNumber
+                            style={{ width: "100%" }}
+                            controls={false}
+                            placeholder='Nhập số lượng phòng' />
                     </Form.Item>
+                    <Row>
+                        <Col span={12}>
+                            <Form.Item
+                                className="form-item"
+                                // name=""
+                                labelCol={{ span: 24 }}
+                                label={
+                                    <span>
+                                        <b>Tên phòng quy ước: </b>
+                                    </span>
+                                }
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: "Vui lòng nhập tên phòng",
+                                    },
+                                ]}
+                            >
+                                <Input placeholder='Nhập tên phòng' />
+                            </Form.Item>
+                        </Col>
+                        <Col span={11} offset={1}>
+                            <Form.Item
+                                className="form-item"
+                                // name=""
+                                labelCol={{ span: 24 }}
+                                label={
+                                    <span>
+                                        <b>Số phòng quy ước: </b>
+                                    </span>
+                                }
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: "Vui lòng nhập số phòng",
+                                    },
+                                ]}
+                            >
+                                <InputNumber
+                                    style={{ width: "100%" }}
+                                    controls={false}
+                                    placeholder='Nhập số phòng' />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col span={24}>
+                            <p><i><b>Ví dụ:</b> Số lượng tầng: <b>5</b>, Số lượng phòng: <b>25</b>, Tên phòng: <b>A</b>, Số phòng: <b>101</b>.
+                                Phòng sẽ tự động được tạo lần lượt là: <b>A101, A102, A103 ... A505</b>
+                            </i></p>
+                        </Col>
+                    </Row>
                     <Form.Item
                         className="form-item"
                         // name=""
                         labelCol={{ span: 24 }}
                         label={
                             <span>
-                                <b>Giá phòng: </b>
+                                <b>Giá phòng trung bình: </b>
                             </span>
                         }
                         rules={[
@@ -163,7 +219,7 @@ function AddRoom({ visible, close, data }) {
                         labelCol={{ span: 24 }}
                         label={
                             <span>
-                                <b>Diện tích phòng: </b>
+                                <b>Diện tích phòng trung bình: </b>
                             </span>
                         }
                         rules={[
@@ -185,4 +241,4 @@ function AddRoom({ visible, close, data }) {
     );
 }
 
-export default AddRoom;
+export default AddRoomAuto;

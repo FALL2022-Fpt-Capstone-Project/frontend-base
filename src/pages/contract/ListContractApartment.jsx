@@ -192,7 +192,7 @@ const ListContractApartment = () => {
               </Col>
             </Row>
             <Row>
-              <Col span={6}>
+              <Col span={6} >
                 <Form.Item name="date">
                   <Row style={style}>
                     <label>Ngày bắt đầu lập hợp đồng</label>
@@ -257,7 +257,7 @@ const ListContractApartment = () => {
                 </Button>
                 <Button
                   icon={<UndoOutlined />}
-                  // onClick={resetForm}
+                // onClick={resetForm}
                 >
                   Đặt lại
                 </Button>

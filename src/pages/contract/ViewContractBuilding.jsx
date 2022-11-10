@@ -70,7 +70,7 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
       key: "asset_id",
     },
     {
-      title: "Loại",
+      title: "Nhóm tài sản",
       dataIndex: "asset_type_show_name",
       filters: [
         { text: "Phòng ngủ", value: "Phòng ngủ" },
@@ -348,7 +348,7 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                   <Row>
                     <Col span={3}>
                       <FilterOutlined style={{ fontSize: "150%" }} />
-                      Loại tài sản:
+                      Nhóm tài sản:
                     </Col>
                     <Col span={21}>
                       <Row>
