@@ -69,6 +69,7 @@ function Service(props) {
         setDataApartmentGroup(res.data.data);
         apartmentGroupById(res.data.data[0].group_id);
         selectDefault.setFieldsValue({ selectApartment: res.data.data[0].group_id });
+        setGroupIdSelect(res.data.data[0].group_id);
       })
       .catch((error) => {
         console.log(error);
@@ -204,6 +205,7 @@ function Service(props) {
         }
       )
       .then((res) => {
+        console.log(res);
         notification.success({
           message: "Thêm mới dịch vụ thành công",
           placement: "top",
@@ -333,9 +335,10 @@ function Service(props) {
         apartmentGroupById(groupIdSelect);
       })
       .catch((error) => {
+        // console.log(error.response.data.data);
         notification.error({
           message: "Thêm mới nhanh dịch vụ thất bại",
-          description: "Vui lòng kiểm tra lại thông tin dịch vụ",
+          description: error.response.data.data,
           placement: "top",
           duration: 3,
         });

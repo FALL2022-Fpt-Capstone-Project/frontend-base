@@ -86,6 +86,7 @@ function AddRoomAuto({ visible, close, data }) {
                         ]}
                     >
                         <Select
+                            disabled
                             placeholder="Chọn tầng"
                             options={[]}
                         />

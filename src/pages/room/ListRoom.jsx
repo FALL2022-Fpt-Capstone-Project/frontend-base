@@ -75,16 +75,20 @@ function ListRoom(props) {
   ];
   const options = [
     {
-      label: "Chung cư victory",
+      label: "Chọn tất cả",
       value: 1,
     },
     {
-      label: "Trọ xanh",
+      label: "Chung cư victory",
       value: 2,
     },
     {
-      label: "Chung cư Văn Phú",
+      label: "Trọ xanh",
       value: 3,
+    },
+    {
+      label: "Chung cư Văn Phú",
+      value: 4,
     },
   ];
 
@@ -211,16 +215,23 @@ function ListRoom(props) {
         </Col>
         <Col span={6} offset={4}>
           <Select
-            mode="multiple"
-            allowClear
+            showSearch
+            optionFilterProp="children"
+            filterOption={(input, option) =>
+              (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+            }
             style={{
               width: '100%',
             }}
             placeholder="Chọn tòa nhà để hiển thị dữ liệu"
-            defaultValue={["Trọ xanh"]}
             // onChange={handleChange}
             options={options}
-          />
+          >
+            {/* <Select.Option>Chọn tất cả</Select.Option>
+            {options?.map((obj, index) => {
+              return <Select.Option value={obj.value}>{obj.label}</Select.Option>
+            })} */}
+          </Select>
         </Col>
       </Row>
       <Row>
