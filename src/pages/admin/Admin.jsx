@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Button, Layout } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusCircleOutlined } from "@ant-design/icons";
 import Sidebar from "../../components/sidebar/Sidebar";
 import "./admin.scss";
 import ListStaff from "./ListStaff";
 import { Link } from "react-router-dom";
-import BreadCrumb from "../../components/BreadCrumb ";
 import Breadcrumbs from "../../components/BreadCrumb ";
 
 const { Content, Sider, Header } = Layout;
@@ -31,7 +30,7 @@ const Admin = () => {
               <Breadcrumbs />
               <div>
                 <Link to="/manage-staff/create-staff">
-                  <Button type="primary" icon={<PlusOutlined />} size="middle" className="button-add">
+                  <Button type="primary" icon={<PlusCircleOutlined />} size="middle" className="button-add">
                     Tạo mới
                   </Button>
                 </Link>

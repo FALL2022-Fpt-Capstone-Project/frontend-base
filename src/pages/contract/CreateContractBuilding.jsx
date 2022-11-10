@@ -11,7 +11,7 @@ import {
   UserOutlined,
   AuditOutlined,
   DollarOutlined,
-  HomeOutlined,
+  HomeOutlined
 } from "@ant-design/icons";
 import moment from "moment";
 import {
@@ -70,7 +70,7 @@ const floorNumber = [];
 for (let i = 1; i <= 20; i++) {
   floorNumber.push({
     name: `${i} Tầng`,
-    value: i,
+    value: i
   });
 }
 
@@ -80,6 +80,7 @@ const dataFilter = {
 };
 
 const CreateContractBuilding = () => {
+
   const [listAssetType, setListAssetType] = useState([]);
   const navigate = useNavigate();
   const [searched, setSearched] = useState("");
@@ -130,7 +131,7 @@ const CreateContractBuilding = () => {
       key: "asset_id",
     },
     {
-      title: "Loại",
+      title: "Nhóm tài sản",
       dataIndex: "asset_type_show_name",
       filters: [
         { text: "Phòng ngủ", value: "Phòng ngủ" },
@@ -405,11 +406,11 @@ const CreateContractBuilding = () => {
 
   const onFinishAddService = (e) => {
     console.log(e);
-  };
+  }
 
   const onFinishAddServiceFail = (e) => {
     console.log(e);
-  };
+  }
   const onCheckAllChange = (e) => {
     setApartmentFloor(e.target.checked ? numberOfFloor : []);
     setIndeterminate(false);
@@ -479,17 +480,14 @@ const CreateContractBuilding = () => {
                 id="create-contract"
               >
                 <Tabs activeKey={changeTab} defaultActiveKey="1">
-                  <Tabs.TabPane tab={<span style={{ fontSize: "17px" }}>1. Thông tin chung</span>} key="1">
+                  <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>1. Thông tin chung</span>} key="1">
                     <Row>
                       <Col span={12}>
                         <Row>
-                          <Tag color="blue" style={{ wordBreak: "break-all", whiteSpace: "normal", height: "auto" }}>
+                          <Tag color="blue" style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}>
                             <div style={{ overflow: "auto" }}>
                               <h3>
-                                <UserOutlined style={{ fontSize: "130%" }} />
-                                <span style={{ fontSize: "15px" }}>
-                                  <b> Thông tin người cho thuê </b>
-                                </span>
+                                <UserOutlined style={{ fontSize: '130%' }} /><span style={{ fontSize: '15px' }}><b> Thông tin người cho thuê </b></span>
                               </h3>
                             </div>
                           </Tag>
@@ -584,12 +582,10 @@ const CreateContractBuilding = () => {
                           </Form.Item>
                         </Row>
                         <Row>
-                          <Tag color="blue" style={{ wordBreak: "break-all", whiteSpace: "normal", height: "auto" }}>
+                          <Tag color="blue" style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}>
                             <h3>
-                              <AuditOutlined style={{ fontSize: "130%" }} />
-                              <span style={{ fontSize: "15px" }}>
-                                <b> Thông tin về hợp đồng </b>
-                              </span>
+                              <AuditOutlined style={{ fontSize: '130%' }} />
+                              <span style={{ fontSize: '15px' }}><b> Thông tin về hợp đồng </b></span>
                             </h3>
                           </Tag>
                           <Form.Item
@@ -598,14 +594,14 @@ const CreateContractBuilding = () => {
                             labelCol={{ span: 24 }}
                             label={
                               <span>
-                                <b>Tên chung cư mini/căn hộ: </b>
+                                <b>Tên chung cư mini/căn hộ:  </b>
                               </span>
                             }
                             rules={[
                               {
                                 required: true,
                                 message: "Vui lòng chọn tầng",
-                                whitespace: true,
+                                whitespace: true
                               },
                             ]}
                           >
@@ -688,10 +684,16 @@ const CreateContractBuilding = () => {
                             <Select
                               placeholder="Thời hạn hợp đồng"
                               onChange={(e) => {
-                                console.log();
+                                console.log()
                                 form.setFieldsValue({
-                                  contract_end_date: moment(contractStartDate.add(e, "M"), dateFormatList),
-                                  contract_start_date: moment(contractStartDate.add(-e, "M"), dateFormatList),
+                                  contract_end_date: moment(
+                                    contractStartDate.add(e, "M"),
+                                    dateFormatList
+                                  ),
+                                  contract_start_date: moment(
+                                    contractStartDate.add(-e, "M"),
+                                    dateFormatList
+                                  ),
                                 });
                               }}
                             >
@@ -717,9 +719,7 @@ const CreateContractBuilding = () => {
                             ]}
                           >
                             <DatePicker
-                              onChange={(e) => {
-                                setContractStartDate(e);
-                              }}
+                              onChange={(e) => { setContractStartDate(e) }}
                               allowClear={false}
                               style={{ width: "100%" }}
                               placeholder="Ngày vào ở"
@@ -748,12 +748,10 @@ const CreateContractBuilding = () => {
                       </Col>
                       <Col span={12}>
                         <Row>
-                          <Tag color="blue" style={{ wordBreak: "break-all", whiteSpace: "normal", height: "auto" }}>
+                          <Tag color="blue" style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}>
                             <h3>
-                              <HomeOutlined style={{ fontSize: "130%" }} />
-                              <span style={{ fontSize: "15px" }}>
-                                <b> Thông tin tầng và phòng </b>
-                              </span>
+                              <HomeOutlined style={{ fontSize: '130%' }} />
+                              <span style={{ fontSize: '15px' }}><b> Thông tin tầng và phòng </b></span>
                             </h3>
                           </Tag>
                           <Form.Item
@@ -772,30 +770,26 @@ const CreateContractBuilding = () => {
                               },
                             ]}
                           >
-                            <Select
-                              onChange={(e) => {
-                                setCheckAll(false);
-                                setNumberOfFloor([]);
-                                setApartmentFloor([]);
-                                setSelectFloorNumber(e);
-                                setDisplayFloor(false);
-                              }}
-                              placeholder="Số lượng tầng"
-                            >
+                            <Select onChange={(e) => {
+                              setCheckAll(false);
+                              setNumberOfFloor([]);
+                              setApartmentFloor([]);
+                              setSelectFloorNumber(e);
+                              setDisplayFloor(false);
+                            }} placeholder="Số lượng tầng">
                               {floorNumber?.map((obj, index) => {
-                                return <Select.Option value={obj.value}>{obj.name}</Select.Option>;
+                                return <Select.Option value={obj.value}>{obj.name}</Select.Option>
                               })}
                             </Select>
                           </Form.Item>
                           <Row>
                             <Checkbox
-                              checked={displayFloor}
-                              style={{ width: "100%" }}
+                              checked={displayFloor} style={{ width: "100%" }}
                               disabled={selectFloorNumber === 0 ? true : false}
                               onChange={(e) => {
                                 if (e.target.checked) {
                                   for (let i = 1; i <= selectFloorNumber; i++) {
-                                    setNumberOfFloor((pre) => [...pre, i]);
+                                    setNumberOfFloor(pre => [...pre, i]);
                                   }
                                   setDisplayFloor(true);
                                 } else {
@@ -804,13 +798,13 @@ const CreateContractBuilding = () => {
                                   setCheckAll(false);
                                   setDisplayFloor(false);
                                 }
-                              }}
-                            >
+
+                              }}>
                               Chọn tầng thuê và nhập số lượng phòng mỗi tầng
                             </Checkbox>
                           </Row>
                           <Form.Item
-                            style={displayFloor ? { display: "none" } : { display: "block" }}
+                            style={displayFloor ? { display: 'none' } : { display: 'block' }}
                             className="form-item"
                             name="contract_deposit"
                             labelCol={{ span: 24 }}
@@ -828,20 +822,12 @@ const CreateContractBuilding = () => {
                               min={0}
                             />
                           </Form.Item>
-                          <Row
-                            gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
-                            style={!displayFloor ? { display: "none" } : { display: "contents" }}
-                          >
+                          <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} style={!displayFloor ? { display: 'none' } : { display: 'contents' }}>
                             <Col span={24}>
                               <Row>
                                 <Col span={16}>
-                                  <span>
-                                    <b>Chọn các tầng:</b> <br />
-                                    <Checkbox
-                                      indeterminate={indeterminate}
-                                      onChange={onCheckAllChange}
-                                      checked={checkAll}
-                                    >
+                                  <span><b>Chọn các tầng:</b> <br />
+                                    <Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>
                                       Chọn tất cả:
                                     </Checkbox>
                                     <Divider />
@@ -851,11 +837,7 @@ const CreateContractBuilding = () => {
                               <Row>
                                 <Col span={24}>
                                   <Form.Item className="form-item" labelCol={{ span: 24 }}>
-                                    <Checkbox.Group
-                                      options={numberOfFloor}
-                                      value={apartmentFloor}
-                                      onChange={onChangeSelectFloor}
-                                    />
+                                    <Checkbox.Group options={numberOfFloor} value={apartmentFloor} onChange={onChangeSelectFloor} />
                                   </Form.Item>
                                 </Col>
                               </Row>
@@ -867,8 +849,10 @@ const CreateContractBuilding = () => {
                                         <span>Tầng {obj}</span>
                                         <InputNumber
                                           onChange={(e) => {
-                                            if (!floorAndRoom.find((o, i) => o.floor === obj)) {
-                                              setFloorAndRoom((pre) => [...pre, { floor: obj, number_of_room: e }]);
+                                            if (!floorAndRoom.find(
+                                              (o, i) => o.floor === obj
+                                            )) {
+                                              setFloorAndRoom(pre => [...pre, { floor: obj, number_of_room: e }]);
                                             } else {
                                               setFloorAndRoom((pre) => {
                                                 return pre.map((o, i) => {
@@ -891,18 +875,13 @@ const CreateContractBuilding = () => {
                                         />
                                       </Col>
                                     </>
-                                  );
+                                  )
                                 })}
                               </Row>
                             </Col>
                           </Row>
                           <br />
-                          <p>
-                            <i>
-                              Hệ thống sẽ tự động tạo phòng theo số lượng bạn nhập bên trên để tiết kiệm thời gian việc
-                              nhập dữ liệu cho từng phòng
-                            </i>
-                          </p>
+                          <p><i>Hệ thống sẽ tự động tạo phòng theo số lượng bạn nhập bên trên để tiết kiệm thời gian việc nhập dữ liệu cho từng phòng</i></p>
                           <Form.Item
                             className="form-item"
                             name="contract_deposit"
@@ -977,12 +956,10 @@ const CreateContractBuilding = () => {
                           </Form.Item>
                         </Row>
                         <Row>
-                          <Tag color="blue" style={{ wordBreak: "break-all", whiteSpace: "normal", height: "auto" }}>
+                          <Tag color="blue" style={{ wordBreak: 'break-all', whiteSpace: 'normal', height: 'auto' }}>
                             <h3>
-                              <DollarOutlined style={{ fontSize: "130%" }} />
-                              <span style={{ fontSize: "15px" }}>
-                                <b> Thông tin giá trị hợp đồng </b>
-                              </span>
+                              <DollarOutlined style={{ fontSize: '130%' }} />
+                              <span style={{ fontSize: '15px' }}><b> Thông tin giá trị hợp đồng </b></span>
                             </h3>
                           </Tag>
                           <Form.Item
@@ -1053,7 +1030,7 @@ const CreateContractBuilding = () => {
                       </Col>
                     </Row>
                   </Tabs.TabPane>
-                  <Tabs.TabPane tab={<span style={{ fontSize: "17px" }}>2. Dịch vụ</span>} key="2">
+                  <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>2. Dịch vụ</span>} key="2">
                     <Row>
                       <Col span={23}>
                         <Form.Item className="form-item" name="list_general_service" labelCol={{ span: 24 }}>
@@ -1068,8 +1045,7 @@ const CreateContractBuilding = () => {
                         <Button
                           type="primary"
                           style={{ marginBottom: "1%", float: "left" }}
-                          icon={<PlusCircleOutlined style={{ fontSize: 15 }} />}
-                        >
+                          icon={<PlusCircleOutlined style={{ fontSize: 15 }} />} >
                           Thêm mới nhanh
                         </Button>
                       </Col>
@@ -1077,10 +1053,7 @@ const CreateContractBuilding = () => {
                     <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                       <Col className="gutter-row" span={20}>
                         <p>
-                          <i>
-                            Thêm mới nhanh các dịch vụ cơ bản (điện, nước, internet, xe) giúp việc nhập dữ liệu nhanh
-                            hơn
-                          </i>
+                          <i>Thêm mới nhanh các dịch vụ cơ bản (điện, nước, internet, xe) giúp việc nhập dữ liệu nhanh hơn</i>
                         </p>
                       </Col>
                       <Col className="gutter-row" span={4}>
@@ -1116,32 +1089,23 @@ const CreateContractBuilding = () => {
                       <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
                     </Row>
                   </Tabs.TabPane>
-                  <Tabs.TabPane tab={<span style={{ fontSize: "17px" }}>3. Tài sản bàn giao</span>} key="3">
+                  <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>3. Tài sản bàn giao</span>} key="3">
                     <Row>
                       <Col span={24}>
                         <Form.Item className="form-item" name="list_hand_over_assets" labelCol={{ span: 24 }}>
                           <p>
                             <h3>
-                              <b>Thông tin tài sản bàn giao</b>
+                              <b>
+                                Thông tin tài sản bàn giao
+                              </b>
                             </h3>
                           </p>
                         </Form.Item>
                         <Row>
-                          <Button
-                            icon={<PlusCircleOutlined style={{ fontSize: 15 }} />}
-                            type="primary"
-                            style={{ marginBottom: "1%" }}
-                          >
-                            Thêm mới nhanh
-                          </Button>
+                          <Button icon={<PlusCircleOutlined style={{ fontSize: 15 }} />} type="primary" style={{ marginBottom: '1%' }}>Thêm mới nhanh</Button>
                         </Row>
                         <Row>
-                          <p>
-                            <i>
-                              Thêm mới nhanh các tài sản cơ bản (điều hòa, giường tủ, nóng lạnh,...) giúp việc nhập dữ
-                              liệu nhanh hơn
-                            </i>
-                          </p>
+                          <p><i>Thêm mới nhanh các tài sản cơ bản (điều hòa, giường tủ, nóng lạnh,...) giúp việc nhập dữ liệu nhanh hơn</i></p>
                         </Row>
                         <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                           <Col>
@@ -1161,11 +1125,8 @@ const CreateContractBuilding = () => {
                           <Col span={22}>
                             <Row>
                               <FilterOutlined style={{ fontSize: "150%" }} />
-                              <p>
-                                <b>Loại tài sản: </b>
-                              </p>
-                              <Checkbox.Group
-                                style={{ marginLeft: "1%" }}
+                              <p><b>Nhóm tài sản: </b></p>
+                              <Checkbox.Group style={{ marginLeft: '1%' }}
                                 options={listAssetType?.map((obj, index) => {
                                   return obj.asset_type_show_name;
                                 })}
@@ -1219,7 +1180,7 @@ const CreateContractBuilding = () => {
                 </Tabs>
               </Form>
               <Button
-                style={changeTab === "1" ? { display: "none" } : { display: "inline", marginRight: "0.5%" }}
+                style={changeTab === "1" ? { display: "none" } : { display: "inline", marginRight: '0.5%' }}
                 type="default"
                 onClick={() => {
                   setChangeTab((pre) => {
@@ -1370,17 +1331,17 @@ const CreateContractBuilding = () => {
                     labelCol={{ span: 24 }}
                     label={
                       <span>
-                        <b>Loại tài sản: </b>
+                        <b>Nhóm tài sản: </b>
                       </span>
                     }
                     rules={[
                       {
                         required: true,
-                        message: "Vui lòng chọn loại tài sản",
+                        message: "Vui lòng chọn nhóm tài sản",
                       },
                     ]}
                   >
-                    <Select placeholder="Chọn loại tài sản">
+                    <Select placeholder="Chọn nhóm tài sản">
                       {listAssetType?.map((obj, index) => {
                         return (
                           <Select.Option value={obj.asset_type_show_name}>{obj.asset_type_show_name}</Select.Option>
@@ -1518,17 +1479,17 @@ const CreateContractBuilding = () => {
                     labelCol={{ span: 24 }}
                     label={
                       <span>
-                        <b>Loại tài sản: </b>
+                        <b>Nhóm tài sản: </b>
                       </span>
                     }
                     rules={[
                       {
                         required: true,
-                        message: "Vui lòng chọn loại tài sản",
+                        message: "Vui lòng chọn Nhóm tài sản",
                       },
                     ]}
                   >
-                    <Select placeholder={"Loại tài sản"}>
+                    <Select placeholder={"Nhóm tài sản"}>
                       {listAssetType?.map((obj, index) => {
                         return (
                           <Select.Option value={obj.asset_type_show_name}>{obj.asset_type_show_name}</Select.Option>

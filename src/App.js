@@ -15,7 +15,6 @@ import CreateStaff from "./pages/admin/CreateStaff";
 import DetailStaff from "./pages/admin/DetailStaff";
 import UpdateStaff from "./pages/admin/UpdateStaff";
 import Service from "./pages/service/Service";
-import ServiceSetting from "./pages/service/ServiceSetting";
 import EditContractRenter from "./pages/contract/EditContractRenter";
 import CreateContractBuilding from "./pages/contract/CreateContractBuilding";
 const ROLES = {
@@ -51,7 +50,7 @@ const App = () => {
           <Route path="contract-renter/create" element={<CreateContractRenter />} />
         </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
-          <Route path="contract-renter/edit/:contract_id" element={<EditContractRenter />} />
+          <Route path="contract-renter/edit/:contract_id/group/:group_id" element={<EditContractRenter />} />
         </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
           <Route path="contract-apartment/create" element={<CreateContractBuilding />} />
@@ -70,7 +69,6 @@ const App = () => {
         </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
           <Route path="service" element={<Service />} />
-          <Route path="service/setting" element={<ServiceSetting />} />
         </Route>
       </Routes>
     </div>

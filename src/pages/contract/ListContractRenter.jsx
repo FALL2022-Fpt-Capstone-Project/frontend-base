@@ -69,6 +69,7 @@ const ListContractRenter = () => {
       });
     setLoading(false);
   };
+
   useEffect(() => {
     const getBuildingFilter = async () => {
       setLoading(true);
@@ -282,8 +283,8 @@ const ListContractRenter = () => {
                 </Row>
               </Row>
               <Row style={{ marginBottom: "20px" }}>
-                <Col offset={10}>
-                  <Row>
+                <Col span={24}>
+                  <Row justify="center">
                     <Button
                       type="primary"
                       icon={<SearchOutlined />}
@@ -306,6 +307,7 @@ const ListContractRenter = () => {
       <Table
         bordered
         dataSource={dataSource}
+        scroll={{ x: 1500, y: 600 }}
         columns={[
           {
             title: "Tên khách thuê",
@@ -390,7 +392,7 @@ const ListContractRenter = () => {
                     <EditOutlined
                       className="icon"
                       onClick={() => {
-                        navigate(`/contract-renter/edit/${record.contract_id}`);
+                        navigate(`/contract-renter/edit/${record.contract_id}/group/${record.group_id}`);
                       }}
                     />
                   </Tooltip>

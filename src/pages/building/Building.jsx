@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import "./building.scss";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusCircleOutlined } from "@ant-design/icons";
 import { Button, Layout, Modal } from "antd";
 import CreateBuilding from "./CreateBuilding";
 import ListBuilding from "./ListBuilding";
@@ -45,7 +45,13 @@ const Building = () => {
           >
             <Breadcrumbs />
             <div>
-              <Button type="primary" icon={<PlusOutlined />} size="middle" onClick={showModal} className="button-add">
+              <Button
+                type="primary"
+                icon={<PlusCircleOutlined />}
+                size="middle"
+                onClick={showModal}
+                className="button-add"
+              >
                 Thêm chung cư
               </Button>
             </div>

@@ -1,70 +1,52 @@
 import "./room.scss";
 import {
-  Modal,
   Table,
   Input,
   Button,
-  DatePicker,
   Form,
   InputNumber,
   Select,
-  Switch,
   Tag,
-  Popover,
   Row,
   Col,
   Checkbox,
   Tabs,
   Statistic,
-  Tooltip,
-  Card,
   Divider,
+  Tooltip,
 } from "antd";
 import {
-  MoreOutlined,
-  FilterOutlined,
+  EyeOutlined,
+  AuditOutlined,
   SearchOutlined,
   UndoOutlined,
-  QuestionCircleTwoTone,
-  PlusOutlined,
-  ArrowRightOutlined,
-  AuditOutlined,
-  DollarOutlined,
-  SettingOutlined,
-  DeleteOutlined,
+  PlusCircleOutlined,
+  DeleteOutlined
 } from "@ant-design/icons";
 import React, { useState } from "react";
+import AddRoom from "./AddRoom";
+import AddRoomAuto from "./AddRoomAuto";
 const style = {
   marginBottom: "5%",
 };
+const textSize = {
+  fontSize: 15
+}
+const iconSize = {
+  fontSize: '130%',
+  marginRight: '8%',
+}
 
 function ListRoom(props) {
   const [form] = Form.useForm();
-  const optionFilterRoom = [
-    {
-      label: "Phòng đang ở",
-      value: "1",
-    },
-    {
-      label: "Phòng trống",
-      value: "2",
-    },
-    {
-      label: "Cọc giữ chỗ",
-      value: "3",
-    },
-  ];
-  const optionPaymentCycle = [
-    {
-      label: "Kỳ 15",
-      value: 15,
-    },
-    {
-      label: "Kỳ 30",
-      value: 30,
-    },
-  ];
-
+  const [addRoom, setAddRoom] = useState(false);
+  const [addRoomAuto, setAddRoomAuto] = useState(false);
+  const onClickAddRoom = (e) => {
+    setAddRoom(true);
+  }
+  const onClickAddRoomAuto = (e) => {
+    setAddRoomAuto(true);
+  }
   const optionRoomStatus = [
     {
       label: "Đang ở",
@@ -73,10 +55,6 @@ function ListRoom(props) {
     {
       label: "Đang trống",
       value: 0,
-    },
-    {
-      label: "Đã cọc",
-      value: 2,
     },
   ];
   const renter = [
@@ -94,47 +72,23 @@ function ListRoom(props) {
       durationContract: "6 tháng",
       roomStatus: 1,
     },
-    {
-      index: 2,
-      groupName: "Trọ xanh",
-      roomName: "Phòng 202",
-      roomFloor: "Tầng 2",
-      roomNumberOfRenter: "0/5",
-      roomPrice: 3000000,
-      roomDeposit: 0,
-      roomSquare: "30m2",
-      billCycle: "",
-      paymentCycle: "",
-      durationContract: "6 tháng",
-      roomStatus: 0,
-    },
-    {
-      index: 3,
-      groupName: "Trọ tươi",
-      roomName: "Phòng 203",
-      roomFloor: "Tầng 2",
-      roomNumberOfRenter: "1/5",
-      roomPrice: 10000000,
-      roomDeposit: 10000000,
-      roomSquare: "30m2",
-      billCycle: "1 tháng",
-      paymentCycle: "Kỳ 30",
-      durationContract: "6 tháng",
-      roomStatus: 2,
-    },
   ];
   const options = [
     {
-      label: "Chung cư victory",
+      label: "Chọn tất cả",
       value: 1,
     },
     {
-      label: "Trọ xanh",
+      label: "Chung cư victory",
       value: 2,
     },
     {
-      label: "Chung cư Văn Phú",
+      label: "Trọ xanh",
       value: 3,
+    },
+    {
+      label: "Chung cư Văn Phú",
+      value: 4,
     },
   ];
 
@@ -166,7 +120,7 @@ function ListRoom(props) {
       key: "index",
       render: (roomPrice) => {
         return (
-          <span style={{ fontWeight: "bold" }}>
+          <span>
             {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(roomPrice)}
           </span>
         );
@@ -178,7 +132,7 @@ function ListRoom(props) {
       key: "index",
       render: (roomDeposit) => {
         return (
-          <span style={{ fontWeight: "bold" }}>
+          <span>
             {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(roomDeposit)}
           </span>
         );
@@ -190,22 +144,12 @@ function ListRoom(props) {
       key: "index",
     },
     {
-      title: "Chu kỳ thanh toán",
-      dataIndex: "paymentCycle",
-      key: "index",
-    },
-    {
-      title: "Chu kỳ tính tiền",
-      dataIndex: "billCycle",
-      key: "index",
-    },
-    {
       title: "Thời hạn hợp đồng",
       dataIndex: "durationContract",
       key: "index",
     },
     {
-      title: "Trạng thái phòng",
+      title: "Trạng thái",
       key: "index",
       dataIndex: "roomStatus",
       filters: [
@@ -232,60 +176,15 @@ function ListRoom(props) {
       render: (record) => {
         return (
           <>
-            <Popover
-              placement="left"
-              title="Thao tác"
-              content={
-                <>
-                  <Row>
-                    <Col span={24}>
-                      <Row>
-                        <Button
-                          style={{ marginBottom: "2%" }}
-                          icon={<ArrowRightOutlined style={{ fontSize: "130%" }} />}
-                        >
-                          Chi tiết phòng
-                        </Button>
-                      </Row>
-                      <Row>
-                        <Button style={{ marginBottom: "2%" }} icon={<AuditOutlined style={{ fontSize: "130%" }} />}>
-                          Hợp đồng mới
-                        </Button>
-                      </Row>
-                      <Row>
-                        <Button
-                          style={{ marginBottom: "2%", paddingRight: "22%" }}
-                          icon={<DollarOutlined style={{ fontSize: "130%" }} />}
-                        >
-                          Cọc giữ chỗ
-                        </Button>
-                      </Row>
-                      <Row>
-                        <Button
-                          href="/service"
-                          style={{ marginBottom: "2%" }}
-                          icon={<SettingOutlined style={{ fontSize: "130%" }} />}
-                        >
-                          Cài đặt dịch vụ
-                        </Button>
-                      </Row>
-                      <Row>
-                        <Button
-                          style={{ paddingRight: "25%" }}
-                          icon={<DeleteOutlined style={{ fontSize: "130%", color: "red" }} />}
-                          danger
-                        >
-                          Xóa phòng
-                        </Button>
-                      </Row>
-                    </Col>
-                  </Row>
-                </>
-              }
-              trigger="click"
-            >
-              <MoreOutlined style={{ fontSize: "180%", borderRadius: "50%", border: "1px solid black" }} />
-            </Popover>
+            <Tooltip title="Xem chi tiết">
+              <EyeOutlined style={iconSize} />
+            </Tooltip>
+            <Tooltip title="Lập hợp đồng phòng">
+              <AuditOutlined style={iconSize} />
+            </Tooltip>
+            <Tooltip title="Xóa phòng">
+              <DeleteOutlined style={{ fontSize: '130%', color: 'red' }} />
+            </Tooltip>
           </>
         );
       },
@@ -301,65 +200,76 @@ function ListRoom(props) {
       }}
     >
       <Row>
-        <Col span={7}>
-          <span style={{ fontSize: "16px", marginBottom: "0.5%" }}>Chọn tòa nhà để hiển thị dữ liệu </span>
+        <Col span={6} offset={18}>
+          <span style={textSize}>Chọn chung cư để hiển thị dữ liệu </span>
         </Col>
-        <Col span={4} offset={13}>
-          <Button type="primary" size="default" style={{ float: "right" }} icon={<PlusOutlined />}>
+      </Row>
+      <Row>
+        <Col span={14}>
+          <Button onClick={onClickAddRoomAuto} type="primary" size="default" style={{ marginBottom: "1%", marginRight: "1%", float: "left" }} icon={<PlusCircleOutlined style={textSize} />}>
+            Thêm mới phòng nhanh
+          </Button>
+          <Button onClick={onClickAddRoom} type="primary" size="default" style={{ marginBottom: "1%", float: "left" }} icon={<PlusCircleOutlined style={textSize} />}>
             Thêm Phòng
           </Button>
         </Col>
+        <Col span={6} offset={4}>
+          <Select
+            showSearch
+            optionFilterProp="children"
+            filterOption={(input, option) =>
+              (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+            }
+            style={{
+              width: '100%',
+            }}
+            placeholder="Chọn tòa nhà để hiển thị dữ liệu"
+            // onChange={handleChange}
+            options={options}
+          >
+            {/* <Select.Option>Chọn tất cả</Select.Option>
+            {options?.map((obj, index) => {
+              return <Select.Option value={obj.value}>{obj.label}</Select.Option>
+            })} */}
+          </Select>
+        </Col>
       </Row>
-      <Row style={{ marginBottom: "2%" }}>
-        <Select
-          mode="multiple"
-          allowClear
-          style={{
-            width: 400,
-          }}
-          placeholder="Chọn tòa nhà để hiển thị dữ liệu"
-          defaultValue={["Trọ xanh"]}
-          // onChange={handleChange}
-          options={options}
-        />
+      <Row>
+        <Col>
+          <p>
+            <i>
+              <b>Thêm mới phòng nhanh: </b> các thông tin về phòng sẽ tự động được thêm vào giúp việc nhập dữ liệu nhanh hơn
+            </i>
+          </p>
+        </Col>
       </Row>
       <Row style={{ marginBottom: "2%" }} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-        <Col span={5}>
+        <Col span={8}>
           <Statistic
             title={
               <>
-                <span style={{ fontSize: "16px" }}>Tổng số phòng: </span>
+                <span style={textSize}>Tổng số phòng: </span>
               </>
             }
             value={50}
           />
         </Col>
-        <Col span={7}>
+        <Col span={8}>
           <Statistic
             title={
               <>
-                <span style={{ fontSize: "16px" }}>Tổng số phòng trống: </span>
-                <Button icon={<ArrowRightOutlined />} style={{ borderRadius: "50%" }}></Button>
+                <span style={textSize}>Tổng số phòng trống: </span>
+                {/* <Button icon={<ArrowRightOutlined />} style={{ borderRadius: "50%" }}></Button> */}
               </>
             }
             value={10}
           />
         </Col>
-        <Col span={6}>
+        <Col span={8}>
           <Statistic
             title={
               <>
-                <span style={{ fontSize: "16px" }}>Tổng số tiền cọc: </span>
-              </>
-            }
-            value={100000000}
-          />
-        </Col>
-        <Col span={6}>
-          <Statistic
-            title={
-              <>
-                <span style={{ fontSize: "16px" }}>Tổng số tiền phòng: </span>
+                <span style={textSize}>Tổng số tiền phòng: </span>
               </>
             }
             value={100000000}
@@ -381,7 +291,7 @@ function ListRoom(props) {
         </Tabs.TabPane>
         <Tabs.TabPane tab="Tìm kiếm nâng cao" key="2">
           <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-            <Col span={6}>
+            <Col span={8}>
               <Row style={style}>
                 <span>Tìm kiếm theo diện tích </span>
               </Row>
@@ -393,13 +303,8 @@ function ListRoom(props) {
               <Row style={style}>
                 <span>Tìm kiếm theo giá phòng </span>
               </Row>
-              {/* <Row>
-                                <Select placeholder="Chọn khoảng giá" style={{ width: '100%' }}>
-                                    <Select.Option>1.000.000đ - 10.000.0000đ</Select.Option>
-                                </Select>
-                            </Row> */}
               <Row gutter={12} style={{ marginTop: "1%" }}>
-                <Col span={12}>
+                <Col xs={24} xl={12} span={12}>
                   {/* <Row style={style}>Từ: </Row> */}
                   <InputNumber
                     formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
@@ -410,7 +315,7 @@ function ListRoom(props) {
                     controls={false}
                   />
                 </Col>
-                <Col span={12}>
+                <Col xs={24} xl={12} span={12}>
                   {/* <Row style={style}>Đến: </Row> */}
                   <InputNumber
                     formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
@@ -423,7 +328,7 @@ function ListRoom(props) {
                 </Col>
               </Row>
             </Col>
-            <Col span={6} offset={3}>
+            <Col span={8}>
               <Row style={style}>
                 <span>Số lượng người tốt đa / phòng </span>
               </Row>
@@ -443,27 +348,12 @@ function ListRoom(props) {
                 </Select>
               </Row>
             </Col>
-            <Col span={6} offset={3}>
+            <Col span={8}>
               <Row style={style}>
                 <span>Trạng thái phòng </span>
               </Row>
               <Row>
                 <Checkbox.Group style={{ marginBottom: "15%" }} options={optionRoomStatus}></Checkbox.Group>
-              </Row>
-              <Row style={style}>
-                <span>
-                  Chu kỳ thanh toán:
-                  <Tooltip
-                    color="#108ee9"
-                    placement="topLeft"
-                    title="Kỳ 15: Khách thuê vào từ ngày 1-15 Kỳ 30: Khách thuê vào từ ngày  16-31"
-                  >
-                    <QuestionCircleTwoTone style={{ fontSize: "130%" }} />
-                  </Tooltip>
-                </span>
-              </Row>
-              <Row>
-                <Checkbox.Group defaultValue={[15, 30]} options={optionPaymentCycle}></Checkbox.Group>
               </Row>
             </Col>
           </Row>
@@ -479,7 +369,9 @@ function ListRoom(props) {
           </Row>
         </Tabs.TabPane>
       </Tabs>
-      <Table bordered dataSource={dataSource} columns={columns} scroll={{ x: 1600, y: 800 }}></Table>
+      <Table bordered dataSource={dataSource} columns={columns} scroll={{ x: 1200, y: 600 }}></Table>
+      <AddRoom visible={addRoom} close={setAddRoom} />
+      <AddRoomAuto visible={addRoomAuto} close={setAddRoomAuto} />
     </div>
   );
 }
