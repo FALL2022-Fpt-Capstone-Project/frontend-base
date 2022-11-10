@@ -5,6 +5,8 @@ import Sidebar from "../../components/sidebar/Sidebar";
 import "./admin.scss";
 import ListStaff from "./ListStaff";
 import { Link } from "react-router-dom";
+import BreadCrumb from "../../components/BreadCrumb ";
+import Breadcrumbs from "../../components/BreadCrumb ";
 
 const { Content, Sider, Header } = Layout;
 const Admin = () => {
@@ -22,22 +24,13 @@ const Admin = () => {
             <Sidebar />
           </Sider>
           <Layout className="site-layout">
-            <Header
-              className="layout-header"
-              style={{
-                margin: "0 16px",
-              }}
-            >
+            <Header className="layout-header">
               <p className="header-title">Quản lý nhân viên</p>
             </Header>
-            <Content
-              className="layout-content"
-              style={{
-                margin: "10px 16px",
-              }}
-            >
+            <Content className="layout-content">
+              <Breadcrumbs />
               <div>
-                <Link to="/create-staff">
+                <Link to="/manage-staff/create-staff">
                   <Button type="primary" icon={<PlusOutlined />} size="middle" className="button-add">
                     Tạo mới
                   </Button>

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Input, Table, Select, DatePicker, Tag, Tabs, Button, Row, Col, Form, Switch } from "antd";
 import { EyeOutlined, EditOutlined, SearchOutlined, UndoOutlined } from "@ant-design/icons";
-import useAuth from "../../hooks/useAuth";
+import "./listContract.scss";
 import axios from "../../api/axios";
 const { Search } = Input;
-const LIST_CONTRACT_EXPIRED_URL = "manager/contract/get-contract/1";
+const LIST_CONTRACT_EXPIRED_URL = "";
 const LIST_BUILDING_FILTER = "manager/group/all";
 
 const { Option } = Select;

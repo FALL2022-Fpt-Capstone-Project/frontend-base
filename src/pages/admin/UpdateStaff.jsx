@@ -5,6 +5,7 @@ import axios from "../../api/axios";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../../components/sidebar/Sidebar";
 import useAuth from "../../hooks/useAuth";
+import Breadcrumbs from "../../components/BreadCrumb ";
 const { Content, Sider, Header } = Layout;
 const { Option } = Select;
 
@@ -97,7 +98,7 @@ const UpdateStaff = () => {
       })
       .then((res) => {
         if (roleInfo === "ROLE_ADMIN") {
-          navigate("/manage-admin");
+          navigate("/manage-staff");
         } else {
           navigate("/home");
         }
@@ -134,19 +135,11 @@ const UpdateStaff = () => {
           <Sidebar />
         </Sider>
         <Layout className="site-layout">
-          <Header
-            className="layout-header"
-            style={{
-              margin: "0 16px",
-            }}
-          >
+          <Header className="layout-header">
             <p className="header-title">Chỉnh sửa thông tin nhân viên</p>
           </Header>
-          <Content
-            style={{
-              margin: "10px 16px",
-            }}
-          >
+          <Content className="layout-content">
+            <Breadcrumbs />
             <Form
               {...formItemLayout}
               form={form}
@@ -270,7 +263,7 @@ const UpdateStaff = () => {
                 <Switch checked={deactivate} onChange={deactivateChange} style={{ marginLeft: "-9px" }} />
               </Form.Item>
               {roleInfo === "ROLE_ADMIN" ? (
-                <NavLink to="/manage-admin">
+                <NavLink to="/manage-staff">
                   <Button style={{ marginRight: "20px" }}>Quay lại</Button>
                 </NavLink>
               ) : (

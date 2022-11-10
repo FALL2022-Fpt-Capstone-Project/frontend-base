@@ -4,7 +4,7 @@ import { EyeOutlined, EditOutlined, SearchOutlined, UndoOutlined } from "@ant-de
 import useAuth from "../../hooks/useAuth";
 import axios from "../../api/axios";
 const { Search } = Input;
-const LIST_CONTRACT_LATEST_URL = "manager/contract/get-contract/1";
+const LIST_CONTRACT_LATEST_URL = "";
 const LIST_BUILDING_FILTER = "manager/group/all";
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -55,7 +55,6 @@ const ListContractRenterLatest = ({ duration }) => {
     };
     getAllContractLatest();
   }, [duration]);
-  const { auth } = useAuth();
   let cookie = localStorage.getItem("Cookie");
   useEffect(() => {
     const getBuildingFilter = async () => {

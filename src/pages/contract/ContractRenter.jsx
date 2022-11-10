@@ -9,6 +9,7 @@ import ListContractRenterAlmostExpired from "./ListContractRenterAlmostExpired";
 import ListContractRenterLatest from "./ListContractRenterLatest";
 import axios from "../../api/axios";
 import useAuth from "../../hooks/useAuth";
+import Breadcrumbs from "../../components/BreadCrumb ";
 const { Option } = Select;
 const { Content, Sider, Header } = Layout;
 
@@ -90,13 +91,8 @@ const ContractRenter = () => {
           <Sidebar />
         </Sider>
         <Layout className="site-layout">
-          <Header
-            className="layout-header"
-            style={{
-              margin: "0 16px",
-            }}
-          >
-            <p className="header-title">Quản lý hợp đồng khách thuê</p>
+          <Header className="layout-header">
+            <p className="header-title">Quản lý hợp đồng cho thuê</p>
           </Header>
           <Content
             className="layout-content"
@@ -104,6 +100,7 @@ const ContractRenter = () => {
               margin: "10px 10px",
             }}
           >
+            <Breadcrumbs />
             <div className="btn-contract">
               <Button icon={<PieChartOutlined />} size="middle" className="button-collapse" onClick={showModal}>
                 Thống kê hợp đồng

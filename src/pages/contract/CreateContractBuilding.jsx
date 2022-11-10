@@ -36,6 +36,7 @@ import {
 } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import { useNavigate } from "react-router-dom";
+import Breadcrumbs from "../../components/BreadCrumb ";
 const { Content, Sider, Header } = Layout;
 const { Option } = Select;
 const LIST_ASSET_TYPE = "manager/asset/type";
@@ -441,6 +442,7 @@ const CreateContractBuilding = () => {
               margin: "10px 16px",
             }}
           >
+            <Breadcrumbs />
             <div
               className="site-layout-background"
               style={{

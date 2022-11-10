@@ -5,6 +5,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import { Button, Layout, Modal } from "antd";
 import CreateBuilding from "./CreateBuilding";
 import ListBuilding from "./ListBuilding";
+import Breadcrumbs from "../../components/BreadCrumb ";
 const { Content, Sider, Header } = Layout;
 const Building = () => {
   const [open, setOpen] = useState(false);
@@ -33,12 +34,7 @@ const Building = () => {
           <Sidebar />
         </Sider>
         <Layout className="site-layout">
-          <Header
-            className="layout-header"
-            style={{
-              margin: "0 16px",
-            }}
-          >
+          <Header className="layout-header">
             <p className="header-title">Quản lý chung cư</p>
           </Header>
           <Content
@@ -47,6 +43,7 @@ const Building = () => {
               margin: "10px 10px",
             }}
           >
+            <Breadcrumbs />
             <div>
               <Button type="primary" icon={<PlusOutlined />} size="middle" onClick={showModal} className="button-add">
                 Thêm chung cư

@@ -62,6 +62,7 @@ const ListContractRenter = () => {
       })
       .then((res) => {
         setDataSource(res.data.data);
+        console.log(res);
       })
       .catch((error) => {
         console.log(error);
@@ -135,19 +136,9 @@ const ListContractRenter = () => {
         console.log(error);
       });
     setLoading(false);
-    console.log(filterContract);
   };
   const durationChange = (value) => {
     setDuration(value);
-  };
-  const filterContract = {
-    phoneNumber: phoneNumber,
-    renterName: renterName,
-    endContract: endContract,
-    startDate: startDate,
-    endDate: endDate,
-    identity: identity,
-    groupId: building,
   };
 
   const renterNameChange = (e) => {
@@ -174,48 +165,28 @@ const ListContractRenter = () => {
     setEndContract(false);
     setLoading(true);
     const response = await axios
-      .get(LIST_BUILDING_FILTER, {
+      .get(LIST_CONTRACT_URL, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${cookie}`,
         },
       })
       .then((res) => {
-        setBuildingFilter(res.data.data);
-        console.log(res);
+        setDataSource(res.data.data);
       })
       .catch((error) => {
         console.log(error);
       });
     setLoading(false);
   };
-  // const getContractById = async (contractId) => {
-  //   let cookie = localStorage.getItem("Cookie");
-  //   await axios
-  //     .get(GET_CONTRACT + contractId, {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         // "Access-Control-Allow-Origin": "*",
-  //         Authorization: `Bearer ${cookie}`,
-  //       },
-  //       // withCredentials: true,
-  //     })
-  //     .then((res) => {
-  //       // console.log(res);
-  //       setContractInfor(res.data.data);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // };
   return (
     <div className="list-contract">
       <div className="list-contract-search">
         <Tabs defaultActiveKey="1">
           <Tabs.TabPane tab="Tìm kiếm nhanh" key="1">
             <Search
-              placeholder="Tìm kiếm theo tên hợp đồng, tên khách thuê"
-              style={{ marginBottom: 8, width: 400, padding: "10px 0" }}
+              placeholder="Tìm kiếm theo số phòng, số điện thoại, tên khách thuê,..."
+              className="quich-search"
               onSearch={(value) => {
                 setTextSearch(value);
               }}
@@ -231,14 +202,13 @@ const ListContractRenter = () => {
               name="filterStaff"
               id="filterStaff"
               onFinish={getFilterContractRenter}
-              style={{ width: "100%" }}
             >
-              <Row gutter={[16]} style={{ marginBottom: "20px", marginLeft: "20px" }}>
+              <Row gutter={[16]} className="advanced-search" style={{ marginBottom: "20px", marginLeft: "20px" }}>
                 <Row>
-                  <Form.Item name="renterName" style={{ width: "500px", marginBottom: 0 }}>
+                  <Form.Item name="renterName" className="form-item-renter">
                     <Col className="gutter-row" xs={{ span: 24 }} lg={{ span: 24 }}>
                       <Row>
-                        <label htmlFor="" style={{ marginBottom: "10px" }}>
+                        <label htmlFor="" className="search-name">
                           Tìm kiếm theo tên khách thuê
                         </label>
                       </Row>
@@ -248,10 +218,10 @@ const ListContractRenter = () => {
                     </Col>
                   </Form.Item>
 
-                  <Form.Item name="identity" style={{ width: "500px" }}>
+                  <Form.Item name="identity" className="form-item-renter">
                     <Col className="gutter-row" span={24}>
                       <Row>
-                        <label htmlFor="" style={{ marginBottom: "10px" }}>
+                        <label htmlFor="" className="search-name">
                           Tìm kiếm theo số CCCD
                         </label>
                       </Row>
@@ -260,10 +230,10 @@ const ListContractRenter = () => {
                       </Row>
                     </Col>
                   </Form.Item>
-                  <Form.Item name="phoneNumber" style={{ width: "500px" }}>
+                  <Form.Item name="phoneNumber" className="form-item-renter">
                     <Col className="gutter-row" span={24}>
                       <Row>
-                        <label htmlFor="" style={{ marginBottom: "10px" }}>
+                        <label htmlFor="" className="search-name">
                           Tìm kiếm theo số điện thoại
                         </label>
                       </Row>
@@ -274,10 +244,10 @@ const ListContractRenter = () => {
                   </Form.Item>
                 </Row>
                 <Row>
-                  <Form.Item name="date" style={{ width: "500px" }}>
+                  <Form.Item name="date" className="form-item-renter">
                     <Col className="gutter-row" span={24}>
                       <Row>
-                        <label htmlFor="" style={{ marginBottom: "10px" }}>
+                        <label htmlFor="" className="search-name">
                           Ngày bắt đầu lập hợp đồng
                         </label>
                       </Row>
@@ -291,10 +261,10 @@ const ListContractRenter = () => {
                       </Row>
                     </Col>
                   </Form.Item>
-                  <Form.Item name="groupId" style={{ width: "500px" }}>
+                  <Form.Item name="groupId" className="form-item-renter">
                     <Col className="gutter-row" span={24}>
                       <Row>
-                        <label htmlFor="" style={{ marginBottom: "10px" }}>
+                        <label htmlFor="" className="search-name">
                           Tìm kiếm theo tên chung cư
                         </label>
                       </Row>
@@ -303,9 +273,10 @@ const ListContractRenter = () => {
                       </Row>
                     </Col>
                   </Form.Item>
-                  <Form.Item name="deactive" style={{ width: "500px", marginTop: "30px" }}>
+                  <Form.Item name="deactive" className="form-item-renter form-item-renter-deactive">
                     <Col className="gutter-row" span={24}>
-                      <Switch onChange={endContractChange} /> <span>Hợp đồng đã kết thúc</span>
+                      <Switch onChange={endContractChange} />{" "}
+                      {endContract ? <span>Hợp đồng đã kết thúc</span> : <span>Hợp đồng còn hiệu lực</span>}
                     </Col>
                   </Form.Item>
                 </Row>
@@ -336,19 +307,26 @@ const ListContractRenter = () => {
         bordered
         dataSource={dataSource}
         columns={[
-          // {
-          //   title: 'STT',
-          //   key: 'index',
-          //   render: (text, record, index) => index,
-          // },
           {
-            title: "Tên hợp đồng",
-            dataIndex: "contract_name",
+            title: "Tên khách thuê",
+            dataIndex: "list_renter",
+            render: (renter) => renter[0].renter_full_name,
+          },
+          {
+            title: "Số điện thoại",
+            dataIndex: "list_renter",
+            render: (renter) => renter[0].phone_number,
+          },
+          {
+            title: "Phòng",
+            dataIndex: "room",
             filteredValue: [textSearch],
+            render: (room) => room.room_name,
             onFilter: (value, record) => {
               return (
-                String(record.contract_name).toLowerCase()?.includes(value.toLowerCase()) ||
-                String(record.list_renter).toLowerCase()?.includes(value.toLowerCase())
+                String(record.room.room_name).toLowerCase()?.includes(value.toLowerCase()) ||
+                String(record.list_renter[0].renter_full_name).toLowerCase()?.includes(value.toLowerCase()) ||
+                String(record.list_renter[0].phone_number).toLowerCase()?.includes(value.toLowerCase())
               );
             },
           },
@@ -356,12 +334,6 @@ const ListContractRenter = () => {
             title: "Tên chung cư",
             dataIndex: "group_name",
           },
-          {
-            title: "Tên khách thuê",
-            dataIndex: "list_renter",
-            render: (renter) => renter[0].renter_full_name,
-          },
-
           {
             title: "Số tiền cọc",
             dataIndex: "contract_deposit",
@@ -416,7 +388,7 @@ const ListContractRenter = () => {
                 <>
                   <Tooltip title="Chỉnh sửa">
                     <EditOutlined
-                      style={{ fontSize: "20px", marginRight: "10px", color: "#46a6ff" }}
+                      className="icon"
                       onClick={() => {
                         navigate(`/contract-renter/edit/${record.contract_id}`);
                       }}
@@ -424,12 +396,9 @@ const ListContractRenter = () => {
                   </Tooltip>
                   <Tooltip title="Xem">
                     <EyeOutlined
-                      style={{ fontSize: "20px", color: "#46a6ff" }}
+                      className="icon"
                       onClick={() => {
                         setViewContract(true);
-                        // setContractId(record.contract_id);
-                        // getContractById(record.contract_id);
-                        //   setViewContract(true);
                         setContractInfor(record);
                       }}
                     />

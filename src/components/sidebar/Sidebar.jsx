@@ -97,13 +97,13 @@ const Sidebar = () => {
             <span>Quản lý hợp đồng cho thuê</span>
             <Link to="/contract-renter" />
           </Menu.Item>
-          <Menu.Item key="/manage-admin">
+          <Menu.Item key="/manage-staff">
             <UserOutlined />
             <span>Quản lý nhân viên</span>
-            <Link to="/manage-admin" />
+            <Link to="/manage-staff" />
           </Menu.Item>
 
-          <Menu.Item key={`/detail-staff/${id}`}>
+          <Menu.Item key={`/manage-staff/detail-staff/${id}`}>
             <IdcardOutlined />
             <span onClick={showModal}>Thông tin cá nhân</span>
             {/* <Link to={`/detail-staff/${id}`} /> */}
@@ -153,7 +153,7 @@ const Sidebar = () => {
             <Link to="/contract-renter" />
           </Menu.Item>
 
-          <Menu.Item key={`/detail-staff/${id}`}>
+          <Menu.Item key={`/manage-staff/detail-staff/${id}`}>
             <IdcardOutlined />
             <span onClick={showModal}>Thông tin cá nhân</span>
             {/* <Link to={`/detail-staff/${id}`} /> */}
@@ -260,7 +260,7 @@ const Sidebar = () => {
         </div>
         <div style={{ marginLeft: "3%" }}>
           <Button onClick={handleCancel}>Quay lại</Button>
-          <NavLink to={`/update-staff/${id}`}>
+          <NavLink to={`/manage-staff/update-staff/${id}`}>
             <Button
               type="primary"
               icon={<EditOutlined />}

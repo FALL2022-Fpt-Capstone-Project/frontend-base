@@ -5,6 +5,7 @@ import { Button, Layout } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import ListContractApartment from "./ListContractApartment";
 import "./contract.scss";
+import Breadcrumbs from "../../components/BreadCrumb ";
 const { Content, Sider, Header } = Layout;
 
 const ContractApartment = () => {
@@ -22,7 +23,7 @@ const ContractApartment = () => {
         </Sider>
         <Layout className="site-layout">
           <Header className="layout-header">
-            <p className="header-title">Quản lý hợp đồng chung cư mini/căn hộ</p>
+            <p className="header-title">Quản lý hợp đồng đi thuê</p>
           </Header>
           <Content
             className="layout-content"
@@ -30,6 +31,7 @@ const ContractApartment = () => {
               margin: "10px 16px",
             }}
           >
+            <Breadcrumbs />
             <div className="btn-contract">
               <Button
                 type="primary"

@@ -5,6 +5,7 @@ import { useNavigate, NavLink } from "react-router-dom";
 import "./createStaff.scss";
 import axios from "../../api/axios";
 import useAuth from "../../hooks/useAuth";
+import BreadCrumb from "../../components/BreadCrumb ";
 const { Content, Sider, Header } = Layout;
 const ADD_EMPLOYEE_URL = "manager/staff/add";
 const formItemLayout = {
@@ -67,7 +68,7 @@ const CreateStaff = () => {
         },
         // withCredentials: true,
       })
-      .then(() => navigate("/manage-admin"))
+      .then(() => navigate("/manage-staff"))
       .catch((e) => {
         notification.error({
           message: "Thêm mới nhân viên thất bại",
@@ -97,19 +98,11 @@ const CreateStaff = () => {
           <Sidebar />
         </Sider>
         <Layout className="site-layout">
-          <Header
-            className="layout-header"
-            style={{
-              margin: "0 16px",
-            }}
-          >
+          <Header className="layout-header">
             <p className="header-title">Tạo mới nhân viên</p>
           </Header>
-          <Content
-            style={{
-              margin: "10px 16px",
-            }}
-          >
+          <Content className="layout-content">
+            <BreadCrumb />
             <div
               className="site-layout-background"
               style={{
@@ -226,7 +219,7 @@ const CreateStaff = () => {
                     options={options}
                   />
                 </Form.Item>
-                <NavLink to="/manage-admin">
+                <NavLink to="/manage-staff">
                   <Button style={{ marginRight: "20px" }}>Quay lại</Button>
                 </NavLink>
                 <Button type="primary" htmlType="submit">
