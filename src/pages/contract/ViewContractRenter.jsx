@@ -462,7 +462,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                             </Tabs.TabPane>
                         </Tabs>
                         <Button onClick={() => {
-                            navigate(`/contract-renter/edit/${dataContract?.contract_id}`);
+                            navigate(`/contract-renter/edit/${dataContract?.contract_id}/group/${dataContract?.group_id}`);
                         }} style={{ marginTop: '3%' }} type='primary' icon={<ArrowRightOutlined />}> Chỉnh sửa thông tin hợp đồng</Button>
                     </div>
                 </Modal>

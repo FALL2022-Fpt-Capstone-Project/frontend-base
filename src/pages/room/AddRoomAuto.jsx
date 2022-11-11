@@ -158,8 +158,8 @@ function AddRoomAuto({ visible, close, data }) {
                     </Row>
                     <Row>
                         <Col span={24}>
-                            <p><i><b>Ví dụ:</b>Tầng: <b>1</b>, Số lượng phòng: <b>10</b>, Tên phòng: <b>A</b>, Số phòng: <b>101</b>.
-                                Phòng sẽ tự động được tạo lần lượt là: <b>A101, A102, A103 ... A110</b>
+                            <p><i><b>Ví dụ:</b>Tầng: <b>1</b>, Số lượng phòng mỗi tầng: <b>10</b>, Tên phòng quy ước: <b>A</b>, Số phòng quy ước: <b>101</b>.
+                                Phòng sẽ tự động được tạo lần lượt là: <b>A101, A102, A103 ... A110.</b>
                             </i></p>
                         </Col>
                     </Row>

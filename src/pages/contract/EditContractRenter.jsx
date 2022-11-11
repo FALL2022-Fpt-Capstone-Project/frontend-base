@@ -3,7 +3,7 @@ import Sidebar from "../../components/sidebar/Sidebar";
 import "./contract.scss";
 import axios from "../../api/axios";
 import {
-  EditOutlined,
+  EditTwoTone,
   DeleteOutlined,
   PlusCircleOutlined,
   FilterOutlined,
@@ -48,6 +48,9 @@ const UPDATE_RENTER = "manager/renter/update/"
 const UPDATE_CONTRACT_RENTER = "manager/contract/room/update/";
 const cardHeight = {
   height: 850
+}
+const fontSizeIcon = {
+  fontSize: "120%"
 }
 
 const EditContractRenter = () => {
@@ -267,7 +270,7 @@ const EditContractRenter = () => {
       render: (record) => {
         return (
           <>
-            <EditOutlined
+            <EditTwoTone
               onClick={() => {
                 record.asset_id < 0 ? setDisableEditAsset(false) : setDisableEditAsset(true);
                 setIsEditAsset(true);
@@ -282,7 +285,7 @@ const EditContractRenter = () => {
                   // hand_over_asset_status: record.hand_over_asset_status,
                 });
               }}
-              style={{ fontSize: "120%" }}
+              style={fontSizeIcon}
             />
             <DeleteOutlined
               onClick={() => {
@@ -402,7 +405,8 @@ const EditContractRenter = () => {
       key: "member_id",
       render: (record) => (
         <Space>
-          <EditOutlined
+          <EditTwoTone
+            style={fontSizeIcon}
             onClick={() => {
               setIsEditMem(true);
               formEditMem.setFieldsValue({
@@ -416,7 +420,7 @@ const EditContractRenter = () => {
               });
             }}
           />
-          <DeleteOutlined onClick={() => onDeleteMember(record)} style={{ color: "red", marginLeft: 12 }} />
+          <DeleteOutlined onClick={() => onDeleteMember(record)} style={{ fontSize: '120%', color: "red", marginLeft: 12 }} />
         </Space>
       ),
     },

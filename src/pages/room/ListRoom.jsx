@@ -16,12 +16,13 @@ import {
   Tooltip,
 } from "antd";
 import {
-  EyeOutlined,
+  EyeTwoTone,
   AuditOutlined,
   SearchOutlined,
   UndoOutlined,
   PlusCircleOutlined,
-  DeleteOutlined
+  DeleteOutlined,
+  UserOutlined
 } from "@ant-design/icons";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -68,7 +69,7 @@ function ListRoom(props) {
       groupName: "Trọ xanh",
       roomName: "Phòng 201",
       roomFloor: "Tầng 2",
-      roomNumberOfRenter: "3/5",
+      roomNumberOfRenter: "1/5",
       roomPrice: 10000000,
       roomDeposit: 10000000,
       roomSquare: "30m2",
@@ -76,6 +77,20 @@ function ListRoom(props) {
       paymentCycle: "Kỳ 30",
       durationContract: "6 tháng",
       roomStatus: 1,
+    },
+    {
+      index: 2,
+      groupName: "Trọ xanh",
+      roomName: "Phòng 202",
+      roomFloor: "Tầng 2",
+      roomNumberOfRenter: "0/5",
+      roomPrice: 10000000,
+      roomDeposit: 0,
+      roomSquare: "30m2",
+      billCycle: "",
+      paymentCycle: "Kỳ 30",
+      durationContract: "Chưa vào ở",
+      roomStatus: 0,
     },
   ];
   const options = [
@@ -179,19 +194,35 @@ function ListRoom(props) {
       title: "Thao tác",
       key: "index",
       render: (record) => {
-        return (
-          <>
-            <Tooltip title="Xem chi tiết">
-              <EyeOutlined onClick={() => { setSetRoomDetail(true) }} style={iconSize} />
-            </Tooltip>
-            <Tooltip title="Lập hợp đồng phòng">
-              <AuditOutlined onClick={() => { navigate(`/contract-renter/create`) }} style={iconSize} />
-            </Tooltip>
-            <Tooltip title="Xóa phòng">
-              <DeleteOutlined style={{ fontSize: '130%', color: 'red' }} />
-            </Tooltip>
-          </>
-        );
+        if (record.roomStatus === 0) {
+          return (
+            <>
+              <Tooltip title="Xem chi tiết">
+                <EyeTwoTone onClick={() => { setSetRoomDetail(true) }} style={iconSize} />
+              </Tooltip>
+              <Tooltip title="Lập hợp đồng phòng">
+                <AuditOutlined onClick={() => { navigate(`/contract-renter/create`) }} style={iconSize} />
+              </Tooltip>
+              <Tooltip title="Xóa phòng">
+                <DeleteOutlined style={{ fontSize: '130%', color: 'red' }} />
+              </Tooltip>
+            </>
+          )
+        } else {
+          return (
+            <>
+              <Tooltip title="Xem chi tiết">
+                <EyeTwoTone onClick={() => { setSetRoomDetail(true) }} style={iconSize} />
+              </Tooltip>
+              <Tooltip title="Thêm thành viên vào phòng">
+                <UserOutlined style={iconSize} />
+              </Tooltip>
+              <Tooltip title="Xóa phòng">
+                <DeleteOutlined style={{ fontSize: '130%', color: 'red' }} />
+              </Tooltip>
+            </>
+          )
+        }
       },
     },
   ];
@@ -286,7 +317,7 @@ function ListRoom(props) {
         <Tabs.TabPane tab="Tìm kiếm nhanh" key="1">
           <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
             <Col xs={24} sm={12} xl={8} span={8}>
-              <Input.Search placeholder="Nhập tên phòng để tìm kiếm" />
+              <Input.Search placeholder="Nhập tên phòng hoặc tên chung cư để tìm kiếm" />
             </Col>
           </Row>
         </Tabs.TabPane>
