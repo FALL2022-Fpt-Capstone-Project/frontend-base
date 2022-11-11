@@ -3,7 +3,7 @@ import Sidebar from "../../components/sidebar/Sidebar";
 import "./contract.scss";
 import axios from "../../api/axios";
 import {
-  EditOutlined,
+  EditTwoTone,
   DeleteOutlined,
   PlusCircleOutlined,
   FilterOutlined,
@@ -46,6 +46,9 @@ const APARTMENT_DATA_GROUP = "/manager/group/all";
 const ADD_NEW_CONTRACT = "/manager/contract/room/add";
 const cardHeight = {
   height: 900,
+};
+const fontSizeIcon = {
+  fontSize: "120%",
 };
 
 const CreateContractRenter = () => {
@@ -203,7 +206,7 @@ const CreateContractRenter = () => {
       render: (record) => {
         return (
           <>
-            <EditOutlined
+            <EditTwoTone
               onClick={() => {
                 record.asset_id < 0 ? setDisableEditAsset(false) : setDisableEditAsset(true);
                 setIsEditAsset(true);
@@ -219,7 +222,7 @@ const CreateContractRenter = () => {
                   // hand_over_asset_status: record.hand_over_asset_status,
                 });
               }}
-              style={{ fontSize: "120%" }}
+              style={fontSizeIcon}
             />
             <DeleteOutlined
               onClick={() => {
@@ -436,7 +439,8 @@ const CreateContractRenter = () => {
       key: "member_id",
       render: (record) => (
         <Space>
-          <EditOutlined
+          <EditTwoTone
+            style={fontSizeIcon}
             onClick={() => {
               setIsEditMem(true);
               formEditMem.setFieldsValue({
@@ -450,7 +454,10 @@ const CreateContractRenter = () => {
               });
             }}
           />
-          <DeleteOutlined onClick={() => onDeleteMember(record)} style={{ color: "red", marginLeft: 12 }} />
+          <DeleteOutlined
+            onClick={() => onDeleteMember(record)}
+            style={{ fontSize: "120%", color: "red", marginLeft: 12 }}
+          />
         </Space>
       ),
     },
@@ -1034,7 +1041,7 @@ const CreateContractRenter = () => {
                             }
                             bordered={false}
                           >
-                            <Form.Item
+                            {/* <Form.Item
                               className="form-item"
                               name="contract_name"
                               labelCol={{ span: 24 }}
@@ -1052,7 +1059,7 @@ const CreateContractRenter = () => {
                               ]}
                             >
                               <Input placeholder="Tên hợp đồng"></Input>
-                            </Form.Item>
+                            </Form.Item> */}
                             <Form.Item
                               className="form-item"
                               name="group_id"
@@ -1416,30 +1423,26 @@ const CreateContractRenter = () => {
                                 min={0}
                               />
                             </Form.Item>
+                            <Row>
+                              <p>
+                                <i>
+                                  <b>Lưu ý:</b>
+                                  <br />
+                                  <b>- Chu kỳ thanh toán: </b> nếu bạn thu tiền 1 lần vào cuối tháng thì bạn chọn là kỳ
+                                  30. Trường hợp có số lượng phòng nhiều, chia làm 2 đợt thu, bạn dựa vào ngày vào của
+                                  khách, ví dụ: vào từ ngày 1 đến 15 của tháng thì gán kỳ 15; nếu vào từ ngày 16 đến 31
+                                  của tháng thì gán kỳ 30. Khi tính tiền phòng bạn sẽ tính tiền theo kỳ.
+                                  <br />
+                                  <b>- Chu kỳ tính tiền: </b> là số tháng được tính trên mỗi hóa đơn.
+                                  <br />
+                                </i>
+                              </p>
+                              <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
+                            </Row>
                           </Card>
                         </Col>
                       </Row>
                     </div>
-                    <Row></Row>
-                    <p>
-                      <i>
-                        <b>Lưu ý:</b>
-                        <br />
-                        - Kỳ thanh toán tùy thuộc vào từng khu nhà trọ, nếu khu trọ bạn thu tiền 1 lần vào cuối tháng
-                        thì bạn chọn là kỳ 30. Trường hợp khu nhà trọ bạn có số lượng phòng nhiều, chia làm 2 đợt thu,
-                        bạn dựa vào ngày vào của khách để gán kỳ cho phù hợp, ví dụ: vào từ ngày 1 đến 15 của tháng thì
-                        gán kỳ 15; nếu vào từ ngày 16 đến 31 của tháng thì gán kỳ 30. Khi tính tiền phòng bạn sẽ tính
-                        tiền theo kỳ.
-                        <br />
-                        - Tiền đặt cọc sẽ không tính vào doanh thu ở các báo cáo và thống kê doanh thu. Nếu bạn muốn
-                        tính vào doanh thu bạn ghi nhận vào trong phần thu/chi khác (phát sinh). Tiền đặt cọc sẽ được
-                        trừ ra khi tính tiền trả phòng.
-                        <br />
-                        - Chu kỳ tính tiền: là số tháng được tính trên mỗi hóa đơn.
-                        <br />
-                      </i>
-                    </p>
-                    <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
                   </Tabs.TabPane>
                   <Tabs.TabPane
                     tab={

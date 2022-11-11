@@ -73,10 +73,6 @@ const Sidebar = () => {
             <span>Quản lý trang thiết bị</span>
             <Link to="/equiment" />
           </Menu.Item>
-          <Menu.Item>
-            <DollarOutlined />
-            <span>Quản lý nguồn tiền</span>
-          </Menu.Item>
 
           <Menu.Item>
             <ProfileOutlined />

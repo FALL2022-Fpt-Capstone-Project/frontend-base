@@ -15,20 +15,21 @@ import {
   message,
   Tooltip,
 } from "antd";
-import { PlusCircleOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { PlusCircleOutlined, EditTwoTone, DeleteOutlined } from "@ant-design/icons";
 import axios from "../../api/axios";
 import TextArea from "antd/lib/input/TextArea";
 import Breadcrumbs from "../../components/BreadCrumb ";
 
+const APARTMENT_DATA_GROUP = "/manager/group/all";
+const GET_SERVICE_GROUP_BY_ID = "manager/service/general?contractId=";
+const GET_LIST_SERVICE_BASIC = "manager/service/basics";
+const ADD_NEW_SERIVCE = "manager/service/general/add";
+const DELETE_SERVICE = "manager/service/general/remove/";
+const UPDATE_SERVICE = "manager/service/general/update/";
+const LIST_SERVICE_CACUL_METHOD = "manager/service/types";
+const QUICK_ADD_SERVICE = "manager/service/general/quick-add/";
+
 function Service(props) {
-  const APARTMENT_DATA_GROUP = "/manager/group/all";
-  const GET_SERVICE_GROUP_BY_ID = "manager/service/general?contractId=";
-  const GET_LIST_SERVICE_BASIC = "manager/service/basics";
-  const ADD_NEW_SERIVCE = "manager/service/general/add";
-  const DELETE_SERVICE = "manager/service/general/remove/";
-  const UPDATE_SERVICE = "manager/service/general/update/";
-  const LIST_SERVICE_CACUL_METHOD = "manager/service/types";
-  const QUICK_ADD_SERVICE = "manager/service/general/quick-add/";
   const { Content, Sider, Header } = Layout;
   const [loading, setLoading] = useState(false);
   const [componentSize, setComponentSize] = useState("default");
@@ -166,7 +167,7 @@ function Service(props) {
         return (
           <>
             <Tooltip title="Chỉnh sửa">
-              <EditOutlined
+              <EditTwoTone
                 onClick={() => {
                   console.log(record);
                   setEditServiceGeneral(true);
@@ -179,7 +180,7 @@ function Service(props) {
                     note: record.note,
                   });
                 }}
-                className="icon"
+                style={{ fontSize: "120%" }}
               />
             </Tooltip>
             <Tooltip title="Xoá">
@@ -195,7 +196,7 @@ function Service(props) {
                     },
                   });
                 }}
-                className="icon icon-delete"
+                style={{ color: "red", marginLeft: 12, fontSize: "120%" }}
               />
             </Tooltip>
           </>
@@ -381,7 +382,7 @@ function Service(props) {
         </Sider>
         <Layout className="site-layout">
           <Header className="layout-header">
-            <p className="header-title">Thiết lập dịch vụ chung {dataApartmentGroup.group_name}</p>
+            <p className="header-title">Thiết lập dịch vụ chung</p>
           </Header>
           <Content style={{ margin: "10px 16px" }}>
             <div
@@ -394,7 +395,7 @@ function Service(props) {
               <Breadcrumbs />
               <Row>
                 <Col span={6} offset={18}>
-                  Chọn chung cư mini / căn hộ
+                  Chọn chung cư để thiết lập dịch vụ
                 </Col>
               </Row>
               <Row>

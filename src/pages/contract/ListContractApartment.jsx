@@ -274,8 +274,7 @@ const ListContractApartment = () => {
         <Column title="Số điện thoại" dataIndex="phoneNumber" key="key" />
 
         <Column title="Tên chung cư" dataIndex="apartmentName" key="key" />
-        <Column title="Ngày lập hợp đồng" dataIndex="startDate" key="key" />
-        <Column title="Ngày kết thúc" dataIndex="endDate" key="key" />
+
         <Column
           title="Giá thuê"
           dataIndex="contractValue"
@@ -286,6 +285,8 @@ const ListContractApartment = () => {
         />
         <Column title="Số lượng tầng" dataIndex="numberOfFloor" key="key" />
         <Column title="Số lượng phòng" dataIndex="numberOfRoom" key="key" />
+        <Column title="Ngày lập hợp đồng" dataIndex="startDate" key="key" />
+        <Column title="Ngày kết thúc" dataIndex="endDate" key="key" />
         <Column
           title="Trạng thái hợp đồng"
           dataIndex="statusContract"

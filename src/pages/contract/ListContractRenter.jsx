@@ -180,7 +180,26 @@ const ListContractRenter = () => {
       });
     setLoading(false);
   };
-
+  // const getContractById = async (contractId) => {
+  //   let cookie = localStorage.getItem("Cookie");
+  //   await axios
+  //     .get(GET_CONTRACT + contractId, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         // "Access-Control-Allow-Origin": "*",
+  //         Authorization: `Bearer ${cookie}`,
+  //       },
+  //       // withCredentials: true,
+  //     })
+  //     .then((res) => {
+  //       // console.log(res);
+  //       setContractInfor(res.data.data);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // };
+  console.log(dataSource);
   return (
     <div className="list-contract">
       <div className="list-contract-search">
@@ -325,6 +344,10 @@ const ListContractRenter = () => {
             },
           },
           {
+            title: "Tên chung cư",
+            dataIndex: "group_name",
+          },
+          {
             title: "Phòng",
             dataIndex: "room",
             filteredValue: [textSearch],
@@ -341,10 +364,7 @@ const ListContractRenter = () => {
               );
             },
           },
-          {
-            title: "Tên chung cư",
-            dataIndex: "group_name",
-          },
+
           {
             title: "Số tiền cọc",
             dataIndex: "contract_deposit",
