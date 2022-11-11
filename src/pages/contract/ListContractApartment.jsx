@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+import "./listContract.scss";
 import {
   Input,
   Table,
@@ -12,11 +12,11 @@ import {
   Select,
   DatePicker,
   Button,
-  Slider,
+  Tooltip,
   Switch,
   Form,
 } from "antd";
-import { EyeTwoTone, EditOutlined, FilterOutlined, SearchOutlined, UndoOutlined } from "@ant-design/icons";
+import { EyeOutlined, EditOutlined, FilterOutlined, SearchOutlined, UndoOutlined } from "@ant-design/icons";
 import axios from "../../api/axios";
 import ViewContractBuilding from "./ViewContractBuilding";
 import moment from "moment";
@@ -92,11 +92,12 @@ const ListContractApartment = () => {
   const data = [
     {
       key: "1",
-      ownerName: "Antony",
+      ownerName: "Nguyễn Viết Thắng",
       apartmentName: "Trọ xanh",
-      startDate: moment().format(dateFormat),
-      endDate: moment().format(dateFormat),
-      statusContract: "Còn hiệu lực",
+      startDate: "20-12-2018",
+      endDate: "25-10-2022",
+      phoneNumber: "0987893432",
+      statusContract: "Hợp đồng còn hiệu lực",
       contractValue: 100000000,
       depositValue: 100000000,
       numberOfFloor: 10,
@@ -105,11 +106,12 @@ const ListContractApartment = () => {
     },
     {
       key: "2",
-      ownerName: "Harry mac hai",
+      ownerName: "Đào Minh Hà",
+      phoneNumber: "0987893432",
       apartmentName: "Trọ sạch",
-      startDate: moment().format(dateFormat),
-      endDate: moment().format(dateFormat),
-      statusContract: "Còn hiệu lực",
+      startDate: "20-11-2019",
+      endDate: "20-01-2023",
+      statusContract: "Hợp đồng còn hiệu lực",
       contractValue: 100000000,
       depositValue: 100000000,
       numberOfFloor: 10,
@@ -119,10 +121,11 @@ const ListContractApartment = () => {
     {
       key: "3",
       ownerName: "Fred",
+      phoneNumber: "0987893432",
       apartmentName: "Trọ đẹp",
-      startDate: moment().format(dateFormat),
-      endDate: moment().format(dateFormat),
-      statusContract: "Còn hiệu lực",
+      startDate: "24-12-2020",
+      endDate: "29-12-2022",
+      statusContract: "Hợp đồng còn hiệu lực",
       contractValue: 100000000,
       depositValue: 100000000,
       numberOfFloor: 10,
@@ -192,7 +195,7 @@ const ListContractApartment = () => {
               </Col>
             </Row>
             <Row>
-              <Col span={6} >
+              <Col span={6}>
                 <Form.Item name="date">
                   <Row style={style}>
                     <label>Ngày bắt đầu lập hợp đồng</label>
@@ -257,7 +260,7 @@ const ListContractApartment = () => {
                 </Button>
                 <Button
                   icon={<UndoOutlined />}
-                // onClick={resetForm}
+                  // onClick={resetForm}
                 >
                   Đặt lại
                 </Button>
@@ -268,27 +271,22 @@ const ListContractApartment = () => {
       </Tabs>
       <Table dataSource={data} scroll={{ x: 1600, y: 600 }} bordered>
         <Column title="Tên người cho thuê" dataIndex="ownerName" key="key" />
+        <Column title="Số điện thoại" dataIndex="phoneNumber" key="key" />
+
         <Column title="Tên chung cư" dataIndex="apartmentName" key="key" />
-        <Column title="Ngày lập hợp đồng" dataIndex="startDate" key="key" />
-        <Column title="Ngày kết thúc" dataIndex="endDate" key="key" />
+
         <Column
           title="Giá thuê"
           dataIndex="contractValue"
           key="key"
           render={(value) => {
-            return <b>{value.toLocaleString("vn") + " đ"}</b>;
-          }}
-        />
-        <Column
-          title="Số tiền cọc"
-          dataIndex="depositValue"
-          key="key"
-          render={(value) => {
-            return <b>{value.toLocaleString("vn") + " đ"}</b>;
+            return <span>{value.toLocaleString("vn") + " đ"}</span>;
           }}
         />
         <Column title="Số lượng tầng" dataIndex="numberOfFloor" key="key" />
         <Column title="Số lượng phòng" dataIndex="numberOfRoom" key="key" />
+        <Column title="Ngày lập hợp đồng" dataIndex="startDate" key="key" />
+        <Column title="Ngày kết thúc" dataIndex="endDate" key="key" />
         <Column
           title="Trạng thái hợp đồng"
           dataIndex="statusContract"
@@ -303,13 +301,17 @@ const ListContractApartment = () => {
           render={(_, record) => {
             return (
               <>
-                <EditOutlined style={{ fontSize: "20px", marginRight: "10px" }} />
-                <EyeTwoTone
-                  style={{ fontSize: "20px" }}
-                  onClick={() => {
-                    setViewContract(true);
-                  }}
-                />
+                <Tooltip title="Chỉnh sửa">
+                  <EditOutlined style={{ fontSize: "20px", color: "#46a6ff", margin: "0 5px" }} />
+                </Tooltip>
+                <Tooltip title="Xem">
+                  <EyeOutlined
+                    style={{ fontSize: "20px", color: "#46a6ff", margin: "0 5px" }}
+                    onClick={() => {
+                      setViewContract(true);
+                    }}
+                  />
+                </Tooltip>
               </>
             );
           }}

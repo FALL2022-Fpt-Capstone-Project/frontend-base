@@ -12,7 +12,7 @@ function AddRoomAuto({ visible, close, data }) {
     return (
         <>
             <Modal
-                title="Thêm mới phòng tự động"
+                title="Thêm mới phòng nhanh"
                 open={visible}
                 onOk={() => {
                     close(false);
@@ -75,7 +75,7 @@ function AddRoomAuto({ visible, close, data }) {
                         labelCol={{ span: 24 }}
                         label={
                             <span>
-                                <b>Số lượng tầng: </b>
+                                <b>Chọn tầng: </b>
                             </span>
                         }
                         rules={[
@@ -86,7 +86,6 @@ function AddRoomAuto({ visible, close, data }) {
                         ]}
                     >
                         <Select
-                            disabled
                             placeholder="Chọn tầng"
                             options={[]}
                         />
@@ -97,7 +96,7 @@ function AddRoomAuto({ visible, close, data }) {
                         labelCol={{ span: 24 }}
                         label={
                             <span>
-                                <b>Số lượng phòng: </b>
+                                <b>Số lượng phòng mỗi tầng: </b>
                             </span>
                         }
                         rules={[
@@ -159,8 +158,8 @@ function AddRoomAuto({ visible, close, data }) {
                     </Row>
                     <Row>
                         <Col span={24}>
-                            <p><i><b>Ví dụ:</b> Số lượng tầng: <b>5</b>, Số lượng phòng: <b>25</b>, Tên phòng: <b>A</b>, Số phòng: <b>101</b>.
-                                Phòng sẽ tự động được tạo lần lượt là: <b>A101, A102, A103 ... A505</b>
+                            <p><i><b>Ví dụ:</b>Tầng: <b>1</b>, Số lượng phòng mỗi tầng: <b>10</b>, Tên phòng quy ước: <b>A</b>, Số phòng quy ước: <b>101</b>.
+                                Phòng sẽ tự động được tạo lần lượt là: <b>A101, A102, A103 ... A110.</b>
                             </i></p>
                         </Col>
                     </Row>

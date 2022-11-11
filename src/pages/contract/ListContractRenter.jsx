@@ -180,6 +180,26 @@ const ListContractRenter = () => {
       });
     setLoading(false);
   };
+  // const getContractById = async (contractId) => {
+  //   let cookie = localStorage.getItem("Cookie");
+  //   await axios
+  //     .get(GET_CONTRACT + contractId, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         // "Access-Control-Allow-Origin": "*",
+  //         Authorization: `Bearer ${cookie}`,
+  //       },
+  //       // withCredentials: true,
+  //     })
+  //     .then((res) => {
+  //       // console.log(res);
+  //       setContractInfor(res.data.data);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // };
+  console.log(dataSource);
   return (
     <div className="list-contract">
       <div className="list-contract-search">
@@ -312,12 +332,20 @@ const ListContractRenter = () => {
           {
             title: "Tên khách thuê",
             dataIndex: "list_renter",
-            render: (renter) => renter[0].renter_full_name,
+            render: (list_renter) => {
+              return list_renter?.find((obj, index) => obj?.represent === true)?.renter_full_name;
+            },
           },
           {
             title: "Số điện thoại",
             dataIndex: "list_renter",
-            render: (renter) => renter[0].phone_number,
+            render: (list_renter) => {
+              return list_renter?.find((obj, index) => obj?.represent === true)?.phone_number;
+            },
+          },
+          {
+            title: "Tên chung cư",
+            dataIndex: "group_name",
           },
           {
             title: "Phòng",
@@ -327,15 +355,16 @@ const ListContractRenter = () => {
             onFilter: (value, record) => {
               return (
                 String(record.room.room_name).toLowerCase()?.includes(value.toLowerCase()) ||
-                String(record.list_renter[0].renter_full_name).toLowerCase()?.includes(value.toLowerCase()) ||
-                String(record.list_renter[0].phone_number).toLowerCase()?.includes(value.toLowerCase())
+                String(record.list_renter.find((obj, index) => obj?.represent === true)?.renter_full_name)
+                  .toLowerCase()
+                  ?.includes(value.toLowerCase()) ||
+                String(record.list_renter.find((obj, index) => obj?.represent === true)?.phone_number)
+                  .toLowerCase()
+                  ?.includes(value.toLowerCase())
               );
             },
           },
-          {
-            title: "Tên chung cư",
-            dataIndex: "group_name",
-          },
+
           {
             title: "Số tiền cọc",
             dataIndex: "contract_deposit",

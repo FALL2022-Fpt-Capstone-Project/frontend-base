@@ -221,10 +221,6 @@ const ListStaff = () => {
       });
     setLoading(false);
   };
-  const location = useLocation();
-  const pathSnippets = location.pathname.split("/").filter((i) => i);
-
-  console.log(pathSnippets);
   return (
     <div className="list-staff">
       <div className="list-staff-search">

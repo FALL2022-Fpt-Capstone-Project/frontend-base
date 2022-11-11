@@ -31,7 +31,7 @@ const Admin = () => {
               <div>
                 <Link to="/manage-staff/create-staff">
                   <Button type="primary" icon={<PlusCircleOutlined />} size="middle" className="button-add">
-                    Tạo mới
+                    Thêm mới nhân viên
                   </Button>
                 </Link>
               </div>

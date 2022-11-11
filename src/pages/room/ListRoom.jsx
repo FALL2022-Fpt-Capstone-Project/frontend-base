@@ -16,37 +16,43 @@ import {
   Tooltip,
 } from "antd";
 import {
-  EyeOutlined,
+  EyeTwoTone,
   AuditOutlined,
   SearchOutlined,
   UndoOutlined,
   PlusCircleOutlined,
-  DeleteOutlined
+  DeleteOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AddRoom from "./AddRoom";
 import AddRoomAuto from "./AddRoomAuto";
+import RoomDetail from "./RoomDetail";
 const style = {
-  marginBottom: "5%",
+  marginBottom: "3%",
 };
 const textSize = {
-  fontSize: 15
-}
+  fontSize: 15,
+};
 const iconSize = {
-  fontSize: '130%',
-  marginRight: '8%',
-}
+  fontSize: "130%",
+  marginRight: "8%",
+};
 
 function ListRoom(props) {
   const [form] = Form.useForm();
   const [addRoom, setAddRoom] = useState(false);
   const [addRoomAuto, setAddRoomAuto] = useState(false);
+  const [roomDetail, setSetRoomDetail] = useState(false);
+  const navigate = useNavigate();
+
   const onClickAddRoom = (e) => {
     setAddRoom(true);
-  }
+  };
   const onClickAddRoomAuto = (e) => {
     setAddRoomAuto(true);
-  }
+  };
   const optionRoomStatus = [
     {
       label: "Đang ở",
@@ -63,7 +69,7 @@ function ListRoom(props) {
       groupName: "Trọ xanh",
       roomName: "Phòng 201",
       roomFloor: "Tầng 2",
-      roomNumberOfRenter: "3/5",
+      roomNumberOfRenter: "1/5",
       roomPrice: 10000000,
       roomDeposit: 10000000,
       roomSquare: "30m2",
@@ -72,10 +78,24 @@ function ListRoom(props) {
       durationContract: "6 tháng",
       roomStatus: 1,
     },
+    {
+      index: 2,
+      groupName: "Trọ xanh",
+      roomName: "Phòng 202",
+      roomFloor: "Tầng 2",
+      roomNumberOfRenter: "0/5",
+      roomPrice: 10000000,
+      roomDeposit: 0,
+      roomSquare: "30m2",
+      billCycle: "",
+      paymentCycle: "Kỳ 30",
+      durationContract: "Chưa vào ở",
+      roomStatus: 0,
+    },
   ];
   const options = [
     {
-      label: "Chọn tất cả",
+      label: "Tất cả chung cư",
       value: 1,
     },
     {
@@ -119,11 +139,7 @@ function ListRoom(props) {
       dataIndex: "roomPrice",
       key: "index",
       render: (roomPrice) => {
-        return (
-          <span>
-            {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(roomPrice)}
-          </span>
-        );
+        return <span>{new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(roomPrice)}</span>;
       },
     },
     {
@@ -132,9 +148,7 @@ function ListRoom(props) {
       key: "index",
       render: (roomDeposit) => {
         return (
-          <span>
-            {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(roomDeposit)}
-          </span>
+          <span>{new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(roomDeposit)}</span>
         );
       },
     },
@@ -174,19 +188,50 @@ function ListRoom(props) {
       title: "Thao tác",
       key: "index",
       render: (record) => {
-        return (
-          <>
-            <Tooltip title="Xem chi tiết">
-              <EyeOutlined style={iconSize} />
-            </Tooltip>
-            <Tooltip title="Lập hợp đồng phòng">
-              <AuditOutlined style={iconSize} />
-            </Tooltip>
-            <Tooltip title="Xóa phòng">
-              <DeleteOutlined style={{ fontSize: '130%', color: 'red' }} />
-            </Tooltip>
-          </>
-        );
+        if (record.roomStatus === 0) {
+          return (
+            <>
+              <Tooltip title="Xem chi tiết">
+                <EyeTwoTone
+                  onClick={() => {
+                    setSetRoomDetail(true);
+                  }}
+                  style={iconSize}
+                />
+              </Tooltip>
+              <Tooltip title="Lập hợp đồng phòng">
+                <AuditOutlined
+                  onClick={() => {
+                    navigate(`/contract-renter/create`);
+                  }}
+                  style={iconSize}
+                />
+              </Tooltip>
+              <Tooltip title="Xóa phòng">
+                <DeleteOutlined style={{ fontSize: "130%", color: "red" }} />
+              </Tooltip>
+            </>
+          );
+        } else {
+          return (
+            <>
+              <Tooltip title="Xem chi tiết">
+                <EyeTwoTone
+                  onClick={() => {
+                    setSetRoomDetail(true);
+                  }}
+                  style={iconSize}
+                />
+              </Tooltip>
+              <Tooltip title="Thêm thành viên vào phòng">
+                <UserOutlined style={iconSize} />
+              </Tooltip>
+              <Tooltip title="Xóa phòng">
+                <DeleteOutlined style={{ fontSize: "130%", color: "red" }} />
+              </Tooltip>
+            </>
+          );
+        }
       },
     },
   ];
@@ -206,10 +251,22 @@ function ListRoom(props) {
       </Row>
       <Row>
         <Col span={14}>
-          <Button onClick={onClickAddRoomAuto} type="primary" size="default" style={{ marginBottom: "1%", marginRight: "1%", float: "left" }} icon={<PlusCircleOutlined style={textSize} />}>
+          <Button
+            onClick={onClickAddRoomAuto}
+            type="primary"
+            size="default"
+            style={{ marginBottom: "1%", marginRight: "1%", float: "left" }}
+            icon={<PlusCircleOutlined style={textSize} />}
+          >
             Thêm mới phòng nhanh
           </Button>
-          <Button onClick={onClickAddRoom} type="primary" size="default" style={{ marginBottom: "1%", float: "left" }} icon={<PlusCircleOutlined style={textSize} />}>
+          <Button
+            onClick={onClickAddRoom}
+            type="primary"
+            size="default"
+            style={{ marginBottom: "1%", float: "left" }}
+            icon={<PlusCircleOutlined style={textSize} />}
+          >
             Thêm Phòng
           </Button>
         </Col>
@@ -217,11 +274,9 @@ function ListRoom(props) {
           <Select
             showSearch
             optionFilterProp="children"
-            filterOption={(input, option) =>
-              (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-            }
+            filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase())}
             style={{
-              width: '100%',
+              width: "100%",
             }}
             placeholder="Chọn tòa nhà để hiển thị dữ liệu"
             // onChange={handleChange}
@@ -238,7 +293,8 @@ function ListRoom(props) {
         <Col>
           <p>
             <i>
-              <b>Thêm mới phòng nhanh: </b> các thông tin về phòng sẽ tự động được thêm vào giúp việc nhập dữ liệu nhanh hơn
+              <b>Thêm mới phòng nhanh: </b> các thông tin về phòng sẽ tự động được thêm vào giúp việc nhập dữ liệu nhanh
+              hơn
             </i>
           </p>
         </Col>
@@ -251,7 +307,7 @@ function ListRoom(props) {
                 <span style={textSize}>Tổng số phòng: </span>
               </>
             }
-            value={50}
+            value={2}
           />
         </Col>
         <Col span={8}>
@@ -262,7 +318,7 @@ function ListRoom(props) {
                 {/* <Button icon={<ArrowRightOutlined />} style={{ borderRadius: "50%" }}></Button> */}
               </>
             }
-            value={10}
+            value={1}
           />
         </Col>
         <Col span={8}>
@@ -272,7 +328,7 @@ function ListRoom(props) {
                 <span style={textSize}>Tổng số tiền phòng: </span>
               </>
             }
-            value={100000000}
+            value={20000000}
           />
         </Col>
       </Row>
@@ -280,12 +336,8 @@ function ListRoom(props) {
       <Tabs defaultActiveKey="1" style={{ marginBottom: "1%" }}>
         <Tabs.TabPane tab="Tìm kiếm nhanh" key="1">
           <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-            <Col span={24}>
-              <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                <Col span={24}>
-                  <Input.Search placeholder="Nhập tên phòng để tìm kiếm" style={{ marginBottom: 8, width: 400 }} />
-                </Col>
-              </Row>
+            <Col xs={24} sm={12} xl={8} span={8}>
+              <Input.Search placeholder="Nhập tên phòng hoặc tên chung cư để tìm kiếm" />
             </Col>
           </Row>
         </Tabs.TabPane>
@@ -296,7 +348,7 @@ function ListRoom(props) {
                 <span>Tìm kiếm theo diện tích </span>
               </Row>
               <Row>
-                <Select placeholder="Chọn khoảng diện tích" style={{ width: "100%", marginBottom: "15%" }}>
+                <Select placeholder="Chọn khoảng diện tích" style={{ width: "100%", marginBottom: "5%" }}>
                   <Select.Option>15m2 - 20m2</Select.Option>
                 </Select>
               </Row>
@@ -333,7 +385,7 @@ function ListRoom(props) {
                 <span>Số lượng người tốt đa / phòng </span>
               </Row>
               <Row>
-                <Select placeholder="Chọn số lượng người tối đa" style={{ width: "100%", marginBottom: "15%" }}>
+                <Select placeholder="Chọn số lượng người tối đa" style={{ width: "100%", marginBottom: "5%" }}>
                   <Select.Option>5 người </Select.Option>
                 </Select>
               </Row>
@@ -372,6 +424,7 @@ function ListRoom(props) {
       <Table bordered dataSource={dataSource} columns={columns} scroll={{ x: 1200, y: 600 }}></Table>
       <AddRoom visible={addRoom} close={setAddRoom} />
       <AddRoomAuto visible={addRoomAuto} close={setAddRoomAuto} />
+      <RoomDetail visible={roomDetail} close={setSetRoomDetail} />
     </div>
   );
 }

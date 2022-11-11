@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Breadcrumb } from "antd";
+import "./breadcrumb.scss";
 
 const breadcrumbNameMap = {
   "/building": "Quản lý chung cư",
@@ -20,7 +21,7 @@ const Breadcrumbs = () => {
   const extraBreadcrumbItems = pathSnippets.map((_, index) => {
     const url = `/${pathSnippets.slice(0, index + 1).join("/")}`;
     return (
-      <Breadcrumb.Item key={url}>
+      <Breadcrumb.Item key={url} className="breadcrumb">
         <Link to={url}>{breadcrumbNameMap[url]}</Link>
       </Breadcrumb.Item>
     );
