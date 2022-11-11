@@ -45,8 +45,8 @@ const LIST_ASSET_TYPE = "manager/asset/type";
 const APARTMENT_DATA_GROUP = "/manager/group/all";
 const ADD_NEW_CONTRACT = "/manager/contract/room/add";
 const cardHeight = {
-  height: 900
-}
+  height: 900,
+};
 
 const CreateContractRenter = () => {
   const dateFormatList = ["DD-MM-YYYY", "YYYY-MM-DD"];
@@ -136,6 +136,7 @@ const CreateContractRenter = () => {
       })
       .then((res) => {
         setDataApartmentGroup(res.data.data);
+        console.log(res.data.data);
       })
       .catch((error) => {
         console.log(error);
@@ -359,7 +360,7 @@ const CreateContractRenter = () => {
       renter_email: selectOldRenter.email,
       renter_identity_card: selectOldRenter.identity_number,
       license_plates: selectOldRenter.license_plates,
-      address_more_detail: selectOldRenter.address.address_more_details
+      address_more_detail: selectOldRenter.address.address_more_details,
     });
     setisAdd(false);
   };
@@ -849,19 +850,28 @@ const CreateContractRenter = () => {
                     <div className="site-card-wrapper">
                       <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                         <Col span={8} xs={24} xl={8}>
-                          <Card style={cardHeight} title={
-                            <Tag color="blue">
-                              <h3>
-                                <UserOutlined style={{ fontSize: "130%" }} />
-                                <span style={{ fontSize: "15px" }}>
-                                  <b>Thông tin người đại diện </b>
-                                </span>
-                              </h3>
-                            </Tag>
-                          } bordered={true}>
+                          <Card
+                            style={cardHeight}
+                            title={
+                              <Tag color="blue">
+                                <h3>
+                                  <UserOutlined style={{ fontSize: "130%" }} />
+                                  <span style={{ fontSize: "15px" }}>
+                                    <b>Thông tin người đại diện </b>
+                                  </span>
+                                </h3>
+                              </Tag>
+                            }
+                            bordered={true}
+                          >
                             <Row>
                               <Button
-                                style={{ marginTop: "1%", wordBreak: "break-all", whiteSpace: "normal", height: "auto" }}
+                                style={{
+                                  marginTop: "1%",
+                                  wordBreak: "break-all",
+                                  whiteSpace: "normal",
+                                  height: "auto",
+                                }}
                                 type="primary"
                                 size="default"
                                 onClick={() => {
@@ -1010,14 +1020,20 @@ const CreateContractRenter = () => {
                           </Card>
                         </Col>
                         <Col span={8} xs={24} xl={8}>
-                          <Card style={cardHeight} title={<Tag color="blue">
-                            <h3>
-                              <AuditOutlined style={{ fontSize: "130%" }} />{" "}
-                              <span style={{ fontSize: "15px" }}>
-                                <b>Thông tin về hợp đồng </b>
-                              </span>
-                            </h3>
-                          </Tag>} bordered={false}>
+                          <Card
+                            style={cardHeight}
+                            title={
+                              <Tag color="blue">
+                                <h3>
+                                  <AuditOutlined style={{ fontSize: "130%" }} />{" "}
+                                  <span style={{ fontSize: "15px" }}>
+                                    <b>Thông tin về hợp đồng </b>
+                                  </span>
+                                </h3>
+                              </Tag>
+                            }
+                            bordered={false}
+                          >
                             <Form.Item
                               className="form-item"
                               name="contract_name"
@@ -1063,7 +1079,9 @@ const CreateContractRenter = () => {
                                     serviceIndexInForm: null,
                                   });
                                   setRoomStatus(true);
-                                  setDataApartmentGroupSelect(dataApartmentGroup.find((obj, index) => obj.group_id === e));
+                                  setDataApartmentGroupSelect(
+                                    dataApartmentGroup.find((obj, index) => obj.group_id === e)
+                                  );
                                   setDataAsset(
                                     dataApartmentGroup
                                       .find((obj, index) => obj.group_id === e)
@@ -1162,10 +1180,12 @@ const CreateContractRenter = () => {
                                 onChange={(e) => {
                                   setRoomSelect(dataApartmentGroupSelect?.list_rooms?.find((obj) => obj.room_id === e));
                                   form.setFieldsValue({
-                                    contract_price: dataApartmentGroupSelect?.list_rooms?.find((obj) => obj.room_id === e)
-                                      .room_price,
-                                    contract_deposit: dataApartmentGroupSelect?.list_rooms?.find((obj) => obj.room_id === e)
-                                      .room_price,
+                                    contract_price: dataApartmentGroupSelect?.list_rooms?.find(
+                                      (obj) => obj.room_id === e
+                                    ).room_price,
+                                    contract_deposit: dataApartmentGroupSelect?.list_rooms?.find(
+                                      (obj) => obj.room_id === e
+                                    ).room_price,
                                   });
                                 }}
                               >
@@ -1179,7 +1199,11 @@ const CreateContractRenter = () => {
                                 })}
                               </Select>
                             </Form.Item>
-                            <Form.Item className="form-item" name="contract_type" style={{ display: "none" }}></Form.Item>
+                            <Form.Item
+                              className="form-item"
+                              name="contract_type"
+                              style={{ display: "none" }}
+                            ></Form.Item>
                             <Form.Item
                               className="form-item"
                               name="contract_duration"
@@ -1189,12 +1213,12 @@ const CreateContractRenter = () => {
                                   <b>Thời hạn hợp đồng (ít nhất 1 tháng): </b>
                                 </span>
                               }
-                            // rules={[
-                            //   {
-                            //     required: true,
-                            //     message: "Vui lòng chọn thời hạn hợp đồng",
-                            //   },
-                            // ]}
+                              // rules={[
+                              //   {
+                              //     required: true,
+                              //     message: "Vui lòng chọn thời hạn hợp đồng",
+                              //   },
+                              // ]}
                             >
                               <Select
                                 placeholder="Thời hạn hợp đồng"
@@ -1320,20 +1344,26 @@ const CreateContractRenter = () => {
 
                             <span>
                               <i>
-                                <b>Kỳ 15:</b> Khách thuê vào từ ngày 1-15 <br /> <b>Kỳ 30:</b> Khách thuê vào từ ngày 16-31
+                                <b>Kỳ 15:</b> Khách thuê vào từ ngày 1-15 <br /> <b>Kỳ 30:</b> Khách thuê vào từ ngày
+                                16-31
                               </i>
                             </span>
                           </Card>
                         </Col>
                         <Col span={8} xs={24} xl={8}>
-                          <Card title={<Tag color="blue">
-                            <h3>
-                              <DollarOutlined style={{ fontSize: "130%" }} />{" "}
-                              <span style={{ fontSize: "15px" }}>
-                                <b> Thông tin giá trị hợp đồng </b>
-                              </span>
-                            </h3>
-                          </Tag>} bordered={false}>
+                          <Card
+                            title={
+                              <Tag color="blue">
+                                <h3>
+                                  <DollarOutlined style={{ fontSize: "130%" }} />{" "}
+                                  <span style={{ fontSize: "15px" }}>
+                                    <b> Thông tin giá trị hợp đồng </b>
+                                  </span>
+                                </h3>
+                              </Tag>
+                            }
+                            bordered={false}
+                          >
                             <Form.Item
                               className="form-item"
                               name="contract_price"
@@ -1343,12 +1373,12 @@ const CreateContractRenter = () => {
                                   <b>Giá phòng (VND): </b>
                                 </span>
                               }
-                            // rules={[
-                            //   {
-                            //     required: true,
-                            //     message: "Vui lòng nhập giá phòng",
-                            //   },
-                            // ]}
+                              // rules={[
+                              //   {
+                              //     required: true,
+                              //     message: "Vui lòng nhập giá phòng",
+                              //   },
+                              // ]}
                             >
                               <InputNumber
                                 controls={false}
@@ -1390,8 +1420,7 @@ const CreateContractRenter = () => {
                         </Col>
                       </Row>
                     </div>
-                    <Row>
-                    </Row>
+                    <Row></Row>
                     <p>
                       <i>
                         <b>Lưu ý:</b>
@@ -1543,12 +1572,12 @@ const CreateContractRenter = () => {
                                     String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
                                       ? "Nhập chỉ số hiện tại"
                                       : "Số " +
-                                      obj.service_type_name +
-                                      " / " +
-                                      obj.service_price.toLocaleString("vn-VN", {
-                                        style: "currency",
-                                        currency: "VND",
-                                      })
+                                        obj.service_type_name +
+                                        " / " +
+                                        obj.service_price.toLocaleString("vn-VN", {
+                                          style: "currency",
+                                          currency: "VND",
+                                        })
                                   }
                                   addonAfter={
                                     String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
@@ -1655,7 +1684,7 @@ const CreateContractRenter = () => {
                           <p>
                             <h3>
                               <b>
-                                Thông tin tài sản bàn giao tòa {" "}
+                                Thông tin tài sản bàn giao tòa{" "}
                                 {dataApartmentGroupSelect?.group_name !== undefined
                                   ? dataApartmentGroupSelect?.group_name + " "
                                   : ""}

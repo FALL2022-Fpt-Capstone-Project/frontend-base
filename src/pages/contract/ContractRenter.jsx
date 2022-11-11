@@ -18,7 +18,7 @@ const fontSize = {
 const COUNT_CONTRACT_GROUP = "manager/contract/statistical/get-contract/1";
 
 const ContractRenter = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isStatistic, setStatistic] = useState(false);
   const [isModalNewOpen, setIsModalNewOpen] = useState(false);
   const [isModalOldOpen, setIsModalOldOpen] = useState(false);
   const [isModalEndOpen, setIsModalEndOpen] = useState(false);
@@ -33,14 +33,8 @@ const ContractRenter = () => {
     <Option value={6}>6 tháng</Option>,
     <Option value={12}>1 năm</Option>,
   ];
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-  const handleCancel = () => {
-    setIsModalOpen(false);
+  const showStatistic = () => {
+    setStatistic(!isStatistic);
   };
   const showModalNew = () => {
     setIsModalNewOpen(true);
@@ -100,7 +94,7 @@ const ContractRenter = () => {
           <Content
             className="layout-content"
             style={{
-              margin: "10px 10px",
+              margin: "10px 16px",
             }}
           >
             <Breadcrumbs />
@@ -109,7 +103,7 @@ const ContractRenter = () => {
                 icon={<PieChartOutlined style={fontSize} />}
                 size="middle"
                 className="button-collapse"
-                onClick={showModal}
+                onClick={showStatistic}
               >
                 Thống kê hợp đồng
               </Button>
@@ -120,22 +114,11 @@ const ContractRenter = () => {
                 className="button-add"
                 href="/contract-renter/create"
               >
-                Thêm hợp đồng
+                Thêm mới hợp đồng cho thuê
               </Button>
             </div>
-            <Modal
-              title="Thống kê hợp đồng"
-              open={isModalOpen}
-              onOk={handleOk}
-              onCancel={handleCancel}
-              cancelText={"Huỷ"}
-              footer={[
-                <Button key="back" onClick={handleCancel}>
-                  Quay lại
-                </Button>,
-              ]}
-              width={1200}
-            >
+
+            {isStatistic && (
               <div className="contract-statistic">
                 <div className="contract-card">
                   <Row>
@@ -204,15 +187,9 @@ const ContractRenter = () => {
                   </Row>
                 </div>
               </div>
-            </Modal>
+            )}
 
-            <div
-              className="site-layout-background"
-              style={{
-                padding: 24,
-                minHeight: 360,
-              }}
-            >
+            <div className="site-layout-background">
               <ListContractRenter />
             </div>
           </Content>

@@ -1,7 +1,20 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import "./service.scss";
-import { Button, Col, Layout, Modal, Row, Table, Form, InputNumber, Select, notification, message } from "antd";
+import {
+  Button,
+  Col,
+  Layout,
+  Modal,
+  Row,
+  Table,
+  Form,
+  InputNumber,
+  Select,
+  notification,
+  message,
+  Tooltip,
+} from "antd";
 import { PlusCircleOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import axios from "../../api/axios";
 import TextArea from "antd/lib/input/TextArea";
@@ -89,6 +102,7 @@ function Service(props) {
       })
       .then((res) => {
         setListServiceName(res.data.data);
+        console.log(res.data.data);
       })
       .catch((error) => {
         console.log(error);
@@ -107,6 +121,7 @@ function Service(props) {
       })
       .then((res) => {
         setServiceCalCuMethod(res.data.data);
+        console.log(res.data.data);
       })
       .catch((error) => {
         console.log(error);
@@ -150,35 +165,39 @@ function Service(props) {
       render: (record) => {
         return (
           <>
-            <EditOutlined
-              onClick={() => {
-                console.log(record);
-                setEditServiceGeneral(true);
-                formEditSerivce.setFieldsValue({
-                  general_service_id: record.general_service_id,
-                  service_id: record.service_id,
-                  service_show_name: record.service_show_name,
-                  general_service_price: record.service_price,
-                  general_service_type: record.service_type_id,
-                  note: record.note,
-                });
-              }}
-              style={{ fontSize: "120%" }}
-            />
-            <DeleteOutlined
-              onClick={() => {
-                const data = record;
-                Modal.confirm({
-                  title: `Bạn có chắc chắn muốn xóa ${record.service_show_name} ?`,
-                  okText: "Có",
-                  cancelText: "Hủy",
-                  onOk: () => {
-                    return onDeleteService(data);
-                  },
-                });
-              }}
-              style={{ color: "red", marginLeft: 12, fontSize: "120%" }}
-            />
+            <Tooltip title="Chỉnh sửa">
+              <EditOutlined
+                onClick={() => {
+                  console.log(record);
+                  setEditServiceGeneral(true);
+                  formEditSerivce.setFieldsValue({
+                    general_service_id: record.general_service_id,
+                    service_id: record.service_id,
+                    service_show_name: record.service_show_name,
+                    general_service_price: record.service_price,
+                    general_service_type: record.service_type_id,
+                    note: record.note,
+                  });
+                }}
+                className="icon"
+              />
+            </Tooltip>
+            <Tooltip title="Xoá">
+              <DeleteOutlined
+                onClick={() => {
+                  const data = record;
+                  Modal.confirm({
+                    title: `Bạn có chắc chắn muốn xóa ${record.service_show_name} ?`,
+                    okText: "Có",
+                    cancelText: "Hủy",
+                    onOk: () => {
+                      return onDeleteService(data);
+                    },
+                  });
+                }}
+                className="icon icon-delete"
+              />
+            </Tooltip>
           </>
         );
       },

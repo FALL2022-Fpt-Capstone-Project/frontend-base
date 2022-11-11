@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Input, Table, Select, DatePicker, Tag, Button, Tabs, Row, Col, Switch, Form } from "antd";
+import { Input, Table, Select, DatePicker, Tag, Button, Tabs, Row, Col, Switch, Form, Tooltip } from "antd";
 import { EyeOutlined, EditOutlined, SearchOutlined, UndoOutlined } from "@ant-design/icons";
 import useAuth from "../../hooks/useAuth";
 import axios from "../../api/axios";
@@ -103,7 +103,19 @@ const ListContractRenterLatest = ({ duration }) => {
     <div>
       <div>
         <Tabs defaultActiveKey="1">
-          <Tabs.TabPane tab="Tìm kiếm nâng cao" key="1">
+          <Tabs.TabPane tab="Tìm kiếm nhanh" key="1">
+            <Search
+              placeholder="Tìm kiếm theo tên hợp đồng, tên khách thuê"
+              style={{ marginBottom: 8, width: 400, padding: "10px 0" }}
+              onSearch={(value) => {
+                setTextSearch(value);
+              }}
+              onChange={(e) => {
+                setTextSearch(e.target.value);
+              }}
+            />
+          </Tabs.TabPane>
+          <Tabs.TabPane tab="Tìm kiếm nâng cao" key="2">
             <Form
               {...formItemLayout}
               form={form}
@@ -204,45 +216,47 @@ const ListContractRenterLatest = ({ duration }) => {
               </Row>
             </Form>
           </Tabs.TabPane>
-          <Tabs.TabPane tab="Tìm kiếm nhanh" key="2">
-            <Search
-              placeholder="Tìm kiếm theo tên hợp đồng, tên khách thuê"
-              style={{ marginBottom: 8, width: 400, padding: "10px 0" }}
-              onSearch={(value) => {
-                setTextSearch(value);
-              }}
-              onChange={(e) => {
-                setTextSearch(e.target.value);
-              }}
-            />
-          </Tabs.TabPane>
         </Tabs>
       </div>
       <Table
         bordered
         dataSource={dataSource}
         columns={[
-          // {
-          //   title: 'STT',
-          //   key: 'index',
-          //   render: (text, record, index) => index,
-          // },
           {
-            title: "Tên hợp đồng",
-            dataIndex: "contract_name",
+            title: "Tên khách thuê",
+            dataIndex: "list_renter",
+            render: (list_renter) => {
+              return list_renter?.find((obj, index) => obj?.represent === true)?.renter_full_name;
+            },
+          },
+          {
+            title: "Số điện thoại",
+            dataIndex: "list_renter",
+            render: (list_renter) => {
+              return list_renter?.find((obj, index) => obj?.represent === true)?.phone_number;
+            },
+          },
+          {
+            title: "Phòng",
+            dataIndex: "room",
             filteredValue: [textSearch],
+            render: (room) => room.room_name,
             onFilter: (value, record) => {
               return (
-                String(record.contract_name).toLowerCase()?.includes(value.toLowerCase()) ||
-                String(record.renter_name).toLowerCase()?.includes(value.toLowerCase())
+                String(record.room.room_name).toLowerCase()?.includes(value.toLowerCase()) ||
+                String(record.list_renter.find((obj, index) => obj?.represent === true)?.renter_full_name)
+                  .toLowerCase()
+                  ?.includes(value.toLowerCase()) ||
+                String(record.list_renter.find((obj, index) => obj?.represent === true)?.phone_number)
+                  .toLowerCase()
+                  ?.includes(value.toLowerCase())
               );
             },
           },
           {
-            title: "Tên khách thuê",
-            dataIndex: "renter_name",
+            title: "Tên chung cư",
+            dataIndex: "group_name",
           },
-
           {
             title: "Số tiền cọc",
             dataIndex: "contract_deposit",
@@ -270,7 +284,7 @@ const ListContractRenterLatest = ({ duration }) => {
 
           {
             title: "Trạng thái hợp đồng",
-            dataIndex: "contract_is_disable",
+            dataIndex: "contractIsDisable",
             render: (_, record) => {
               let status;
               if (record.contract_is_disable === true) {
@@ -295,8 +309,23 @@ const ListContractRenterLatest = ({ duration }) => {
             render: (_, record) => {
               return (
                 <>
-                  <EditOutlined style={{ fontSize: "20px", marginRight: "10px" }} />
-                  <EyeOutlined style={{ fontSize: "20px" }} />
+                  <Tooltip title="Chỉnh sửa">
+                    <EditOutlined
+                      className="icon"
+                      onClick={() => {
+                        // navigate(`/contract-renter/edit/${record.contract_id}/group/${record.group_id}`);
+                      }}
+                    />
+                  </Tooltip>
+                  <Tooltip title="Xem">
+                    <EyeOutlined
+                      className="icon"
+                      onClick={() => {
+                        // setViewContract(true);
+                        // setContractInfor(record);
+                      }}
+                    />
+                  </Tooltip>
                 </>
               );
             },

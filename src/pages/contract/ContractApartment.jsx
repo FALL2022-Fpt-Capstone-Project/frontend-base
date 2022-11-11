@@ -8,8 +8,8 @@ import "./contract.scss";
 import Breadcrumbs from "../../components/BreadCrumb ";
 const { Content, Sider, Header } = Layout;
 const fontSize = {
-  fontSize: 15
-}
+  fontSize: 15,
+};
 const ContractApartment = () => {
   return (
     <div className="contract">
@@ -42,7 +42,7 @@ const ContractApartment = () => {
                 className="button-add"
                 href="/contract-apartment/create"
               >
-                Thêm hợp đồng
+                Thêm mới hợp đồng đi thuê
               </Button>
             </div>
             <div

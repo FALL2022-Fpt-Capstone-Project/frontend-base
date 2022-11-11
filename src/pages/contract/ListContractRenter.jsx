@@ -180,6 +180,7 @@ const ListContractRenter = () => {
       });
     setLoading(false);
   };
+
   return (
     <div className="list-contract">
       <div className="list-contract-search">
@@ -312,12 +313,16 @@ const ListContractRenter = () => {
           {
             title: "Tên khách thuê",
             dataIndex: "list_renter",
-            render: (renter) => renter[0].renter_full_name,
+            render: (list_renter) => {
+              return list_renter?.find((obj, index) => obj?.represent === true)?.renter_full_name;
+            },
           },
           {
             title: "Số điện thoại",
             dataIndex: "list_renter",
-            render: (renter) => renter[0].phone_number,
+            render: (list_renter) => {
+              return list_renter?.find((obj, index) => obj?.represent === true)?.phone_number;
+            },
           },
           {
             title: "Phòng",
@@ -327,8 +332,12 @@ const ListContractRenter = () => {
             onFilter: (value, record) => {
               return (
                 String(record.room.room_name).toLowerCase()?.includes(value.toLowerCase()) ||
-                String(record.list_renter[0].renter_full_name).toLowerCase()?.includes(value.toLowerCase()) ||
-                String(record.list_renter[0].phone_number).toLowerCase()?.includes(value.toLowerCase())
+                String(record.list_renter.find((obj, index) => obj?.represent === true)?.renter_full_name)
+                  .toLowerCase()
+                  ?.includes(value.toLowerCase()) ||
+                String(record.list_renter.find((obj, index) => obj?.represent === true)?.phone_number)
+                  .toLowerCase()
+                  ?.includes(value.toLowerCase())
               );
             },
           },

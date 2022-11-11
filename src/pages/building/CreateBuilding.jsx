@@ -1,9 +1,10 @@
-import { Form, Input, InputNumber } from "antd";
+import { Button, Card, Col, Form, Input, InputNumber, Modal, Row, Select, Checkbox } from "antd";
 import React, { useEffect, useState } from "react";
-import Select from "react-select";
 import axios from "../../api/axios";
-import useLocationForm from "./useLocationForm";
-
+import "./building.scss";
+const GET_LIST_SERVICE_BASIC = "manager/service/basics";
+const LIST_SERVICE_CACUL_METHOD = "manager/service/types";
+const CheckboxGroup = Checkbox.Group;
 const ADD_EMPLOYEE_URL = "manager/add-building";
 const formItemLayout = {
   labelCol: {
@@ -24,37 +25,30 @@ const formItemLayout = {
   },
 };
 
-const CreateBuilding = () => {
+const CreateBuilding = ({ visible, close, data }) => {
   const [form] = Form.useForm();
-  const { state, onCitySelect, onDistrictSelect, onWardSelect } = useLocationForm(false);
-
-  const { cityOptions, districtOptions, wardOptions, selectedCity, selectedDistrict, selectedWard } = state;
-
-  // console.log(cityOptions);
 
   const [building_name, setBuildingName] = useState("");
   const [building_total_floor, setBuildingFloor] = useState("");
   const [building_total_room, setBuildingRoom] = useState("");
-  const [building_address_city, setBuildingCty] = useState("");
-  const [building_address_district, setBuildingDistrict] = useState("");
-  const [building_address_wards, setBuildingWard] = useState("");
+  const [building_address_city, setBuildingCity] = useState("");
+  const [building_address_city_id, setBuildingCityId] = useState("");
+  const [building_address_district, setBuildingDistrict] = useState([]);
+  const [building_address_district_id, setBuildingDistrictId] = useState("");
+  const [building_address_wards, setBuildingWard] = useState([]);
   const [building_address_more_detail, setBuildingAddress] = useState("");
-
-  // console.log(selectedCity?.label);
-
-  const Address = () => {
-    setBuildingCty(selectedCity?.label);
-    setBuildingDistrict(selectedDistrict?.label);
-    setBuildingWard(selectedWard?.label);
-    // address();
-  };
-  useEffect(() => {
-    Address();
-  });
+  const [disabledDistrict, setDisableDistrict] = useState(true);
+  const [disabledWard, setDisableWard] = useState(true);
+  const [listServiceName, setListServiceName] = useState([]);
+  const [serviceCalMethod, setServiceCalCuMethod] = useState([]);
+  const [dien, setDien] = useState(true);
+  const [nuoc, setNuoc] = useState(true);
+  const [xe, setXe] = useState(true);
+  const [mang, setMang] = useState(true);
+  const [veSinh, setVesinh] = useState(true);
+  const [khac, setKhac] = useState(true);
+  let cookie = localStorage.getItem("Cookie");
   const handleCreateBuilding = async (value) => {
-    let cookie = localStorage.getItem("Cookie");
-    // console.log(cookie);
-
     const building = {
       building_name,
       building_total_room,
@@ -79,150 +73,520 @@ const CreateBuilding = () => {
     // console.log(value);
   };
 
+  useEffect(() => {
+    const getListServiceBasic = async () => {
+      await axios
+        .get(GET_LIST_SERVICE_BASIC, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cookie}`,
+          },
+        })
+        .then((res) => {
+          setListServiceName(res.data.data);
+          console.log(res.data.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+    getListServiceBasic();
+  }, []);
+
+  useEffect(() => {
+    const getListServiceCaculMethod = async () => {
+      await axios
+        .get(LIST_SERVICE_CACUL_METHOD, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cookie}`,
+          },
+        })
+        .then((res) => {
+          setServiceCalCuMethod(res.data.data);
+          console.log(res.data.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+    getListServiceCaculMethod();
+  }, []);
+
+  useEffect(() => {
+    const getCity = async () => {
+      const response = await axios
+        .get("https://provinces.open-api.vn/api/p/", {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          setBuildingCity(res.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+    getCity();
+  }, []);
+
+  useEffect(() => {
+    const getDistric = async () => {
+      const response = await axios
+        .get(`https://provinces.open-api.vn/api/p/${building_address_city_id}?depth=2`, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          setBuildingDistrict(res.data.districts);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+    getDistric();
+  }, [building_address_city_id]);
+  useEffect(() => {
+    const getDistric = async () => {
+      const response = await axios
+        .get(`https://provinces.open-api.vn/api/d/${building_address_district_id}?depth=2`, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((res) => {
+          setBuildingWard(res.data.wards);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+    getDistric();
+  }, [building_address_district_id]);
+
+  let optionsCity = [];
+  for (let i = 0; i < building_address_city.length; i++) {
+    optionsCity.push({
+      label: building_address_city[i].name,
+      value: building_address_city[i].code,
+    });
+  }
+
+  const cityChange = (value) => {
+    setBuildingDistrict([]);
+    setBuildingCityId(value);
+    setDisableDistrict(false);
+    // optionsDistrict = [];
+    setDisableWard(true);
+    form.setFieldsValue({ district: "", ward: "" });
+  };
+  const districtChange = (value) => {
+    console.log(value);
+    setBuildingDistrictId(value);
+    setDisableWard(false);
+    form.setFieldsValue({ ward: "" });
+  };
   const changeRoom = (value) => {
     setBuildingRoom(value);
   };
   const changeFloor = (value) => {
     setBuildingFloor(value);
   };
+  const onFinish = (e) => {
+    close(false);
+    setDien(true);
+    setNuoc(true);
+    setMang(true);
+    setVesinh(true);
+    setKhac(true);
+    setXe(true);
+  };
+  const onFinishFail = (e) => {};
   return (
-    <Form
-      {...formItemLayout}
-      form={form}
-      name="createBuilding"
-      id="createBuilding"
-      scrollToFirstError
-      onFinish={handleCreateBuilding}
-    >
-      <Form.Item
-        name="building_name"
-        label="Tên chung cư"
-        rules={[
-          {
-            message: "Vui lòng nhập tên chung cư!",
-          },
-          {
-            required: true,
-            message: "Vui lòng nhập tên chung cư!",
-          },
+    <>
+      <Modal
+        title="Thêm mới chung cư"
+        open={visible}
+        width={1000}
+        destroyOnClose
+        onOk={() => {
+          close(false);
+        }}
+        onCancel={() => {
+          close(false);
+        }}
+        footer={[
+          <Button
+            key="back"
+            onClick={() => {
+              close(false);
+            }}
+          >
+            Đóng
+          </Button>,
+          <Button htmlType="submit" key="submit" form="" type="primary">
+            Thêm mới
+          </Button>,
         ]}
       >
-        <Input onChange={(e) => setBuildingName(e.target.value)} />
-      </Form.Item>
+        <Form
+          // form={""}
+          onFinish={onFinish}
+          onFinishFailed={onFinishFail}
+          layout="horizontal"
+          size={"default"}
+          // id=""
+        >
+          <Row gutter={24}>
+            <Col span={12}>
+              <Card title="Thông tin chung" className="card">
+                <Form.Item
+                  name="building_name"
+                  labelCol={{ span: 24 }}
+                  label={
+                    <span>
+                      <b>Tên chung cư: </b>
+                    </span>
+                  }
+                  rules={[
+                    {
+                      message: "Vui lòng nhập tên chung cư!",
+                    },
+                    {
+                      required: true,
+                      message: "Vui lòng nhập tên chung cư!",
+                    },
+                  ]}
+                >
+                  <Input onChange={(e) => setBuildingName(e.target.value)} placeholder="Nhập tên chung cư" />
+                </Form.Item>
+                <Form.Item
+                  name="building_total_floor"
+                  labelCol={{ span: 24 }}
+                  label={
+                    <span>
+                      <b>Số lượng tầng: </b>
+                    </span>
+                  }
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng nhập số lượng tầng của chung cư!",
+                    },
+                  ]}
+                >
+                  <InputNumber
+                    style={{
+                      width: "100%",
+                    }}
+                    onChange={changeFloor}
+                    placeholder="Nhập số lượng tầng của chung cư"
+                  />
+                </Form.Item>
+                <Form.Item
+                  name="building_total_room"
+                  labelCol={{ span: 24 }}
+                  label={
+                    <span>
+                      <b>Số lượng phòng mỗi tầng: </b>
+                    </span>
+                  }
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng nhập số lượng phòng mỗi tầng!",
+                    },
+                  ]}
+                >
+                  <InputNumber
+                    style={{
+                      width: "100%",
+                    }}
+                    onChange={changeRoom}
+                    placeholder="Nhập số lượng phòng mỗi tầng"
+                  />
+                </Form.Item>
+                <Form.Item
+                  name="city"
+                  labelCol={{ span: 24 }}
+                  label={
+                    <span>
+                      <b>Chọn thành phố: </b>
+                    </span>
+                  }
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng chọn thành phố!",
+                    },
+                  ]}
+                >
+                  <Select
+                    defaultValue="Chọn thành phố"
+                    style={{
+                      width: "100%",
+                    }}
+                    onChange={cityChange}
+                    options={optionsCity}
+                  />
+                </Form.Item>
+                <Form.Item
+                  name="district"
+                  labelCol={{ span: 24 }}
+                  label={
+                    <span>
+                      <b>Chọn Quận/Huyện: </b>
+                    </span>
+                  }
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng chọn quận/huyện!",
+                    },
+                  ]}
+                >
+                  <Select
+                    defaultValue="Chọn Quận/Huyện"
+                    style={{
+                      width: "100%",
+                    }}
+                    disabled={disabledDistrict}
+                    onChange={districtChange}
+                    // options={optionsDistrict}
+                  >
+                    <Select.Option value="">Chọn Quận/Huyện</Select.Option>
+                    {building_address_district?.map((obj, index) => {
+                      return (
+                        <>
+                          <Select.Option value={obj.code}>{obj.name}</Select.Option>
+                        </>
+                      );
+                    })}
+                  </Select>
+                </Form.Item>
+                <Form.Item
+                  name="ward"
+                  labelCol={{ span: 24 }}
+                  label={
+                    <span>
+                      <b>Chọn Phường/Xã: </b>
+                    </span>
+                  }
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng chọn phường/xã!",
+                    },
+                  ]}
+                >
+                  <Select
+                    defaultValue="Chọn Phường/Xã"
+                    style={{
+                      width: "100%",
+                    }}
+                    disabled={disabledWard}
+                  >
+                    <Select.Option value="">Chọn Phường/Xã</Select.Option>
+                    {building_address_wards?.map((obj, index) => {
+                      return (
+                        <>
+                          <Select.Option value={obj.code}>{obj.name}</Select.Option>
+                        </>
+                      );
+                    })}
+                  </Select>
+                </Form.Item>
 
-      <Form.Item
-        name="building_total_floor"
-        label="Số tầng"
-        rules={[
-          {
-            required: true,
-            message: "Vui lòng nhập số tầng của chung cư!",
-          },
-        ]}
-      >
-        <InputNumber
-          style={{
-            width: "100%",
-          }}
-          onChange={changeFloor}
-        />
-      </Form.Item>
-      <Form.Item
-        name="building_total_room"
-        label="Số phòng"
-        rules={[
-          {
-            required: true,
-            message: "Vui lòng nhập số phòng của chung cư!",
-          },
-        ]}
-      >
-        <InputNumber
-          style={{
-            width: "100%",
-          }}
-          onChange={changeRoom}
-        />
-      </Form.Item>
-
-      <Form.Item
-        name="building_address_city"
-        label="Thành phố"
-        rules={[
-          {
-            required: true,
-            message: "Vui lòng chọn Thành phố!",
-          },
-        ]}
-      >
-        <Select
-          name="cityId"
-          key={`cityId_${selectedCity?.value}`}
-          isDisabled={cityOptions.length === 0}
-          options={cityOptions}
-          onChange={(option) => onCitySelect(option)}
-          placeholder="Tỉnh/Thành"
-          defaultValue={selectedCity}
-        />
-      </Form.Item>
-      <Form.Item
-        name="building_address_district"
-        label="Quận/Huyện"
-        rules={[
-          {
-            required: true,
-            message: "Vui lòng chọn Quận/Huyện!",
-          },
-        ]}
-      >
-        <Select
-          name="districtId"
-          key={`districtId_${selectedDistrict?.value}`}
-          isDisabled={districtOptions.length === 0}
-          options={districtOptions}
-          onChange={(option) => onDistrictSelect(option)}
-          placeholder="Quận/Huyện"
-          defaultValue={selectedDistrict}
-        />
-      </Form.Item>
-
-      <Form.Item
-        name="building_address_wards"
-        label="Phường/Xã"
-        rules={[
-          {
-            required: true,
-            message: "Vui lòng chọn Phường/Xã!",
-          },
-        ]}
-      >
-        <Select
-          name="wardId"
-          key={`wardId_${selectedWard?.value}`}
-          isDisabled={wardOptions.length === 0}
-          options={wardOptions}
-          placeholder="Phường/Xã"
-          onChange={(option) => onWardSelect(option)}
-          defaultValue={selectedWard}
-        />
-      </Form.Item>
-
-      <Form.Item
-        name="building_address_more_detail"
-        label="Địa chỉ chi tiết"
-        rules={[
-          {
-            message: "Vui lòng nhập địa chỉ!",
-          },
-          {
-            required: true,
-            message: "Vui lòng nhập địa chỉ!",
-          },
-        ]}
-      >
-        <Input onChange={(e) => setBuildingAddress(e.target.value)} />
-      </Form.Item>
-    </Form>
+                <Form.Item
+                  name="building_address_more_detail"
+                  labelCol={{ span: 24 }}
+                  label={
+                    <span>
+                      <b>Địa chỉ chi tiết: </b>
+                    </span>
+                  }
+                  rules={[
+                    {
+                      message: "Vui lòng nhập địa chỉ!",
+                    },
+                    {
+                      required: true,
+                      message: "Vui lòng nhập địa chỉ!",
+                    },
+                  ]}
+                >
+                  <Input onChange={(e) => setBuildingAddress(e.target.value)} placeholder="Nhập địa chỉ chi tiết" />
+                </Form.Item>
+              </Card>
+            </Col>
+            <Col span={12}>
+              <Card title="Dịch vụ chung" className="card">
+                <Row>
+                  <Col span={12}>
+                    <Row style={{ marginBottom: "10px" }}>
+                      <b>Tên dịch vụ</b>
+                    </Row>
+                    <Row>
+                      <CheckboxGroup>
+                        <Row style={{ marginBottom: "23px" }}>
+                          <Checkbox value="A" onChange={() => setDien(!dien)}>
+                            Dịch vụ điện
+                          </Checkbox>
+                        </Row>
+                        <Row style={{ marginBottom: "23px" }}>
+                          <Checkbox value="B" onChange={() => setNuoc(!nuoc)}>
+                            Dịch vụ nước
+                          </Checkbox>
+                        </Row>
+                        <Row style={{ marginBottom: "23px" }}>
+                          <Checkbox value="C" onChange={() => setMang(!mang)}>
+                            Dịch vụ Internet
+                          </Checkbox>
+                        </Row>
+                        <Row style={{ marginBottom: "23px" }}>
+                          <Checkbox value="D" onChange={() => setXe(!xe)}>
+                            Dịch vụ xe
+                          </Checkbox>
+                        </Row>
+                        <Row style={{ marginBottom: "23px" }}>
+                          <Checkbox value="E" onChange={() => setVesinh(!veSinh)}>
+                            Vệ sinh
+                          </Checkbox>
+                        </Row>
+                        <Row>
+                          <Checkbox value="F" onChange={() => setKhac(!khac)}>
+                            Khác
+                          </Checkbox>
+                        </Row>
+                      </CheckboxGroup>
+                    </Row>
+                  </Col>
+                  <Col span={12}>
+                    <Row style={{ marginBottom: "10px" }}>
+                      <b>Cách tính giá dịch vụ</b>
+                    </Row>
+                    <Row>
+                      <Select
+                        defaultValue={1}
+                        style={{
+                          width: "100%",
+                        }}
+                        disabled={dien}
+                      >
+                        {serviceCalMethod?.map((obj, index) => {
+                          return (
+                            <>
+                              <Select.Option value={obj.id}>{obj.service_type_name}</Select.Option>
+                            </>
+                          );
+                        })}
+                      </Select>
+                      <br />
+                      <br />
+                    </Row>
+                    <Row>
+                      <Select
+                        defaultValue={1}
+                        style={{
+                          width: "100%",
+                        }}
+                        disabled={nuoc}
+                      >
+                        {serviceCalMethod?.map((obj, index) => {
+                          return (
+                            <>
+                              <Select.Option value={obj.id}>{obj.service_type_name}</Select.Option>
+                            </>
+                          );
+                        })}
+                      </Select>
+                      <br />
+                      <br />
+                    </Row>
+                    <Row>
+                      <Select
+                        defaultValue={1}
+                        style={{
+                          width: "100%",
+                        }}
+                        disabled={mang}
+                      >
+                        {serviceCalMethod?.map((obj, index) => {
+                          return (
+                            <>
+                              <Select.Option value={obj.id}>{obj.service_type_name}</Select.Option>
+                            </>
+                          );
+                        })}
+                      </Select>
+                      <br />
+                      <br />
+                    </Row>
+                    <Row>
+                      <Select
+                        defaultValue={1}
+                        style={{
+                          width: "100%",
+                        }}
+                        disabled={xe}
+                      >
+                        {serviceCalMethod?.map((obj, index) => {
+                          return (
+                            <>
+                              <Select.Option value={obj.id}>{obj.service_type_name}</Select.Option>
+                            </>
+                          );
+                        })}
+                      </Select>
+                      <br />
+                      <br />
+                    </Row>
+                    <Row>
+                      <Select
+                        defaultValue={1}
+                        style={{
+                          width: "100%",
+                        }}
+                        disabled={veSinh}
+                      >
+                        {serviceCalMethod?.map((obj, index) => {
+                          return (
+                            <>
+                              <Select.Option value={obj.id}>{obj.service_type_name}</Select.Option>
+                            </>
+                          );
+                        })}
+                      </Select>
+                      <br />
+                      <br />
+                    </Row>
+                    <Row>
+                      <Select
+                        defaultValue={1}
+                        style={{
+                          width: "100%",
+                        }}
+                        disabled={khac}
+                      >
+                        {serviceCalMethod?.map((obj, index) => {
+                          return (
+                            <>
+                              <Select.Option value={obj.id}>{obj.service_type_name}</Select.Option>
+                            </>
+                          );
+                        })}
+                      </Select>
+                    </Row>
+                  </Col>
+                </Row>
+              </Card>
+            </Col>
+          </Row>
+        </Form>
+      </Modal>
+    </>
   );
 };
 

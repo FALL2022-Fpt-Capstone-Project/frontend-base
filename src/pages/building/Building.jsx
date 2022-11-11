@@ -8,18 +8,9 @@ import ListBuilding from "./ListBuilding";
 import Breadcrumbs from "../../components/BreadCrumb ";
 const { Content, Sider, Header } = Layout;
 const Building = () => {
-  const [open, setOpen] = useState(false);
-
-  const showModal = () => {
-    setOpen(true);
-  };
-
-  const handleOk = () => {
-    setOpen(false);
-  };
-
-  const handleCancel = () => {
-    setOpen(false);
+  const [createBuilding, setCreateBuilding] = useState(false);
+  const onClickCreateBuilding = () => {
+    setCreateBuilding(true);
   };
 
   return (
@@ -49,7 +40,7 @@ const Building = () => {
                 type="primary"
                 icon={<PlusCircleOutlined />}
                 size="middle"
-                onClick={showModal}
+                onClick={onClickCreateBuilding}
                 className="button-add"
               >
                 Thêm chung cư
@@ -67,25 +58,7 @@ const Building = () => {
           </Content>
         </Layout>
       </Layout>
-
-      <Modal
-        open={open}
-        title="Thêm chung cư"
-        onOk={handleOk}
-        onCancel={handleCancel}
-        destroyOnClose={true}
-        width={700}
-        footer={[
-          <Button htmlType="submit" form="createBuilding" type="primary" onClick={handleOk}>
-            Lưu
-          </Button>,
-          <Button key="back" onClick={handleCancel}>
-            Huỷ
-          </Button>,
-        ]}
-      >
-        <CreateBuilding />
-      </Modal>
+      <CreateBuilding visible={createBuilding} close={setCreateBuilding} />
     </div>
   );
 };
