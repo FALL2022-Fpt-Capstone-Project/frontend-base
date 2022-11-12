@@ -40,12 +40,15 @@ import { useNavigate, useParams } from "react-router-dom";
 const { Content, Sider, Header } = Layout;
 const { Option } = Select;
 const LIST_ASSET_TYPE = "manager/asset/type";
+const ADD_ASSET = "manager/asset/hand-over/add/";
 const APARTMENT_DATA_GROUP = "manager/group/all";
 const GET_ROOM_CONTRACT_BY_ID = "manager/contract/room/";
 const ADD_RENTER = "manager/renter/add";
 const DELETE_RENTER = "manager/renter/remove/";
 const UPDATE_RENTER = "manager/renter/update/";
 const UPDATE_CONTRACT_RENTER = "manager/contract/room/update/";
+
+
 const cardHeight = {
   height: 850,
 };
@@ -60,7 +63,6 @@ const EditContractRenter = () => {
   const defaultAddAsset = {
     dateOfDelivery: moment(),
     asset_unit: 1,
-    asset_type: "Khác",
     asset_status: true,
   };
   const contract_duration = [];
@@ -219,8 +221,6 @@ const EditContractRenter = () => {
     setLoading(false);
   };
 
-  console.log(dataContractById);
-
   const onFormLayoutChange = ({ size }) => {
     setComponentSize(size);
   };
@@ -341,6 +341,7 @@ const EditContractRenter = () => {
       })
       .then((res) => {
         setListAssetType(res.data.data);
+        createAssetForm.setFieldsValue({ asset_type_show_name: res.data.data?.find((obj, index) => obj.asset_type_name === "OTHER" && obj.asset_type_show_name === "Khác")?.id });
       })
       .catch((error) => {
         console.log(error);
@@ -676,59 +677,41 @@ const EditContractRenter = () => {
   };
 
   const addAssetFinish = async (dataAsset) => {
-    console.log(dataAsset);
-    // console.log({
-    //   ...dataAsset,
-    //   id: 0,
-    //   asset_name: ,
-    //   asset_type_id:
-    // });
-    // const data = {
-    //   ...dataMem,
-    //   name: dataMem.name,
-    //   gender: dataMem.member_gender,
-    //   email: "",
-    //   phone_number: dataMem.phone_number,
-    //   identity_card: dataMem.identity_card,
-    //   license_plates: dataMem.license_plates,
-    //   room_id: dataContractById?.room_id,
-    //   address_more_detail: dataMem.address,
-    //   represent: false,
-    // }
-    // setLoading(true);
-    // await axios
-    //   .post(ADD_RENTER, data, {
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //       Authorization: `Bearer ${cookie}`,
-    //     },
-    //   })
-    //   .then((res) => {
-    //     notification.success({
-    //       message: "Thêm mới tài sản thành công",
-    //       placement: "top",
-    //       duration: 2,
-    //     });
-    //     getContractRoomById();
-    //     setIsAddMem(false);
-    //     formAddMem.setFieldsValue({
-    //       member_id: memberId,
-    //       name: "",
-    //       identity_card: "",
-    //       phone_number: "",
-    //       license_plates: "",
-    //       address: "",
-    //     });
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //     notification.error({
-    //       message: "Thêm mới tài sản thất bại",
-    //       placement: "top",
-    //       duration: 2,
-    //     });
-    //   });
-    // setLoading(false);
+    const data = {
+      asset_id: dataAsset?.asset_id,
+      assets_additional_name: dataAsset?.asset_name,
+      assets_additional_type: dataAsset?.asset_type_show_name,
+      hand_over_asset_quantity: dataAsset?.hand_over_asset_quantity,
+      hand_over_asset_status: true,
+      hand_over_date_delivery: dataAsset?.hand_over_asset_date_delivery?.format('DD-MM-YYYY')
+    };
+    console.log(JSON.stringify(data));
+    setLoading(true);
+    await axios
+      .post(ADD_ASSET + contract_id, data, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie}`,
+        },
+      })
+      .then((res) => {
+        notification.success({
+          message: "Thêm mới tài sản thành công",
+          placement: "top",
+          duration: 2,
+        });
+        getContractRoomById();
+        addAssetInRoom(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        notification.error({
+          message: "Thêm mới tài sản thất bại",
+          placement: "top",
+          duration: 2,
+        });
+      });
+    setLoading(false);
   };
   const addAssetFail = (e) => {
     setAddAssetInRoom(true);
@@ -780,7 +763,7 @@ const EditContractRenter = () => {
       asset_id: assetId,
       hand_over_asset_date_delivery: formAddAsset.dateOfDelivery,
       hand_over_asset_quantity: formAddAsset.asset_unit,
-      asset_type_show_name: formAddAsset.asset_type,
+      // asset_type_show_name: formAddAsset.asset_type,
       // hand_over_asset_status: formAddAsset.asset_status,
     });
   };
@@ -1253,12 +1236,12 @@ const EditContractRenter = () => {
                                   <b>Thời hạn hợp đồng (ít nhất 1 tháng): </b>
                                 </span>
                               }
-                              // rules={[
-                              //   {
-                              //     required: true,
-                              //     message: "Vui lòng chọn thời hạn hợp đồng",
-                              //   },
-                              // ]}
+                            // rules={[
+                            //   {
+                            //     required: true,
+                            //     message: "Vui lòng chọn thời hạn hợp đồng",
+                            //   },
+                            // ]}
                             >
                               <Select
                                 placeholder="Thời hạn hợp đồng"
@@ -1416,12 +1399,12 @@ const EditContractRenter = () => {
                                   <b>Giá phòng (VND): </b>
                                 </span>
                               }
-                              // rules={[
-                              //   {
-                              //     required: true,
-                              //     message: "Vui lòng nhập giá phòng",
-                              //   },
-                              // ]}
+                            // rules={[
+                            //   {
+                            //     required: true,
+                            //     message: "Vui lòng nhập giá phòng",
+                            //   },
+                            // ]}
                             >
                               <InputNumber
                                 controls={false}
@@ -1541,12 +1524,12 @@ const EditContractRenter = () => {
                                     String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
                                       ? "Nhập chỉ số"
                                       : "Số " +
-                                        obj.service_type_name +
-                                        " / " +
-                                        obj.service_price.toLocaleString("vn-VN", {
-                                          style: "currency",
-                                          currency: "VND",
-                                        })
+                                      obj.service_type_name +
+                                      " / " +
+                                      obj.service_price.toLocaleString("vn-VN", {
+                                        style: "currency",
+                                        currency: "VND",
+                                      })
                                   }
                                   addonAfter={
                                     String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
@@ -1729,6 +1712,20 @@ const EditContractRenter = () => {
                         </Row>
                       </Col>
                     </Row>
+                    {/* <Row>
+                      <p>
+                        <i>
+                          <b>Lưu ý:</b>
+                          <br />
+                          - Trên đây là những tài sản cố định theo phòng
+                          <br />- Nếu bạn muốn chỉnh sửa, thay đổi những tài sản cố định này cần vào mục <b>Quản lý trang thiết bị</b>
+                          <br />
+                        </i>
+                      </p>
+                    </Row>
+                    <Row>
+                      <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
+                    </Row> */}
                   </Tabs.TabPane>
                 </Tabs>
               </Form>
@@ -1882,7 +1879,7 @@ const EditContractRenter = () => {
                     <Select placeholder="Chọn nhóm tài sản">
                       {listAssetType?.map((obj, index) => {
                         return (
-                          <Select.Option value={obj.asset_type_show_name}>{obj.asset_type_show_name}</Select.Option>
+                          <Select.Option value={obj.id}>{obj.asset_type_show_name}</Select.Option>
                         );
                       })}
                     </Select>

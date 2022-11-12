@@ -189,23 +189,23 @@ const CreateContractBuilding = () => {
       dataIndex: "hand_over_asset_date_delivery",
       key: "asset_id",
     },
-    {
-      title: "Trạng thái",
-      dataIndex: "hand_over_asset_status",
-      filters: [
-        { text: "Tốt", value: true },
-        { text: "Hỏng", value: false },
-      ],
-      filteredValue: assetStatus.hand_over_asset_status || null,
-      onFilter: (value, record) => record.hand_over_asset_status === value,
-      render: (status) => {
-        return (
-          <>
-            <Tag color={status ? "success" : "error"}>{status ? "Tốt" : "Hỏng"}</Tag>
-          </>
-        );
-      },
-    },
+    // {
+    //   title: "Trạng thái",
+    //   dataIndex: "hand_over_asset_status",
+    //   filters: [
+    //     { text: "Tốt", value: true },
+    //     { text: "Hỏng", value: false },
+    //   ],
+    //   filteredValue: assetStatus.hand_over_asset_status || null,
+    //   onFilter: (value, record) => record.hand_over_asset_status === value,
+    //   render: (status) => {
+    //     return (
+    //       <>
+    //         <Tag color={status ? "success" : "error"}>{status ? "Tốt" : "Hỏng"}</Tag>
+    //       </>
+    //     );
+    //   },
+    // },
     {
       title: "Thao tác",
       key: "asset_id",
@@ -1347,7 +1347,7 @@ const CreateContractBuilding = () => {
                       })}
                     </Select>
                   </Form.Item>
-                  <Form.Item
+                  {/* <Form.Item
                     className="form-item"
                     name="hand_over_asset_status"
                     labelCol={{ span: 24 }}
@@ -1371,7 +1371,7 @@ const CreateContractBuilding = () => {
                         <Tag color="error">Hỏng</Tag>
                       </Radio>
                     </Radio.Group>
-                  </Form.Item>
+                  </Form.Item> */}
                 </Form>
               </Modal>
 
@@ -1495,7 +1495,7 @@ const CreateContractBuilding = () => {
                       })}
                     </Select>
                   </Form.Item>
-                  <Form.Item
+                  {/* <Form.Item
                     className="form-item"
                     name="hand_over_asset_status"
                     labelCol={{ span: 24 }}
@@ -1519,7 +1519,7 @@ const CreateContractBuilding = () => {
                         <Tag color="error">Hỏng</Tag>
                       </Radio>
                     </Radio.Group>
-                  </Form.Item>
+                  </Form.Item> */}
                 </Form>
               </Modal>
               <Modal
