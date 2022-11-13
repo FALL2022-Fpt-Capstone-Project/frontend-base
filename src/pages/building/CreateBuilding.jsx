@@ -1,4 +1,5 @@
 import { Button, Card, Col, Form, Input, InputNumber, Modal, Row, Select, Checkbox } from "antd";
+import TextArea from "antd/lib/input/TextArea";
 import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
 import "./building.scss";
@@ -418,6 +419,17 @@ const CreateBuilding = ({ visible, close, data }) => {
                   ]}
                 >
                   <Input onChange={(e) => setBuildingAddress(e.target.value)} placeholder="Nhập địa chỉ chi tiết" />
+                </Form.Item>
+                <Form.Item
+                  name="building_address_more_detail"
+                  labelCol={{ span: 24 }}
+                  label={
+                    <span>
+                      <b>Mô tả: </b>
+                    </span>
+                  }
+                >
+                  <TextArea rows={4} />
                 </Form.Item>
               </Card>
             </Col>

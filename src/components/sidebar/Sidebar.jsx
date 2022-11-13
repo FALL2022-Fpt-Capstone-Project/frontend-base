@@ -2,7 +2,6 @@ import "antd/dist/antd.min.css";
 import {
   DashboardOutlined,
   LogoutOutlined,
-  DollarOutlined,
   SolutionOutlined,
   ProfileOutlined,
   HomeOutlined,
@@ -13,22 +12,34 @@ import {
   GoldOutlined,
   EditOutlined,
 } from "@ant-design/icons";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { Button, Col, Menu, Modal, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import "./sidebar.scss";
-import useAuth from "../../hooks/useAuth";
 import axios from "../../api/axios";
 const Sidebar = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [user, setUser] = useState([]);
+  const [contractRenterLink, setContractRenterLink] = useState("/contract-renter");
+  const [contractApartmentLink, setContractApartmentLink] = useState("/contract-apartment");
   const showModal = () => {
     setIsModalOpen(true);
   };
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-  const { auth } = useAuth();
+  const location = useLocation();
+  useEffect(() => {
+    if (location.pathname.includes("/contract-renter/create")) {
+      setContractRenterLink("/contract-renter/create");
+    }
+  }, [location.pathname]);
+  useEffect(() => {
+    if (location.pathname.includes("/contract-apartment/create")) {
+      setContractApartmentLink("/contract-apartment/create");
+    }
+  }, [location.pathname]);
+
   let id = localStorage.getItem("id");
   let cookie = localStorage.getItem("Cookie");
   let role = localStorage.getItem("Role");
@@ -83,12 +94,12 @@ const Sidebar = () => {
             <span>Dịch vụ</span>
             <Link to="/service" />
           </Menu.Item>
-          <Menu.Item key="/contract-apartment">
+          <Menu.Item key={contractApartmentLink}>
             <SolutionOutlined />
             <span>Quản lý hợp đồng đi thuê</span>
             <Link to="/contract-apartment" />
           </Menu.Item>
-          <Menu.Item key="/contract-renter">
+          <Menu.Item key={contractRenterLink}>
             <SolutionOutlined />
             <span>Quản lý hợp đồng cho thuê</span>
             <Link to="/contract-renter" />
@@ -143,7 +154,7 @@ const Sidebar = () => {
             <span>Dịch vụ</span>
             <Link to="/service" />
           </Menu.Item>
-          <Menu.Item key="/contract-renter">
+          <Menu.Item key={contractRenterLink}>
             <SolutionOutlined />
             <span>Quản lý hợp đồng cho thuê</span>
             <Link to="/contract-renter" />
