@@ -43,77 +43,8 @@ const iconSize = {
   marginRight: "8%",
 };
 
-const treeData = [
-  {
-    title: '0-0',
-    key: '0-0',
-    children: [
-      {
-        title: '0-0-0',
-        key: '0-0-0',
-        children: [
-          {
-            title: '0-0-0-0',
-            key: '0-0-0-0',
-          },
-          {
-            title: '0-0-0-1',
-            key: '0-0-0-1',
-          },
-          {
-            title: '0-0-0-2',
-            key: '0-0-0-2',
-          },
-        ],
-      },
-      {
-        title: '0-0-1',
-        key: '0-0-1',
-        children: [
-          {
-            title: '0-0-1-0',
-            key: '0-0-1-0',
-          },
-          {
-            title: '0-0-1-1',
-            key: '0-0-1-1',
-          },
-          {
-            title: '0-0-1-2',
-            key: '0-0-1-2',
-          },
-        ],
-      },
-      {
-        title: '0-0-2',
-        key: '0-0-2',
-      },
-    ],
-  },
-  {
-    title: '0-1',
-    key: '0-1',
-    children: [
-      {
-        title: '0-1-0-0',
-        key: '0-1-0-0',
-      },
-      {
-        title: '0-1-0-1',
-        key: '0-1-0-1',
-      },
-      {
-        title: '0-1-0-2',
-        key: '0-1-0-2',
-      },
-    ],
-  },
-  {
-    title: '0-2',
-    key: '0-2',
-  },
-];
 const APARTMENT_DATA_GROUP = "/manager/group/all";
+const ROOM_INFOR = "manager/room/";
 
 function ListRoom(props) {
   const [form] = Form.useForm();
@@ -122,6 +53,9 @@ function ListRoom(props) {
   const [roomDetail, setSetRoomDetail] = useState(false);
   const [loading, setLoading] = useState(false);
   const [dataApartmentGroup, setDataApartmentGroup] = useState([]);
+  const [dataSource, setDataSource] = useState([]);
+  const [roomInfor, setRoomInfor] = useState([]);
+  const [groupRoom, setGroupRoom] = useState([]);
   let cookie = localStorage.getItem("Cookie");
 
   //Tree
@@ -157,71 +91,41 @@ function ListRoom(props) {
   const optionRoomStatus = [
     {
       label: "Đang ở",
-      value: 1,
+      value: true,
     },
     {
       label: "Đang trống",
-      value: 0,
+      value: false,
     },
   ];
 
-  const renter = [
-    {
-      index: 1,
-      groupName: "Trọ xanh",
-      roomName: "Phòng 201",
-      roomFloor: "Tầng 2",
-      roomNumberOfRenter: "1/5",
-      roomPrice: 10000000,
-      roomDeposit: 10000000,
-      roomSquare: "30m2",
-      billCycle: "1 tháng",
-      paymentCycle: "Kỳ 30",
-      durationContract: "6 tháng",
-      roomStatus: 1,
-    },
-    {
-      index: 2,
-      groupName: "Trọ xanh",
-      roomName: "Phòng 202",
-      roomFloor: "Tầng 2",
-      roomNumberOfRenter: "0/5",
-      roomPrice: 10000000,
-      roomDeposit: 0,
-      roomSquare: "30m2",
-      billCycle: "",
-      paymentCycle: "Kỳ 30",
-      durationContract: "Chưa vào ở",
-      roomStatus: 0,
-    },
-  ];
 
-  const [dataSource, setDataSource] = useState(renter);
+
   const columns = [
     {
       title: "Tên chung cư",
       dataIndex: "groupName",
-      key: "index",
+      key: "room_id",
     },
     {
       title: "Tên phòng",
       dataIndex: "roomName",
-      key: "index",
+      key: "room_id",
     },
     {
       title: "Tầng",
       dataIndex: "roomFloor",
-      key: "index",
+      key: "room_id",
     },
     {
       title: "Số lượng người",
       dataIndex: "roomNumberOfRenter",
-      key: "index",
+      key: "room_id",
     },
     {
       title: "Giá phòng",
       dataIndex: "roomPrice",
-      key: "index",
+      key: "room_id",
       render: (roomPrice) => {
         return <span>{new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(roomPrice)}</span>;
       },
@@ -229,7 +133,7 @@ function ListRoom(props) {
     {
       title: "Tiền cọc",
       dataIndex: "roomDeposit",
-      key: "index",
+      key: "room_id",
       render: (roomDeposit) => {
         return (
           <span>{new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(roomDeposit)}</span>
@@ -239,40 +143,33 @@ function ListRoom(props) {
     {
       title: "Diện tích",
       dataIndex: "roomSquare",
-      key: "index",
+      key: "room_id",
     },
     {
       title: "Thời hạn hợp đồng",
       dataIndex: "durationContract",
-      key: "index",
+      key: "room_id",
     },
     {
       title: "Trạng thái",
-      key: "index",
+      key: "room_id",
       dataIndex: "roomStatus",
       filters: [
-        { text: "Đang ở", value: 1 },
-        { text: "Đang trống", value: 0 },
-        { text: "Đã cọc", value: 2 },
+        { text: "Đang ở", value: true },
+        { text: "Đang trống", value: false },
       ],
       onFilter: (value, record) => {
         return record.status === value;
       },
       render: (roomStatus) => {
-        if (roomStatus === 0) {
-          return <Tag color="error">Đang trống</Tag>;
-        } else if (roomStatus === 1) {
-          return <Tag color="success">Đang ở</Tag>;
-        } else {
-          return <Tag color="blue">Đã cọc</Tag>;
-        }
+        return roomStatus ? <Tag color="success">Đang ở</Tag> : <Tag color="error">Đang trống</Tag>
       },
     },
     {
       title: "Thao tác",
       key: "index",
       render: (record) => {
-        if (record.roomStatus === 0) {
+        if (!record.roomStatus) {
           return (
             <>
               <Tooltip title="Xem chi tiết">
@@ -321,6 +218,7 @@ function ListRoom(props) {
   ];
   useEffect(() => {
     apartmentGroup();
+    getRoomInfor();
   }, []);
   const apartmentGroup = async () => {
     setLoading(true);
@@ -333,13 +231,75 @@ function ListRoom(props) {
       })
       .then((res) => {
         setDataApartmentGroup(res.data.data);
+        setGroupRoom(pre => {
+          return { ...pre, group: res.data.data }
+        });
       })
       .catch((error) => {
         console.log(error);
       });
     setLoading(false);
   };
-  console.log(dataApartmentGroup);
+
+  const getRoomInfor = async () => {
+    setLoading(true);
+    await axios
+      .get(ROOM_INFOR, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie}`,
+        },
+      })
+      .then((res) => {
+        // const data = res.data.data?.map((obj, index) => {
+        //   return {
+        //     room_id: obj.contract_id,
+        //     groupName: obj.group_name,
+        //     roomFloor: 'Tầng ' + obj.room.room_floor,
+        //     roomNumberOfRenter: obj.list_renter.length + "/" + obj.room.room_limit_people,
+        //     roomPrice: obj.room.room_price,
+        //     roomDeposit: obj.contract_price,
+        //     roomSquare: obj.room.room_area,
+        //     billCycle: obj.contract_bill_cycle,
+        //     paymentCycle: obj.contract_payment_cycle,
+        //     durationContract: obj?.contract_term + ' tháng',
+        //     roomStatus: obj.list_renter.length > 0 ? true : false
+        //   }
+        // });
+        setGroupRoom(pre => {
+          return { ...pre, list_rooms: res.data.data };
+        });
+        setRoomInfor(res.data.data)
+        // setDataSource(data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    setLoading(false);
+  };
+  console.log();
+
+  const treeData = dataApartmentGroup?.map((obj, index) => {
+    return {
+      title: obj.group_name,
+      key: obj.group_id,
+      children: obj.list_rooms?.map((o, i) => o.room_floor)
+        ?.filter((floor, j) => obj.list_rooms
+          ?.map((n, m) => n.room_floor)?.indexOf(floor) === j)
+        ?.sort((a, b) => a - b)
+        ?.map((pre, k) => {
+          return {
+            title: 'Tầng ' + pre,
+            key: obj.group_id + '-' + pre,
+            children: obj.list_rooms?.map((room, r) => {
+              return [{ room_id: room.room_id, room_floor: room.room_floor, room_name: parseInt(room.room_name) }][0]
+            })?.filter((room_by_floor, l) => room_by_floor.room_floor === pre)?.sort((q, w) => q.room_name - w.room_name)
+              ?.map((tree_room, t) => { return { title: 'Phòng ' + tree_room.room_name, key: obj.group_id + '-' + pre + '-' + tree_room.room_id } })
+          }
+        })
+    }
+  });
+  // console.log(dataApartmentGroup);
 
   return (
     <div
@@ -524,7 +484,27 @@ function ListRoom(props) {
                 </Row>
               </Tabs.TabPane>
             </Tabs>
-            <Table bordered dataSource={dataSource} columns={columns} scroll={{ x: 1180, y: 600 }}></Table>
+            <Table
+              bordered
+              loading={loading}
+              dataSource={groupRoom?.list_rooms?.map((obj, index) => {
+                return {
+                  room_id: obj.room_id,
+                  groupName: groupRoom?.group?.find((o, i) => o.group_id === obj.group_id).group_name,
+                  roomName: obj.room_name,
+                  roomFloor: obj.room_floor,
+                  roomNumberOfRenter: 0,
+                  roomPrice: obj.room_price,
+                  roomDeposit: 0,
+                  roomSquare: obj.room_area,
+                  billCycle: 0,
+                  paymentCycle: 0,
+                  durationContract: 0,
+                  roomStatus: obj.contract_id !== null ? true : false
+                }
+              })}
+              columns={columns}
+              scroll={{ x: 1180, y: 600 }}></Table>
           </Card>
         </Col>
       </Row>

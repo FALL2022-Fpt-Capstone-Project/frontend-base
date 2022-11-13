@@ -30,7 +30,7 @@ function AddRoomAuto({ visible, close, data }) {
                         Đóng
                     </Button>,
                     <Button htmlType="submit" key="submit" form="" type="primary">
-                        Thêm mới
+                        Xem trước
                     </Button>,
                 ]}
             >
