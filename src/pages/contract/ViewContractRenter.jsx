@@ -127,7 +127,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
         <>
             <div>
                 <Modal
-                    title={<h2>{dataContract?.contract_name}</h2>}
+                    title={<h2>Hợp đồng phòng {dataContract?.room?.room_name}</h2>}
                     width={1200}
                     open={openView}
                     onOk={handleOk}

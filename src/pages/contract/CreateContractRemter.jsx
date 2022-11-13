@@ -45,7 +45,7 @@ const LIST_ASSET_TYPE = "manager/asset/type";
 const APARTMENT_DATA_GROUP = "/manager/group/all";
 const ADD_NEW_CONTRACT = "/manager/contract/room/add";
 const cardHeight = {
-  height: 900,
+  height: '100%',
 };
 const fontSizeIcon = {
   fontSize: "120%",
@@ -800,7 +800,7 @@ const CreateContractRenter = () => {
           <Header className="layout-header">
             <Row>
               <Col span={24}>
-                <p className="header-title">Thêm hợp đồng mới cho khách thuê</p>
+                <p className="header-title">Tạo mới hợp đồng cho thuê</p>
               </Col>
             </Row>
           </Header>
@@ -1006,11 +1006,11 @@ const CreateContractRenter = () => {
                               labelCol={{ span: 24 }}
                               label={
                                 <span>
-                                  <b>Địa chỉ: </b>
+                                  <b>Địa chỉ chi tiết: </b>
                                 </span>
                               }
                             >
-                              <Input placeholder="Địa chỉ"></Input>
+                              <Input placeholder="Địa chỉ chi tiết"></Input>
                             </Form.Item>
                             <Form.Item
                               className="form-item"
@@ -1022,7 +1022,7 @@ const CreateContractRenter = () => {
                                 </span>
                               }
                             >
-                              <TextArea rows={6} placeholder="Ghi chú" value={""} />
+                              <TextArea maxLength={200} rows={4} placeholder="Ghi chú" value={""} />
                             </Form.Item>
                           </Card>
                         </Col>
@@ -1220,12 +1220,12 @@ const CreateContractRenter = () => {
                                   <b>Thời hạn hợp đồng (ít nhất 1 tháng): </b>
                                 </span>
                               }
-                              // rules={[
-                              //   {
-                              //     required: true,
-                              //     message: "Vui lòng chọn thời hạn hợp đồng",
-                              //   },
-                              // ]}
+                            // rules={[
+                            //   {
+                            //     required: true,
+                            //     message: "Vui lòng chọn thời hạn hợp đồng",
+                            //   },
+                            // ]}
                             >
                               <Select
                                 placeholder="Thời hạn hợp đồng"
@@ -1380,12 +1380,12 @@ const CreateContractRenter = () => {
                                   <b>Giá phòng (VND): </b>
                                 </span>
                               }
-                              // rules={[
-                              //   {
-                              //     required: true,
-                              //     message: "Vui lòng nhập giá phòng",
-                              //   },
-                              // ]}
+                            // rules={[
+                            //   {
+                            //     required: true,
+                            //     message: "Vui lòng nhập giá phòng",
+                            //   },
+                            // ]}
                             >
                               <InputNumber
                                 controls={false}
@@ -1575,12 +1575,12 @@ const CreateContractRenter = () => {
                                     String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
                                       ? "Nhập chỉ số hiện tại"
                                       : "Số " +
-                                        obj.service_type_name +
-                                        " / " +
-                                        obj.service_price.toLocaleString("vn-VN", {
-                                          style: "currency",
-                                          currency: "VND",
-                                        })
+                                      obj.service_type_name +
+                                      " / " +
+                                      obj.service_price.toLocaleString("vn-VN", {
+                                        style: "currency",
+                                        currency: "VND",
+                                      })
                                   }
                                   addonAfter={
                                     String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
@@ -2308,11 +2308,11 @@ const CreateContractRenter = () => {
                     labelCol={{ span: 24 }}
                     label={
                       <span>
-                        <b>Địa chỉ: </b>
+                        <b>Địa chỉ chi tiết: </b>
                       </span>
                     }
                   >
-                    <Input placeholder="Địa chỉ"></Input>
+                    <Input placeholder="Địa chỉ chi tiết"></Input>
                   </Form.Item>
                 </Form>
               </Modal>
@@ -2450,11 +2450,11 @@ const CreateContractRenter = () => {
                     labelCol={{ span: 24 }}
                     label={
                       <span>
-                        <b>Địa chỉ: </b>
+                        <b>Địa chỉ chi tiết: </b>
                       </span>
                     }
                   >
-                    <Input placeholder="Địa chỉ"></Input>
+                    <Input placeholder="Địa chỉ chi tiết"></Input>
                   </Form.Item>
                 </Form>
               </Modal>

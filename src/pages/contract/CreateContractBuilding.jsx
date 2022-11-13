@@ -33,6 +33,8 @@ import {
   message,
   notification,
   Divider,
+  Card,
+  Tree,
 } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import { useNavigate } from "react-router-dom";
@@ -49,6 +51,7 @@ const defaultAddAsset = {
   asset_type: "Khác",
   asset_status: true,
 };
+
 
 const contract_duration = [];
 for (let i = 6; i < 17; i++) {
@@ -72,7 +75,57 @@ const dataFilter = {
   asset_type: [],
 };
 
+const treeData = [
+  {
+    title: '0-0',
+    key: '0-0',
+    children: [
+      {
+        title: '0-0-0',
+        key: '0-0-0',
+      },
+      {
+        title: '0-0-1',
+        key: '0-0-1',
+      },
+      {
+        title: '0-0-2',
+        key: '0-0-2',
+      },
+    ],
+  },
+  {
+    title: '0-1',
+    key: '0-1',
+  },
+  {
+    title: '0-2',
+    key: '0-2',
+  },
+];
+
 const CreateContractBuilding = () => {
+  const [expandedKeys, setExpandedKeys] = useState(['0-0-0', '0-0-1']);
+  const [checkedKeys, setCheckedKeys] = useState(['0-0-0']);
+  const [selectedKeys, setSelectedKeys] = useState([]);
+  const [autoExpandParent, setAutoExpandParent] = useState(true);
+  const onExpand = (expandedKeysValue) => {
+    console.log('onExpand', expandedKeysValue);
+    // if not set autoExpandParent to false, if children expanded, parent can not collapse.
+    // or, you can remove all expanded children keys.
+    setExpandedKeys(expandedKeysValue);
+    setAutoExpandParent(false);
+  };
+  const onCheck = (checkedKeysValue) => {
+    console.log('onCheck', checkedKeysValue);
+    setCheckedKeys(checkedKeysValue);
+  };
+  const onSelect = (selectedKeysValue, info) => {
+    console.log('onSelect', info);
+    setSelectedKeys(selectedKeysValue);
+  };
+
+
   const [listAssetType, setListAssetType] = useState([]);
   const navigate = useNavigate();
   const [searched, setSearched] = useState("");
@@ -95,6 +148,7 @@ const CreateContractBuilding = () => {
   const [addServiceGeneral, setAddServiceGeneral] = useState(false);
   const [formAddSerivce] = Form.useForm();
   const [dataApartmentGroup, setDataApartmentGroup] = useState([]);
+  const [groupSelect, setGroupSelect] = useState([]);
   const [numberOfFloor, setNumberOfFloor] = useState([]);
 
   let cookie = localStorage.getItem("Cookie");
@@ -135,23 +189,23 @@ const CreateContractBuilding = () => {
       dataIndex: "hand_over_asset_date_delivery",
       key: "asset_id",
     },
-    {
-      title: "Trạng thái",
-      dataIndex: "hand_over_asset_status",
-      filters: [
-        { text: "Tốt", value: true },
-        { text: "Hỏng", value: false },
-      ],
-      filteredValue: assetStatus.hand_over_asset_status || null,
-      onFilter: (value, record) => record.hand_over_asset_status === value,
-      render: (status) => {
-        return (
-          <>
-            <Tag color={status ? "success" : "error"}>{status ? "Tốt" : "Hỏng"}</Tag>
-          </>
-        );
-      },
-    },
+    // {
+    //   title: "Trạng thái",
+    //   dataIndex: "hand_over_asset_status",
+    //   filters: [
+    //     { text: "Tốt", value: true },
+    //     { text: "Hỏng", value: false },
+    //   ],
+    //   filteredValue: assetStatus.hand_over_asset_status || null,
+    //   onFilter: (value, record) => record.hand_over_asset_status === value,
+    //   render: (status) => {
+    //     return (
+    //       <>
+    //         <Tag color={status ? "success" : "error"}>{status ? "Tốt" : "Hỏng"}</Tag>
+    //       </>
+    //     );
+    //   },
+    // },
     {
       title: "Thao tác",
       key: "asset_id",
@@ -173,13 +227,13 @@ const CreateContractBuilding = () => {
                   hand_over_asset_status: record.hand_over_asset_status,
                 });
               }}
-              style={{ fontSize: "120%" }}
+              className="icon-size"
             />
             <DeleteOutlined
               onClick={() => {
                 onDeleteAsset(record);
               }}
-              style={{ color: "red", marginLeft: 12, fontSize: "120%" }}
+              className="icon-delete"
             />
           </>
         );
@@ -282,8 +336,8 @@ const CreateContractBuilding = () => {
       render: (record) => {
         return (
           <>
-            <EditOutlined style={{ fontSize: "120%" }} />
-            <DeleteOutlined style={{ color: "red", marginLeft: 12, fontSize: "120%" }} />
+            <EditOutlined className="icon-size" />
+            <DeleteOutlined className="icon-delete" />
           </>
         );
       },
@@ -416,41 +470,37 @@ const CreateContractBuilding = () => {
   const onFinishAddServiceFail = (e) => {
     console.log(e);
   };
-
+  console.log(numberOfFloor);
   return (
     <div className="contract">
-      <Layout
-        style={{
-          minHeight: "100vh",
-          minWidth: "100vh",
-        }}
-      >
+      <Layout className="page-layout">
         <Sider width={250}>
           <p className="sider-title">QUẢN LÝ CHUNG CƯ MINI</p>
           <Sidebar />
         </Sider>
         <Layout className="site-layout">
           <Header className="layout-header">
-            <p className="header-title">Thêm hợp đồng chung cư mini/căn hộ</p>
+            <p className="header-title">Tạo mới hợp đồng đi thuê</p>
           </Header>
-          <Content
-            style={{
-              margin: "10px 16px",
-            }}
-          >
-            <Breadcrumbs />
+          <Content className="page-content">
+            <Row>
+              <Col span={24}>
+                <Breadcrumbs />
+              </Col>
+            </Row>
             <div
               className="site-layout-background"
-              style={{
-                minHeight: 360,
-              }}
+            // style={{
+            //   minHeight: 360,
+            // }}
             >
-              <div style={{ overflow: "auto" }}>
+              <div className="button-cover">
                 <Button
                   href="/contract-apartment"
                   type="primary"
                   icon={<ArrowLeftOutlined />}
-                  style={{ marginRight: 5, float: "right" }}
+                  // style={{ marginRight: 5, float: "right" }}
+                  className="button-back"
                 >
                   Danh sách hợp đồng
                 </Button>
@@ -459,12 +509,6 @@ const CreateContractBuilding = () => {
                 onFinish={onFinish}
                 onFinishFailed={onFinishContractFail}
                 form={form}
-                labelCol={{
-                  span: 6,
-                }}
-                wrapperCol={{
-                  span: 15,
-                }}
                 layout="horizontal"
                 initialValues={{
                   size: componentSize,
@@ -475,423 +519,515 @@ const CreateContractBuilding = () => {
                 id="create-contract"
               >
                 <Tabs activeKey={changeTab} defaultActiveKey="1">
-                  <Tabs.TabPane tab={<span style={{ fontSize: "17px" }}>1. Thông tin chung</span>} key="1">
-                    <Row>
-                      <Col span={12}>
-                        <Row>
-                          <Tag color="blue" style={{ wordBreak: "break-all", whiteSpace: "normal", height: "auto" }}>
-                            <div style={{ overflow: "auto" }}>
-                              <h3>
-                                <UserOutlined style={{ fontSize: "130%" }} />
-                                <span style={{ fontSize: "15px" }}>
-                                  <b> Thông tin người cho thuê </b>
-                                </span>
-                              </h3>
-                            </div>
-                          </Tag>
-                          <Form.Item
-                            className="form-item"
-                            name="contract_name"
-                            labelCol={{ span: 24 }}
-                            label={
-                              <span>
-                                <b>Tên người cho thuê: </b>
-                              </span>
-                            }
-                            rules={[
-                              {
-                                required: true,
-                                message: "Vui lòng nhập tên người cho thuê",
-                                whitespace: true,
-                              },
-                            ]}
-                          >
-                            <Input placeholder="Tên người cho thuê"></Input>
-                          </Form.Item>
-                          <Form.Item
-                            className="form-item"
-                            name="renter_phone_number"
-                            labelCol={{ span: 24 }}
-                            label={
-                              <span>
-                                <b>Số điện thoại: </b>
-                              </span>
-                            }
-                            rules={[
-                              {
-                                required: true,
-                                message: "Vui lòng nhập số điện thoại",
-                                whitespace: true,
-                              },
-                              {
-                                pattern: /^((\+84|84|0)+(3|5|7|8|9|1[2|6|8|9]))+([0-9]{8})\b/,
-                                message: "Số điện thoại phải bắt đầu (+84,0,84)",
-                              },
-                            ]}
-                          >
-                            <Input placeholder="Số điện thoại"></Input>
-                          </Form.Item>
-                          <Form.Item
-                            className="form-item"
-                            name="renter_email"
-                            labelCol={{ span: 24 }}
-                            label={
-                              <span>
-                                <b>Email: </b>
-                              </span>
-                            }
-                          >
-                            <Input placeholder="Email"></Input>
-                          </Form.Item>
-                          <Form.Item
-                            className="form-item"
-                            name="renter_identity_card"
-                            labelCol={{ span: 24 }}
-                            label={
-                              <span>
-                                <b>CCCD/CMND: </b>
-                              </span>
-                            }
-                            rules={[
-                              {
-                                required: true,
-                                message: "Vui lòng nhập CCCD/CMND",
-                                whitespace: true,
-                              },
-                              {
-                                pattern: /^([0-9]{12})\b/,
-                                message: "Vui lòng nhập đúng CMND/CCCD (12 số)",
-                              },
-                            ]}
-                          >
-                            <Input placeholder="CCCD/CMND"></Input>
-                          </Form.Item>
-                          <Form.Item
-                            className="form-item"
-                            name="contract_note"
-                            labelCol={{ span: 24 }}
-                            label={
-                              <span>
-                                <b>Ghi chú: </b>
-                              </span>
-                            }
-                          >
-                            <TextArea rows={4} placeholder="Ghi chú" value={""} />
-                          </Form.Item>
-                        </Row>
-                        <Row>
-                          <Tag color="blue" style={{ wordBreak: "break-all", whiteSpace: "normal", height: "auto" }}>
-                            <h3>
-                              <AuditOutlined style={{ fontSize: "130%" }} />
-                              <span style={{ fontSize: "15px" }}>
-                                <b> Thông tin về hợp đồng </b>
-                              </span>
-                            </h3>
-                          </Tag>
-                          <Form.Item
-                            className="form-item"
-                            name="floor"
-                            labelCol={{ span: 24 }}
-                            label={
-                              <span>
-                                <b>Tên chung cư mini/căn hộ: </b>
-                              </span>
-                            }
-                            rules={[
-                              {
-                                required: true,
-                                message: "Vui lòng chọn tầng",
-                                whitespace: true,
-                              },
-                            ]}
-                          >
-                            <Input placeholder="Tên chung cư mini/căn hộ" />
-                          </Form.Item>
-                          <Form.Item
-                            className="form-item"
-                            name="room_id"
-                            labelCol={{ span: 24 }}
-                            label={
-                              <span>
-                                <b>Chọn Tỉnh/Tp: </b>
-                              </span>
-                            }
-                            rules={[
-                              {
-                                required: true,
-                                message: "Vui lòng chọn Tỉnh/Tp",
-                              },
-                            ]}
-                          >
-                            <Select placeholder="Chọn Tỉnh/Tp">
-                              <Select.Option value="">Chọn Tỉnh/Tp</Select.Option>
-                            </Select>
-                          </Form.Item>
-                          <Form.Item
-                            className="form-item"
-                            name="contract_duration"
-                            labelCol={{ span: 24 }}
-                            label={
-                              <span>
-                                <b>Chọn Quận/Huyện: </b>
-                              </span>
-                            }
-                            rules={[
-                              {
-                                required: true,
-                                message: "Vui lòng chọn Quận/Huyện",
-                              },
-                            ]}
-                          >
-                            <Select placeholder="Chọn Quận/Huyện">
-                              <Select.Option value="">Chọn Quận/Huyện</Select.Option>
-                            </Select>
-                          </Form.Item>
-                          <Form.Item
-                            className="form-item"
-                            name="contract_duration"
-                            labelCol={{ span: 24 }}
-                            label={
-                              <span>
-                                <b>Địa chỉ: </b>
-                              </span>
-                            }
-                            rules={[
-                              {
-                                required: true,
-                                message: "Vui lòng nhập địa chỉ",
-                              },
-                            ]}
-                          >
-                            <Input placeholder="Địa chỉ" />
-                          </Form.Item>
-                          <Form.Item
-                            className="form-item"
-                            name="contract_duration"
-                            labelCol={{ span: 24 }}
-                            label={
-                              <span>
-                                <b>Thời hạn hợp đồng (ít nhất 6 tháng): </b>
-                              </span>
-                            }
-                            rules={[
-                              {
-                                required: true,
-                                message: "Vui lòng chọn thời hạn hợp đồng",
-                              },
-                            ]}
-                          >
-                            <Select
-                              placeholder="Thời hạn hợp đồng"
-                              onChange={(e) => {
-                                console.log();
-                                form.setFieldsValue({
-                                  contract_end_date: moment(contractStartDate.add(e, "M"), dateFormatList),
-                                  contract_start_date: moment(contractStartDate.add(-e, "M"), dateFormatList),
-                                });
-                              }}
-                            >
-                              {contract_duration?.map((obj, index) => {
-                                return <Option value={obj.contractTermValue}>{obj.contractTermName}</Option>;
-                              })}
-                            </Select>
-                          </Form.Item>
-                          <Form.Item
-                            className="form-item"
-                            name="contract_start_date"
-                            labelCol={{ span: 24 }}
-                            label={
-                              <span>
-                                <b>Ngày hợp đồng có hiệu lực: </b>
-                              </span>
-                            }
-                            rules={[
-                              {
-                                required: true,
-                                message: "Vui lòng chọn ngày lập hợp đồng",
-                              },
-                            ]}
-                          >
-                            <DatePicker
-                              onChange={(e) => {
-                                setContractStartDate(e);
-                              }}
-                              allowClear={false}
-                              style={{ width: "100%" }}
-                              placeholder="Ngày vào ở"
-                              defaultValue={moment()}
-                              format="DD/MM/YYYY"
-                            />
-                          </Form.Item>
-                          <Form.Item
-                            className="form-item"
-                            name="contract_end_date"
-                            labelCol={{ span: 24 }}
-                            label={
-                              <span>
-                                <b>Ngày kết thúc: </b>
-                              </span>
-                            }
-                          >
-                            <DatePicker
-                              allowClear={false}
-                              style={{ width: "100%" }}
-                              placeholder="Ngày kết thúc"
-                              format="DD/MM/YYYY"
-                            />
-                          </Form.Item>
-                        </Row>
-                      </Col>
-                      <Col span={12}>
-                        <Row>
-                          <Tag color="blue" style={{ wordBreak: "break-all", whiteSpace: "normal", height: "auto" }}>
-                            <h3>
-                              <HomeOutlined style={{ fontSize: "130%" }} />
-                              <span style={{ fontSize: "15px" }}>
-                                <b> Chọn tầng và phòng </b>
-                              </span>
-                            </h3>
-                          </Tag>
-                          <Form.Item
-                            className="form-item"
-                            name="contract_price"
-                            labelCol={{ span: 24 }}
-                            label={
-                              <span>
-                                <b>Chọn chung cư: </b>
-                              </span>
-                            }
-                            rules={[
-                              {
-                                required: true,
-                                message: "Vui lòng nhập giá phòng",
-                              },
-                            ]}
-                          >
-                            <Select
-                              onChange={(e) => {
-                                const list_rooms = dataApartmentGroup?.find(
-                                  (obj, index) => obj.group_id === e
-                                )?.list_rooms;
-                                const mapped_list_rooms = list_rooms?.map((obj, index) => obj.room_floor);
-                                const get_floors = mapped_list_rooms
-                                  ?.filter((obj, index) => mapped_list_rooms.indexOf(obj) === index)
-                                  .sort((a, b) => a - b);
-                                const floor_room = get_floors?.map((obj, index) => {
-                                  return [obj, list_rooms?.filter((o, i) => o.room_floor === obj)];
-                                });
-                                setNumberOfFloor(floor_room);
-                                console.log(floor_room);
-                              }}
-                              placeholder="Chọn chung cư"
-                              options={dataApartmentGroup?.map((obj, index) => {
-                                return { value: obj.group_id, label: obj.group_name };
-                              })}
-                            ></Select>
-                          </Form.Item>
-                        </Row>
-                        {numberOfFloor?.map((obj, index) => {
-                          return (
+                  <Tabs.TabPane tab={<span className="text-size-tab">1. Thông tin chung</span>} key="1">
+                    <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+                      <Col xs={24} md={12} lg={8} xl={8} span={8}>
+                        <Card
+                          title={
                             <>
-                              <Row>
-                                <p>Tầng {obj[0]}</p>
-                              </Row>
-                              <Row>
-                                <Col>
-                                  <Checkbox checked>Chọn tất cả</Checkbox>
-                                </Col>
-                              </Row>
-                              {obj[1]?.map((o, i) => {
-                                return (
-                                  <>
-                                    <Checkbox checked value={o.room_id}>
-                                      {o.room_name}
-                                    </Checkbox>
-                                  </>
-                                );
-                              })}
-                              <Divider />
+                              <Tag color="blue" className="text-tag">
+                                <div style={{ overflow: "auto" }}>
+                                  <h3>
+                                    <UserOutlined className="icon-size" />
+                                    <span className="font-size-tag">
+                                      <b> Thông tin người cho thuê </b>
+                                    </span>
+                                  </h3>
+                                </div>
+                              </Tag>
                             </>
-                          );
-                        })}
-                        <Row>
-                          <Tag color="blue" style={{ wordBreak: "break-all", whiteSpace: "normal", height: "auto" }}>
-                            <h3>
-                              <DollarOutlined style={{ fontSize: "130%" }} />
-                              <span style={{ fontSize: "15px" }}>
-                                <b> Thông tin giá trị hợp đồng </b>
-                              </span>
-                            </h3>
-                          </Tag>
-                          <Form.Item
-                            className="form-item"
-                            name="contract_price"
-                            labelCol={{ span: 24 }}
-                            label={
-                              <span>
-                                <b>Giá thuê (VND): </b>
-                              </span>
-                            }
-                            rules={[
-                              {
-                                required: true,
-                                message: "Vui lòng nhập giá thuê",
-                              },
-                            ]}
-                          >
-                            <InputNumber
-                              controls={false}
-                              addonAfter="VNĐ"
-                              defaultValue={0}
-                              formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                              parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
-                              style={{ width: "100%" }}
-                              min={0}
-                            />
-                          </Form.Item>
-                          <Form.Item
-                            className="form-item"
-                            name="contract_deposit"
-                            labelCol={{ span: 24 }}
-                            label={
-                              <span>
-                                <b>Số tiền cọc (VND): </b>
-                              </span>
-                            }
-                            rules={[
-                              {
-                                required: true,
-                                message: "Vui lòng nhập tiền cọc",
-                              },
-                            ]}
-                          >
-                            <InputNumber
-                              controls={false}
-                              addonAfter="VNĐ"
-                              defaultValue={0}
-                              formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                              parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
-                              style={{ width: "100%" }}
-                              min={0}
-                            />
-                          </Form.Item>
-                        </Row>
-                        <Form.Item
-                          className="form-item"
-                          name="contract_note"
-                          labelCol={{ span: 24 }}
-                          label={
-                            <span>
-                              <b>Ghi chú: </b>
-                            </span>
                           }
+                          className="card-width-100 card-height"
                         >
-                          <TextArea rows={4} placeholder="Ghi chú" value={""} />
-                        </Form.Item>
+                          <Row>
+                            <Form.Item
+                              className="form-item"
+                              name="contract_name"
+                              labelCol={{ span: 24 }}
+                              label={
+                                <span>
+                                  <b>Tên người cho thuê: </b>
+                                </span>
+                              }
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Vui lòng nhập tên người cho thuê",
+                                  whitespace: true,
+                                },
+                              ]}
+                            >
+                              <Input placeholder="Tên người cho thuê"></Input>
+                            </Form.Item>
+                            <Form.Item
+                              className="form-item"
+                              name="renter_phone_number"
+                              labelCol={{ span: 24 }}
+                              label={
+                                <span>
+                                  <b>Số điện thoại: </b>
+                                </span>
+                              }
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Vui lòng nhập số điện thoại",
+                                  whitespace: true,
+                                },
+                                {
+                                  pattern: /^((\+84|84|0)+(3|5|7|8|9|1[2|6|8|9]))+([0-9]{8})\b/,
+                                  message: "Số điện thoại phải bắt đầu (+84,0,84)",
+                                },
+                              ]}
+                            >
+                              <Input placeholder="Số điện thoại"></Input>
+                            </Form.Item>
+                            <Form.Item
+                              className="form-item"
+                              name="renter_email"
+                              labelCol={{ span: 24 }}
+                              label={
+                                <span>
+                                  <b>Email: </b>
+                                </span>
+                              }
+                            >
+                              <Input placeholder="Email"></Input>
+                            </Form.Item>
+                            <Form.Item
+                              className="form-item"
+                              name="renter_identity_card"
+                              labelCol={{ span: 24 }}
+                              label={
+                                <span>
+                                  <b>CCCD/CMND: </b>
+                                </span>
+                              }
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Vui lòng nhập CCCD/CMND",
+                                  whitespace: true,
+                                },
+                                {
+                                  pattern: /^([0-9]{12})\b/,
+                                  message: "Vui lòng nhập đúng CMND/CCCD (12 số)",
+                                },
+                              ]}
+                            >
+                              <Input placeholder="CCCD/CMND"></Input>
+                            </Form.Item>
+                            <Form.Item
+                              className="form-item"
+                              name="contract_note"
+                              labelCol={{ span: 24 }}
+                              label={
+                                <span>
+                                  <b>Ghi chú: </b>
+                                </span>
+                              }
+                            >
+                              <TextArea maxLength={200} rows={6} placeholder="Ghi chú" value={""} />
+                            </Form.Item>
+                          </Row>
+                        </Card>
+                      </Col>
+                      <Col xs={24} md={12} lg={8} xl={8} span={8}>
+                        <Card
+                          title={
+                            <>
+                              <Tag color="blue" className="text-tag">
+                                <h3>
+                                  <AuditOutlined className="icon-size" />
+                                  <span className="font-size-tag">
+                                    <b> Thông tin về hợp đồng </b>
+                                  </span>
+                                </h3>
+                              </Tag>
+                            </>
+                          }
+                          bordered={false}
+                          className="card-width-100 card-height">
+                          <Row>
+                            <Form.Item
+                              className="form-item"
+                              name="contract_price"
+                              labelCol={{ span: 24 }}
+                              label={
+                                <span>
+                                  <b>Chọn chung cư: </b>
+                                </span>
+                              }
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Vui lòng nhập giá phòng",
+                                },
+                              ]}
+                            >
+                              <Select
+                                showSearch
+                                filterOption={(input, option) =>
+                                  (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                                }
+                                onChange={(e) => {
+                                  const list_rooms = dataApartmentGroup?.find(
+                                    (obj, index) => obj.group_id === e
+                                  )?.list_rooms;
+                                  const mapped_list_rooms = list_rooms?.map((obj, index) => obj.room_floor);
+                                  const get_floors = mapped_list_rooms
+                                    ?.filter((obj, index) => mapped_list_rooms.indexOf(obj) === index)
+                                    .sort((a, b) => a - b);
+                                  const floor_room = get_floors?.map((obj, index) => {
+                                    const children = list_rooms?.filter((o, i) => o.room_floor === obj)?.map((room, j) => { return [{ title: `Phòng ${room.room_name}`, value: room.room_id }] })?.map((a, b) => a[0]);
+                                    return [
+                                      {
+                                        title: `Tầng ${obj} ( Số lượng phòng: ${children.length} )`,
+                                        key: obj,
+                                        children: children
+                                      }
+                                    ]
+                                  })?.map((o, i) => o[0]);
+                                  setNumberOfFloor(floor_room);
+                                }}
+                                placeholder="Chọn chung cư"
+                                options={dataApartmentGroup?.map((obj, index) => {
+                                  return { value: obj.group_id, label: obj.group_name };
+                                })}
+                              ></Select>
+                            </Form.Item>
+                            <Form.Item
+                              className="form-item"
+                              name="room_id"
+                              labelCol={{ span: 24 }}
+                              label={
+                                <span>
+                                  <b>Tỉnh/Tp: </b>
+                                </span>
+                              }
+                            >
+                              <Input disabled placeholder="Tỉnh/Tp" />
+                            </Form.Item>
+                            <Form.Item
+                              className="form-item"
+                              name="contract_duration"
+                              labelCol={{ span: 24 }}
+                              label={
+                                <span>
+                                  <b>Quận/Huyện: </b>
+                                </span>
+                              }
+                            >
+                              <Input disabled placeholder="Quận/Huyện" />
+                            </Form.Item>
+                            <Form.Item
+                              className="form-item"
+                              name="contract_duration"
+                              labelCol={{ span: 24 }}
+                              label={
+                                <span>
+                                  <b>Phường/Xã: </b>
+                                </span>
+                              }
+                            >
+                              <Input disabled placeholder="Phường/Xã" />
+                            </Form.Item>
+                            <Form.Item
+                              className="form-item"
+                              name="contract_duration"
+                              labelCol={{ span: 24 }}
+                              label={
+                                <span>
+                                  <b>Địa chỉ chi tiết: </b>
+                                </span>
+                              }
+                            >
+                              <Input disabled placeholder="Địa chỉ chi tiết" />
+                            </Form.Item>
+                            <Form.Item
+                              className="form-item"
+                              name="contract_duration"
+                              labelCol={{ span: 24 }}
+                              label={
+                                <span>
+                                  <b>Thời hạn hợp đồng (ít nhất 6 tháng): </b>
+                                </span>
+                              }
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Vui lòng chọn thời hạn hợp đồng",
+                                },
+                              ]}
+                            >
+                              <Select
+                                placeholder="Thời hạn hợp đồng"
+                                onChange={(e) => {
+                                  console.log();
+                                  form.setFieldsValue({
+                                    contract_end_date: moment(contractStartDate.add(e, "M"), dateFormatList),
+                                    contract_start_date: moment(contractStartDate.add(-e, "M"), dateFormatList),
+                                  });
+                                }}
+                              >
+                                {contract_duration?.map((obj, index) => {
+                                  return <Option value={obj.contractTermValue}>{obj.contractTermName}</Option>;
+                                })}
+                              </Select>
+                            </Form.Item>
+                            <Form.Item
+                              className="form-item"
+                              name="contract_start_date"
+                              labelCol={{ span: 24 }}
+                              label={
+                                <span>
+                                  <b>Ngày hợp đồng có hiệu lực: </b>
+                                </span>
+                              }
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Vui lòng chọn ngày lập hợp đồng",
+                                },
+                              ]}
+                            >
+                              <DatePicker
+                                onChange={(e) => {
+                                  setContractStartDate(e);
+                                }}
+                                allowClear={false}
+                                style={{ width: "100%" }}
+                                placeholder="Ngày vào ở"
+                                defaultValue={moment()}
+                                format="DD/MM/YYYY"
+                              />
+                            </Form.Item>
+                            <Form.Item
+                              className="form-item"
+                              name="contract_end_date"
+                              labelCol={{ span: 24 }}
+                              label={
+                                <span>
+                                  <b>Ngày kết thúc: </b>
+                                </span>
+                              }
+                            >
+                              <DatePicker
+                                allowClear={false}
+                                style={{ width: "100%" }}
+                                placeholder="Ngày kết thúc"
+                                format="DD/MM/YYYY"
+                              />
+                            </Form.Item>
+                          </Row>
+                        </Card>
+                      </Col>
+                      <Col xs={24} md={12} lg={8} xl={8} span={8}>
+                        <Card
+                          title={
+                            <>
+                              <Tag color="blue" className="text-tag">
+                                <h3>
+                                  <DollarOutlined className="icon-size" />
+                                  <span className="font-size-tag">
+                                    <b> Thông tin giá trị hợp đồng </b>
+                                  </span>
+                                </h3>
+                              </Tag>
+                            </>
+                          }
+                          className="card-width-100">
+                          <Row>
+                            <Form.Item
+                              className="form-item"
+                              name="contract_price"
+                              labelCol={{ span: 24 }}
+                              label={
+                                <span>
+                                  <b>Giá thuê (VND): </b>
+                                </span>
+                              }
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Vui lòng nhập giá thuê",
+                                },
+                              ]}
+                            >
+                              <InputNumber
+                                controls={false}
+                                addonAfter="VNĐ"
+                                defaultValue={0}
+                                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
+                                style={{ width: "100%" }}
+                                min={0}
+                              />
+                            </Form.Item>
+                            <Form.Item
+                              className="form-item"
+                              name="contract_deposit"
+                              labelCol={{ span: 24 }}
+                              label={
+                                <span>
+                                  <b>Số tiền cọc (VND): </b>
+                                </span>
+                              }
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Vui lòng nhập tiền cọc",
+                                },
+                              ]}
+                            >
+                              <InputNumber
+                                controls={false}
+                                addonAfter="VNĐ"
+                                defaultValue={0}
+                                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
+                                style={{ width: "100%" }}
+                                min={0}
+                              />
+                            </Form.Item>
+                          </Row>
+                          <Row>
+                            <p><i>Bạn chưa chọn tầng và phòng thuê, bấm <b>tiếp</b> để chọn</i></p>
+                          </Row>
+                        </Card>
                       </Col>
                     </Row>
                   </Tabs.TabPane>
-                  <Tabs.TabPane tab={<span style={{ fontSize: "17px" }}>2. Dịch vụ</span>} key="2">
+                  <Tabs.TabPane tab={<span className="text-size-tab">2. Chọn tầng và phòng</span>} key="2">
+                    <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+                      <Col xs={24} xl={12} span={12}>
+                        <Card
+                          title={
+                            <>
+                              <Tag color="blue" className="text-tag">
+                                <h3>
+                                  <HomeOutlined className="icon-size" />
+                                  <span className="font-size-tag">
+                                    <b> Thông tin chung cư </b>
+                                  </span>
+                                </h3>
+                              </Tag>
+                            </>
+                          }
+                          bordered={false} className="card-width-100 card-height">
+                          <Row>
+                            <Col xs={24} xl={12} span={12}>
+                              <Form.Item
+                                className="form-item"
+                                name="contract_price"
+                                labelCol={{ span: 24 }}
+                                label={
+                                  <span>
+                                    <b>Chọn chung cư: </b>
+                                  </span>
+                                }
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: "Vui lòng nhập giá phòng",
+                                  },
+                                ]}
+                              >
+                                <Select
+                                  showSearch
+                                  filterOption={(input, option) =>
+                                    (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                                  }
+                                  onChange={(e) => {
+                                    const list_rooms = dataApartmentGroup?.find(
+                                      (obj, index) => obj.group_id === e
+                                    )?.list_rooms;
+                                    const mapped_list_rooms = list_rooms?.map((obj, index) => obj.room_floor);
+                                    const get_floors = mapped_list_rooms
+                                      ?.filter((obj, index) => mapped_list_rooms.indexOf(obj) === index)
+                                      .sort((a, b) => a - b);
+                                    const floor_room = get_floors?.map((obj, index) => {
+                                      const children = list_rooms?.filter((o, i) => o.room_floor === obj)?.map((room, j) => { return [{ title: `Phòng ${room.room_name}`, value: room.room_id }] })?.map((a, b) => a[0]);
+                                      return [
+                                        {
+                                          title: `Tầng ${obj} ( Số lượng phòng: ${children.length} )`,
+                                          key: obj,
+                                          children: children
+                                        }
+                                      ]
+                                    })?.map((o, i) => o[0]);
+                                    setGroupSelect(dataApartmentGroup?.find(
+                                      (obj, index) => obj.group_id === e
+                                    ));
+                                    setNumberOfFloor(floor_room);
+                                  }}
+                                  placeholder="Chọn chung cư"
+                                  options={dataApartmentGroup?.map((obj, index) => {
+                                    return { value: obj.group_id, label: obj.group_name };
+                                  })}
+                                ></Select>
+                              </Form.Item>
+                            </Col>
+                          </Row>
+                          <Divider />
+                          <Row>
+                            <Col span={5}>
+                              <p><b>Số lượng tầng:</b> </p>
+                            </Col>
+                            <Col span={19}>
+                              <p>{groupSelect?.list_rooms?.map((obj, index) => obj.room_floor)?.filter((o, i) => groupSelect?.list_rooms?.map((obj, index) => obj.room_floor)?.indexOf(o) === i)?.length}</p>
+                            </Col>
+                          </Row>
+                          <Row>
+                            <Col span={5}>
+                              <p><b>Số lượng phòng:</b> </p>
+                            </Col>
+                            <Col span={19}>
+                              <p>{groupSelect?.list_rooms?.length}</p>
+                            </Col>
+                          </Row>
+                          <Row>
+                            <Col span={5}>
+                              <p><b>Địa chỉ:</b> </p>
+                            </Col>
+                            <Col span={19}>
+                              <p>Hữu Quan, Dương Quan, Thủy Nguyên, Hải Phòng</p>
+                            </Col>
+                          </Row>
+                        </Card>
+                      </Col>
+                      <Col xs={24} xl={12} span={12}>
+                        <Card
+                          title={
+                            <>
+                              <Tag color="blue" className="text-tag">
+                                <h3>
+                                  <HomeOutlined className="icon-size" />
+                                  <span className="font-size-tag">
+                                    <b> Chọn tầng và phòng </b>
+                                  </span>
+                                </h3>
+                              </Tag>
+                            </>
+                          }
+                          bordered={false} className="card-width-100 card-height">
+                          <Tree
+                            checkable
+                            onExpand={onExpand}
+                            expandedKeys={expandedKeys}
+                            autoExpandParent={autoExpandParent}
+                            onCheck={onCheck}
+                            checkedKeys={checkedKeys}
+                            onSelect={onSelect}
+                            selectedKeys={selectedKeys}
+                            treeData={numberOfFloor}
+                            height={900}
+                          />
+                        </Card>
+                      </Col>
+                    </Row>
+                  </Tabs.TabPane>
+                  {/* <Tabs.TabPane tab={<span className="text-size-tab">3. Dịch vụ</span>} key="3">
                     <Row>
                       <Col span={23}>
                         <Form.Item className="form-item" name="list_general_service" labelCol={{ span: 24 }}>
@@ -953,8 +1089,8 @@ const CreateContractBuilding = () => {
                     <Row>
                       <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
                     </Row>
-                  </Tabs.TabPane>
-                  <Tabs.TabPane tab={<span style={{ fontSize: "17px" }}>3. Tài sản bàn giao</span>} key="3">
+                  </Tabs.TabPane> */}
+                  <Tabs.TabPane tab={<span className="text-size-tab">3. Tài sản bàn giao</span>} key="3">
                     <Row>
                       <Col span={24}>
                         <Form.Item className="form-item" name="list_hand_over_assets" labelCol={{ span: 24 }}>
@@ -1038,21 +1174,6 @@ const CreateContractBuilding = () => {
                         </Row>
                       </Col>
                     </Row>
-                    {/* <Row>
-                                            <p>
-                                                <i>
-                                                    <b>Lưu ý:</b>
-                                                    <br />- Cột <b>"thời gian"</b>: trong bảng hiển thị là tính từ thời gian đó tới thời điểm hiện
-                                                    tại thì tài sản có trạng thái <b>"Tốt"</b> hoặc <b>"Hỏng"</b>. <br />- Trong trường hợp bàn
-                                                    giao với khách thuê, tài sản ở thời điểm bàn giao <b>"trạng thái"</b> không như trong bảng
-                                                    hiển thị. Cần cập nhập để hệ thống ghi nhận trạng thái của tài sản ở thời điểm hiện tại.
-                                                    <br />
-                                                </i>
-                                            </p>
-                                        </Row>
-                                        <Row>
-                                            <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
-                                        </Row> */}
                   </Tabs.TabPane>
                 </Tabs>
               </Form>
@@ -1226,7 +1347,7 @@ const CreateContractBuilding = () => {
                       })}
                     </Select>
                   </Form.Item>
-                  <Form.Item
+                  {/* <Form.Item
                     className="form-item"
                     name="hand_over_asset_status"
                     labelCol={{ span: 24 }}
@@ -1250,7 +1371,7 @@ const CreateContractBuilding = () => {
                         <Tag color="error">Hỏng</Tag>
                       </Radio>
                     </Radio.Group>
-                  </Form.Item>
+                  </Form.Item> */}
                 </Form>
               </Modal>
 
@@ -1374,7 +1495,7 @@ const CreateContractBuilding = () => {
                       })}
                     </Select>
                   </Form.Item>
-                  <Form.Item
+                  {/* <Form.Item
                     className="form-item"
                     name="hand_over_asset_status"
                     labelCol={{ span: 24 }}
@@ -1398,7 +1519,7 @@ const CreateContractBuilding = () => {
                         <Tag color="error">Hỏng</Tag>
                       </Radio>
                     </Radio.Group>
-                  </Form.Item>
+                  </Form.Item> */}
                 </Form>
               </Modal>
               <Modal
@@ -1510,7 +1631,7 @@ const CreateContractBuilding = () => {
                       </span>
                     }
                   >
-                    <TextArea rows={5} placeholder="Ghi chú"></TextArea>
+                    <TextArea maxLength={200} rows={5} placeholder="Ghi chú"></TextArea>
                   </Form.Item>
                 </Form>
               </Modal>

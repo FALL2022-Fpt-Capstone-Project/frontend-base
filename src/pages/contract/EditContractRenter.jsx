@@ -40,12 +40,15 @@ import { useNavigate, useParams } from "react-router-dom";
 const { Content, Sider, Header } = Layout;
 const { Option } = Select;
 const LIST_ASSET_TYPE = "manager/asset/type";
+const ADD_ASSET = "manager/asset/hand-over/add/";
 const APARTMENT_DATA_GROUP = "manager/group/all";
 const GET_ROOM_CONTRACT_BY_ID = "manager/contract/room/";
 const ADD_RENTER = "manager/renter/add";
 const DELETE_RENTER = "manager/renter/remove/";
 const UPDATE_RENTER = "manager/renter/update/";
 const UPDATE_CONTRACT_RENTER = "manager/contract/room/update/";
+
+
 const cardHeight = {
   height: 850,
 };
@@ -60,7 +63,6 @@ const EditContractRenter = () => {
   const defaultAddAsset = {
     dateOfDelivery: moment(),
     asset_unit: 1,
-    asset_type: "Khác",
     asset_status: true,
   };
   const contract_duration = [];
@@ -198,7 +200,7 @@ const EditContractRenter = () => {
           contract_type: res.data.data?.contract_type,
           room_floor: res.data.data?.room.room_floor,
           room_id: res.data.data?.room_id,
-          contract_duration: res.data.data?.contract_term,
+          contract_duration: contract_duration?.find((obj, index) => obj.contractTermValue === res.data.data?.contract_term) ? res.data.data?.contract_term : null,
           contract_start_date: moment(res.data.data?.contract_start_date),
           contract_end_date: moment(res.data.data?.contract_end_date),
           contract_payment_cycle: res.data.data?.contract_payment_cycle,
@@ -219,7 +221,36 @@ const EditContractRenter = () => {
     setLoading(false);
   };
 
-  console.log(dataContractById);
+  const loadingMemberInRoom = async () => {
+    await axios
+      .get(GET_ROOM_CONTRACT_BY_ID + contract_id, {
+        headers: {
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${cookie}`,
+        },
+        // withCredentials: true,
+      })
+      .then((res) => {
+        setDataMember(
+          res.data.data?.list_renter
+            ?.map((obj, index) => {
+              return {
+                ...obj,
+                member_id: obj.renter_id,
+                name: obj.renter_full_name,
+                member_gender: obj.gender,
+                identity_card: obj.identity_number,
+                address: obj.address.address_more_details,
+              };
+            })
+            .filter((o, i) => o.represent === false)
+        );
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   const onFormLayoutChange = ({ size }) => {
     setComponentSize(size);
@@ -341,6 +372,7 @@ const EditContractRenter = () => {
       })
       .then((res) => {
         setListAssetType(res.data.data);
+        createAssetForm.setFieldsValue({ asset_type_show_name: res.data.data?.find((obj, index) => obj.asset_type_name === "OTHER" && obj.asset_type_show_name === "Khác")?.id });
       })
       .catch((error) => {
         console.log(error);
@@ -467,7 +499,6 @@ const EditContractRenter = () => {
           placement: "top",
           duration: 2,
         });
-        getContractRoomById();
         setIsAddMem(false);
         formAddMem.setFieldsValue({
           member_id: memberId,
@@ -477,6 +508,7 @@ const EditContractRenter = () => {
           license_plates: "",
           address: "",
         });
+        loadingMemberInRoom();
       })
       .catch((error) => {
         console.log(error);
@@ -526,7 +558,6 @@ const EditContractRenter = () => {
           placement: "top",
           duration: 2,
         });
-        getContractRoomById();
         setIsEditMem(false);
         formEditMem.setFieldsValue({
           member_id: memberId,
@@ -536,6 +567,7 @@ const EditContractRenter = () => {
           license_plates: "",
           address: "",
         });
+        loadingMemberInRoom();
       })
       .catch((error) => {
         console.log(error);
@@ -571,8 +603,8 @@ const EditContractRenter = () => {
               placement: "top",
               duration: 2,
             });
-            getContractRoomById();
             setIsAddMem(false);
+            loadingMemberInRoom();
           })
           .catch((error) => {
             console.log(error);
@@ -602,13 +634,17 @@ const EditContractRenter = () => {
   const onFinish = async (e) => {
     const listServiceOfBuilding = Object.values(e.serviceIndexInForm);
     listServiceOfBuilding.push({
-      general_service_id: dataApartmentGroupSelect.list_general_service.map((obj, index) => obj.general_service_id),
+      general_service_id: dataContractById.list_hand_over_general_service.map((obj, index) => obj.general_service_id),
     });
+    listServiceOfBuilding.push({
+      hand_over_general_service_id: dataContractById.list_hand_over_general_service.map((obj, index) => obj.hand_over_general_service_id),
+    })
     const list_general_service = listServiceOfBuilding
       .map((obj, index) => {
         return {
-          ...obj,
-          general_service_id: listServiceOfBuilding[listServiceOfBuilding.length - 1].general_service_id[index],
+          hand_over_general_service_index: obj.hand_over_service_index,
+          general_service_id: listServiceOfBuilding[listServiceOfBuilding.length - 2].general_service_id[index],
+          hand_over_general_service_id: listServiceOfBuilding[listServiceOfBuilding.length - 1].hand_over_general_service_id[index]
         };
       })
       .filter((o, i) => i !== listServiceOfBuilding.length - 1);
@@ -621,6 +657,7 @@ const EditContractRenter = () => {
     //     contract_start_date: e.contract_start_date.format('YYYY-MM-DD'),
     //   })
     // );
+
     const data = {
       ...e,
       list_general_service: list_general_service,
@@ -659,7 +696,6 @@ const EditContractRenter = () => {
           placement: "top",
           duration: 3,
         });
-        getContractRoomById();
       })
       .catch((error) => {
         console.log(error);
@@ -676,59 +712,40 @@ const EditContractRenter = () => {
   };
 
   const addAssetFinish = async (dataAsset) => {
-    console.log(dataAsset);
-    // console.log({
-    //   ...dataAsset,
-    //   id: 0,
-    //   asset_name: ,
-    //   asset_type_id:
-    // });
-    // const data = {
-    //   ...dataMem,
-    //   name: dataMem.name,
-    //   gender: dataMem.member_gender,
-    //   email: "",
-    //   phone_number: dataMem.phone_number,
-    //   identity_card: dataMem.identity_card,
-    //   license_plates: dataMem.license_plates,
-    //   room_id: dataContractById?.room_id,
-    //   address_more_detail: dataMem.address,
-    //   represent: false,
-    // }
-    // setLoading(true);
-    // await axios
-    //   .post(ADD_RENTER, data, {
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //       Authorization: `Bearer ${cookie}`,
-    //     },
-    //   })
-    //   .then((res) => {
-    //     notification.success({
-    //       message: "Thêm mới tài sản thành công",
-    //       placement: "top",
-    //       duration: 2,
-    //     });
-    //     getContractRoomById();
-    //     setIsAddMem(false);
-    //     formAddMem.setFieldsValue({
-    //       member_id: memberId,
-    //       name: "",
-    //       identity_card: "",
-    //       phone_number: "",
-    //       license_plates: "",
-    //       address: "",
-    //     });
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //     notification.error({
-    //       message: "Thêm mới tài sản thất bại",
-    //       placement: "top",
-    //       duration: 2,
-    //     });
-    //   });
-    // setLoading(false);
+    const data = {
+      asset_id: dataAsset?.asset_id,
+      assets_additional_name: dataAsset?.asset_name,
+      assets_additional_type: dataAsset?.asset_type_show_name,
+      hand_over_asset_quantity: dataAsset?.hand_over_asset_quantity,
+      hand_over_asset_status: true,
+      hand_over_date_delivery: dataAsset?.hand_over_asset_date_delivery?.format('DD-MM-YYYY')
+    };
+    console.log(JSON.stringify(data));
+    setLoading(true);
+    await axios
+      .post(ADD_ASSET + contract_id, data, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie}`,
+        },
+      })
+      .then((res) => {
+        notification.success({
+          message: "Thêm mới tài sản thành công",
+          placement: "top",
+          duration: 2,
+        });
+        addAssetInRoom(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        notification.error({
+          message: "Thêm mới tài sản thất bại",
+          placement: "top",
+          duration: 2,
+        });
+      });
+    setLoading(false);
   };
   const addAssetFail = (e) => {
     setAddAssetInRoom(true);
@@ -780,7 +797,7 @@ const EditContractRenter = () => {
       asset_id: assetId,
       hand_over_asset_date_delivery: formAddAsset.dateOfDelivery,
       hand_over_asset_quantity: formAddAsset.asset_unit,
-      asset_type_show_name: formAddAsset.asset_type,
+      // asset_type_show_name: formAddAsset.asset_type,
       // hand_over_asset_status: formAddAsset.asset_status,
     });
   };
@@ -837,7 +854,7 @@ const EditContractRenter = () => {
       });
     }
   };
-  // console.log(dataApartmentGroupSelect);
+  console.log(dataContractById);
   return (
     <div className="contract">
       <Layout
@@ -1253,12 +1270,12 @@ const EditContractRenter = () => {
                                   <b>Thời hạn hợp đồng (ít nhất 1 tháng): </b>
                                 </span>
                               }
-                              // rules={[
-                              //   {
-                              //     required: true,
-                              //     message: "Vui lòng chọn thời hạn hợp đồng",
-                              //   },
-                              // ]}
+                            // rules={[
+                            //   {
+                            //     required: true,
+                            //     message: "Vui lòng chọn thời hạn hợp đồng",
+                            //   },
+                            // ]}
                             >
                               <Select
                                 placeholder="Thời hạn hợp đồng"
@@ -1416,12 +1433,12 @@ const EditContractRenter = () => {
                                   <b>Giá phòng (VND): </b>
                                 </span>
                               }
-                              // rules={[
-                              //   {
-                              //     required: true,
-                              //     message: "Vui lòng nhập giá phòng",
-                              //   },
-                              // ]}
+                            // rules={[
+                            //   {
+                            //     required: true,
+                            //     message: "Vui lòng nhập giá phòng",
+                            //   },
+                            // ]}
                             >
                               <InputNumber
                                 controls={false}
@@ -1541,16 +1558,16 @@ const EditContractRenter = () => {
                                     String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
                                       ? "Nhập chỉ số"
                                       : "Số " +
-                                        obj.service_type_name +
-                                        " / " +
-                                        obj.service_price.toLocaleString("vn-VN", {
-                                          style: "currency",
-                                          currency: "VND",
-                                        })
+                                      obj.service_type_name +
+                                      " / " +
+                                      obj.service_price.toLocaleString("vn-VN", {
+                                        style: "currency",
+                                        currency: "VND",
+                                      })
                                   }
                                   addonAfter={
                                     String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
-                                      ? "Chỉ số "
+                                      ? "Chỉ số hiện tại"
                                       : obj.service_type_name
                                   }
                                   style={{ width: "100%" }}
@@ -1729,6 +1746,20 @@ const EditContractRenter = () => {
                         </Row>
                       </Col>
                     </Row>
+                    {/* <Row>
+                      <p>
+                        <i>
+                          <b>Lưu ý:</b>
+                          <br />
+                          - Trên đây là những tài sản cố định theo phòng
+                          <br />- Nếu bạn muốn chỉnh sửa, thay đổi những tài sản cố định này cần vào mục <b>Quản lý trang thiết bị</b>
+                          <br />
+                        </i>
+                      </p>
+                    </Row>
+                    <Row>
+                      <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
+                    </Row> */}
                   </Tabs.TabPane>
                 </Tabs>
               </Form>
@@ -1882,7 +1913,7 @@ const EditContractRenter = () => {
                     <Select placeholder="Chọn nhóm tài sản">
                       {listAssetType?.map((obj, index) => {
                         return (
-                          <Select.Option value={obj.asset_type_show_name}>{obj.asset_type_show_name}</Select.Option>
+                          <Select.Option value={obj.id}>{obj.asset_type_show_name}</Select.Option>
                         );
                       })}
                     </Select>

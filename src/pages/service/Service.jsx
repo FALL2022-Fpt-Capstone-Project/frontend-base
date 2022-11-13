@@ -82,9 +82,9 @@ function Service(props) {
       })
       .then((res) => {
         setDataApartmentGroup(res.data.data);
-        apartmentGroupById(res.data.data[0].group_id);
-        selectDefault.setFieldsValue({ selectApartment: res.data.data[0].group_id });
-        setGroupIdSelect(res.data.data[0].group_id);
+        // apartmentGroupById(res.data.data[0].group_id);
+        // selectDefault.setFieldsValue({ selectApartment: res.data.data[0].group_id });
+        // setGroupIdSelect(res.data.data[0].group_id);
       })
       .catch((error) => {
         console.log(error);
@@ -366,7 +366,7 @@ function Service(props) {
       });
     setLoading(false);
   };
-
+  console.log(dataApartmentServiceGeneral);
   return (
     <div className="service">
       <Layout
@@ -401,6 +401,7 @@ function Service(props) {
               <Row>
                 <Col span={14}>
                   <Button
+                    disabled={dataApartmentServiceGeneral?.length === 0 ? true : false}
                     type="primary"
                     style={{ marginBottom: "1%", marginRight: "1%", float: "left" }}
                     icon={<PlusCircleOutlined style={{ fontSize: 15 }} />}
@@ -409,6 +410,7 @@ function Service(props) {
                     Thêm mới nhanh
                   </Button>
                   <Button
+                    disabled={dataApartmentServiceGeneral?.length === 0 ? true : false}
                     type="primary"
                     style={{ marginBottom: "1%", float: "left" }}
                     onClick={onClikAddService}
@@ -422,31 +424,31 @@ function Service(props) {
                                     </Button> */}
                 </Col>
                 <Col span={6} offset={4}>
-                  <Form form={selectDefault}>
-                    <Form.Item name="selectApartment">
-                      <Select
-                        showSearch
-                        style={{
-                          width: "100%",
-                        }}
-                        placeholder="Tìm và chọn chung cư mini / căn hộ "
-                        optionFilterProp="children"
-                        filterOption={(input, option) =>
-                          (option?.label.toLowerCase().trim() ?? "").includes(input.toLocaleLowerCase().trim())
-                        }
-                        filterSort={(optionA, optionB) =>
-                          (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())
-                        }
-                        onChange={(e) => {
-                          apartmentGroupById(e);
-                          setGroupIdSelect(e);
-                        }}
-                        options={dataApartmentGroup?.map((obj, index) => {
-                          return { value: obj.group_id, label: obj.group_name };
-                        })}
-                      />
-                    </Form.Item>
-                  </Form>
+                  {/* <Form form={selectDefault}> */}
+                  {/* <Form.Item name="selectApartment"> */}
+                  <Select
+                    showSearch
+                    style={{
+                      width: "100%",
+                    }}
+                    placeholder="Tìm và chọn chung cư mini / căn hộ "
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      (option?.label.toLowerCase().trim() ?? "").includes(input.toLocaleLowerCase().trim())
+                    }
+                    filterSort={(optionA, optionB) =>
+                      (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())
+                    }
+                    onChange={(e) => {
+                      apartmentGroupById(e);
+                      setGroupIdSelect(e);
+                    }}
+                    options={dataApartmentGroup?.map((obj, index) => {
+                      return { value: obj.group_id, label: obj.group_name };
+                    })}
+                  />
+                  {/* </Form.Item> */}
+                  {/* </Form> */}
                 </Col>
               </Row>
               <Row>
