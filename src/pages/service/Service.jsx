@@ -14,6 +14,7 @@ import {
   notification,
   message,
   Tooltip,
+  Divider,
 } from "antd";
 import { PlusCircleOutlined, EditTwoTone, DeleteOutlined } from "@ant-design/icons";
 import axios from "../../api/axios";
@@ -393,6 +394,7 @@ function Service(props) {
               }}
             >
               <Breadcrumbs />
+              <Divider />
               <Row>
                 <Col span={6} offset={18}>
                   Chọn chung cư để thiết lập dịch vụ
