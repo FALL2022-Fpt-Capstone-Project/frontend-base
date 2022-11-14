@@ -368,7 +368,7 @@ const CreateContractRenter = () => {
     });
     setisAdd(false);
   };
-  const [listGeneralService, setListGeneralService] = useState([]);
+  // const [listGeneralService, setListGeneralService] = useState([]);
 
   const columnsService = [
     {

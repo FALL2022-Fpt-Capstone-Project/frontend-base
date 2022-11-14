@@ -68,6 +68,7 @@ function ListRoom(props) {
   const [checkedKeys, setCheckedKeys] = useState([]);
   const [selectedKeys, setSelectedKeys] = useState([]);
   const [autoExpandParent, setAutoExpandParent] = useState(true);
+  const [room_status, setRoomStatus] = useState([]);
   const onExpand = (expandedKeysValue) => {
     console.log('onExpand', expandedKeysValue);
     // if not set autoExpandParent to false, if children expanded, parent can not collapse.
@@ -130,18 +131,6 @@ function ListRoom(props) {
   const onClickAddRoomAuto = (e) => {
     setAddRoomAuto(true);
   };
-  const optionRoomStatus = [
-    {
-      label: "Đang ở",
-      value: true,
-    },
-    {
-      label: "Đang trống",
-      value: false,
-    },
-  ];
-
-
 
   const columns = [
     {
@@ -215,7 +204,9 @@ function ListRoom(props) {
           return durationContract + ' tháng'
         } else {
           if (durationContract > 12) {
-            return Math.floor(durationContract / 12) + ' năm ' + durationContract % 12 + ' tháng'
+            return durationContract % 12 !== 0 ?
+              Math.floor(durationContract / 12) + ' năm ' + durationContract % 12 + ' tháng' :
+              Math.floor(durationContract / 12) + ' năm '
           } else {
             return 'Chưa vào ở';
           }
@@ -224,22 +215,21 @@ function ListRoom(props) {
     },
     {
       title: "Trạng thái",
-      key: "room_id",
       dataIndex: "roomStatus",
+      key: 'roomStatus',
       filters: [
         { text: "Đang ở", value: true },
         { text: "Đang trống", value: false },
       ],
-      onFilter: (value, record) => {
-        return record.roomStatus === value;
-      },
+      filteredValue: room_status.roomStatus || null,
+      onFilter: (value, record) => record.roomStatus === value,
       render: (roomStatus) => {
         return roomStatus ? <Tag color="success">Đang ở</Tag> : <Tag color="error">Đang trống</Tag>
       },
     },
     {
       title: "Thao tác",
-      key: "index",
+      key: "room_id",
       render: (record) => {
         if (!record.roomStatus) {
           return (
@@ -292,6 +282,7 @@ function ListRoom(props) {
     apartmentGroup();
     getRoomInfor();
     getAllContract();
+    setRoomStatus({ ...room_status, roomStatus: [true, false] })
   }, []);
   const apartmentGroup = async () => {
     setLoading(true);
@@ -361,7 +352,7 @@ function ListRoom(props) {
       });
     setLoading(false);
   };
-  console.log(groupRoom);
+  // console.log(groupRoom);
 
   const treeData = dataApartmentGroup?.map((obj, index) => {
     return {
@@ -559,7 +550,12 @@ function ListRoom(props) {
                       <span>Trạng thái phòng </span>
                     </Row>
                     <Row>
-                      <Checkbox.Group style={{ marginBottom: "15%" }} options={optionRoomStatus}></Checkbox.Group>
+                      <Checkbox.Group defaultValue={[true, false]} onChange={(e) => {
+                        setRoomStatus({ ...room_status, roomStatus: e });
+                      }} style={{ marginBottom: "15%" }} options={[
+                        { label: "Đang ở", value: true },
+                        { label: "Đang trống", value: false },
+                      ]}></Checkbox.Group>
                     </Row>
                   </Col>
                 </Row>
@@ -577,6 +573,9 @@ function ListRoom(props) {
             </Tabs>
             <Table
               bordered
+              onChange={(pagination, filters, sorter, extra) => {
+                setRoomStatus(filters);
+              }}
               loading={loading}
               dataSource={groupRoom?.list_rooms?.map((obj, index) => {
                 return {
