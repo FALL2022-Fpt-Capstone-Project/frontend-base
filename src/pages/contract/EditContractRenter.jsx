@@ -37,6 +37,7 @@ import {
 } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import { useNavigate, useParams } from "react-router-dom";
+import Breadcrumbs from "../../components/BreadCrumb ";
 const { Content, Sider, Header } = Layout;
 const { Option } = Select;
 const LIST_ASSET_TYPE = "manager/asset/type";
@@ -47,7 +48,6 @@ const ADD_RENTER = "manager/renter/add";
 const DELETE_RENTER = "manager/renter/remove/";
 const UPDATE_RENTER = "manager/renter/update/";
 const UPDATE_CONTRACT_RENTER = "manager/contract/room/update/";
-
 
 const cardHeight = {
   height: 850,
@@ -200,7 +200,11 @@ const EditContractRenter = () => {
           contract_type: res.data.data?.contract_type,
           room_floor: res.data.data?.room.room_floor,
           room_id: res.data.data?.room_id,
-          contract_duration: contract_duration?.find((obj, index) => obj.contractTermValue === res.data.data?.contract_term) ? res.data.data?.contract_term : null,
+          contract_duration: contract_duration?.find(
+            (obj, index) => obj.contractTermValue === res.data.data?.contract_term
+          )
+            ? res.data.data?.contract_term
+            : null,
           contract_start_date: moment(res.data.data?.contract_start_date),
           contract_end_date: moment(res.data.data?.contract_end_date),
           contract_payment_cycle: res.data.data?.contract_payment_cycle,
@@ -372,7 +376,11 @@ const EditContractRenter = () => {
       })
       .then((res) => {
         setListAssetType(res.data.data);
-        createAssetForm.setFieldsValue({ asset_type_show_name: res.data.data?.find((obj, index) => obj.asset_type_name === "OTHER" && obj.asset_type_show_name === "Khác")?.id });
+        createAssetForm.setFieldsValue({
+          asset_type_show_name: res.data.data?.find(
+            (obj, index) => obj.asset_type_name === "OTHER" && obj.asset_type_show_name === "Khác"
+          )?.id,
+        });
       })
       .catch((error) => {
         console.log(error);
@@ -637,14 +645,17 @@ const EditContractRenter = () => {
       general_service_id: dataContractById.list_hand_over_general_service.map((obj, index) => obj.general_service_id),
     });
     listServiceOfBuilding.push({
-      hand_over_general_service_id: dataContractById.list_hand_over_general_service.map((obj, index) => obj.hand_over_general_service_id),
-    })
+      hand_over_general_service_id: dataContractById.list_hand_over_general_service.map(
+        (obj, index) => obj.hand_over_general_service_id
+      ),
+    });
     const list_general_service = listServiceOfBuilding
       .map((obj, index) => {
         return {
           hand_over_general_service_index: obj.hand_over_service_index,
           general_service_id: listServiceOfBuilding[listServiceOfBuilding.length - 2].general_service_id[index],
-          hand_over_general_service_id: listServiceOfBuilding[listServiceOfBuilding.length - 1].hand_over_general_service_id[index]
+          hand_over_general_service_id:
+            listServiceOfBuilding[listServiceOfBuilding.length - 1].hand_over_general_service_id[index],
         };
       })
       .filter((o, i) => i !== listServiceOfBuilding.length - 1);
@@ -718,7 +729,7 @@ const EditContractRenter = () => {
       assets_additional_type: dataAsset?.asset_type_show_name,
       hand_over_asset_quantity: dataAsset?.hand_over_asset_quantity,
       hand_over_asset_status: true,
-      hand_over_date_delivery: dataAsset?.hand_over_asset_date_delivery?.format('DD-MM-YYYY')
+      hand_over_date_delivery: dataAsset?.hand_over_asset_date_delivery?.format("DD-MM-YYYY"),
     };
     console.log(JSON.stringify(data));
     setLoading(true);
@@ -880,6 +891,7 @@ const EditContractRenter = () => {
               margin: "10px 16px",
             }}
           >
+            <Breadcrumbs />
             <div
               className="site-layout-background"
               style={{
@@ -1270,12 +1282,12 @@ const EditContractRenter = () => {
                                   <b>Thời hạn hợp đồng (ít nhất 1 tháng): </b>
                                 </span>
                               }
-                            // rules={[
-                            //   {
-                            //     required: true,
-                            //     message: "Vui lòng chọn thời hạn hợp đồng",
-                            //   },
-                            // ]}
+                              // rules={[
+                              //   {
+                              //     required: true,
+                              //     message: "Vui lòng chọn thời hạn hợp đồng",
+                              //   },
+                              // ]}
                             >
                               <Select
                                 placeholder="Thời hạn hợp đồng"
@@ -1433,12 +1445,12 @@ const EditContractRenter = () => {
                                   <b>Giá phòng (VND): </b>
                                 </span>
                               }
-                            // rules={[
-                            //   {
-                            //     required: true,
-                            //     message: "Vui lòng nhập giá phòng",
-                            //   },
-                            // ]}
+                              // rules={[
+                              //   {
+                              //     required: true,
+                              //     message: "Vui lòng nhập giá phòng",
+                              //   },
+                              // ]}
                             >
                               <InputNumber
                                 controls={false}
@@ -1558,12 +1570,12 @@ const EditContractRenter = () => {
                                     String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
                                       ? "Nhập chỉ số"
                                       : "Số " +
-                                      obj.service_type_name +
-                                      " / " +
-                                      obj.service_price.toLocaleString("vn-VN", {
-                                        style: "currency",
-                                        currency: "VND",
-                                      })
+                                        obj.service_type_name +
+                                        " / " +
+                                        obj.service_price.toLocaleString("vn-VN", {
+                                          style: "currency",
+                                          currency: "VND",
+                                        })
                                   }
                                   addonAfter={
                                     String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
@@ -1912,9 +1924,7 @@ const EditContractRenter = () => {
                   >
                     <Select placeholder="Chọn nhóm tài sản">
                       {listAssetType?.map((obj, index) => {
-                        return (
-                          <Select.Option value={obj.id}>{obj.asset_type_show_name}</Select.Option>
-                        );
+                        return <Select.Option value={obj.id}>{obj.asset_type_show_name}</Select.Option>;
                       })}
                     </Select>
                   </Form.Item>

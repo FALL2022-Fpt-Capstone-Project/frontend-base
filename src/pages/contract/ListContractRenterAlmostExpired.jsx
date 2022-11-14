@@ -331,7 +331,6 @@ const ListContractRenterAlmostExpired = ({ duration }) => {
             },
           },
         ]}
-        pagination={{ pageSize: 5 }}
         loading={loading}
       />
     </div>

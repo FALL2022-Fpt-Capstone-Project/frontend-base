@@ -14,8 +14,9 @@ import {
   notification,
   message,
   Tooltip,
+  ConfigProvider,
 } from "antd";
-import { PlusCircleOutlined, EditTwoTone, DeleteOutlined } from "@ant-design/icons";
+import { PlusCircleOutlined, EditTwoTone, DeleteOutlined, InboxOutlined } from "@ant-design/icons";
 import axios from "../../api/axios";
 import TextArea from "antd/lib/input/TextArea";
 import Breadcrumbs from "../../components/BreadCrumb ";
@@ -367,6 +368,14 @@ function Service(props) {
     setLoading(false);
   };
   console.log(dataApartmentServiceGeneral);
+
+  const customizeRenderEmpty = () => (
+    <div style={{ textAlign: "center" }}>
+      <InboxOutlined style={{ fontSize: 70 }} />
+      <p style={{ fontSize: 20 }}>Vui lòng lựa chọn chung cư để hiển thị dữ liệu dịch vụ</p>
+    </div>
+  );
+
   return (
     <div className="service">
       <Layout
@@ -463,13 +472,15 @@ function Service(props) {
               </Row>
               <Row>
                 <Col span={24}>
-                  <Table
-                    bordered
-                    columns={columnServiceGeneral}
-                    loading={loading}
-                    dataSource={dataApartmentServiceGeneral}
-                    scroll={{ x: 800, y: 600 }}
-                  />
+                  <ConfigProvider renderEmpty={customizeRenderEmpty}>
+                    <Table
+                      bordered
+                      columns={columnServiceGeneral}
+                      loading={loading}
+                      dataSource={dataApartmentServiceGeneral}
+                      scroll={{ x: 800, y: 600 }}
+                    />
+                  </ConfigProvider>
                 </Col>
               </Row>
               <Modal

@@ -13,15 +13,20 @@ import {
   EditOutlined,
 } from "@ant-design/icons";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { Button, Col, Menu, Modal, Row } from "antd";
+import { Button, Card, Col, Menu, Modal, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import "./sidebar.scss";
 import axios from "../../api/axios";
+import UpdateStaff from "../../pages/admin/UpdateStaff";
 const Sidebar = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [user, setUser] = useState([]);
   const [contractRenterLink, setContractRenterLink] = useState("/contract-renter");
   const [contractApartmentLink, setContractApartmentLink] = useState("/contract-apartment");
+  const [updateStaff, setUpdateStaff] = useState(false);
+  const onClickUpdateStaff = (id) => {
+    setUpdateStaff(true);
+  };
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -30,10 +35,16 @@ const Sidebar = () => {
   };
   const location = useLocation();
   useEffect(() => {
-    if (location.pathname.includes("/contract-renter/create")) {
+    if (location.pathname.includes("/contract-renter/create") || location.pathname.includes("/contract-renter/edit")) {
       setContractRenterLink("/contract-renter/create");
     }
   }, [location.pathname]);
+  useEffect(() => {
+    if (location.pathname.includes("/contract-renter/edit")) {
+      setContractRenterLink(location.pathname);
+    }
+  }, [location.pathname]);
+  console.log(location.pathname.includes("/contract-renter/edit"));
   useEffect(() => {
     if (location.pathname.includes("/contract-apartment/create")) {
       setContractApartmentLink("/contract-apartment/create");
@@ -174,12 +185,26 @@ const Sidebar = () => {
         </Menu>
       )}
       <Modal
-        title="Thông tin cá nhân"
+        title={<h2>Thông tin cá nhân</h2>}
         className="modalStyle"
         open={isModalOpen}
-        footer={(null, null)}
         onCancel={handleCancel}
-        width="700px"
+        width="500px"
+        footer={[
+          <>
+            <Button onClick={handleCancel}>Quay lại</Button>
+            <Button
+              type="primary"
+              icon={<EditOutlined />}
+              style={{ margin: "20px 20px" }}
+              size="middle"
+              className="button-add"
+              onClick={() => onClickUpdateStaff(id)}
+            >
+              Sửa thông tin
+            </Button>
+          </>,
+        ]}
       >
         <div
           className="basic-info"
@@ -187,99 +212,61 @@ const Sidebar = () => {
             marginLeft: "3%",
           }}
         >
-          <Row>
-            <Col span={12}>
-              <img
-                src="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png"
-                style={{ width: "150px" }}
-                alt=""
-              />
-            </Col>
-            <Col span={12}>
-              <Row>
-                <Col span={12}>
-                  <p style={{ fontSize: "14px", textTransform: "uppercase", color: "rgb(113 102 102)" }}>Họ và tên: </p>
+          <Card className="card">
+            <Row>
+              <Row className="detail-row">
+                <Col span={10}>
+                  <h4>Họ và tên: </h4>
                 </Col>
-                <Col span={12}>
-                  <p style={{ fontSize: "14px", padding: "0 0 0 5px" }}>{user.full_name}</p>
+                <Col span={14}>
+                  <p>{user.full_name}</p>
                 </Col>
               </Row>
-              <Row>
-                <Col span={12}>
-                  <p style={{ fontSize: "14px", textTransform: "uppercase", color: "rgb(113 102 102)" }}>
-                    Tên đăng nhập:
-                  </p>
+              <Row className="detail-row">
+                <Col span={10}>
+                  <h4>Tên đăng nhập:</h4>
                 </Col>
 
-                <Col span={12}>
-                  <p style={{ fontSize: "14px", padding: "0 0 0 5px" }}>{user.user_name}</p>
+                <Col span={14}>
+                  <p>{user.user_name}</p>
                 </Col>
               </Row>
-              <Row>
-                <Col span={12}>
-                  <p style={{ fontSize: "14px", textTransform: "uppercase", color: "rgb(113 102 102)" }}>Giới tính: </p>
+              <Row className="detail-row">
+                <Col span={10}>
+                  <h4>Giới tính: </h4>
                 </Col>
 
-                <Col span={12}>
-                  {user.gender ? (
-                    <p style={{ fontSize: "14px", padding: "0 0 0 5px" }}>Nam</p>
-                  ) : (
-                    <p style={{ fontSize: "14px", padding: "0 0 0 5px" }}>Nữ</p>
-                  )}
-                </Col>
+                <Col span={14}>{user.gender ? <p>Nam</p> : <p>Nữ</p>}</Col>
               </Row>
-              <Row>
-                <Col span={12}>
-                  <p style={{ fontSize: "14px", textTransform: "uppercase", color: "rgb(113 102 102)" }}>Chức vụ: </p>
+              <Row className="detail-row">
+                <Col span={10}>
+                  <h4>Chức vụ: </h4>
                 </Col>
-                <Col span={12}>
-                  {role === "ROLE_ADMIN" ? (
-                    <p style={{ fontSize: "14px", padding: "0 0 0 5px" }}>ADMIN</p>
-                  ) : (
-                    <p style={{ fontSize: "14px", padding: "0 0 0 5px" }}>Nhân viên</p>
-                  )}
-                </Col>
+                <Col span={14}>{role === "ROLE_ADMIN" ? <p>ADMIN</p> : <p>Nhân viên</p>}</Col>
               </Row>
-              <Row>
-                <Col span={12}>
-                  <p style={{ fontSize: "14px", textTransform: "uppercase", color: "rgb(113 102 102)" }}>
-                    Số điện thoại:
-                  </p>
+              <Row className="detail-row">
+                <Col span={10}>
+                  <h4>Số điện thoại:</h4>
                 </Col>
 
-                <Col span={12}>
-                  <p style={{ fontSize: "14px", padding: "0 0 0 5px" }}>{user.phone_number}</p>
+                <Col span={14}>
+                  <p>{user.phone_number}</p>
                 </Col>
               </Row>
-              <Row>
-                <Col span={12}>
-                  <p style={{ fontSize: "14px", textTransform: "uppercase", color: "rgb(113 102 102)" }}>
-                    Địa chỉ chi tiết:
-                  </p>
+              <Row className="detail-row">
+                <Col span={10}>
+                  <h4>Địa chỉ chi tiết:</h4>
                 </Col>
 
-                <Col span={12}>
-                  <p style={{ fontSize: "14px", padding: "0 0 0 5px" }}>{user.address_more_detail}</p>
+                <Col span={14}>
+                  <p>{user.address_more_detail}</p>
                 </Col>
               </Row>
-            </Col>
-          </Row>
-        </div>
-        <div style={{ marginLeft: "3%" }}>
-          <Button onClick={handleCancel}>Quay lại</Button>
-          <NavLink to={`/manage-staff/update-staff/${id}`}>
-            <Button
-              type="primary"
-              icon={<EditOutlined />}
-              style={{ margin: "20px 20px" }}
-              size="middle"
-              className="button-add"
-            >
-              Sửa thông tin
-            </Button>
-          </NavLink>
+            </Row>
+          </Card>
         </div>
       </Modal>
+      <UpdateStaff visible={updateStaff} close={setUpdateStaff} id={id} />
     </div>
   );
 };

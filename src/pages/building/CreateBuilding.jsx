@@ -175,19 +175,21 @@ const CreateBuilding = ({ visible, close, data }) => {
     });
   }
 
-  const cityChange = (value) => {
+  const cityChange = (value, option) => {
     setBuildingDistrict([]);
     setBuildingCityId(value);
     setDisableDistrict(false);
     // optionsDistrict = [];
     setDisableWard(true);
     form.setFieldsValue({ district: "", ward: "" });
+    console.log(option.label);
   };
-  const districtChange = (value) => {
+  const districtChange = (value, option) => {
     console.log(value);
     setBuildingDistrictId(value);
     setDisableWard(false);
     form.setFieldsValue({ ward: "" });
+    console.log(option.children);
   };
   const changeRoom = (value) => {
     setBuildingRoom(value);
@@ -208,7 +210,7 @@ const CreateBuilding = ({ visible, close, data }) => {
   return (
     <>
       <Modal
-        title="Thêm mới chung cư"
+        title={<h2>Thêm mới chung cư</h2>}
         open={visible}
         width={1000}
         destroyOnClose

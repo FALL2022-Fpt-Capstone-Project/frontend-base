@@ -69,14 +69,13 @@ const CreateStaff = ({ visible, close }) => {
           Authorization: `Bearer ${cookie}`,
         },
       })
-      .then(
-        () =>
-          notification.success({
-            message: "Thêm mới nhân viên thành công",
-            duration: 3,
-          }),
-        close(false)
-      )
+      .then(() => {
+        notification.success({
+          message: "Thêm mới nhân viên thành công",
+          duration: 3,
+        });
+        close(false);
+      })
       .catch((e) => {
         notification.error({
           message: "Thêm mới nhân viên thất bại",
@@ -97,7 +96,7 @@ const CreateStaff = ({ visible, close }) => {
   return (
     <>
       <Modal
-        title="Thêm mới nhân viên"
+        title={<h2>Thêm mới nhân viên</h2>}
         open={visible}
         destroyOnClose={true}
         afterClose={() => form.resetFields()}

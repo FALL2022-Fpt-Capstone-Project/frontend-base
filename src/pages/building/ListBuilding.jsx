@@ -31,8 +31,8 @@ const ListBuilding = () => {
   const [building_address_city, setBuildingCity] = useState("");
   const [building_address_city_id, setBuildingCityId] = useState("");
   const [building_address_district, setBuildingDistrict] = useState([]);
-  const [building_address_district_id, setBuildingDistrictId] = useState("");
-  const [building_address_more_detail, setBuildingAddress] = useState("");
+  // const [building_address_district_id, setBuildingDistrictId] = useState("");
+  // const [building_address_more_detail, setBuildingAddress] = useState("");
   const [disabledDistrict, setDisableDistrict] = useState(true);
   useEffect(() => {
     const getCity = async () => {
@@ -53,25 +53,25 @@ const ListBuilding = () => {
     getCity();
   }, []);
 
-  useEffect(() => {
-    const getDistric = async () => {
-      const response = await axios
-        .get(`https://provinces.open-api.vn/api/p/${building_address_city_id}?depth=2`, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-        .then((res) => {
-          console.log(res.data.districts);
+  // useEffect(() => {
+  //   const getDistric = async () => {
+  //     const response = await axios
+  //       .get(`https://provinces.open-api.vn/api/p/${building_address_city_id}?depth=2`, {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       })
+  //       .then((res) => {
+  //         console.log(res.data.districts);
 
-          setBuildingDistrict(res.data.districts);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    };
-    getDistric();
-  }, [building_address_city_id]);
+  //         setBuildingDistrict(res.data.districts);
+  //       })
+  //       .catch((error) => {
+  //         console.log(error);
+  //       });
+  //   };
+  //   getDistric();
+  // }, [building_address_city_id]);
 
   let optionsCity = [];
   for (let i = 0; i < building_address_city.length; i++) {
@@ -87,11 +87,11 @@ const ListBuilding = () => {
     setDisableDistrict(false);
     // form.setFieldsValue({ district: "", ward: "" });
   };
-  const districtChange = (value) => {
-    console.log(value);
-    setBuildingDistrictId(value);
-    // form.setFieldsValue({ ward: "" });
-  };
+  // const districtChange = (value) => {
+  //   console.log(value);
+  //   setBuildingDistrictId(value);
+  //   // form.setFieldsValue({ ward: "" });
+  // };
   return (
     <div>
       <Row gutter={16}>
@@ -130,13 +130,12 @@ const ListBuilding = () => {
                 />
               </Row>
             </Col>
-            <Col span={6}>
+            {/* <Col span={6}>
               <Row>
                 <span>Tìm kiếm theo Quận/Huyện</span>
               </Row>
               <Row>
                 <Select
-                  defaultValue="Chọn Quận/Huyện"
                   style={{
                     width: "100%",
                     padding: "10px 0",
@@ -144,8 +143,9 @@ const ListBuilding = () => {
                   disabled={disabledDistrict}
                   onChange={districtChange}
                   // options={optionsDistrict}
+                  defaultValue={defaultValue}
                 >
-                  <Select.Option value="">Chọn Quận/Huyện</Select.Option>
+                  <Select.Option value="default">Tất cả</Select.Option>
                   {building_address_district?.map((obj, index) => {
                     return (
                       <>
@@ -155,7 +155,7 @@ const ListBuilding = () => {
                   })}
                 </Select>
               </Row>
-            </Col>
+            </Col> */}
             <Col span={8}>
               <Row>
                 <span>Tìm kiếm theo địa chỉ chi tiết</span>
@@ -230,7 +230,6 @@ const ListBuilding = () => {
             },
           },
         ]}
-        pagination={{ pageSize: 5 }}
         loading={loading}
       />
     </div>

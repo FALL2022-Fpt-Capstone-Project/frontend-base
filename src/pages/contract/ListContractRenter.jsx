@@ -439,7 +439,6 @@ const ListContractRenter = () => {
             },
           },
         ]}
-        pagination={{ pageSize: 5 }}
         loading={loading}
       />
       <ViewContractRenter openView={viewContract} closeView={setViewContract} dataContract={contractInfor} />
