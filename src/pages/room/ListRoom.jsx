@@ -59,6 +59,7 @@ function ListRoom(props) {
   const [contractRoom, setContractRoom] = useState([]);
   const [numberOfRoom, setNumberOfRoom] = useState(0);
   const [numberOfRoomEmpty, setNumberOfRoomEmpty] = useState(0);
+  const [numberOfRoomRented, setNumberOfRoomRented] = useState(0);
   const [totalRoomPrice, setTotalRoomPrice] = useState(0);
   const [searchRoom, setSearchRoom] = useState("");
   let cookie = localStorage.getItem("Cookie");
@@ -87,6 +88,10 @@ function ListRoom(props) {
       return roomInfor?.filter((o, i) => o.group_id === obj.group
         && o.room_floor === obj.floor)?.length
     });
+    const totalRoomRented = group_floor?.map((obj, index) => {
+      return roomInfor?.filter((o, i) => o.group_id === obj.group && o.room_floor === obj.floor
+        && o.contract_id !== null)?.length
+    });
     const totalEmptyRoom = group_floor?.map((obj, index) => {
       return roomInfor?.filter((o, i) => o.group_id === obj.group && o.room_floor === obj.floor
         && o.contract_id === null)?.length
@@ -95,12 +100,16 @@ function ListRoom(props) {
       return roomInfor?.filter((o, i) => o.group_id === obj.group && o.room_floor === obj.floor)?.map((room, j) => room.room_price).reduce(
         (previousValue, currentValue) => previousValue + currentValue, 0)
     });
+
     setNumberOfRoom(arrTotalRoom?.reduce(
       (previousValue, currentValue) => previousValue + currentValue, 0));
     setNumberOfRoomEmpty(totalEmptyRoom?.reduce(
       (previousValue, currentValue) => previousValue + currentValue, 0));
     setTotalRoomPrice(totalPrice?.reduce(
       (previousValue, currentValue) => previousValue + currentValue, 0));
+    setNumberOfRoomRented(totalRoomRented?.reduce(
+      (previousValue, currentValue) => previousValue + currentValue, 0));
+
     const dataApartment = group_floor?.map((obj, index) => {
       return dataApartmentGroup?.filter((o, i) => o.group_id === obj.group)[0]
     });
@@ -305,6 +314,7 @@ function ListRoom(props) {
       });
     setLoading(false);
   };
+
   const getAllContract = async () => {
     setLoading(true);
     await axios
@@ -342,6 +352,8 @@ function ListRoom(props) {
         setNumberOfRoom(res.data.data.length);
         setNumberOfRoomEmpty(res.data.data?.map((obj, index) => obj.contract_id === null)?.reduce(
           (previousValue, currentValue) => previousValue + currentValue, 0));
+        setNumberOfRoomRented(res.data.data?.map((obj, index) => obj.contract_id !== null)?.reduce(
+          (previousValue, currentValue) => previousValue + currentValue, 0));
         setTotalRoomPrice(res.data.data?.map((obj, index) => obj.room_price)?.reduce(
           (previousValue, currentValue) => previousValue + currentValue, 0));
         setRoomInfor(res.data.data)
@@ -352,29 +364,25 @@ function ListRoom(props) {
       });
     setLoading(false);
   };
-  // console.log(groupRoom);
 
   const treeData = dataApartmentGroup?.map((obj, index) => {
+    let floor = [];
+    for (let i = 1; i <= obj.total_floor; i++) {
+      floor.push(i);
+    }
     return {
-      title: obj.group_name + " (" + obj.list_rooms.length + "phòng)",
+      title: obj.group_name + " (" + obj.total_floor + " tầng, " + obj.list_rooms.length + " phòng)",
       key: obj.group_id.toString(),
-      children: obj.list_rooms?.map((o, i) => o.room_floor)
-        ?.filter((floor, j) => obj.list_rooms
-          ?.map((n, m) => n.room_floor)?.indexOf(floor) === j)
-        ?.sort((a, b) => a - b)
-        ?.map((pre, k) => {
-          return {
-            title: 'Tầng ' + pre + ' (' + obj.list_rooms?.filter((u, y) => u.room_floor === pre).length + ' phòng)',
-            key: obj.group_id + '-' + pre,
-            // children: obj.list_rooms?.map((room, r) => {
-            //   return [{ room_id: room.room_id, room_floor: room.room_floor, room_name: parseInt(room.room_name) }][0]
-            // })?.filter((room_by_floor, l) => room_by_floor.room_floor === pre)?.sort((q, w) => q.room_name - w.room_name)
-            //   ?.map((tree_room, t) => { return { title: 'Phòng ' + tree_room.room_name, key: obj.group_id + '-' + pre + '-' + tree_room.room_id } })
-          }
-        })
+      children: floor?.map((pre, k) => {
+        return {
+          title: 'Tầng ' + pre + ' (' + obj.list_rooms?.filter((u, y) => u.room_floor === pre).length + ' phòng)',
+          key: obj.group_id + '-' + pre,
+        }
+      })
     }
   });
   // console.log(dataApartmentGroup);
+  console.log(groupRoom?.contracts);
   return (
     <div
       className="site-layout-background"
@@ -415,7 +423,7 @@ function ListRoom(props) {
           >
             <Row>
               <Col span={24}>
-                <p>Danh sách các chung cư, tầng và phòng: </p>
+                <p>Danh sách các chung cư <b>({dataApartmentGroup?.length} chung cư)</b>: </p>
               </Col>
             </Row>
             <Tree
@@ -442,31 +450,31 @@ function ListRoom(props) {
                 <Statistic
                   title={
                     <>
-                      <span style={textSize}>Tổng số phòng: </span>
+                      <span style={textSize}>Số phòng đã thuê </span>
                     </>
                   }
-                  value={numberOfRoom}
+                  value={numberOfRoomRented + "/" + numberOfRoom}
                 />
               </Col>
               <Col span={8}>
                 <Statistic
                   title={
                     <>
-                      <span style={textSize}>Tổng số phòng trống: </span>
+                      <span style={textSize}>Số phòng trống </span>
                       {/* <Button icon={<ArrowRightOutlined />} style={{ borderRadius: "50%" }}></Button> */}
                     </>
                   }
-                  value={numberOfRoomEmpty}
+                  value={numberOfRoomEmpty + "/" + numberOfRoom}
                 />
               </Col>
               <Col span={8}>
                 <Statistic
                   title={
                     <>
-                      <span style={textSize}>Tổng số tiền phòng: </span>
+                      <span style={textSize}>Tổng số tiền phòng (VND) </span>
                     </>
                   }
-                  value={totalRoomPrice}
+                  value={new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(totalRoomPrice)}
                 />
               </Col>
             </Row>

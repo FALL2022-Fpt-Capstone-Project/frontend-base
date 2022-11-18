@@ -169,7 +169,7 @@ function AddRoomAuto({ visible, close, data }) {
                         labelCol={{ span: 24 }}
                         label={
                             <span>
-                                <b>Giá phòng trung bình: </b>
+                                <b>Giá phòng chung: </b>
                             </span>
                         }
                         rules={[
@@ -218,7 +218,7 @@ function AddRoomAuto({ visible, close, data }) {
                         labelCol={{ span: 24 }}
                         label={
                             <span>
-                                <b>Diện tích phòng trung bình: </b>
+                                <b>Diện tích (m2): </b>
                             </span>
                         }
                         rules={[

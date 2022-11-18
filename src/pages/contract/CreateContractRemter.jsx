@@ -587,7 +587,7 @@ const CreateContractRenter = () => {
     console.log(
       JSON.stringify({
         ...e,
-        renter_old_id: renterId !== undefined ? renterId : null,
+        // renter_old_id: renterId !== undefined ? renterId : null,
         list_general_service: list_general_service,
         contract_end_date: e.contract_end_date.format("YYYY-MM-DD"),
         contract_start_date: e.contract_start_date.format("YYYY-MM-DD"),
@@ -606,7 +606,7 @@ const CreateContractRenter = () => {
         ADD_NEW_CONTRACT,
         {
           ...e,
-          renter_old_id: renterId !== undefined ? renterId : null,
+          // renter_old_id: renterId !== undefined ? renterId : null,
           list_general_service: list_general_service,
           contract_end_date: e.contract_end_date.format("YYYY-MM-DD"),
           contract_start_date: e.contract_start_date.format("YYYY-MM-DD"),
@@ -630,10 +630,9 @@ const CreateContractRenter = () => {
         });
       })
       .catch((error) => {
-        console.log(error);
         notification.error({
           message: "Thêm mới hợp đồng thất bại",
-          description: "Vui lòng kiểm tra lại thông tin hợp đồng",
+          description: error.response.data.meta.message,
           placement: "top",
           duration: 3,
         });

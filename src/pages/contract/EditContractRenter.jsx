@@ -632,19 +632,26 @@ const EditContractRenter = () => {
   const [roomSelect, setRoomSelect] = useState();
 
   const onFinish = async (e) => {
+    console.log(dataContractById);
     const listServiceOfBuilding = Object.values(e.serviceIndexInForm);
+
     listServiceOfBuilding.push({
       general_service_id: dataContractById.list_hand_over_general_service.map((obj, index) => obj.general_service_id),
     });
     listServiceOfBuilding.push({
       hand_over_general_service_id: dataContractById.list_hand_over_general_service.map((obj, index) => obj.hand_over_general_service_id),
-    })
+    });
+    listServiceOfBuilding.push({
+      service_id: dataContractById.list_hand_over_general_service.map((obj, index) => obj.service_id),
+    });
+    console.log(listServiceOfBuilding);
     const list_general_service = listServiceOfBuilding
       .map((obj, index) => {
         return {
           hand_over_general_service_index: obj.hand_over_service_index,
-          general_service_id: listServiceOfBuilding[listServiceOfBuilding.length - 2].general_service_id[index],
-          hand_over_general_service_id: listServiceOfBuilding[listServiceOfBuilding.length - 1].hand_over_general_service_id[index]
+          service_id: listServiceOfBuilding[listServiceOfBuilding.length - 1].service_id[index],
+          general_service_id: listServiceOfBuilding[listServiceOfBuilding.length - 3].general_service_id[index],
+          hand_over_general_service_id: listServiceOfBuilding[listServiceOfBuilding.length - 2].hand_over_general_service_id[index]
         };
       })
       .filter((o, i) => i !== listServiceOfBuilding.length - 1);
