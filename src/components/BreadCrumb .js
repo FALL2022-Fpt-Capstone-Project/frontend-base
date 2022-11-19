@@ -5,6 +5,7 @@ import "./breadcrumb.scss";
 const breadcrumbNameMap = {
   "/building": "Quản lý chung cư",
   "/room": "Quản lý phòng",
+  "/room/member": "Quản lý thành viên trong phòng",
   "/contract-apartment": "Quản lý hợp đồng đi thuê",
   "/contract-renter": "Quản lý hợp đồng cho thuê",
   "/contract-renter/create": "Tạo mới hợp đồng cho thuê",

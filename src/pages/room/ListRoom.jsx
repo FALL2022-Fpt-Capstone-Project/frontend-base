@@ -62,7 +62,9 @@ function ListRoom(props) {
   const [numberOfRoomRented, setNumberOfRoomRented] = useState(0);
   const [totalRoomPrice, setTotalRoomPrice] = useState(0);
   const [searchRoom, setSearchRoom] = useState("");
+  const [roomDetailData, setRoomDetailData] = useState([]);
   let cookie = localStorage.getItem("Cookie");
+  const navigate = useNavigate();
 
   //Tree
   const [expandedKeys, setExpandedKeys] = useState([]);
@@ -131,8 +133,6 @@ function ListRoom(props) {
     setSelectedKeys(selectedKeysValue);
   };
   //Tree
-
-  const navigate = useNavigate();
 
   const onClickAddRoom = (e) => {
     setAddRoom(true);
@@ -247,6 +247,7 @@ function ListRoom(props) {
                 <EyeTwoTone
                   onClick={() => {
                     setSetRoomDetail(true);
+                    setRoomDetailData(record);
                   }}
                   style={iconSize}
                 />
@@ -271,12 +272,15 @@ function ListRoom(props) {
                 <EyeTwoTone
                   onClick={() => {
                     setSetRoomDetail(true);
+                    setRoomDetailData(record);
                   }}
                   style={iconSize}
                 />
               </Tooltip>
               <Tooltip title="Thêm thành viên vào phòng">
-                <UserOutlined style={iconSize} />
+                <UserOutlined onClick={() => {
+                  navigate(`/room/member/${record.room_id}`);
+                }} style={iconSize} />
               </Tooltip>
               <Tooltip title="Xóa phòng">
                 <DeleteOutlined style={{ fontSize: "130%", color: "red" }} />
@@ -382,7 +386,7 @@ function ListRoom(props) {
     }
   });
   // console.log(dataApartmentGroup);
-  console.log(groupRoom?.contracts);
+  console.log(groupRoom);
   return (
     <div
       className="site-layout-background"
@@ -582,13 +586,15 @@ function ListRoom(props) {
             <Table
               bordered
               onChange={(pagination, filters, sorter, extra) => {
-                setRoomStatus(filters);
+                console.log(filters.roomStatus)
+                setRoomStatus({ ...room_status, roomStatus: filters.roomStatus });
               }}
               loading={loading}
               dataSource={groupRoom?.list_rooms?.map((obj, index) => {
                 return {
                   room_id: obj.room_id,
-                  groupName: groupRoom?.group?.find((o, i) => o.group_id === obj.group_id).group_name,
+                  contract_id: groupRoom?.contracts?.find((o, i) => o.room_id === obj.room_id)?.contract_id,
+                  groupName: groupRoom?.group?.find((o, i) => o.group_id === obj.group_id)?.group_name,
                   roomName: obj.room_name,
                   roomFloor: obj.room_floor,
                   roomNumberOfRenter: groupRoom?.contracts?.find((o, i) => o.room_id === obj.room_id)?.list_renter?.length ?
@@ -600,7 +606,11 @@ function ListRoom(props) {
                   paymentCycle: groupRoom?.contracts?.find((o, i) => o.room_id === obj.room_id)?.contract_payment_cycle,
                   durationContract: groupRoom?.contracts?.find((o, i) => o.room_id === obj.room_id)?.contract_term,
                   roomStatus: obj.contract_id !== null ? true : false,
-                  room_limit_people: obj.room_limit_people
+                  room_limit_people: obj.room_limit_people,
+                  list_renter: groupRoom?.contracts?.find((o, i) => o.room_id === obj.room_id)?.list_renter,
+                  list_services: groupRoom?.group?.find((o, i) => o.group_id === obj.group_id)?.list_general_service,
+                  startDate: groupRoom?.contracts?.find((o, i) => o.room_id === obj.room_id)?.contract_start_date,
+                  endDate: groupRoom?.contracts?.find((o, i) => o.room_id === obj.room_id)?.contract_end_date
                 }
               })}
               columns={columns}
@@ -611,7 +621,7 @@ function ListRoom(props) {
 
       <AddRoom visible={addRoom} close={setAddRoom} />
       <AddRoomAuto visible={addRoomAuto} close={setAddRoomAuto} />
-      <RoomDetail visible={roomDetail} close={setSetRoomDetail} />
+      <RoomDetail visible={roomDetail} close={setSetRoomDetail} data={roomDetailData} />
     </div>
   );
 }

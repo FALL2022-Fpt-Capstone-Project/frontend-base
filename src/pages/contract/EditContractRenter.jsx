@@ -102,7 +102,7 @@ const EditContractRenter = () => {
   const [formAddAsset, setFormAddAsset] = useState(defaultAddAsset);
   const [isEditAsset, setIsEditAsset] = useState(false);
   const [dataMember, setDataMember] = useState([]);
-  const [memberId, setMemberId] = useState(1);
+  // const [memberId, setMemberId] = useState(1);
   const [loading, setLoading] = useState(false);
 
   const [formEditMem] = Form.useForm();
@@ -220,8 +220,8 @@ const EditContractRenter = () => {
       });
     setLoading(false);
   };
-
   const loadingMemberInRoom = async () => {
+    setLoading(true);
     await axios
       .get(GET_ROOM_CONTRACT_BY_ID + contract_id, {
         headers: {
@@ -250,6 +250,7 @@ const EditContractRenter = () => {
       .catch((error) => {
         console.log(error);
       });
+    setLoading(false);
   };
 
   const onFormLayoutChange = ({ size }) => {
@@ -473,52 +474,61 @@ const EditContractRenter = () => {
     },
   ];
   const onFinishAddMem = async (dataMem) => {
-    const data = {
-      ...dataMem,
-      name: dataMem.name,
-      gender: dataMem.member_gender,
-      email: "",
-      phone_number: dataMem.phone_number,
-      identity_card: dataMem.identity_card,
-      license_plates: dataMem.license_plates,
-      room_id: dataContractById?.room_id,
-      address_more_detail: dataMem.address,
-      represent: false,
-    };
-    setLoading(true);
-    await axios
-      .post(ADD_RENTER, data, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${cookie}`,
-        },
-      })
-      .then((res) => {
-        notification.success({
-          message: "Thêm mới thành viên thành công",
-          placement: "top",
-          duration: 2,
+    console.log(dataContractById);
+    if (dataContractById?.list_renter?.length < dataContractById?.room?.room_limit_people) {
+      const data = {
+        ...dataMem,
+        name: dataMem.name,
+        gender: dataMem.member_gender,
+        email: "",
+        phone_number: dataMem.phone_number,
+        identity_card: dataMem.identity_card,
+        license_plates: dataMem.license_plates,
+        room_id: dataContractById?.room_id,
+        address_more_detail: dataMem.address,
+        represent: false,
+      };
+      setLoading(true);
+      await axios
+        .post(ADD_RENTER, data, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cookie}`,
+          },
+        })
+        .then((res) => {
+          notification.success({
+            message: "Thêm mới thành viên thành công",
+            placement: "top",
+            duration: 2,
+          });
+          setIsAddMem(false);
+          formAddMem.setFieldsValue({
+            // member_id: memberId,
+            name: "",
+            identity_card: "",
+            phone_number: "",
+            license_plates: "",
+            address: "",
+          });
+          loadingMemberInRoom();
+        })
+        .catch((error) => {
+          console.log(error);
+          notification.error({
+            message: "Vui lòng kiểm tra lại " + error.response.data.data,
+            placement: "top",
+            duration: 2,
+          });
         });
-        setIsAddMem(false);
-        formAddMem.setFieldsValue({
-          member_id: memberId,
-          name: "",
-          identity_card: "",
-          phone_number: "",
-          license_plates: "",
-          address: "",
-        });
-        loadingMemberInRoom();
-      })
-      .catch((error) => {
-        console.log(error);
-        notification.error({
-          message: "Thêm mới thành viên thất bại",
-          placement: "top",
-          duration: 2,
-        });
+      setLoading(false);
+    } else {
+      notification.error({
+        message: "Phòng " + roomSelect?.room_name === undefined ? "" : " phòng " + roomSelect?.room_name + " đã đầy",
+        placement: "top",
+        duration: 2,
       });
-    setLoading(false);
+    }
   };
 
   const onFinishFailAddMem = (e) => {
@@ -544,7 +554,7 @@ const EditContractRenter = () => {
       represent: false,
     };
     // console.log(JSON.stringify(data));
-    setLoading(true);
+    // setLoading(true);
     await axios
       .put(UPDATE_RENTER + dataMem.member_id, data, {
         headers: {
@@ -560,7 +570,7 @@ const EditContractRenter = () => {
         });
         setIsEditMem(false);
         formEditMem.setFieldsValue({
-          member_id: memberId,
+          // member_id: memberId,
           name: "",
           identity_card: "",
           phone_number: "",
@@ -577,7 +587,7 @@ const EditContractRenter = () => {
           duration: 2,
         });
       });
-    setLoading(false);
+    // setLoading(false);
   };
   const onFinishFailEditMem = (e) => {
     message.error("Chỉnh sửa thành viên thất bại");
@@ -589,7 +599,7 @@ const EditContractRenter = () => {
       okText: "Xóa",
       cancelText: "Hủy",
       onOk: async () => {
-        setLoading(true);
+        // setLoading(true);
         await axios
           .delete(DELETE_RENTER + record.renter_id, {
             headers: {
@@ -614,7 +624,7 @@ const EditContractRenter = () => {
               duration: 2,
             });
           });
-        setLoading(false);
+        // setLoading(false);
       },
     });
   };
@@ -1653,7 +1663,7 @@ const EditContractRenter = () => {
                             setIsAddMem(true);
                             formAddMem.setFieldsValue({
                               member_gender: true,
-                              member_id: memberId,
+                              // member_id: memberId,
                             });
                           }}
                         />
