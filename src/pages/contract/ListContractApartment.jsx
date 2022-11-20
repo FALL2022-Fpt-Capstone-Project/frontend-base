@@ -37,7 +37,33 @@ const ListContractApartment = () => {
   const [loading, setLoading] = useState(false);
   const [viewContract, setViewContract] = useState(false);
   const [dataApartmentGroup, setDataApartmentGroup] = useState([]);
+  const [endDate, setEndDate] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [identity, setIdentity] = useState("");
+  const [rentalName, setRentalName] = useState("");
+  const [building, setBuilding] = useState("");
+  const [endContract, setEndContract] = useState(false);
   const dateTimeSelect = [];
+  const formItemLayout = {
+    labelCol: {
+      xs: {
+        span: 24,
+      },
+      sm: {
+        span: 8,
+      },
+    },
+    wrapperCol: {
+      xs: {
+        span: 24,
+      },
+      sm: {
+        span: 16,
+      },
+    },
+  };
+  const [form] = Form.useForm();
   let cookie = localStorage.getItem("Cookie");
 
   useEffect(() => {
@@ -84,16 +110,74 @@ const ListContractApartment = () => {
       });
     setLoading(false);
   };
+  const resetForm = async () => {
+    form.resetFields();
+    setRentalName("");
+    setPhoneNumber("");
+    setIdentity("");
+    setBuilding("");
+    setEndContract(false);
+    setLoading(true);
+    // const response = await axios
+    //   .get(LIST_CONTRACT_URL, {
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       Authorization: `Bearer ${cookie}`,
+    //     },
+    //   })
+    //   .then((res) => {
+    //     setDataSource(res.data.data);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
+    // setLoading(false);
+  };
   const getFullDate = (date) => {
-    const dateAndTime = date.split("T");
+    const dateAndTime = date.split(" ");
 
     return dateAndTime[0].split("-").reverse().join("-");
+  };
+  const dateChange = (value, dateString) => {
+    let [day1, month1, year1] = dateString[0].split("-");
+    let startDate = `${year1}-${month1}-${day1}`;
+    let [day2, month2, year2] = dateString[1].split("-");
+    let endDate = `${year2}-${month2}-${day2}`;
+    setStartDate(startDate);
+    setEndDate(endDate);
+  };
+  const rentalNameChange = (e) => {
+    setRentalName(e.target.value);
+  };
+  const phoneNumberChange = (e) => {
+    setPhoneNumber(e.target.value);
+  };
+  const identityChange = (e) => {
+    setIdentity(e.target.value);
+  };
+  const buildingChange = (value) => {
+    setBuilding(value);
+  };
+  const endContractChange = (value) => {
+    setEndContract(value);
+  };
+  const getFilterContractRental = () => {
+    console.log(rental);
+  };
+  const rental = {
+    rentalName: rentalName,
+    identity: identity,
+    phoneNumber: phoneNumber,
+    startDate: startDate,
+    endDate: endDate,
+    building: building,
+    endContract: endContract,
   };
   const data = [
     {
       key: "1",
       ownerName: "Nguyễn Viết Thắng",
-      apartmentName: "Trọ xanh",
+      apartmentName: "Trọ Xanh",
       startDate: "20-12-2018",
       endDate: "25-10-2022",
       phoneNumber: "0987893432",
@@ -108,7 +192,7 @@ const ListContractApartment = () => {
       key: "2",
       ownerName: "Đào Minh Hà",
       phoneNumber: "0987893432",
-      apartmentName: "Trọ sạch",
+      apartmentName: "Trọ của Pháp",
       startDate: "20-11-2019",
       endDate: "20-01-2023",
       statusContract: "Hợp đồng còn hiệu lực",
@@ -120,9 +204,9 @@ const ListContractApartment = () => {
     },
     {
       key: "3",
-      ownerName: "Fred",
+      ownerName: "Nguyễn Xuân Nam",
       phoneNumber: "0987893432",
-      apartmentName: "Trọ đẹp",
+      apartmentName: "Young and Happy",
       startDate: "24-12-2020",
       endDate: "29-12-2022",
       statusContract: "Hợp đồng còn hiệu lực",
@@ -135,140 +219,147 @@ const ListContractApartment = () => {
   ];
 
   return (
-    <div>
-      <Tabs defaultActiveKey="1">
-        <Tabs.TabPane tab="Tìm kiếm nhanh" key="1">
-          <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-            <Col>
-              <Search
-                placeholder="Nhập tên người cho thuê để tìm kiếm"
-                style={{ marginBottom: "3%", width: 400 }}
-                onSearch={(value) => {
-                  setTextSearch(value);
-                }}
-                onChange={(e) => {
-                  setTextSearch(e.target.value);
-                }}
-              />
-            </Col>
-          </Row>
-        </Tabs.TabPane>
-        <Tabs.TabPane tab="Tìm kiếm nâng cao" key="2">
-          <Form
-            // {...formItemLayout}
-            // form={form}
-            name="filterStaff"
-            id="filterStaff"
-            // onFinish={getFilterContractRenter}
-            style={{ width: "100%" }}
-          >
-            <Row gutter={[16]}>
-              <Col span={6}>
-                <Form.Item name="full_name">
-                  <Row style={style}>
-                    <label>Tìm kiếm theo tên người cho thuê</label>
-                  </Row>
-                  <Row>
-                    <Input placeholder="Nhập tên khách thuê" autoComplete="off" />
-                  </Row>
-                </Form.Item>
-              </Col>
-              <Col span={6} offset={2}>
-                <Form.Item name="user_name">
-                  <Row style={style}>
-                    <label>Tìm kiếm theo số CCCD</label>
-                  </Row>
-                  <Row>
-                    <Input placeholder="Nhập số CCCD" autoComplete="off" />
-                  </Row>
-                </Form.Item>
-              </Col>
-              <Col span={6} offset={2}>
-                <Form.Item name="user_name">
-                  <Row style={style}>
-                    <label>Tìm kiếm theo số điện thoại</label>
-                  </Row>
-                  <Row>
-                    <Input placeholder="Nhập số điện thoại" autoComplete="off" />
-                  </Row>
-                </Form.Item>
+    <div className="list-contract">
+      <div className="list-contract-search">
+        <Tabs defaultActiveKey="1">
+          <Tabs.TabPane tab="Tìm kiếm nhanh" key="1">
+            <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+              <Col>
+                <Search
+                  placeholder="Nhập tên người cho thuê để tìm kiếm"
+                  style={{ marginBottom: "3%", width: 400 }}
+                  onSearch={(value) => {
+                    setTextSearch(value);
+                  }}
+                  onChange={(e) => {
+                    setTextSearch(e.target.value);
+                  }}
+                />
               </Col>
             </Row>
-            <Row>
-              <Col span={6}>
-                <Form.Item name="date">
-                  <Row style={style}>
-                    <label>Ngày bắt đầu lập hợp đồng</label>
+          </Tabs.TabPane>
+          <Tabs.TabPane tab="Tìm kiếm nâng cao" key="2">
+            <Form
+              {...formItemLayout}
+              form={form}
+              name="filterStaff"
+              id="filterStaff"
+              onFinish={getFilterContractRental}
+            >
+              <Row gutter={[16]} className="advanced-search" style={{ marginBottom: "20px", marginLeft: "20px" }}>
+                <Row>
+                  <Form.Item name="rentalName" className="form-item-renter">
+                    <Col className="gutter-row" xs={{ span: 24 }} lg={{ span: 24 }}>
+                      <Row>
+                        <label htmlFor="" className="search-name">
+                          Tìm kiếm theo tên người cho thuê
+                        </label>
+                      </Row>
+                      <Row>
+                        <Input placeholder="Nhập tên người cho thuê" autoComplete="off" onChange={rentalNameChange} />
+                      </Row>
+                    </Col>
+                  </Form.Item>
+
+                  <Form.Item name="identity" className="form-item-renter">
+                    <Col className="gutter-row" span={24}>
+                      <Row>
+                        <label htmlFor="" className="search-name">
+                          Tìm kiếm theo số CCCD
+                        </label>
+                      </Row>
+                      <Row>
+                        <Input placeholder="Nhập số CCCD" autoComplete="off" onChange={identityChange} />
+                      </Row>
+                    </Col>
+                  </Form.Item>
+                  <Form.Item name="phoneNumber" className="form-item-renter">
+                    <Col className="gutter-row" span={24}>
+                      <Row>
+                        <label htmlFor="" className="search-name">
+                          Tìm kiếm theo số điện thoại
+                        </label>
+                      </Row>
+                      <Row>
+                        <Input placeholder="Nhập số điện thoại" autoComplete="off" onChange={phoneNumberChange} />
+                      </Row>
+                    </Col>
+                  </Form.Item>
+                </Row>
+                <Row>
+                  <Form.Item name="date" className="form-item-renter">
+                    <Col className="gutter-row" span={24}>
+                      <Row>
+                        <label htmlFor="" className="search-name">
+                          Ngày bắt đầu lập hợp đồng
+                        </label>
+                      </Row>
+                      <Row>
+                        <RangePicker
+                          format={"DD-MM-YYYY"}
+                          placeholder={["Từ", "Đến"]}
+                          onChange={dateChange}
+                          style={{ width: "500px" }}
+                        />
+                      </Row>
+                    </Col>
+                  </Form.Item>
+                  <Form.Item name="groupId" className="form-item-renter">
+                    <Col className="gutter-row" span={24}>
+                      <Row>
+                        <label htmlFor="" className="search-name">
+                          Tìm kiếm theo tên chung cư
+                        </label>
+                      </Row>
+                      <Row>
+                        <Select
+                          showSearch
+                          optionFilterProp="children"
+                          filterOption={(input, option) =>
+                            (option?.label.toLowerCase().trim() ?? "").includes(input.toLocaleLowerCase().trim())
+                          }
+                          filterSort={(optionA, optionB) =>
+                            (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())
+                          }
+                          onChange={buildingChange}
+                          options={dataApartmentGroup?.map((obj, index) => {
+                            return { value: obj.group_id, label: obj.group_name };
+                          })}
+                          placeholder="Chọn chung cư"
+                        ></Select>
+                      </Row>
+                    </Col>
+                  </Form.Item>
+                  <Form.Item name="deactive" className="form-item-renter form-item-renter-deactive">
+                    <Col className="gutter-row" span={24}>
+                      <Switch onChange={endContractChange} />{" "}
+                      {endContract ? <span>Hợp đồng đã kết thúc</span> : <span>Hợp đồng còn hiệu lực</span>}
+                    </Col>
+                  </Form.Item>
+                </Row>
+              </Row>
+              <Row style={{ marginBottom: "20px" }}>
+                <Col span={24}>
+                  <Row justify="center">
+                    <Button
+                      type="primary"
+                      icon={<SearchOutlined />}
+                      style={{ marginRight: "20px" }}
+                      // onClick={getFilterContractRenter}
+                      htmlType="submit"
+                    >
+                      Tìm kiếm
+                    </Button>
+                    <Button icon={<UndoOutlined />} onClick={resetForm}>
+                      Đặt lại
+                    </Button>
                   </Row>
-                  <Row>
-                    <RangePicker
-                      format={"DD-MM-YYYY"}
-                      placeholder={["Từ", "Đến"]}
-                      // onChange={dateChange}
-                      style={{ width: "100%" }}
-                    />
-                  </Row>
-                </Form.Item>
-              </Col>
-              <Col span={6} offset={2}>
-                <Form.Item name="user_name">
-                  <Row style={style}>
-                    <label>Tìm kiếm theo tên chung cư</label>
-                  </Row>
-                  <Row>
-                    <Select
-                      showSearch
-                      optionFilterProp="children"
-                      filterOption={(input, option) =>
-                        (option?.label.toLowerCase().trim() ?? "").includes(input.toLocaleLowerCase().trim())
-                      }
-                      filterSort={(optionA, optionB) =>
-                        (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())
-                      }
-                      onChange={(e) => {
-                        console.log(e);
-                      }}
-                      options={dataApartmentGroup?.map((obj, index) => {
-                        return { value: obj.group_id, label: obj.group_name };
-                      })}
-                      placeholder="Chọn chung cư"
-                    ></Select>
-                  </Row>
-                </Form.Item>
-              </Col>
-              <Col span={6} offset={2}>
-                <Form.Item name="deactive">
-                  <Row style={style}>
-                    <label>Hợp đồng đã kết thúc</label>
-                  </Row>
-                  <Row>
-                    <Switch />
-                  </Row>
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row>
-              <Col span={14} offset={10}>
-                <Button
-                  type="primary"
-                  icon={<SearchOutlined />}
-                  style={{ margin: "5% 1% 5% 0%" }}
-                  // onClick={getFilterContractRenter}
-                  htmlType="submit"
-                >
-                  Tìm kiếm
-                </Button>
-                <Button
-                  icon={<UndoOutlined />}
-                  // onClick={resetForm}
-                >
-                  Đặt lại
-                </Button>
-              </Col>
-            </Row>
-          </Form>
-        </Tabs.TabPane>
-      </Tabs>
+                </Col>
+              </Row>
+            </Form>
+          </Tabs.TabPane>
+        </Tabs>
+      </div>
       <Table dataSource={data} scroll={{ x: 1600, y: 600 }} bordered>
         <Column title="Tên người cho thuê" dataIndex="ownerName" key="key" />
         <Column title="Số điện thoại" dataIndex="phoneNumber" key="key" />
@@ -302,11 +393,11 @@ const ListContractApartment = () => {
             return (
               <>
                 <Tooltip title="Chỉnh sửa">
-                  <EditOutlined style={{ fontSize: "20px", color: "#46a6ff", margin: "0 5px" }} />
+                  <EditOutlined className="icon" />
                 </Tooltip>
                 <Tooltip title="Xem">
                   <EyeOutlined
-                    style={{ fontSize: "20px", color: "#46a6ff", margin: "0 5px" }}
+                    className="icon"
                     onClick={() => {
                       setViewContract(true);
                     }}

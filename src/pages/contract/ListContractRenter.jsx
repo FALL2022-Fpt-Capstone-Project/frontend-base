@@ -163,6 +163,8 @@ const ListContractRenter = () => {
     setPhoneNumber("");
     setIdentity("");
     setBuilding("");
+    setStartDate("");
+    setEndDate("");
     setEndContract(false);
     setLoading(true);
     const response = await axios
@@ -439,7 +441,6 @@ const ListContractRenter = () => {
             },
           },
         ]}
-        pagination={{ pageSize: 5 }}
         loading={loading}
       />
       <ViewContractRenter openView={viewContract} closeView={setViewContract} dataContract={contractInfor} />

@@ -1,7 +1,7 @@
 import React from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import "./contract.scss";
-import { Button, Layout } from "antd";
+import { Button, Divider, Layout } from "antd";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import ListContractApartment from "./ListContractApartment";
 import "./contract.scss";
@@ -34,6 +34,7 @@ const ContractApartment = () => {
             }}
           >
             <Breadcrumbs />
+            <Divider />
             <div className="btn-contract">
               <Button
                 type="primary"

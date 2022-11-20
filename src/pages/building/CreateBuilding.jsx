@@ -1,4 +1,5 @@
 import { Button, Card, Col, Form, Input, InputNumber, Modal, Row, Select, Checkbox } from "antd";
+import TextArea from "antd/lib/input/TextArea";
 import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
 import "./building.scss";
@@ -32,6 +33,10 @@ const CreateBuilding = ({ visible, close, data }) => {
   const [building_total_floor, setBuildingFloor] = useState("");
   const [building_total_room, setBuildingRoom] = useState("");
   const [building_address_city, setBuildingCity] = useState("");
+  const [city, setCity] = useState("");
+  const [district, setDistrict] = useState("");
+  const [ward, setWard] = useState("");
+  const [note, setNote] = useState("");
   const [building_address_city_id, setBuildingCityId] = useState("");
   const [building_address_district, setBuildingDistrict] = useState([]);
   const [building_address_district_id, setBuildingDistrictId] = useState("");
@@ -41,36 +46,83 @@ const CreateBuilding = ({ visible, close, data }) => {
   const [disabledWard, setDisableWard] = useState(true);
   const [listServiceName, setListServiceName] = useState([]);
   const [serviceCalMethod, setServiceCalCuMethod] = useState([]);
-  const [dien, setDien] = useState(true);
-  const [nuoc, setNuoc] = useState(true);
-  const [xe, setXe] = useState(true);
-  const [mang, setMang] = useState(true);
-  const [veSinh, setVesinh] = useState(true);
-  const [khac, setKhac] = useState(true);
+  const [service, setService] = useState(["Dịch vụ điện ", "Dịch vụ nước"]);
+  const [electric, setElectric] = useState("Đồng hồ điện/nước");
+  const [water, setWater] = useState("Đồng hồ điện/nước");
+  const [park, setPark] = useState();
+  const [internet, setInternet] = useState();
+  const [clean, setClean] = useState();
+  let optionRoom = [];
+  let optionFloor = [];
+  for (let i = 1; i <= 10; i++) {
+    optionRoom.push({
+      value: i,
+      label: i + " Phòng",
+    });
+  }
+  for (let i = 1; i <= 10; i++) {
+    optionFloor.push({
+      value: i,
+      label: i + " Tầng",
+    });
+  }
+  let serviceAdd = [];
   let cookie = localStorage.getItem("Cookie");
   const handleCreateBuilding = async (value) => {
+    if (service?.includes("Dịch vụ điện ")) {
+      serviceAdd.push({
+        service: "Dịch vụ điện",
+        method: electric,
+      });
+    }
+    if (service?.includes("Dịch vụ nước")) {
+      serviceAdd.push({
+        service: "Dịch vụ nước",
+        method: water,
+      });
+    }
+    if (service?.includes("Dịch vụ xe")) {
+      serviceAdd.push({
+        service: "Dịch vụ xe ",
+        method: park,
+      });
+    }
+    if (service?.includes("Dịch vụ Internet")) {
+      serviceAdd.push({
+        service: "Dịch vụ Internet",
+        method: internet,
+      });
+    }
+    if (service?.includes("Vệ sinh")) {
+      serviceAdd.push({
+        service: "Vệ sinh",
+        method: clean,
+      });
+    }
     const building = {
       building_name,
       building_total_room,
       building_total_floor,
-      building_address_city,
-      building_address_district,
-      building_address_wards,
+      city,
+      district,
+      ward,
       building_address_more_detail,
+      note,
+      serviceAdd,
     };
-    const response = await axios
-      .post(ADD_EMPLOYEE_URL, building, {
-        headers: {
-          "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
-          Authorization: `Bearer ${cookie}`,
-        },
-        // withCredentials: true,
-      })
-      .then((res) => console.log(res))
-      .catch((e) => console.log(e.request));
-    console.log(JSON.stringify(response?.data));
-    // console.log(value);
+    // const response = await axios
+    //   .post(ADD_EMPLOYEE_URL, building, {
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       // "Access-Control-Allow-Origin": "*",
+    //       Authorization: `Bearer ${cookie}`,
+    //     },
+    //     // withCredentials: true,
+    //   })
+    //   .then((res) => console.log(res))
+    //   .catch((e) => console.log(e.request));
+    // console.log(JSON.stringify(response?.data));
+    console.log(building);
   };
 
   useEffect(() => {
@@ -174,19 +226,24 @@ const CreateBuilding = ({ visible, close, data }) => {
     });
   }
 
-  const cityChange = (value) => {
+  const cityChange = (value, option) => {
     setBuildingDistrict([]);
     setBuildingCityId(value);
     setDisableDistrict(false);
     // optionsDistrict = [];
     setDisableWard(true);
     form.setFieldsValue({ district: "", ward: "" });
+    setCity(option.label);
   };
-  const districtChange = (value) => {
+  const districtChange = (value, option) => {
     console.log(value);
     setBuildingDistrictId(value);
     setDisableWard(false);
     form.setFieldsValue({ ward: "" });
+    setDistrict(option.children);
+  };
+  const wardChange = (value, option) => {
+    setWard(option.children);
   };
   const changeRoom = (value) => {
     setBuildingRoom(value);
@@ -194,23 +251,38 @@ const CreateBuilding = ({ visible, close, data }) => {
   const changeFloor = (value) => {
     setBuildingFloor(value);
   };
+  const serviceChange = (checkedValues) => {
+    setService(checkedValues);
+  };
+
+  const electricChange = (value) => {
+    setElectric(value);
+  };
+  const waterChange = (value) => {
+    setWater(value);
+  };
+  const parkChange = (value) => {
+    setPark(value);
+  };
+  const internetChange = (value) => {
+    setInternet(value);
+  };
+  const cleanChange = (value) => {
+    setClean(value);
+  };
+
   const onFinish = (e) => {
     close(false);
-    setDien(true);
-    setNuoc(true);
-    setMang(true);
-    setVesinh(true);
-    setKhac(true);
-    setXe(true);
   };
+
   const onFinishFail = (e) => {};
   return (
     <>
       <Modal
-        title="Thêm mới chung cư"
+        title={<h2>Thêm mới chung cư</h2>}
         open={visible}
         width={1000}
-        destroyOnClose
+        afterClose={() => form.resetFields()}
         onOk={() => {
           close(false);
         }}
@@ -226,18 +298,18 @@ const CreateBuilding = ({ visible, close, data }) => {
           >
             Đóng
           </Button>,
-          <Button htmlType="submit" key="submit" form="" type="primary">
+          <Button htmlType="submit" key="submit" form="createBuilding" type="primary">
             Thêm mới
           </Button>,
         ]}
       >
         <Form
-          // form={""}
-          onFinish={onFinish}
+          form={form}
+          onFinish={handleCreateBuilding}
           onFinishFailed={onFinishFail}
           layout="horizontal"
           size={"default"}
-          // id=""
+          id="createBuilding"
         >
           <Row gutter={24}>
             <Col span={12}>
@@ -273,16 +345,17 @@ const CreateBuilding = ({ visible, close, data }) => {
                   rules={[
                     {
                       required: true,
-                      message: "Vui lòng nhập số lượng tầng của chung cư!",
+                      message: "Vui lòng chọn số lượng tầng!",
                     },
                   ]}
                 >
-                  <InputNumber
+                  <Select
                     style={{
                       width: "100%",
                     }}
                     onChange={changeFloor}
                     placeholder="Nhập số lượng tầng của chung cư"
+                    options={optionFloor}
                   />
                 </Form.Item>
                 <Form.Item
@@ -296,16 +369,17 @@ const CreateBuilding = ({ visible, close, data }) => {
                   rules={[
                     {
                       required: true,
-                      message: "Vui lòng nhập số lượng phòng mỗi tầng!",
+                      message: "Vui lòng chọn số lượng phòng!",
                     },
                   ]}
                 >
-                  <InputNumber
+                  <Select
                     style={{
                       width: "100%",
                     }}
                     onChange={changeRoom}
                     placeholder="Nhập số lượng phòng mỗi tầng"
+                    options={optionRoom}
                   />
                 </Form.Item>
                 <Form.Item
@@ -387,6 +461,7 @@ const CreateBuilding = ({ visible, close, data }) => {
                       width: "100%",
                     }}
                     disabled={disabledWard}
+                    onChange={wardChange}
                   >
                     <Select.Option value="">Chọn Phường/Xã</Select.Option>
                     {building_address_wards?.map((obj, index) => {
@@ -419,6 +494,17 @@ const CreateBuilding = ({ visible, close, data }) => {
                 >
                   <Input onChange={(e) => setBuildingAddress(e.target.value)} placeholder="Nhập địa chỉ chi tiết" />
                 </Form.Item>
+                <Form.Item
+                  name="note"
+                  labelCol={{ span: 24 }}
+                  label={
+                    <span>
+                      <b>Mô tả: </b>
+                    </span>
+                  }
+                >
+                  <TextArea rows={4} onChange={(e) => setNote(e.target.value)} placeholder="Nhập ghi chú" />
+                </Form.Item>
               </Card>
             </Col>
             <Col span={12}>
@@ -429,37 +515,23 @@ const CreateBuilding = ({ visible, close, data }) => {
                       <b>Tên dịch vụ</b>
                     </Row>
                     <Row>
-                      <CheckboxGroup>
-                        <Row style={{ marginBottom: "23px" }}>
-                          <Checkbox value="A" onChange={() => setDien(!dien)}>
-                            Dịch vụ điện
-                          </Checkbox>
-                        </Row>
-                        <Row style={{ marginBottom: "23px" }}>
-                          <Checkbox value="B" onChange={() => setNuoc(!nuoc)}>
-                            Dịch vụ nước
-                          </Checkbox>
-                        </Row>
-                        <Row style={{ marginBottom: "23px" }}>
-                          <Checkbox value="C" onChange={() => setMang(!mang)}>
-                            Dịch vụ Internet
-                          </Checkbox>
-                        </Row>
-                        <Row style={{ marginBottom: "23px" }}>
-                          <Checkbox value="D" onChange={() => setXe(!xe)}>
-                            Dịch vụ xe
-                          </Checkbox>
-                        </Row>
-                        <Row style={{ marginBottom: "23px" }}>
-                          <Checkbox value="E" onChange={() => setVesinh(!veSinh)}>
-                            Vệ sinh
-                          </Checkbox>
-                        </Row>
-                        <Row>
-                          <Checkbox value="F" onChange={() => setKhac(!khac)}>
-                            Khác
-                          </Checkbox>
-                        </Row>
+                      <CheckboxGroup onChange={serviceChange} defaultValue={["Dịch vụ điện ", "Dịch vụ nước"]}>
+                        {listServiceName
+                          ?.filter(function (img) {
+                            if (img.service_show_name === "Khác") {
+                              return false; // skip
+                            }
+                            return true;
+                          })
+                          .map((obj, idx) => {
+                            return (
+                              <>
+                                <Row style={{ marginBottom: "23px" }}>
+                                  <Checkbox value={obj.service_show_name}>{obj.service_show_name}</Checkbox>
+                                </Row>
+                              </>
+                            );
+                          })}
                       </CheckboxGroup>
                     </Row>
                   </Col>
@@ -469,16 +541,17 @@ const CreateBuilding = ({ visible, close, data }) => {
                     </Row>
                     <Row>
                       <Select
-                        defaultValue={1}
+                        defaultValue={"Đồng hồ điện/nước"}
                         style={{
                           width: "100%",
                         }}
-                        disabled={dien}
+                        onChange={electricChange}
                       >
+                        <Select.Option value="">Chọn cách tính giá dịch vụ</Select.Option>
                         {serviceCalMethod?.map((obj, index) => {
                           return (
                             <>
-                              <Select.Option value={obj.id}>{obj.service_type_name}</Select.Option>
+                              <Select.Option value={obj.service_type_name}>{obj.service_type_name}</Select.Option>
                             </>
                           );
                         })}
@@ -488,16 +561,17 @@ const CreateBuilding = ({ visible, close, data }) => {
                     </Row>
                     <Row>
                       <Select
-                        defaultValue={1}
+                        defaultValue={"Đồng hồ điện/nước"}
                         style={{
                           width: "100%",
                         }}
-                        disabled={nuoc}
+                        onChange={waterChange}
                       >
+                        <Select.Option value="">Chọn cách tính giá dịch vụ</Select.Option>
                         {serviceCalMethod?.map((obj, index) => {
                           return (
                             <>
-                              <Select.Option value={obj.id}>{obj.service_type_name}</Select.Option>
+                              <Select.Option value={obj.service_type_name}>{obj.service_type_name}</Select.Option>
                             </>
                           );
                         })}
@@ -507,16 +581,17 @@ const CreateBuilding = ({ visible, close, data }) => {
                     </Row>
                     <Row>
                       <Select
-                        defaultValue={1}
+                        defaultValue={""}
                         style={{
                           width: "100%",
                         }}
-                        disabled={mang}
+                        onChange={parkChange}
                       >
+                        <Select.Option value="">Chọn cách tính giá dịch vụ</Select.Option>
                         {serviceCalMethod?.map((obj, index) => {
                           return (
                             <>
-                              <Select.Option value={obj.id}>{obj.service_type_name}</Select.Option>
+                              <Select.Option value={obj.service_type_name}>{obj.service_type_name}</Select.Option>
                             </>
                           );
                         })}
@@ -526,16 +601,17 @@ const CreateBuilding = ({ visible, close, data }) => {
                     </Row>
                     <Row>
                       <Select
-                        defaultValue={1}
+                        defaultValue={""}
                         style={{
                           width: "100%",
                         }}
-                        disabled={xe}
+                        onChange={internetChange}
                       >
+                        <Select.Option value="">Chọn cách tính giá dịch vụ</Select.Option>
                         {serviceCalMethod?.map((obj, index) => {
                           return (
                             <>
-                              <Select.Option value={obj.id}>{obj.service_type_name}</Select.Option>
+                              <Select.Option value={obj.service_type_name}>{obj.service_type_name}</Select.Option>
                             </>
                           );
                         })}
@@ -545,39 +621,23 @@ const CreateBuilding = ({ visible, close, data }) => {
                     </Row>
                     <Row>
                       <Select
-                        defaultValue={1}
+                        defaultValue={""}
                         style={{
                           width: "100%",
                         }}
-                        disabled={veSinh}
+                        onChange={cleanChange}
                       >
+                        <Select.Option value="">Chọn cách tính giá dịch vụ</Select.Option>
                         {serviceCalMethod?.map((obj, index) => {
                           return (
                             <>
-                              <Select.Option value={obj.id}>{obj.service_type_name}</Select.Option>
+                              <Select.Option value={obj.service_type_name}>{obj.service_type_name}</Select.Option>
                             </>
                           );
                         })}
                       </Select>
                       <br />
                       <br />
-                    </Row>
-                    <Row>
-                      <Select
-                        defaultValue={1}
-                        style={{
-                          width: "100%",
-                        }}
-                        disabled={khac}
-                      >
-                        {serviceCalMethod?.map((obj, index) => {
-                          return (
-                            <>
-                              <Select.Option value={obj.id}>{obj.service_type_name}</Select.Option>
-                            </>
-                          );
-                        })}
-                      </Select>
                     </Row>
                   </Col>
                 </Row>

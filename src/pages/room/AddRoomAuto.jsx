@@ -30,7 +30,7 @@ function AddRoomAuto({ visible, close, data }) {
                         Đóng
                     </Button>,
                     <Button htmlType="submit" key="submit" form="" type="primary">
-                        Thêm mới
+                        Xem trước
                     </Button>,
                 ]}
             >
@@ -235,6 +235,16 @@ function AddRoomAuto({ visible, close, data }) {
                             placeholder='Nhập diện tích phòng' />
                     </Form.Item>
                 </Form>
+                <Row>
+                    <Col>
+                        <p>
+                            <i>
+                                <b>Thêm mới phòng nhanh: </b> các thông tin về phòng sẽ tự động được thêm vào giúp việc nhập dữ liệu nhanh
+                                hơn
+                            </i>
+                        </p>
+                    </Col>
+                </Row>
             </Modal>
         </>
     );

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Layout } from "antd";
+import { Button, Layout, notification, Space } from "antd";
 import "./home.scss";
 import Sidebar from "../../components/sidebar/Sidebar";
 import "./home.scss";
@@ -8,6 +8,31 @@ import Breadcrumbs from "../../components/BreadCrumb ";
 const { Content, Sider, Header } = Layout;
 
 const Home = () => {
+  const [api, contextHolder] = notification.useNotification();
+  const openNotification = () => {
+    const key = `open${Date.now()}`;
+    const btn = (
+      <Space>
+        <Button type="link" size="small" onClick={() => notification.destroy()}>
+          Destroy All
+        </Button>
+        <Button type="primary" size="small" onClick={() => notification.destroy(key)}>
+          Confirm
+        </Button>
+      </Space>
+    );
+    api.open({
+      message: "Notification Title",
+      description:
+        'A function will be be called after the notification is closed (automatically after the "duration" time of manually).',
+      btn,
+      key,
+      placement: "top",
+    });
+  };
+  useEffect(() => {
+    openNotification();
+  }, []);
   const [collapsed, setCollapsed] = useState(false);
   return (
     <div className="home">
@@ -35,6 +60,7 @@ const Home = () => {
             }}
           >
             <Breadcrumbs />
+            {contextHolder}
             Hello
             <div
               className="site-layout-background"

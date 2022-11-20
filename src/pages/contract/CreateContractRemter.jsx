@@ -34,6 +34,7 @@ import {
   message,
   notification,
   Card,
+  Divider,
 } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import { useNavigate } from "react-router-dom";
@@ -367,7 +368,7 @@ const CreateContractRenter = () => {
     });
     setisAdd(false);
   };
-  const [listGeneralService, setListGeneralService] = useState([]);
+  // const [listGeneralService, setListGeneralService] = useState([]);
 
   const columnsService = [
     {
@@ -810,6 +811,7 @@ const CreateContractRenter = () => {
             }}
           >
             <Breadcrumbs />
+            <Divider />
             <div
               className="site-layout-background"
               style={{
