@@ -238,7 +238,11 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                                     <h4>Thời hạn hợp đồng:</h4>
                                                 </Col>
                                                 <Col span={14}>
-                                                    <p>{dataContract?.contract_term < 12 ? dataContract?.contract_term + ' tháng' : Math.floor(dataContract?.contract_term / 12) + ' năm ' + dataContract?.contract_term % 12 + ' tháng'} </p>
+                                                    <p>{dataContract?.contract_term < 12
+                                                        ? dataContract?.contract_term + ' tháng'
+                                                        : dataContract?.contract_term % 12 !== 0 ?
+                                                            Math.floor(dataContract?.contract_term / 12) + ' năm ' + dataContract?.contract_term % 12 + ' tháng' :
+                                                            Math.floor(dataContract?.contract_term / 12) + ' năm '} </p>
                                                 </Col>
                                             </Row>
                                             <Row>
@@ -447,7 +451,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                                 bordered
                                                 onChange={(pagination, filters, sorter, extra) => {
                                                     setFilterAssetType(filters);
-                                                    setAssetStatus(filters)
+                                                    setAssetStatus(filters);
                                                 }}
                                                 dataSource={dataContract?.list_hand_over_asset}
                                                 columns={columns}

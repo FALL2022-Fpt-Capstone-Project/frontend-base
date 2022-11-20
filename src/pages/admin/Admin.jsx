@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Layout } from "antd";
+import { Button, Divider, Layout } from "antd";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import Sidebar from "../../components/sidebar/Sidebar";
 import "./admin.scss";
@@ -33,6 +33,7 @@ const Admin = () => {
             </Header>
             <Content className="layout-content">
               <Breadcrumbs />
+              <Divider />
               <div>
                 <Button
                   type="primary"
@@ -44,13 +45,7 @@ const Admin = () => {
                   Thêm mới nhân viên
                 </Button>
               </div>
-              <div
-                className="site-layout-background"
-                style={{
-                  padding: 24,
-                  minHeight: 360,
-                }}
-              >
+              <div className="site-layout-background">
                 <ListStaff />
               </div>
             </Content>

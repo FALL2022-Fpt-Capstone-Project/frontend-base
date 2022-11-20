@@ -486,6 +486,7 @@ const CreateContractBuilding = () => {
             <Row>
               <Col span={24}>
                 <Breadcrumbs />
+                <Divider />
               </Col>
             </Row>
             <div
@@ -688,6 +689,9 @@ const CreateContractBuilding = () => {
                                       }
                                     ]
                                   })?.map((o, i) => o[0]);
+                                  setGroupSelect(dataApartmentGroup?.find(
+                                    (obj, index) => obj.group_id === e
+                                  ));
                                   setNumberOfFloor(floor_room);
                                 }}
                                 placeholder="Chọn chung cư"

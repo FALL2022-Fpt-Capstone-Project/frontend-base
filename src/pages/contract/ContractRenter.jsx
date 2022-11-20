@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import "./contract.scss";
 import { PlusCircleOutlined, PieChartOutlined } from "@ant-design/icons";
-import { Button, Layout, Card, Modal, Select, Row, Col } from "antd";
+import { Button, Layout, Card, Modal, Select, Row, Col, Divider } from "antd";
 import ListContractRenter from "./ListContractRenter";
 import ListContractExpired from "./ListContractExpired";
 import ListContractRenterAlmostExpired from "./ListContractRenterAlmostExpired";
@@ -96,6 +96,7 @@ const ContractRenter = () => {
             }}
           >
             <Breadcrumbs />
+            <Divider />
             <div className="btn-contract">
               <Button
                 icon={<PieChartOutlined style={fontSize} />}

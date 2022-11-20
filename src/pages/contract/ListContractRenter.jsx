@@ -163,6 +163,8 @@ const ListContractRenter = () => {
     setPhoneNumber("");
     setIdentity("");
     setBuilding("");
+    setStartDate("");
+    setEndDate("");
     setEndContract(false);
     setLoading(true);
     const response = await axios

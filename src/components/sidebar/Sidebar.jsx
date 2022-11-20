@@ -44,7 +44,6 @@ const Sidebar = () => {
       setContractRenterLink(location.pathname);
     }
   }, [location.pathname]);
-  console.log(location.pathname.includes("/contract-renter/edit"));
   useEffect(() => {
     if (location.pathname.includes("/contract-apartment/create")) {
       setContractApartmentLink("/contract-apartment/create");

@@ -41,8 +41,7 @@ const ListContractApartment = () => {
   const [startDate, setStartDate] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [identity, setIdentity] = useState("");
-  const [buildingFilter, setBuildingFilter] = useState("");
-  const [renterName, setRenterName] = useState("");
+  const [rentalName, setRentalName] = useState("");
   const [building, setBuilding] = useState("");
   const [endContract, setEndContract] = useState(false);
   const dateTimeSelect = [];
@@ -113,7 +112,7 @@ const ListContractApartment = () => {
   };
   const resetForm = async () => {
     form.resetFields();
-    setRenterName("");
+    setRentalName("");
     setPhoneNumber("");
     setIdentity("");
     setBuilding("");
@@ -147,8 +146,8 @@ const ListContractApartment = () => {
     setStartDate(startDate);
     setEndDate(endDate);
   };
-  const renterNameChange = (e) => {
-    setRenterName(e.target.value);
+  const rentalNameChange = (e) => {
+    setRentalName(e.target.value);
   };
   const phoneNumberChange = (e) => {
     setPhoneNumber(e.target.value);
@@ -161,6 +160,18 @@ const ListContractApartment = () => {
   };
   const endContractChange = (value) => {
     setEndContract(value);
+  };
+  const getFilterContractRental = () => {
+    console.log(rental);
+  };
+  const rental = {
+    rentalName: rentalName,
+    identity: identity,
+    phoneNumber: phoneNumber,
+    startDate: startDate,
+    endDate: endDate,
+    building: building,
+    endContract: endContract,
   };
   const data = [
     {
@@ -233,19 +244,19 @@ const ListContractApartment = () => {
               form={form}
               name="filterStaff"
               id="filterStaff"
-              // onFinish={getFilterContractRenter}
+              onFinish={getFilterContractRental}
             >
               <Row gutter={[16]} className="advanced-search" style={{ marginBottom: "20px", marginLeft: "20px" }}>
                 <Row>
-                  <Form.Item name="renterName" className="form-item-renter">
+                  <Form.Item name="rentalName" className="form-item-renter">
                     <Col className="gutter-row" xs={{ span: 24 }} lg={{ span: 24 }}>
                       <Row>
                         <label htmlFor="" className="search-name">
-                          Tìm kiếm theo tên khách thuê
+                          Tìm kiếm theo tên người cho thuê
                         </label>
                       </Row>
                       <Row>
-                        <Input placeholder="Nhập tên khách thuê" autoComplete="off" onChange={renterNameChange} />
+                        <Input placeholder="Nhập tên người cho thuê" autoComplete="off" onChange={rentalNameChange} />
                       </Row>
                     </Col>
                   </Form.Item>
@@ -310,9 +321,7 @@ const ListContractApartment = () => {
                           filterSort={(optionA, optionB) =>
                             (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())
                           }
-                          onChange={(e) => {
-                            console.log(e);
-                          }}
+                          onChange={buildingChange}
                           options={dataApartmentGroup?.map((obj, index) => {
                             return { value: obj.group_id, label: obj.group_name };
                           })}
@@ -384,11 +393,11 @@ const ListContractApartment = () => {
             return (
               <>
                 <Tooltip title="Chỉnh sửa">
-                  <EditOutlined style={{ fontSize: "20px", color: "#46a6ff", margin: "0 5px" }} />
+                  <EditOutlined className="icon" />
                 </Tooltip>
                 <Tooltip title="Xem">
                   <EyeOutlined
-                    style={{ fontSize: "20px", color: "#46a6ff", margin: "0 5px" }}
+                    className="icon"
                     onClick={() => {
                       setViewContract(true);
                     }}
