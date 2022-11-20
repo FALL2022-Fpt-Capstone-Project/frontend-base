@@ -163,7 +163,7 @@ function AddRoom({ visible, close, data }) {
                         labelCol={{ span: 24 }}
                         label={
                             <span>
-                                <b>Diện tích phòng: </b>
+                                <b>Diện tích (m2): </b>
                             </span>
                         }
                         rules={[

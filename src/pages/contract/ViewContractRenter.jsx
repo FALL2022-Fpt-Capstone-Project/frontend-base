@@ -21,7 +21,7 @@ const cardBellow = {
 const memeber = {
     border: '1px solid #C0C0C0',
     borderRadius: '10px',
-    width: 300
+    height: 400
 }
 
 function ViewContractRenter({ openView, closeView, dataContract }) {
@@ -351,7 +351,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                     {dataContract?.list_renter?.filter((o, i) => o.represent === false)?.map((obj, index) => {
                                         return (
                                             <>
-                                                <Col>
+                                                <Col xs={24} xl={8} span={8}>
                                                     <Card
                                                         style={memeber}
                                                         cover={

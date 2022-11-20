@@ -1,6 +1,5 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import "./App.scss";
 import Login from "./pages/login/Login";
 import Home from "./pages/home/Home";
 import Building from "./pages/building/Building";
@@ -17,6 +16,7 @@ import UpdateStaff from "./pages/admin/UpdateStaff";
 import Service from "./pages/service/Service";
 import EditContractRenter from "./pages/contract/EditContractRenter";
 import CreateContractBuilding from "./pages/contract/CreateContractBuilding";
+import AddMemInRoom from "./pages/room/AddMemInRoom";
 const ROLES = {
   User: "ROLE_STAFF",
   Admin: "ROLE_ADMIN",
@@ -39,6 +39,9 @@ const App = () => {
         </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
           <Route path="room" element={<Room />} />
+        </Route>
+        <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
+          <Route path="room/member/:room_id" element={<AddMemInRoom />} />
         </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
           <Route path="contract-apartment" element={<ContractApartment />} />
