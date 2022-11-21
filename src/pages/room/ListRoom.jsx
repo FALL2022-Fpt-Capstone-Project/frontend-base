@@ -28,7 +28,7 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import AddRoom from "./AddRoom";
 import AddRoomAuto from "./AddRoomAuto";
 import RoomDetail from "./RoomDetail";
@@ -253,12 +253,20 @@ function ListRoom(props) {
                 />
               </Tooltip>
               <Tooltip title="Lập hợp đồng phòng">
-                <AuditOutlined
-                  onClick={() => {
-                    navigate(`/contract-renter/create`);
+
+                <Link style={{ color: 'black' }}
+                  to={{
+                    pathname: "/room/create-contract",
                   }}
-                  style={iconSize}
-                />
+                  state={{
+                    room_id: record.room_id,
+                    group_id: record.group_id,
+                    room_floor: record.room_floor,
+                    room_price: record.roomPrice,
+                  }}>
+                  <AuditOutlined style={iconSize} />
+                </Link>
+
               </Tooltip>
               <Tooltip title="Xóa phòng">
                 <DeleteOutlined style={{ fontSize: "130%", color: "red" }} />
@@ -593,6 +601,8 @@ function ListRoom(props) {
               dataSource={groupRoom?.list_rooms?.map((obj, index) => {
                 return {
                   room_id: obj.room_id,
+                  group_id: obj.group_id,
+                  room_floor: obj.room_floor,
                   contract_id: groupRoom?.contracts?.find((o, i) => o.room_id === obj.room_id)?.contract_id,
                   groupName: groupRoom?.group?.find((o, i) => o.group_id === obj.group_id)?.group_name,
                   roomName: obj.room_name,
@@ -620,7 +630,7 @@ function ListRoom(props) {
       </Row>
 
       <AddRoom visible={addRoom} close={setAddRoom} />
-      <AddRoomAuto visible={addRoomAuto} close={setAddRoomAuto} />
+      <AddRoomAuto visible={addRoomAuto} close={setAddRoomAuto} data={dataApartmentGroup} />
       <RoomDetail visible={roomDetail} close={setSetRoomDetail} data={roomDetailData} />
     </div>
   );

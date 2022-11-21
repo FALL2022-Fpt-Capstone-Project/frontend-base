@@ -1,14 +1,19 @@
 import { Button, Col, Form, Input, InputNumber, Modal, Row, Select } from 'antd';
-import React, { useState } from 'react';
+import axios from "../../api/axios";
+import React, { useEffect, useState } from 'react';
+
 
 function AddRoomAuto({ visible, close, data }) {
-
+    const [form] = Form.useForm();
+    let cookie = localStorage.getItem("Cookie");
+    // const [dataApartmentGroup, setDataApartmentGroup] = useState([]);
     const onFinish = (e) => {
         close(false);
     }
     const onFinishFail = (e) => {
 
-    }
+    };
+    console.log(data);
     return (
         <>
             <Modal
@@ -29,22 +34,22 @@ function AddRoomAuto({ visible, close, data }) {
                     >
                         Đóng
                     </Button>,
-                    <Button htmlType="submit" key="submit" form="" type="primary">
+                    <Button href='room/preview' htmlType="submit" key="submit" form="addRoomAuto" type="primary">
                         Xem trước
                     </Button>,
                 ]}
             >
                 <Form
-                    // form={""}
+                    form={form}
                     onFinish={onFinish}
                     onFinishFailed={onFinishFail}
                     layout="horizontal"
                     size={"default"}
-                // id=""
+                    id="addRoomAuto"
                 >
                     <Form.Item
                         className="form-item"
-                        // name=""
+                        name="building"
                         labelCol={{ span: 24 }}
                         label={
                             <span>
@@ -62,16 +67,20 @@ function AddRoomAuto({ visible, close, data }) {
                             showSearch
                             placeholder="Chọn tòa nhà"
                             optionFilterProp="children"
-                            filterOption={(input, option) => (option?.label ?? '').includes(input)}
-                            filterSort={(optionA, optionB) =>
-                                (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                            filterOption={(input, option) =>
+                                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                             }
-                            options={[]}
+                            options={data?.map((obj, index) => {
+                                return {
+                                    value: obj.group_id,
+                                    label: obj.group_name
+                                }
+                            })}
                         />
                     </Form.Item>
                     <Form.Item
                         className="form-item"
-                        // name=""
+                        name="floor"
                         labelCol={{ span: 24 }}
                         label={
                             <span>
@@ -92,7 +101,7 @@ function AddRoomAuto({ visible, close, data }) {
                     </Form.Item>
                     <Form.Item
                         className="form-item"
-                        // name=""
+                        name="numberOfRoom"
                         labelCol={{ span: 24 }}
                         label={
                             <span>
@@ -112,10 +121,10 @@ function AddRoomAuto({ visible, close, data }) {
                             placeholder='Nhập số lượng phòng' />
                     </Form.Item>
                     <Row>
-                        <Col span={12}>
+                        <Col span={24}>
                             <Form.Item
                                 className="form-item"
-                                // name=""
+                                name="roomConvention"
                                 labelCol={{ span: 24 }}
                                 label={
                                     <span>
@@ -132,40 +141,17 @@ function AddRoomAuto({ visible, close, data }) {
                                 <Input placeholder='Nhập tên phòng' />
                             </Form.Item>
                         </Col>
-                        <Col span={11} offset={1}>
-                            <Form.Item
-                                className="form-item"
-                                // name=""
-                                labelCol={{ span: 24 }}
-                                label={
-                                    <span>
-                                        <b>Số phòng quy ước: </b>
-                                    </span>
-                                }
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "Vui lòng nhập số phòng",
-                                    },
-                                ]}
-                            >
-                                <InputNumber
-                                    style={{ width: "100%" }}
-                                    controls={false}
-                                    placeholder='Nhập số phòng' />
-                            </Form.Item>
-                        </Col>
                     </Row>
                     <Row>
                         <Col span={24}>
-                            <p><i><b>Ví dụ:</b>Tầng: <b>1</b>, Số lượng phòng mỗi tầng: <b>10</b>, Tên phòng quy ước: <b>A</b>, Số phòng quy ước: <b>101</b>.
+                            <p><i><b>Ví dụ:</b>Tầng: <b>1</b>, Số lượng phòng mỗi tầng: <b>10</b>, Tên phòng quy ước: <b>A</b>.
                                 Phòng sẽ tự động được tạo lần lượt là: <b>A101, A102, A103 ... A110.</b>
                             </i></p>
                         </Col>
                     </Row>
                     <Form.Item
                         className="form-item"
-                        // name=""
+                        name="generalRoomPrice"
                         labelCol={{ span: 24 }}
                         label={
                             <span>
@@ -191,7 +177,7 @@ function AddRoomAuto({ visible, close, data }) {
                     </Form.Item>
                     <Form.Item
                         className="form-item"
-                        // name=""
+                        name="numberOfPerson"
                         labelCol={{ span: 24 }}
                         label={
                             <span>
@@ -214,7 +200,7 @@ function AddRoomAuto({ visible, close, data }) {
                     </Form.Item>
                     <Form.Item
                         className="form-item"
-                        // name=""
+                        name="roomSquare"
                         labelCol={{ span: 24 }}
                         label={
                             <span>

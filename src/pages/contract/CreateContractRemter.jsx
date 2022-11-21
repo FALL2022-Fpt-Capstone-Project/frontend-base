@@ -273,6 +273,28 @@ const CreateContractRenter = () => {
       });
   };
   // console.log(dataOldRenter);
+  const filterRenter = async (groupId) => {
+    setLoading(true);
+    await axios
+      .get(LIST_OLD_RENTER, {
+        params: {
+          group: groupId,
+        },
+        headers: {
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${cookie}`,
+        },
+        // withCredentials: true,
+      })
+      .then((res) => {
+        setDataOldRenter(res.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    setLoading(false);
+  };
 
   useEffect(() => {
     getAssetType();
@@ -573,13 +595,13 @@ const CreateContractRenter = () => {
   const onFinish = async (e) => {
     const listServiceOfBuilding = Object.values(e.serviceIndexInForm);
     listServiceOfBuilding.push({
-      general_service_id: dataApartmentGroupSelect.list_general_service.map((obj, index) => obj.general_service_id),
+      general_service_id: dataApartmentGroupSelect?.list_general_service.map((obj, index) => obj.general_service_id),
     });
     const list_general_service = listServiceOfBuilding
       .map((obj, index) => {
         return {
-          ...obj,
           general_service_id: listServiceOfBuilding[listServiceOfBuilding.length - 1].general_service_id[index],
+          hand_over_general_service_index: obj.hand_over_service_index
         };
       })
       .filter((o, i) => i !== listServiceOfBuilding.length - 1);
@@ -1093,7 +1115,7 @@ const CreateContractRenter = () => {
                                   setDataAsset(
                                     dataApartmentGroup
                                       .find((obj, index) => obj.group_id === e)
-                                      ?.list_hand_over_assets?.map(
+                                      ?.list_hand_over_assets?.filter((asset => asset.hand_over_asset_quantity > 0))?.map(
                                         (obj, index) =>
                                           [
                                             {
@@ -1474,77 +1496,7 @@ const CreateContractRenter = () => {
                     </Row>
                     <Row>
                       <Col span={8}>
-                        {/* {dataApartmentGroupSelect.list_general_service?.map((obj, index) => {
-                          return (
-                            <>
-                              <Form.Item
-                                className="form-item"
-                                name={obj.service_name}
-                                labelCol={{ span: 24 }}
-                                label={
-                                  <h4>
-                                    {obj.service_show_name}{" "}
-                                    <b>
-                                      (
-                                      {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
-                                        obj.service_price
-                                      )}
-                                      )
-                                    </b>
-                                  </h4>
-                                }
-                                rules={[
-                                  {
-                                    required: true,
-                                    message: `Vui lòng không để trống`,
-                                  },
-                                ]}
-                              >
-                                <InputNumber
-                                  onChange={(e) => {
-                                    if (
-                                      !listGeneralService.find(
-                                        (o, i) => o.general_service_id === obj.general_service_id
-                                      )
-                                    ) {
-                                      setListGeneralService((pre) => {
-                                        return [
-                                          ...pre,
-                                          {
-                                            general_service_id: obj.general_service_id,
-                                            hand_over_service_index: e,
-                                          },
-                                        ];
-                                      });
-                                    } else {
-                                      setListGeneralService((pre) => {
-                                        return pre.map((object, serviceIndex) => {
-                                          if (object.general_service_id === obj.general_service_id) {
-                                            return {
-                                              general_service_id: obj.general_service_id,
-                                              hand_over_service_index: e,
-                                            };
-                                          } else {
-                                            return object;
-                                          }
-                                        });
-                                      });
-                                    }
-                                  }}
-                                  addonAfter={
-                                    String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
-                                      ? "Chỉ số hiện tại"
-                                      : obj.service_type_name
-                                  }
-                                  defaultValue={0}
-                                  style={{ width: "100%" }}
-                                  min={0}
-                                />
-                              </Form.Item>
-                            </>
-                          );
-                        })} */}
-                        {dataApartmentGroupSelect.list_general_service?.map((obj, index) => {
+                        {dataApartmentGroupSelect?.list_general_service?.map((obj, index) => {
                           return (
                             <>
                               <Form.Item
@@ -1602,7 +1554,7 @@ const CreateContractRenter = () => {
                         <Table
                           bordered
                           rowKey={(record) => record.key}
-                          dataSource={dataApartmentGroupSelect.list_general_service}
+                          dataSource={dataApartmentGroupSelect?.list_general_service}
                           columns={columnsService}
                           loading={loading}
                         ></Table>
@@ -1822,7 +1774,7 @@ const CreateContractRenter = () => {
                 width={1100}
               >
                 <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                  <Col span={12}>
+                  <Col xs={24} lg={8} span={8}>
                     <Input.Search
                       placeholder="Nhập tên, SĐT hoặc số CMND để tìm kiếm"
                       style={{ marginBottom: "5%", width: "100%" }}
@@ -1834,7 +1786,7 @@ const CreateContractRenter = () => {
                       }}
                     />
                   </Col>
-                  <Col span={12}>
+                  <Col xs={12} lg={8} span={8}>
                     <span>Giới tính: </span>
                     <Checkbox.Group
                       defaultValue={[true, false]}
@@ -1846,6 +1798,21 @@ const CreateContractRenter = () => {
                         { label: "Nữ", value: false },
                       ]}
                     ></Checkbox.Group>
+                  </Col>
+                  <Col xs={12} lg={8} span={8}>
+                    <Select
+                      defaultValue={""}
+                      style={{ width: '100%' }}
+                      onChange={(e) => {
+                        filterRenter(e);
+                      }}
+                      placeholder="Chọn tòa nhà"
+                    >
+                      <Select.Option value="">Tất cả tòa nhà</Select.Option>
+                      {dataApartmentGroup?.map((obj, index) => {
+                        return <Select.Option value={obj.group_id}>{obj.group_name}</Select.Option>;
+                      })}
+                    </Select>
                   </Col>
                 </Row>
                 <Form

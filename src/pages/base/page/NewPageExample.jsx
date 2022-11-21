@@ -13,6 +13,7 @@ function NewPageExample(data) {
             <Layout
                 style={{
                     minHeight: "100vh",
+                    minWidth: '100vh'
                 }}
             >
                 <Sider width={250}>
