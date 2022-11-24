@@ -1,4 +1,4 @@
-.service {
+.invoice {
   .sider-title {
     color: #fff;
     font-size: 24px;
@@ -19,16 +19,15 @@
         font-weight: bold;
       }
     }
-    .icon {
-      font-size: 20px;
-      color: #46a6ff;
-      margin: 0 5px;
-    }
-    .icon-delete {
-      color: #d11919;
+    .layout-content {
+      display: flex;
+      flex-direction: column;
+      margin: 10px 16px;
+      .button-add {
+        float: right;
+        margin: 10px;
+        font-size: 15px;
+      }
     }
   }
-}
-.text-area {
-  resize: none;
 }

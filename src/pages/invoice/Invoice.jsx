@@ -1,39 +1,34 @@
+import { Button, Divider, Layout } from "antd";
 import React, { useState } from "react";
-import Sidebar from "../../components/sidebar/Sidebar";
-import "./building.scss";
-import { PlusCircleOutlined } from "@ant-design/icons";
-import { Button, Divider, Layout, Modal } from "antd";
-import CreateBuilding from "./CreateBuilding";
-import ListBuilding from "./ListBuilding";
+import "./invoice.scss";
 import Breadcrumbs from "../../components/BreadCrumb ";
-const { Content, Sider, Header } = Layout;
-const Building = () => {
-  const [createBuilding, setCreateBuilding] = useState(false);
-  const onClickCreateBuilding = () => {
-    setCreateBuilding(true);
-  };
+import Sidebar from "../../components/sidebar/Sidebar";
+import ListInvoice from "./ListInvoice";
+import { PlusCircleOutlined } from "@ant-design/icons";
 
+const { Content, Sider, Header } = Layout;
+const Invoice = () => {
+  const [collapsed, setCollapsed] = useState(false);
+  const [createInvoice, setCreateInvoice] = useState(false);
+  const onClickCreateInvoice = () => {
+    setCreateInvoice(true);
+  };
   return (
-    <div className="building">
+    <div className="invoice">
       <Layout
         style={{
           minHeight: "100vh",
         }}
       >
-        <Sider width={250}>
+        <Sider width={250} collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
           <p className="sider-title">QUẢN LÝ CHUNG CƯ MINI</p>
           <Sidebar />
         </Sider>
         <Layout className="site-layout">
           <Header className="layout-header">
-            <p className="header-title">Quản lý chung cư</p>
+            <p className="header-title">Quản lý hoá đơn</p>
           </Header>
-          <Content
-            className="layout-content"
-            style={{
-              margin: "10px 10px",
-            }}
-          >
+          <Content className="layout-content">
             <Breadcrumbs />
             <Divider />
             <div>
@@ -41,21 +36,20 @@ const Building = () => {
                 type="primary"
                 icon={<PlusCircleOutlined />}
                 size="middle"
-                onClick={onClickCreateBuilding}
+                // onClick={onClickCreateInvoice}
                 className="button-add"
               >
-                Thêm chung cư
+                Tạo mới nhanh hoá đơn
               </Button>
             </div>
             <div className="site-layout-background">
-              <ListBuilding />
+              <ListInvoice />
             </div>
           </Content>
         </Layout>
       </Layout>
-      <CreateBuilding visible={createBuilding} close={setCreateBuilding} />
     </div>
   );
 };
 
-export default Building;
+export default Invoice;

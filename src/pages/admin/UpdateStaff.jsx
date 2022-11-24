@@ -76,6 +76,7 @@ const UpdateStaff = ({ visible, close, id }) => {
           duration: 3,
         });
         close(false);
+        reload();
       })
       .catch((e) =>
         notification.error({
@@ -104,7 +105,6 @@ const UpdateStaff = ({ visible, close, id }) => {
         open={visible}
         onOk={() => {
           close(false);
-          reload();
         }}
         onCancel={() => {
           close(false);
@@ -118,7 +118,7 @@ const UpdateStaff = ({ visible, close, id }) => {
           >
             Đóng
           </Button>,
-          <Button htmlType="submit" key="submit" form="UpdateStaff" type="primary" onClick={reload}>
+          <Button htmlType="submit" key="submit" form="UpdateStaff" type="primary">
             Cập nhật
           </Button>,
         ]}

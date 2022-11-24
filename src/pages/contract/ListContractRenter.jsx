@@ -7,7 +7,7 @@ import { EditOutlined, SearchOutlined, EyeOutlined, UndoOutlined } from "@ant-de
 import ViewContractRenter from "./ViewContractRenter";
 const { Search } = Input;
 const LIST_CONTRACT_URL = "manager/contract";
-const LIST_BUILDING_FILTER = "manager/group/all";
+const LIST_BUILDING_FILTER = "manager/group/all/contracted";
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 const ListContractRenter = () => {

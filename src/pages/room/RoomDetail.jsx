@@ -20,7 +20,7 @@ const memeber = {
 }
 
 function RoomDetail({ visible, close, data }) {
-    console.log(data);
+    // console.log(data);
     return (
         <>
             <Modal
@@ -91,7 +91,7 @@ function RoomDetail({ visible, close, data }) {
                                             <h4>Diện tích: </h4>
                                         </Col>
                                         <Col span={12}>
-                                            <p>{data?.roomSquare}</p>
+                                            <p>{data?.roomSquare} m2</p>
                                         </Col>
                                     </Row>
                                     <Row>

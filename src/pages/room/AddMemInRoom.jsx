@@ -1,9 +1,10 @@
-import { Form, Layout, Button, Row, Col, Table, Space, Modal, Input, Radio, notification, message } from "antd";
+import { Form, Layout, Button, Row, Col, Table, Space, Modal, Input, Radio, notification, message, Divider } from "antd";
 import React, { useEffect, useState } from 'react';
 import {
     PlusCircleOutlined,
     EditTwoTone,
-    DeleteOutlined
+    DeleteOutlined,
+    ArrowLeftOutlined
 } from "@ant-design/icons";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Breadcrumbs from "../../components/BreadCrumb ";
@@ -50,7 +51,7 @@ function AddMemInRoom(data) {
             });
         setLoading(false);
     };
-    console.log(contractRoom);
+    // console.log(contractRoom);
     const columnsMember = [
         {
             title: "Họ và tên",
@@ -130,7 +131,7 @@ function AddMemInRoom(data) {
             okText: "Xóa",
             cancelText: "Hủy",
             onOk: async () => {
-                console.log(record.member_id);
+                // console.log(record.member_id);
                 // setLoading(true);
                 await axios
                     .delete(DELETE_RENTER + record.member_id, {
@@ -161,7 +162,7 @@ function AddMemInRoom(data) {
         });
     };
     const onFinishAddMem = async (dataMem) => {
-        console.log(dataMem);
+        // console.log(dataMem);
         if (contractRoom?.list_renter?.length < contractRoom?.room?.room_limit_people) {
             const data = {
                 ...dataMem,
@@ -299,6 +300,7 @@ function AddMemInRoom(data) {
                     </Header>
                     <Content className="layout-content">
                         <Breadcrumbs />
+                        <Divider />
                         <div
                             className="site-layout-background"
                             style={{
@@ -306,6 +308,20 @@ function AddMemInRoom(data) {
                                 minHeight: 360,
                             }}
                         >
+                            <div style={{ overflow: "auto" }}>
+                                <Row>
+                                    <Col span={24}>
+                                        <Button
+                                            href="/room"
+                                            type="primary"
+                                            icon={<ArrowLeftOutlined />}
+                                            style={{ marginRight: 5, float: "right", marginBottom: 20 }}
+                                        >
+                                            Danh sách phòng
+                                        </Button>
+                                    </Col>
+                                </Row>
+                            </div>
                             <Row>
                                 <Col span={23}>
                                     <Form.Item className="form-item" name="list_renter" labelCol={{ span: 24 }}>
@@ -319,7 +335,7 @@ function AddMemInRoom(data) {
                                 </Col>
                                 <Col span={1}>
                                     <PlusCircleOutlined
-                                        style={{ fontSize: 36, marginBottom: 20, color: "#1890ff" }}
+                                        style={{ fontSize: 36, marginBottom: 20, color: "#1890ff", float: "right" }}
                                         onClick={() => {
                                             setIsAddMem(true);
                                             formAddMem.setFieldsValue({

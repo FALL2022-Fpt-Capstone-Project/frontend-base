@@ -8,7 +8,6 @@ import ListContractExpired from "./ListContractExpired";
 import ListContractRenterAlmostExpired from "./ListContractRenterAlmostExpired";
 import ListContractRenterLatest from "./ListContractRenterLatest";
 import axios from "../../api/axios";
-import useAuth from "../../hooks/useAuth";
 import Breadcrumbs from "../../components/BreadCrumb ";
 const { Option } = Select;
 const { Content, Sider, Header } = Layout;

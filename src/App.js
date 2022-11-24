@@ -17,6 +17,9 @@ import Service from "./pages/service/Service";
 import EditContractRenter from "./pages/contract/EditContractRenter";
 import CreateContractBuilding from "./pages/contract/CreateContractBuilding";
 import AddMemInRoom from "./pages/room/AddMemInRoom";
+import Invoice from "./pages/invoice/Invoice";
+import RoomContract from "./pages/room/RoomContract";
+import RoomPreview from "./pages/room/RoomPreview";
 const ROLES = {
   User: "ROLE_STAFF",
   Admin: "ROLE_ADMIN",
@@ -43,6 +46,12 @@ const App = () => {
         <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
           <Route path="room/member/:room_id" element={<AddMemInRoom />} />
         </Route>
+        <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
+          <Route path="room/preview" element={<RoomPreview />} />
+        </Route>
+        <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
+          <Route path="room/create-contract" element={<RoomContract />} />
+        </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
           <Route path="contract-apartment" element={<ContractApartment />} />
         </Route>
@@ -55,7 +64,7 @@ const App = () => {
         <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
           <Route path="contract-renter/edit/:contract_id/group/:group_id" element={<EditContractRenter />} />
         </Route>
-        <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
+        <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
           <Route path="contract-apartment/create" element={<CreateContractBuilding />} />
         </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
@@ -72,6 +81,9 @@ const App = () => {
         </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
           <Route path="service" element={<Service />} />
+        </Route>
+        <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
+          <Route path="invoice" element={<Invoice />} />
         </Route>
       </Routes>
     </div>
