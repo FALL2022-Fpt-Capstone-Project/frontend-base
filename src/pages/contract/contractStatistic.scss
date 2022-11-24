@@ -1,0 +1,27 @@
+.list-contract {
+  overflow-x: hidden;
+  .list-contract-search {
+    .ant-slider-rail {
+      background-color: #fff;
+    }
+    .quich-search {
+      margin-bottom: 8px;
+      width: 400px;
+      padding: 10px 0;
+    }
+    #filterStaff {
+      width: 100%;
+    }
+    .form-item {
+      width: 350px;
+    }
+    .search-name {
+      margin-bottom: 10px;
+    }
+  }
+  .icon {
+    font-size: 20px;
+    color: #46a6ff;
+    margin: 0 5px;
+  }
+}

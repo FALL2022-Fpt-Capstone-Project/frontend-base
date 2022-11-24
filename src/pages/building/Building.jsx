@@ -1,23 +1,16 @@
 import React, { useState } from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import "./building.scss";
-import { PlusOutlined } from "@ant-design/icons";
-import { Button, Layout, Modal } from "antd";
+import { PlusCircleOutlined } from "@ant-design/icons";
+import { Button, Divider, Layout, Modal } from "antd";
 import CreateBuilding from "./CreateBuilding";
+import ListBuilding from "./ListBuilding";
+import Breadcrumbs from "../../components/BreadCrumb ";
 const { Content, Sider, Header } = Layout;
 const Building = () => {
-  const [open, setOpen] = useState(false);
-
-  const showModal = () => {
-    setOpen(true);
-  };
-
-  const handleOk = () => {
-    setOpen(false);
-  };
-
-  const handleCancel = () => {
-    setOpen(false);
+  const [createBuilding, setCreateBuilding] = useState(false);
+  const onClickCreateBuilding = () => {
+    setCreateBuilding(true);
   };
 
   return (
@@ -32,50 +25,35 @@ const Building = () => {
           <Sidebar />
         </Sider>
         <Layout className="site-layout">
-          <Header
-            className="layout-header"
-            style={{
-              margin: "0 16px",
-            }}
-          >
+          <Header className="layout-header">
             <p className="header-title">Quản lý chung cư</p>
-            <Button type="primary" icon={<PlusOutlined />} size="middle" onClick={showModal}>
-              Thêm chung cư
-            </Button>
           </Header>
           <Content
+            className="layout-content"
             style={{
-              margin: "10px 16px",
+              margin: "10px 10px",
             }}
           >
-            <div
-              className="site-layout-background"
-              style={{
-                padding: 24,
-                minHeight: 360,
-              }}
-            ></div>
+            <Breadcrumbs />
+            <Divider />
+            <div>
+              <Button
+                type="primary"
+                icon={<PlusCircleOutlined />}
+                size="middle"
+                onClick={onClickCreateBuilding}
+                className="button-add"
+              >
+                Thêm chung cư
+              </Button>
+            </div>
+            <div className="site-layout-background">
+              <ListBuilding />
+            </div>
           </Content>
         </Layout>
       </Layout>
-
-      <Modal
-        open={open}
-        title="Thêm chung cư"
-        onOk={handleOk}
-        onCancel={handleCancel}
-        width={700}
-        footer={[
-          <Button htmlType="submit" form="createBuilding" type="primary" onClick={handleOk}>
-            Lưu
-          </Button>,
-          <Button key="back" onClick={handleCancel}>
-            Huỷ
-          </Button>,
-        ]}
-      >
-        <CreateBuilding />
-      </Modal>
+      <CreateBuilding visible={createBuilding} close={setCreateBuilding} />
     </div>
   );
 };

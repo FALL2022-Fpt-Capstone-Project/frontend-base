@@ -20,5 +20,25 @@
         }
       }
     }
+    .manipulate-table{
+      width: 100%;
+    }
+  }
+  .card-w100-h100{
+    height: 100%;
+    width: 100%;
+    border: 1px solid #C0C0C0;
+    border-radius: 10px;
+  }
+  .margin-bottom-5{
+    margin-bottom: 5%;
+  }
+  .text-card{
+    word-break: break-all;
+    height: auto;
+    white-space: normal;
+  }
+  .data-row.active-row{
+    color: red;
   }
   

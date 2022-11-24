@@ -19,5 +19,31 @@
         font-weight: bold;
       }
     }
+    .layout-content {
+      display: flex;
+      flex-direction: column;
+      margin: 10px 16px;
+      .button-add {
+        float: right;
+        margin: 10px;
+        font-size: 15px;
+      }
+    }
+
+    .icon {
+      font-size: 20px;
+      color: #46a6ff;
+      margin: 0 5px;
+    }
+    .icon-delete {
+      color: red;
+    }
   }
+}
+.card {
+  border: 1px solid #c0c0c0;
+  border-radius: 10px;
+}
+.card-left {
+  width: 100%;
 }
