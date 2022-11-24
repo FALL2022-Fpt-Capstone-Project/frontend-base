@@ -260,7 +260,7 @@ const ListContractApartment = () => {
                 </Button>
                 <Button
                   icon={<UndoOutlined />}
-                  // onClick={resetForm}
+                // onClick={resetForm}
                 >
                   Đặt lại
                 </Button>

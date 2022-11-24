@@ -22,7 +22,7 @@ import TextArea from "antd/lib/input/TextArea";
 import Breadcrumbs from "../../components/BreadCrumb ";
 
 const APARTMENT_DATA_GROUP = "/manager/group/all";
-const GET_SERVICE_GROUP_BY_ID = "manager/service/general?contractId=";
+const GET_SERVICE_GROUP_BY_ID = "manager/service/general?groupId=";
 const GET_LIST_SERVICE_BASIC = "manager/service/basics";
 const ADD_NEW_SERIVCE = "manager/service/general/add";
 const DELETE_SERVICE = "manager/service/general/remove/";
@@ -40,7 +40,7 @@ function Service(props) {
   const [dataApartmentServiceGeneral, setDataApartmentServiceGeneral] = useState([]);
   const [serviceCalCuMethod, setServiceCalCuMethod] = useState([]);
   const [listServiceName, setListServiceName] = useState([]);
-  const [groupIdSelect, setGroupIdSelect] = useState();
+  const [groupIdSelect, setGroupIdSelect] = useState(null);
   const [formAddSerivce] = Form.useForm();
   const [formEditSerivce] = Form.useForm();
   const [selectDefault] = Form.useForm();
@@ -58,6 +58,7 @@ function Service(props) {
         // withCredentials: true,
       })
       .then((res) => {
+        console.log(res.data.data);
         setDataApartmentServiceGeneral(res.data.data);
       })
       .catch((error) => {
@@ -82,7 +83,10 @@ function Service(props) {
         },
       })
       .then((res) => {
-        setDataApartmentGroup(res.data.data);
+        const mergeGroup = res.data.data.list_group_non_contracted.concat(res.data.data.list_group_contracted);
+        const mapped = mergeGroup?.map((obj, index) => obj.group_id);
+        const filterGroupId = mergeGroup?.filter((obj, index) => mapped.indexOf(obj.group_id) === index);
+        setDataApartmentGroup(filterGroupId);
         // apartmentGroupById(res.data.data[0].group_id);
         // selectDefault.setFieldsValue({ selectApartment: res.data.data[0].group_id });
         // setGroupIdSelect(res.data.data[0].group_id);
@@ -94,7 +98,6 @@ function Service(props) {
   };
 
   const getListServiceBasic = async () => {
-    setLoading(true);
     await axios
       .get(GET_LIST_SERVICE_BASIC, {
         headers: {
@@ -109,11 +112,9 @@ function Service(props) {
       .catch((error) => {
         console.log(error);
       });
-    setLoading(false);
   };
 
   const getListServiceCaculMethod = async () => {
-    setLoading(true);
     await axios
       .get(LIST_SERVICE_CACUL_METHOD, {
         headers: {
@@ -128,7 +129,6 @@ function Service(props) {
       .catch((error) => {
         console.log(error);
       });
-    setLoading(false);
   };
 
   const columnServiceGeneral = [
@@ -213,12 +213,17 @@ function Service(props) {
   };
 
   const onFinishAddService = async (e) => {
-    setLoading(true);
     let cookie = localStorage.getItem("Cookie");
     await axios
       .post(
         ADD_NEW_SERIVCE,
-        { ...e, contract_id: groupIdSelect, service_id: parseInt(e.service_id) },
+        {
+          ...e,
+          group_id:
+            groupIdSelect,
+          service_id: parseInt(e.service_id),
+          contract_id: dataApartmentGroup?.find(obj => obj.group_id === groupIdSelect)?.group_contracted ? 1 : null
+        },
         {
           headers: {
             "Content-Type": "application/json",
@@ -227,13 +232,12 @@ function Service(props) {
         }
       )
       .then((res) => {
-        console.log(res);
+        setAddServiceGeneral(false);
         notification.success({
           message: "Thêm mới dịch vụ thành công",
           placement: "top",
           duration: 3,
         });
-        setAddServiceGeneral(false);
         formAddSerivce.setFieldsValue({
           contract_id: null,
           service_id: null,
@@ -251,7 +255,6 @@ function Service(props) {
           duration: 3,
         });
       });
-    setLoading(false);
   };
   const onFinishAddServiceFail = (e) => {
     message.error("Vui lòng kiểm tra lại thông tin");
@@ -264,12 +267,11 @@ function Service(props) {
   };
 
   const onFinishEditService = async (e) => {
-    setLoading(true);
     let cookie = localStorage.getItem("Cookie");
     await axios
       .put(
         UPDATE_SERVICE + e.general_service_id,
-        { ...e, contract_id: groupIdSelect },
+        { ...e, group_id: groupIdSelect },
         {
           headers: {
             "Content-Type": "application/json",
@@ -298,7 +300,6 @@ function Service(props) {
         });
         setEditServiceGeneral(true);
       });
-    setLoading(false);
   };
 
   const onFinishEditServiceFail = (e) => {
@@ -306,8 +307,6 @@ function Service(props) {
   };
 
   const onDeleteService = async (e) => {
-    console.log(e);
-    setLoading(true);
     let cookie = localStorage.getItem("Cookie");
     await axios
       .delete(DELETE_SERVICE + e.general_service_id, {
@@ -331,16 +330,16 @@ function Service(props) {
           duration: 3,
         });
       });
-    setLoading(false);
   };
 
   const onQuickAdd = async () => {
-    setLoading(true);
     let cookie = localStorage.getItem("Cookie");
     await axios
       .post(
         QUICK_ADD_SERVICE + groupIdSelect,
-        { contractId: groupIdSelect },
+        {
+          groupId: groupIdSelect
+        },
         {
           headers: {
             "Content-Type": "application/json",
@@ -365,7 +364,6 @@ function Service(props) {
           duration: 3,
         });
       });
-    setLoading(false);
   };
   console.log(dataApartmentServiceGeneral);
   return (
@@ -403,7 +401,7 @@ function Service(props) {
               <Row>
                 <Col span={14}>
                   <Button
-                    disabled={dataApartmentServiceGeneral?.length === 0 ? true : false}
+                    disabled={groupIdSelect === null ? true : false}
                     type="primary"
                     style={{ marginBottom: "1%", marginRight: "1%", float: "left" }}
                     icon={<PlusCircleOutlined style={{ fontSize: 15 }} />}
@@ -412,7 +410,7 @@ function Service(props) {
                     Thêm mới nhanh
                   </Button>
                   <Button
-                    disabled={dataApartmentServiceGeneral?.length === 0 ? true : false}
+                    disabled={groupIdSelect === null ? true : false}
                     type="primary"
                     style={{ marginBottom: "1%", float: "left" }}
                     onClick={onClikAddService}
@@ -588,7 +586,7 @@ function Service(props) {
                       </span>
                     }
                   >
-                    <TextArea rows={5} placeholder="Ghi chú"></TextArea>
+                    <TextArea className="text-area" rows={5} placeholder="Ghi chú"></TextArea>
                   </Form.Item>
                 </Form>
               </Modal>
@@ -712,7 +710,7 @@ function Service(props) {
                       </span>
                     }
                   >
-                    <TextArea rows={5} placeholder="Ghi chú"></TextArea>
+                    <TextArea className="text-area" rows={5} placeholder="Ghi chú"></TextArea>
                   </Form.Item>
                 </Form>
               </Modal>

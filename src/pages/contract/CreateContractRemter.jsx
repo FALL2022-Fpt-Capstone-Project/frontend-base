@@ -1658,9 +1658,9 @@ const CreateContractRenter = () => {
                               onSearch={(e) => {
                                 setSearched(e);
                               }}
-                              onChange={(e) => {
-                                setSearched(e.target.value);
-                              }}
+                              // onChange={(e) => {
+                              //   setSearched(e.target.value);
+                              // }}
                             />
                           </Col>
                         </Row>
