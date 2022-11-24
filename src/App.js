@@ -17,9 +17,9 @@ import Service from "./pages/service/Service";
 import EditContractRenter from "./pages/contract/EditContractRenter";
 import CreateContractBuilding from "./pages/contract/CreateContractBuilding";
 import AddMemInRoom from "./pages/room/AddMemInRoom";
+import Invoice from "./pages/invoice/Invoice";
 import RoomContract from "./pages/room/RoomContract";
 import RoomPreview from "./pages/room/RoomPreview";
-import Invoice from "./pages/invoice/Invoice";
 const ROLES = {
   User: "ROLE_STAFF",
   Admin: "ROLE_ADMIN",

@@ -12,7 +12,7 @@ import {
   AuditOutlined,
   DollarOutlined,
   HomeOutlined,
-  CheckCircleTwoTone
+  CheckCircleTwoTone,
 } from "@ant-design/icons";
 import moment from "moment";
 import {
@@ -45,7 +45,7 @@ const { Option } = Select;
 const LIST_ASSET_TYPE = "manager/asset/type";
 const ADD_NEW_CONTRACT = "manager/contract/group/add";
 const APARTMENT_DATA_GROUP = "/manager/group/all";
-const ASSET_BASIC = "manager/asset/"
+const ASSET_BASIC = "manager/asset/";
 const dateFormatList = ["DD-MM-YYYY"];
 const defaultAddAsset = {
   dateOfDelivery: moment(),
@@ -117,8 +117,8 @@ const CreateContractBuilding = () => {
     setCheckedKeys(checkedKeysValue);
     setListRoomId(data_id?.map((obj, index) => obj.room).filter((o, i) => Number.isInteger(o)));
     form.setFieldsValue({
-      list_room: data_id?.map((obj, index) => obj.room).filter((o, i) => Number.isInteger(o))
-    })
+      list_room: data_id?.map((obj, index) => obj.room).filter((o, i) => Number.isInteger(o)),
+    });
   };
   const onSelect = (selectedKeysValue, info) => {
     console.log("onSelect", info);
@@ -155,7 +155,6 @@ const CreateContractBuilding = () => {
   const [roomRented, setRoomRented] = useState([]);
 
   // const [assetBasic, setAssetBasic] = useState([]);
-
 
   let cookie = localStorage.getItem("Cookie");
 
@@ -247,7 +246,7 @@ const CreateContractBuilding = () => {
   useEffect(() => {
     getAssetType();
     apartmentGroup();
-    getAssetBasic()
+    getAssetBasic();
   }, []);
 
   const getAssetType = async () => {
@@ -282,17 +281,19 @@ const CreateContractBuilding = () => {
         // asset_id, asset_name, hand_over_asset_quantity, asset_type_show_name, hand_over_asset_date_delivery
 
         // setAssetBasic(res.data.data);
-        setDataAsset(res.data.data?.map((obj, index) => {
-          return {
-            asset_id: obj.basic_asset_id,
-            asset_name: obj.basic_asset_name,
-            hand_over_asset_quantity: 10,
-            asset_type_show_name: obj.asset_type_show_name,
-            hand_over_asset_date_delivery: currentDay.format('DD-MM-YYYY'),
-            asset_type_name: obj.asset_type_name,
-            asset_type_id: obj.asset_type_id
-          }
-        }))
+        setDataAsset(
+          res.data.data?.map((obj, index) => {
+            return {
+              asset_id: obj.basic_asset_id,
+              asset_name: obj.basic_asset_name,
+              hand_over_asset_quantity: 10,
+              asset_type_show_name: obj.asset_type_show_name,
+              hand_over_asset_date_delivery: currentDay.format("DD-MM-YYYY"),
+              asset_type_name: obj.asset_type_name,
+              asset_type_id: obj.asset_type_id,
+            };
+          })
+        );
       })
       .catch((error) => {
         console.log(error);
@@ -324,8 +325,8 @@ const CreateContractBuilding = () => {
     loadDefault();
   }, []);
   form.setFieldsValue({
-    list_hand_over_asset: dataAsset
-  })
+    list_hand_over_asset: dataAsset,
+  });
   const loadDefault = () => {
     form.setFieldsValue({
       contract_type: 2,
@@ -377,9 +378,9 @@ const CreateContractBuilding = () => {
         assets_additional_type: obj.asset_type_id,
         hand_over_asset_quantity: obj.hand_over_asset_quantity,
         hand_over_asset_status: true,
-        hand_over_date_delivery: obj.hand_over_asset_date_delivery
-      }
-    })
+        hand_over_date_delivery: obj.hand_over_asset_date_delivery,
+      };
+    });
     const data = {
       ...e,
       contract_end_date: e.contract_end_date.format("YYYY-MM-DD"),
@@ -391,22 +392,19 @@ const CreateContractBuilding = () => {
       rack_renter_phone: e.owner_phone_number,
       rack_renter_identity: e.owner_identity_card,
       rack_renter_address: e.address_more_detail,
-      rack_renter_note: ""
-    }
+      rack_renter_note: "",
+    };
     console.log(data);
     console.log(JSON.stringify(data));
     await axios
-      .post(
-        ADD_NEW_CONTRACT, data,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            // "Access-Control-Allow-Origin": "*",
-            Authorization: `Bearer ${cookie}`,
-          },
-          // withCredentials: true,
-        }
-      )
+      .post(ADD_NEW_CONTRACT, data, {
+        headers: {
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${cookie}`,
+        },
+        // withCredentials: true,
+      })
       .then((res) => {
         navigate("/contract-apartment");
         notification.success({
@@ -635,14 +633,19 @@ const CreateContractBuilding = () => {
                 id="create-contract"
               >
                 <Tabs activeKey={changeTab} defaultActiveKey="1">
-                  <Tabs.TabPane tab={
-                    <span className="text-size-tab">
-                      1. Thông tin chung {displayFinish.find((obj, index) => obj === 1) ? (
-                        <CheckCircleTwoTone style={{ fontSize: "130%" }} twoToneColor="#52c41a" />
-                      ) : (
-                        ""
-                      )}
-                    </span>} key="1">
+                  <Tabs.TabPane
+                    tab={
+                      <span className="text-size-tab">
+                        1. Thông tin chung{" "}
+                        {displayFinish.find((obj, index) => obj === 1) ? (
+                          <CheckCircleTwoTone style={{ fontSize: "130%" }} twoToneColor="#52c41a" />
+                        ) : (
+                          ""
+                        )}
+                      </span>
+                    }
+                    key="1"
+                  >
                     <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                       <Col xs={24} md={12} lg={8} xl={8} span={8}>
                         <Card
@@ -777,7 +780,13 @@ const CreateContractBuilding = () => {
                                 </span>
                               }
                             >
-                              <TextArea className="textArea" maxLength={200} rows={5} placeholder="Ghi chú" value={""} />
+                              <TextArea
+                                className="textArea"
+                                maxLength={200}
+                                rows={5}
+                                placeholder="Ghi chú"
+                                value={""}
+                              />
                             </Form.Item>
                           </Row>
                         </Card>
@@ -936,7 +945,9 @@ const CreateContractBuilding = () => {
                                 })}
                               </Select>
                             </Form.Item>
-                            <p><b>Chu kỳ thanh toán:</b> chu kỳ bao nhiêu tháng thanh toán 1 lần</p>
+                            <p>
+                              <b>Chu kỳ thanh toán:</b> chu kỳ bao nhiêu tháng thanh toán 1 lần
+                            </p>
                             <Form.Item
                               className="form-item"
                               name="contract_duration"
@@ -946,12 +957,12 @@ const CreateContractBuilding = () => {
                                   <b>Thời hạn hợp đồng (ít nhất 6 tháng): </b>
                                 </span>
                               }
-                            // rules={[
-                            //   {
-                            //     required: true,
-                            //     message: "Vui lòng chọn thời hạn hợp đồng",
-                            //   },
-                            // ]}
+                              // rules={[
+                              //   {
+                              //     required: true,
+                              //     message: "Vui lòng chọn thời hạn hợp đồng",
+                              //   },
+                              // ]}
                             >
                               <Select
                                 placeholder="Thời hạn hợp đồng"
@@ -1107,12 +1118,19 @@ const CreateContractBuilding = () => {
                       </Col>
                     </Row>
                   </Tabs.TabPane>
-                  <Tabs.TabPane tab={
-                    <span className="text-size-tab">2. Chọn tầng và phòng {displayFinish.find((obj, index) => obj === 2) ? (
-                      <CheckCircleTwoTone style={{ fontSize: "130%" }} twoToneColor="#52c41a" />
-                    ) : (
-                      ""
-                    )}</span>} key="2">
+                  <Tabs.TabPane
+                    tab={
+                      <span className="text-size-tab">
+                        2. Chọn tầng và phòng{" "}
+                        {displayFinish.find((obj, index) => obj === 2) ? (
+                          <CheckCircleTwoTone style={{ fontSize: "130%" }} twoToneColor="#52c41a" />
+                        ) : (
+                          ""
+                        )}
+                      </span>
+                    }
+                    key="2"
+                  >
                     <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                       <Col xs={24} xl={12} span={12}>
                         <Card
@@ -1158,13 +1176,16 @@ const CreateContractBuilding = () => {
                                     setDataApartmentGroupSelect(
                                       dataApartmentGroup.find((obj, index) => obj.group_id === e)
                                     );
-                                    const list_rooms = dataApartmentGroup?.find(
-                                      (obj, index) => obj.group_id === e
-                                    )?.list_rooms?.filter((obj, index) => obj.group_contract_id === null);
+                                    const list_rooms = dataApartmentGroup
+                                      ?.find((obj, index) => obj.group_id === e)
+                                      ?.list_rooms?.filter((obj, index) => obj.group_contract_id === null);
 
-                                    setRoomRented(dataApartmentGroup?.find(
-                                      (obj, index) => obj.group_id === e
-                                    )?.list_rooms?.filter((obj, index) => Number.isInteger(obj.group_contract_id)).length);
+                                    setRoomRented(
+                                      dataApartmentGroup
+                                        ?.find((obj, index) => obj.group_id === e)
+                                        ?.list_rooms?.filter((obj, index) => Number.isInteger(obj.group_contract_id))
+                                        .length
+                                    );
 
                                     const mapped_list_rooms = list_rooms?.map((obj, index) => obj.room_floor);
                                     const get_floors = mapped_list_rooms
@@ -1187,11 +1208,15 @@ const CreateContractBuilding = () => {
                                     ));
                                     setNumberOfFloor(floor_room);
                                     form.setFieldsValue({
-                                      address_city: dataApartmentGroup?.find((obj, index) => obj.group_id === e)?.address?.address_city,
-                                      address_district: dataApartmentGroup?.find((obj, index) => obj.group_id === e)?.address?.address_district,
-                                      address_more_details: dataApartmentGroup?.find((obj, index) => obj.group_id === e)?.address?.address_more_details,
-                                      address_wards: dataApartmentGroup?.find((obj, index) => obj.group_id === e)?.address?.address_wards,
-                                    })
+                                      address_city: dataApartmentGroup?.find((obj, index) => obj.group_id === e)
+                                        ?.address?.address_city,
+                                      address_district: dataApartmentGroup?.find((obj, index) => obj.group_id === e)
+                                        ?.address?.address_district,
+                                      address_more_details: dataApartmentGroup?.find((obj, index) => obj.group_id === e)
+                                        ?.address?.address_more_details,
+                                      address_wards: dataApartmentGroup?.find((obj, index) => obj.group_id === e)
+                                        ?.address?.address_wards,
+                                    });
                                   }}
                                   placeholder="Chọn chung cư"
                                   options={dataApartmentGroup?.map((obj, index) => {
@@ -1220,7 +1245,9 @@ const CreateContractBuilding = () => {
                           </Row>
                           <Row>
                             <Col span={8}>
-                              <p><b>Tỉnh/Tp: </b> </p>
+                              <p>
+                                <b>Tỉnh/Tp: </b>{" "}
+                              </p>
                             </Col>
                             <Col span={16}>
                               <p>{groupSelect?.address?.address_city}</p>
@@ -1236,7 +1263,9 @@ const CreateContractBuilding = () => {
                           </Row>
                           <Row>
                             <Col span={8}>
-                              <p><b>Phường/Xã:</b> </p>
+                              <p>
+                                <b>Phường/Xã:</b>{" "}
+                              </p>
                             </Col>
                             <Col span={16}>
                               <p>{groupSelect?.address?.address_wards}</p>
@@ -1244,7 +1273,9 @@ const CreateContractBuilding = () => {
                           </Row>
                           <Row>
                             <Col span={8}>
-                              <p><b>Địa chỉ chi tiết:</b> </p>
+                              <p>
+                                <b>Địa chỉ chi tiết:</b>{" "}
+                              </p>
                             </Col>
                             <Col span={16}>
                               <p>{groupSelect?.address?.address_more_details}</p>
@@ -1252,10 +1283,20 @@ const CreateContractBuilding = () => {
                           </Row>
                           <Row>
                             <Col span={8}>
-                              <p><b>Trạng thái: </b> </p>
+                              <p>
+                                <b>Trạng thái: </b>{" "}
+                              </p>
                             </Col>
                             <Col span={16}>
-                              <p>{groupSelect?.list_rooms?.length === undefined ? "" : (groupSelect?.list_rooms?.length === roomRented ? <Tag color="red">Đã thuê hết</Tag> : <Tag color="success">Còn phòng</Tag>)}</p>
+                              <p>
+                                {groupSelect?.list_rooms?.length === undefined ? (
+                                  ""
+                                ) : groupSelect?.list_rooms?.length === roomRented ? (
+                                  <Tag color="red">Đã thuê hết</Tag>
+                                ) : (
+                                  <Tag color="success">Còn phòng</Tag>
+                                )}
+                              </p>
                             </Col>
                           </Row>
                         </Card>
@@ -1277,7 +1318,9 @@ const CreateContractBuilding = () => {
                           bordered={false} className="card-width-100 card-height">
                           <Row>
                             <Col span={14}>
-                              <p><b>Số lượng phòng đã chọn:</b> {listRoomId.length}</p>
+                              <p>
+                                <b>Số lượng phòng đã chọn:</b> {listRoomId.length}
+                              </p>
                               <Form.Item
                                 className="form-item"
                                 name="list_room"
@@ -1304,7 +1347,9 @@ const CreateContractBuilding = () => {
                               </Form.Item>
                             </Col>
                             <Col span={10}>
-                              <p><b>Số lượng phòng đã thuê:</b> {roomRented}</p>
+                              <p>
+                                <b>Số lượng phòng đã thuê:</b> {roomRented}
+                              </p>
                             </Col>
                           </Row>
                         </Card>
@@ -1364,19 +1409,29 @@ const CreateContractBuilding = () => {
                       <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
                     </Row>
                   </Tabs.TabPane>
-                  <Tabs.TabPane tab={
-                    <span className="text-size-tab">4. Tài sản bàn giao {displayFinish.find((obj, index) => obj === 4) ? (
-                      <CheckCircleTwoTone style={{ fontSize: "130%" }} twoToneColor="#52c41a" />
-                    ) : (
-                      ""
-                    )}</span>} key="4">
+                  <Tabs.TabPane
+                    tab={
+                      <span className="text-size-tab">
+                        4. Tài sản bàn giao{" "}
+                        {displayFinish.find((obj, index) => obj === 4) ? (
+                          <CheckCircleTwoTone style={{ fontSize: "130%" }} twoToneColor="#52c41a" />
+                        ) : (
+                          ""
+                        )}
+                      </span>
+                    }
+                    key="4"
+                  >
                     <Row>
                       <Col span={24}>
                         <p>
                           <h3>
-                            <b>Thông tin tài sản bàn giao {dataApartmentGroupSelect?.group_name !== undefined
-                              ? dataApartmentGroupSelect?.group_name + " "
-                              : ""}</b>
+                            <b>
+                              Thông tin tài sản bàn giao{" "}
+                              {dataApartmentGroupSelect?.group_name !== undefined
+                                ? dataApartmentGroupSelect?.group_name + " "
+                                : ""}
+                            </b>
                           </h3>
                         </p>
                         {/* <Row>
@@ -1412,9 +1467,9 @@ const CreateContractBuilding = () => {
                               onSearch={(e) => {
                                 setSearched(e);
                               }}
-                            // onChange={(e) => {
-                            //   setSearched(e.target.value);
-                            // }}
+                              // onChange={(e) => {
+                              //   setSearched(e.target.value);
+                              // }}
                             />
                           </Col>
                           <Col xs={22} xl={14} span={14}>
@@ -1460,7 +1515,12 @@ const CreateContractBuilding = () => {
                         </Row>
                       </Col>
                       <Row>
-                        <p><i>Trên đây là một số <b>tài sản thiết yếu</b>, bạn có thể thêm các tài sản bàn giao khác trong hợp đồng</i></p>
+                        <p>
+                          <i>
+                            Trên đây là một số <b>tài sản thiết yếu</b>, bạn có thể thêm các tài sản bàn giao khác trong
+                            hợp đồng
+                          </i>
+                        </p>
                       </Row>
                     </Row>
                   </Tabs.TabPane>

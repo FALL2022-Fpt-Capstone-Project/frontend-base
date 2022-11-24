@@ -1263,7 +1263,9 @@ const EditContractRenter = () => {
                                   filterOption={(input, option) => (option?.children ?? "").includes(input)}
                                   placeholder="Chọn phòng"
                                   onChange={(e) => {
-                                    setRoomSelect(dataApartmentGroupSelect?.list_rooms?.find((obj) => obj.room_id === e));
+                                    setRoomSelect(
+                                      dataApartmentGroupSelect?.list_rooms?.find((obj) => obj.room_id === e)
+                                    );
                                     form.setFieldsValue({
                                       contract_price: dataApartmentGroupSelect?.list_rooms?.find(
                                         (obj) => obj.room_id === e
@@ -1300,12 +1302,12 @@ const EditContractRenter = () => {
                                     <b>Thời hạn hợp đồng (ít nhất 1 tháng): </b>
                                   </span>
                                 }
-                              // rules={[
-                              //   {
-                              //     required: true,
-                              //     message: "Vui lòng chọn thời hạn hợp đồng",
-                              //   },
-                              // ]}
+                                // rules={[
+                                //   {
+                                //     required: true,
+                                //     message: "Vui lòng chọn thời hạn hợp đồng",
+                                //   },
+                                // ]}
                               >
                                 <Select
                                   placeholder="Thời hạn hợp đồng"
@@ -1463,12 +1465,12 @@ const EditContractRenter = () => {
                                     <b>Giá phòng (VND): </b>
                                   </span>
                                 }
-                              // rules={[
-                              //   {
-                              //     required: true,
-                              //     message: "Vui lòng nhập giá phòng",
-                              //   },
-                              // ]}
+                                // rules={[
+                                //   {
+                                //     required: true,
+                                //     message: "Vui lòng nhập giá phòng",
+                                //   },
+                                // ]}
                               >
                                 <InputNumber
                                   controls={false}
@@ -1511,10 +1513,10 @@ const EditContractRenter = () => {
                                   <i>
                                     <b>Lưu ý:</b>
                                     <br />
-                                    <b>- Chu kỳ thanh toán: </b> nếu bạn thu tiền 1 lần vào cuối tháng thì bạn chọn là kỳ
-                                    30. Trường hợp có số lượng phòng nhiều, chia làm 2 đợt thu, bạn dựa vào ngày vào của
-                                    khách, ví dụ: vào từ ngày 1 đến 15 của tháng thì gán kỳ 15; nếu vào từ ngày 16 đến 31
-                                    của tháng thì gán kỳ 30. Khi tính tiền phòng bạn sẽ tính tiền theo kỳ.
+                                    <b>- Chu kỳ thanh toán: </b> nếu bạn thu tiền 1 lần vào cuối tháng thì bạn chọn là
+                                    kỳ 30. Trường hợp có số lượng phòng nhiều, chia làm 2 đợt thu, bạn dựa vào ngày vào
+                                    của khách, ví dụ: vào từ ngày 1 đến 15 của tháng thì gán kỳ 15; nếu vào từ ngày 16
+                                    đến 31 của tháng thì gán kỳ 30. Khi tính tiền phòng bạn sẽ tính tiền theo kỳ.
                                     <br />
                                     <b>- Chu kỳ tính tiền: </b> là số tháng được tính trên mỗi hóa đơn.
                                     <br />
@@ -1588,12 +1590,12 @@ const EditContractRenter = () => {
                                       String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
                                         ? "Nhập chỉ số"
                                         : "Số " +
-                                        obj.service_type_name +
-                                        " / " +
-                                        obj.service_price.toLocaleString("vn-VN", {
-                                          style: "currency",
-                                          currency: "VND",
-                                        })
+                                          obj.service_type_name +
+                                          " / " +
+                                          obj.service_price.toLocaleString("vn-VN", {
+                                            style: "currency",
+                                            currency: "VND",
+                                          })
                                     }
                                     addonAfter={
                                       String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
@@ -1942,9 +1944,7 @@ const EditContractRenter = () => {
                     >
                       <Select placeholder="Chọn nhóm tài sản">
                         {listAssetType?.map((obj, index) => {
-                          return (
-                            <Select.Option value={obj.id}>{obj.asset_type_show_name}</Select.Option>
-                          );
+                          return <Select.Option value={obj.id}>{obj.asset_type_show_name}</Select.Option>;
                         })}
                       </Select>
                     </Form.Item>
