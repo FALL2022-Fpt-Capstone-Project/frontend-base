@@ -2,20 +2,19 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import "./contract.scss";
 import { PlusCircleOutlined, PieChartOutlined } from "@ant-design/icons";
-import { Button, Layout, Card, Modal, Select, Row, Col } from "antd";
+import { Button, Layout, Card, Modal, Select, Row, Col, Divider } from "antd";
 import ListContractRenter from "./ListContractRenter";
 import ListContractExpired from "./ListContractExpired";
 import ListContractRenterAlmostExpired from "./ListContractRenterAlmostExpired";
 import ListContractRenterLatest from "./ListContractRenterLatest";
 import axios from "../../api/axios";
-import useAuth from "../../hooks/useAuth";
 import Breadcrumbs from "../../components/BreadCrumb ";
 const { Option } = Select;
 const { Content, Sider, Header } = Layout;
 const fontSize = {
   fontSize: 15,
 };
-const COUNT_CONTRACT_GROUP = "manager/contract/statistical/get-contract/1";
+const COUNT_CONTRACT_GROUP = "manager/statistical/contract/room";
 
 const ContractRenter = () => {
   const [isStatistic, setStatistic] = useState(false);
@@ -46,7 +45,6 @@ const ContractRenter = () => {
     setIsModalEndOpen(true);
   };
   const durationChange = async (value) => {
-    console.log(value);
     setDuration(value);
   };
 
@@ -62,10 +60,9 @@ const ContractRenter = () => {
         })
         .then((res) => {
           console.log(res);
-          setcountAlmostExpired(res.data.body?.almost_expired_contract);
-          setcountExpired(res.data.body?.expired_contract);
-          setcountLatest(res.data.body?.latest_contract);
-          console.log(res.data.body?.almost_expired_contract);
+          setcountAlmostExpired(res.data.data?.almost_expired_contract);
+          setcountExpired(res.data.data?.expired_contract);
+          setcountLatest(res.data.data?.latest_contract);
         })
         .catch((error) => {
           console.log(error);
@@ -98,6 +95,7 @@ const ContractRenter = () => {
             }}
           >
             <Breadcrumbs />
+            <Divider />
             <div className="btn-contract">
               <Button
                 icon={<PieChartOutlined style={fontSize} />}
@@ -131,8 +129,7 @@ const ContractRenter = () => {
                           height: 130,
                         }}
                       >
-                        {/* <span>{countLatest} hợp đồng</span> */}
-                        <span>7 hợp đồng</span>
+                        <span>{countLatest} hợp đồng</span>
                         <Button type="primary" onClick={showModalNew} style={{ marginLeft: "10px" }}>
                           Xem chi tiết
                         </Button>
@@ -146,8 +143,7 @@ const ContractRenter = () => {
                           height: 130,
                         }}
                       >
-                        {/* <span>{countAlmostExpired} hợp đồng</span> */}
-                        <span>0 hợp đồng</span>
+                        <span>{countAlmostExpired} hợp đồng</span>
                         <Button type="primary" onClick={showModalOld} style={{ marginLeft: "10px" }}>
                           Xem chi tiết
                         </Button>
@@ -162,8 +158,7 @@ const ContractRenter = () => {
                           height: 130,
                         }}
                       >
-                        {/* <span>{countExpired} hợp đồng</span> */}
-                        <span>2 hợp đồng</span>
+                        <span>{countExpired} hợp đồng</span>
                         <Button type="primary" onClick={showModalEnd} style={{ marginLeft: "10px" }}>
                           Xem chi tiết
                         </Button>

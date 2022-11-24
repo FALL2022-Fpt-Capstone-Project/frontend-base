@@ -1,9 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { Input, Table, Select, DatePicker, Tag, Row, Col, Button, Tabs, Form, Modal, Switch, Tooltip } from "antd";
+import {
+  Input,
+  Table,
+  Select,
+  DatePicker,
+  Tag,
+  Row,
+  Col,
+  Button,
+  Tabs,
+  Form,
+  Modal,
+  Switch,
+  Tooltip,
+  Card,
+} from "antd";
 import axios from "../../api/axios";
 import { NavLink, useLocation } from "react-router-dom";
 import "./listStaff.scss";
 import { EditOutlined, EyeOutlined, SearchOutlined, UndoOutlined } from "@ant-design/icons";
+import UpdateStaff from "./UpdateStaff";
 const { Search } = Input;
 const { RangePicker } = DatePicker;
 const ListStaff = () => {
@@ -24,7 +40,11 @@ const ListStaff = () => {
   const LIST_EMPLOYEE_URL = "manager/staff";
   const LIST_ROLES_URL = "manager/staff/roles";
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [updateStaff, setUpdateStaff] = useState(false);
+  const onClickUpdateStaff = (id) => {
+    setUpdateStaff(true);
+    setId(id);
+  };
   const showModal = (id) => {
     setIsModalOpen(true);
     setId(id);
@@ -321,7 +341,7 @@ const ListStaff = () => {
                   <Form.Item name="deactive" style={{ width: "500px", marginTop: "30px" }}>
                     <Col className="gutter-row" span={24}>
                       <Switch onChange={deactiveChange} />{" "}
-                      {deactive ? <span>Nhân viên đã nghỉ việc</span> : <span>Nhân viên đang việc</span>}
+                      {deactive ? <span>Nhân viên đã nghỉ việc</span> : <span>Nhân viên đang làm việc</span>}
                     </Col>
                   </Form.Item>
                 </Row>
@@ -433,13 +453,11 @@ const ListStaff = () => {
               return (
                 <>
                   <Tooltip title="Chỉnh sửa">
-                    <NavLink to={`/manage-staff/update-staff/${record.account_id}`}>
-                      <EditOutlined style={{ fontSize: "20px", marginRight: "10px" }} />
-                    </NavLink>
+                    <EditOutlined className="icon" onClick={() => onClickUpdateStaff(record.account_id)} />
                   </Tooltip>
                   <Tooltip title="Xem">
                     <EyeOutlined
-                      style={{ fontSize: "20px", color: "#46a6ff" }}
+                      className="icon"
                       onClick={() => {
                         showModal(record.account_id);
                       }}
@@ -454,12 +472,26 @@ const ListStaff = () => {
         loading={loading}
       />
       <Modal
-        title="Thông tin cá nhân"
+        title={<h2>Thông tin cá nhân</h2>}
         className="modalStyle"
         open={isModalOpen}
-        footer={(null, null)}
         onCancel={handleCancel}
-        width="700px"
+        width="500px"
+        footer={[
+          <>
+            <Button onClick={handleCancel}>Quay lại</Button>
+            <Button
+              type="primary"
+              icon={<EditOutlined />}
+              style={{ margin: "20px 20px" }}
+              size="middle"
+              className="button-add"
+              onClick={() => onClickUpdateStaff(id)}
+            >
+              Sửa thông tin
+            </Button>
+          </>,
+        ]}
       >
         <div
           className="basic-info"
@@ -467,99 +499,61 @@ const ListStaff = () => {
             marginLeft: "3%",
           }}
         >
-          <Row>
-            <Col span={12}>
-              <img
-                src="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png"
-                style={{ width: "150px" }}
-                alt=""
-              />
-            </Col>
-            <Col span={12}>
-              <Row>
-                <Col span={12}>
-                  <p style={{ fontSize: "14px", textTransform: "uppercase", color: "rgb(113 102 102)" }}>Họ và tên: </p>
+          <Card className="card">
+            <Row>
+              <Row className="detail-row">
+                <Col span={10}>
+                  <h4>Họ và tên: </h4>
                 </Col>
-                <Col span={12}>
-                  <p style={{ fontSize: "14px", padding: "0 0 0 5px" }}>{user.full_name}</p>
+                <Col span={14}>
+                  <p>{user.full_name}</p>
                 </Col>
               </Row>
-              <Row>
-                <Col span={12}>
-                  <p style={{ fontSize: "14px", textTransform: "uppercase", color: "rgb(113 102 102)" }}>
-                    Tên đăng nhập:
-                  </p>
+              <Row className="detail-row">
+                <Col span={10}>
+                  <h4>Tên đăng nhập:</h4>
                 </Col>
 
-                <Col span={12}>
-                  <p style={{ fontSize: "14px", padding: "0 0 0 5px" }}>{user.user_name}</p>
+                <Col span={14}>
+                  <p>{user.user_name}</p>
                 </Col>
               </Row>
-              <Row>
-                <Col span={12}>
-                  <p style={{ fontSize: "14px", textTransform: "uppercase", color: "rgb(113 102 102)" }}>Giới tính: </p>
+              <Row className="detail-row">
+                <Col span={10}>
+                  <h4>Giới tính: </h4>
                 </Col>
 
-                <Col span={12}>
-                  {user.gender ? (
-                    <p style={{ fontSize: "14px", padding: "0 0 0 5px" }}>Nam</p>
-                  ) : (
-                    <p style={{ fontSize: "14px", padding: "0 0 0 5px" }}>Nữ</p>
-                  )}
-                </Col>
+                <Col span={14}>{user.gender ? <p>Nam</p> : <p>Nữ</p>}</Col>
               </Row>
-              <Row>
-                <Col span={12}>
-                  <p style={{ fontSize: "14px", textTransform: "uppercase", color: "rgb(113 102 102)" }}>Chức vụ: </p>
+              <Row className="detail-row">
+                <Col span={10}>
+                  <h4>Chức vụ: </h4>
                 </Col>
-                <Col span={12}>
-                  {roleInfo === "ROLE_ADMIN" ? (
-                    <p style={{ fontSize: "14px", padding: "0 0 0 5px" }}>ADMIN</p>
-                  ) : (
-                    <p style={{ fontSize: "14px", padding: "0 0 0 5px" }}>Nhân viên</p>
-                  )}
-                </Col>
+                <Col span={14}>{roleInfo === "ROLE_ADMIN" ? <p>ADMIN</p> : <p>Nhân viên</p>}</Col>
               </Row>
-              <Row>
-                <Col span={12}>
-                  <p style={{ fontSize: "14px", textTransform: "uppercase", color: "rgb(113 102 102)" }}>
-                    Số điện thoại:
-                  </p>
+              <Row className="detail-row">
+                <Col span={10}>
+                  <h4>Số điện thoại:</h4>
                 </Col>
 
-                <Col span={12}>
-                  <p style={{ fontSize: "14px", padding: "0 0 0 5px" }}>{user.phone_number}</p>
+                <Col span={14}>
+                  <p>{user.phone_number}</p>
                 </Col>
               </Row>
-              <Row>
-                <Col span={12}>
-                  <p style={{ fontSize: "14px", textTransform: "uppercase", color: "rgb(113 102 102)" }}>
-                    Địa chỉ chi tiết:
-                  </p>
+              <Row className="detail-row">
+                <Col span={10}>
+                  <h4>Địa chỉ chi tiết:</h4>
                 </Col>
 
-                <Col span={12}>
-                  <p style={{ fontSize: "14px", padding: "0 0 0 5px" }}>{user.address_more_detail}</p>
+                <Col span={14}>
+                  <p>{user.address_more_detail}</p>
                 </Col>
               </Row>
-            </Col>
-          </Row>
-        </div>
-        <div style={{ marginLeft: "3%" }}>
-          <Button onClick={handleCancel}>Quay lại</Button>
-          <NavLink to={`/manage-staff/update-staff/${id}`}>
-            <Button
-              type="primary"
-              icon={<EditOutlined />}
-              style={{ margin: "20px 20px" }}
-              size="middle"
-              className="button-add"
-            >
-              Sửa thông tin
-            </Button>
-          </NavLink>
+            </Row>
+          </Card>
         </div>
       </Modal>
+      <UpdateStaff visible={updateStaff} close={setUpdateStaff} id={id} />
     </div>
   );
 };

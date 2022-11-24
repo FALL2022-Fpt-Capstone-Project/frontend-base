@@ -1,47 +1,51 @@
-import { Form, Input, Radio, Select, notification, Layout, Button } from "antd";
+import { Form, Input, Card, Radio, Select, notification, Button, Modal } from "antd";
 import React, { useEffect, useState } from "react";
-import Sidebar from "../../components/sidebar/Sidebar";
-import { useNavigate, NavLink } from "react-router-dom";
 import "./createStaff.scss";
 import axios from "../../api/axios";
-import useAuth from "../../hooks/useAuth";
-import BreadCrumb from "../../components/BreadCrumb ";
-const { Content, Sider, Header } = Layout;
 const ADD_EMPLOYEE_URL = "manager/staff/add";
-const formItemLayout = {
-  labelCol: {
-    xs: {
-      span: 24,
-    },
-    sm: {
-      span: 8,
-    },
-  },
-  wrapperCol: {
-    xs: {
-      span: 24,
-    },
-    sm: {
-      span: 16,
-    },
-  },
-};
-const options = [
-  { value: "admin", label: "Admin" },
-  { value: "staff", label: "Nhân viên" },
-];
+const LIST_ROLES_URL = "manager/staff/roles";
 
-const CreateStaff = () => {
-  const [collapsed, setCollapsed] = useState(false);
-  const { auth } = useAuth();
+const CreateStaff = ({ visible, close }) => {
   let cookie = localStorage.getItem("Cookie");
   const [gender, setGender] = useState("");
   const [roles, setRoles] = useState("staff");
+  const [option, setOption] = useState([]);
 
   const [form] = Form.useForm();
-
-  const navigate = useNavigate();
-
+  useEffect(() => {
+    const getRoleFilter = async () => {
+      const response = await axios
+        .get(LIST_ROLES_URL, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cookie}`,
+          },
+        })
+        .then((res) => {
+          setOption(res.data.data);
+          console.log(res);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+    getRoleFilter();
+  }, [cookie]);
+  let options = [];
+  for (let i = 0; i < option.length; i++) {
+    if (option[i] === "STAFF") {
+      options.push({
+        value: option[i].toLowerCase(),
+        label: "Nhân viên",
+      });
+    } else {
+      options.push({
+        value: option[i].toLowerCase(),
+        label: option[i],
+      });
+    }
+  }
+  const reload = () => window.location.reload();
   const handleCreateEmployee = async (value) => {
     if (typeof value.roles == "undefined") {
       value.roles = "staff";
@@ -63,21 +67,26 @@ const CreateStaff = () => {
       .post(ADD_EMPLOYEE_URL, employee, {
         headers: {
           "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
           Authorization: `Bearer ${cookie}`,
         },
-        // withCredentials: true,
       })
-      .then(() => navigate("/manage-staff"))
+      .then(() => {
+        notification.success({
+          message: "Thêm mới nhân viên thành công",
+          duration: 3,
+        });
+        close(false);
+        reload();
+      })
       .catch((e) => {
         notification.error({
           message: "Thêm mới nhân viên thất bại",
           description: "Vui lòng kiểm tra lại thông tin và thử lại.",
           duration: 3,
         });
-      });
-    console.log(JSON.stringify(response?.data));
-    console.log(employee);
+      }, close(false));
+    // console.log(JSON.stringify(response?.data));
+    // console.log(employee);
   };
   const genderChange = (e) => {
     setGender(e.target.value);
@@ -87,150 +96,197 @@ const CreateStaff = () => {
     setRoles(value);
   };
   return (
-    <div className="create-staff">
-      <Layout
-        style={{
-          minHeight: "100vh",
+    <>
+      <Modal
+        title={<h2>Thêm mới nhân viên</h2>}
+        open={visible}
+        destroyOnClose={true}
+        afterClose={() => form.resetFields()}
+        onOk={() => {
+          close(false);
         }}
+        onCancel={() => {
+          close(false);
+        }}
+        footer={[
+          <Button
+            key="back"
+            onClick={() => {
+              close(false);
+            }}
+          >
+            Đóng
+          </Button>,
+          <Button htmlType="submit" key="submit" form="createStaff" type="primary">
+            Tạo mới
+          </Button>,
+        ]}
       >
-        <Sider width={250} collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-          <p className="sider-title">QUẢN LÝ CHUNG CƯ MINI</p>
-          <Sidebar />
-        </Sider>
-        <Layout className="site-layout">
-          <Header className="layout-header">
-            <p className="header-title">Tạo mới nhân viên</p>
-          </Header>
-          <Content className="layout-content">
-            <BreadCrumb />
-            <div
-              className="site-layout-background"
-              style={{
-                padding: 24,
-                minHeight: 360,
-              }}
+        <Form
+          form={form}
+          onFinish={handleCreateEmployee}
+          // onFinishFailed={onFinishFail}
+          layout="horizontal"
+          size={"default"}
+          id="createStaff"
+        >
+          <Card className="card">
+            <Form.Item
+              className="form-item"
+              name="full_name"
+              labelCol={{ span: 24 }}
+              label={
+                <span>
+                  <b>Tên nhân viên:</b>
+                </span>
+              }
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng nhập tên nhân viên!",
+                },
+              ]}
             >
-              <Form
-                {...formItemLayout}
-                form={form}
-                name="createStaff"
-                id="createStaff"
-                onFinish={handleCreateEmployee}
-                style={{ margin: "30px", width: 700 }}
-              >
-                <Form.Item
-                  name="full_name"
-                  label="Tên nhân viên"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Vui lòng nhập tên nhân viên!",
-                    },
-                  ]}
-                  labelAlign="left"
-                >
-                  <Input autoComplete="off" />
-                </Form.Item>
-                <Form.Item
-                  name="user_name"
-                  label="Tên đăng nhập"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Vui lòng nhập tên đăng nhập!",
-                    },
-                  ]}
-                  labelAlign="left"
-                >
-                  <Input autoComplete="off" />
-                </Form.Item>
-                <Form.Item
-                  name="password"
-                  label="Mật khẩu"
-                  hasFeedback
-                  rules={[
-                    {
-                      required: true,
-                      message: "Vui lòng nhập mật khẩu!",
-                    },
-                  ]}
-                  labelAlign="left"
-                >
-                  <Input.Password />
-                </Form.Item>
-                <Form.Item
-                  name="comfirmPassword"
-                  label="Nhập lại mật khẩu"
-                  dependencies={["password"]}
-                  hasFeedback
-                  rules={[
-                    {
-                      required: true,
-                      message: "Vui lòng nhập lại mật khẩu",
-                    },
-                    ({ getFieldValue }) => ({
-                      validator(_, value) {
-                        if (!value || getFieldValue("password") === value) {
-                          return Promise.resolve();
-                        }
-                        return Promise.reject(new Error("Mật khẩu không khớp!"));
-                      },
-                    }),
-                  ]}
-                  labelAlign="left"
-                >
-                  <Input.Password />
-                </Form.Item>
-                <Form.Item
-                  name="phone_number"
-                  label="Số điện thoại"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Vui lòng nhập số điện thoại!",
-                      whitespace: true,
-                    },
-                    {
-                      pattern: /^((\+84|84|0)+(3|5|7|8|9|1[2|6|8|9]))+([0-9]{8})\b/,
-                      message: "Số điện thoại phải bắt đầu (+84,0,84)",
-                    },
-                  ]}
-                  labelAlign="left"
-                >
-                  <Input autoComplete="off" />
-                </Form.Item>
-                <Form.Item name="gender" label="Giới tính" labelAlign="left" style={{ paddingLeft: "10px" }}>
-                  <Radio.Group onChange={genderChange} defaultValue={true} style={{ marginLeft: "-9px" }}>
-                    <Radio value={true}>Nam</Radio>
-                    <Radio value={false}>Nữ</Radio>
-                  </Radio.Group>
-                </Form.Item>
-                <Form.Item name="address_more_detail" label="Địa chỉ" labelAlign="left" style={{ paddingLeft: "10px" }}>
-                  <Input autoComplete="off" style={{ marginLeft: "-9px" }} />
-                </Form.Item>
-                <Form.Item name="roles" label="Vai trò" labelAlign="left" style={{ paddingLeft: "10px" }}>
-                  <Select
-                    defaultValue="staff"
-                    style={{
-                      width: 120,
-                      marginLeft: "-9px",
-                    }}
-                    onChange={roleChange}
-                    options={options}
-                  />
-                </Form.Item>
-                <NavLink to="/manage-staff">
-                  <Button style={{ marginRight: "20px" }}>Quay lại</Button>
-                </NavLink>
-                <Button type="primary" htmlType="submit">
-                  Tạo mới
-                </Button>
-              </Form>
-            </div>
-          </Content>
-        </Layout>
-      </Layout>
-    </div>
+              <Input autoComplete="off" placeholder="Nhập tên nhân viên" />
+            </Form.Item>
+            <Form.Item
+              className="form-item"
+              name="user_name"
+              labelCol={{ span: 24 }}
+              label={
+                <span>
+                  <b>Tên đăng nhập:</b>
+                </span>
+              }
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng nhập tên đăng nhập!",
+                },
+              ]}
+            >
+              <Input autoComplete="off" placeholder="Nhập tên đăng nhập" />
+            </Form.Item>
+            <Form.Item
+              className="form-item"
+              name="password"
+              hasFeedback
+              labelCol={{ span: 24 }}
+              label={
+                <span>
+                  <b>Mật khẩu:</b>
+                </span>
+              }
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng nhập mật khẩu!",
+                },
+              ]}
+            >
+              <Input.Password placeholder="Nhập mật khẩu" />
+            </Form.Item>
+            <Form.Item
+              className="form-item"
+              name="comfirmPassword"
+              labelCol={{ span: 24 }}
+              hasFeedback
+              label={
+                <span>
+                  <b>Nhập lại mật khẩu:</b>
+                </span>
+              }
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng nhập lại mật khẩu!",
+                },
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    if (!value || getFieldValue("password") === value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(new Error("Mật khẩu không khớp!"));
+                  },
+                }),
+              ]}
+            >
+              <Input.Password placeholder="Nhập lại mật khẩu" />
+            </Form.Item>
+            <Form.Item
+              className="form-item"
+              name="phone_number"
+              labelCol={{ span: 24 }}
+              label={
+                <span>
+                  <b>Số điện thoại: </b>
+                </span>
+              }
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng nhập số điện thoại",
+                  whitespace: true,
+                },
+                {
+                  pattern: /^((\+84|84|0)+(3|5|7|8|9|1[2|6|8|9]))+([0-9]{8})\b/,
+                  message: "Số điện thoại phải bắt đầu (+84,0,84)",
+                },
+              ]}
+            >
+              <Input placeholder="Số điện thoại" style={{ width: "100%" }} autoComplete="off" />
+            </Form.Item>
+
+            <Form.Item
+              className="form-item"
+              name="gender"
+              labelCol={{ span: 24 }}
+              label={
+                <span>
+                  <b>Giới tính:</b>
+                </span>
+              }
+            >
+              <Radio.Group onChange={genderChange} defaultValue={true}>
+                <Radio value={true}>Nam</Radio>
+                <Radio value={false}>Nữ</Radio>
+              </Radio.Group>
+            </Form.Item>
+            <Form.Item
+              className="form-item"
+              name="address_more_detail"
+              labelCol={{ span: 24 }}
+              label={
+                <span>
+                  <b>Địa chỉ: </b>
+                </span>
+              }
+            >
+              <Input autoComplete="off" placeholder="Nhập địa chỉ" />
+            </Form.Item>
+            <Form.Item
+              className="form-item"
+              name="roles"
+              labelCol={{ span: 24 }}
+              label={
+                <span>
+                  <b>Vai trò: </b>
+                </span>
+              }
+            >
+              <Select
+                defaultValue="staff"
+                style={{
+                  width: 120,
+                }}
+                onChange={roleChange}
+                options={options}
+              />
+            </Form.Item>
+          </Card>
+        </Form>
+      </Modal>
+    </>
   );
 };
 

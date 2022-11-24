@@ -1,6 +1,5 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import "./App.scss";
 import Login from "./pages/login/Login";
 import Home from "./pages/home/Home";
 import Building from "./pages/building/Building";
@@ -20,6 +19,7 @@ import CreateContractBuilding from "./pages/contract/CreateContractBuilding";
 import AddMemInRoom from "./pages/room/AddMemInRoom";
 import RoomContract from "./pages/room/RoomContract";
 import RoomPreview from "./pages/room/RoomPreview";
+import Invoice from "./pages/invoice/Invoice";
 const ROLES = {
   User: "ROLE_STAFF",
   Admin: "ROLE_ADMIN",
@@ -81,6 +81,9 @@ const App = () => {
         </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
           <Route path="service" element={<Service />} />
+        </Route>
+        <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
+          <Route path="invoice" element={<Invoice />} />
         </Route>
       </Routes>
     </div>
