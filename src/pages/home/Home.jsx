@@ -4,6 +4,7 @@ import "./home.scss";
 import Sidebar from "../../components/sidebar/Sidebar";
 import "./home.scss";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
+import Breadcrumbs from "../../components/BreadCrumb ";
 const { Content, Sider, Header } = Layout;
 
 const Home = () => {
@@ -33,6 +34,7 @@ const Home = () => {
               margin: "10px 16px",
             }}
           >
+            <Breadcrumbs />
             Hello
             <div
               className="site-layout-background"

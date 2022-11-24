@@ -14,7 +14,7 @@
 
       .header-title {
         color: #868d96;
-        font-size: 18px;
+        font-size: 20px;
         font-weight: bold;
       }
     }
@@ -48,22 +48,51 @@
       padding: 0;
       margin-bottom: 2% !important;
     }
-    .ant-col-24.ant-form-item-label {
-      padding: 0 !important;
-    }
-    .steps-content {
-      min-height: 200px;
-      margin-top: 16px;
-      // padding-top: 80px;
-      // text-align: center;
-      background-color: #fafafa;
-      border: 1px dashed #e9e9e9;
-      border-radius: 2px;
-      padding: 3% 1% 1% 1%;
-    }
-    
-    .steps-action {
-      margin-top: 24px;
-    }
+  }
+  .icon-size{
+    font-size: 130%;
+    color: #1890ff ;
+  }
+  .icon-delete{
+    color: red;
+    font-size: 130%;
+    margin-left: 6%;
+  }
+  .page-layout{
+    min-height: 100vh;
+    min-width: 100vh;
+  }
+  .page-content{
+    margin: 10px 16px;
+  }
+  .button-cover{
+    overflow: auto;
+  }
+  .button-back{
+    margin-right: 5px;
+    float: right;
+  }
+  .site-layout-background{
+    min-height: 360px;
+  }
+  .text-size-tab{
+    font-size: 17px;
+  }
+  .text-tag{
+    word-break: break-all;
+    white-space: normal;
+    height: auto;
+  }
+  .font-size-tag{
+    font-size: 15px;
+  }
+  .card-width-100{
+    width: 100%;
+  }
+  .card-height{
+    height: 100%;
+  }
+  .textArea{
+    resize: none;
   }
 }

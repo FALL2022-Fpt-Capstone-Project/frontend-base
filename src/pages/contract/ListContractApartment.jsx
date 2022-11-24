@@ -1,63 +1,68 @@
 import React, { useEffect, useState } from "react";
-import { Input, Table, Tag, Row, Checkbox, Tabs, Col, InputNumber, Select, DatePicker, Button } from "antd";
+import "./listContract.scss";
+import {
+  Input,
+  Table,
+  Tag,
+  Row,
+  Checkbox,
+  Tabs,
+  Col,
+  InputNumber,
+  Select,
+  DatePicker,
+  Button,
+  Tooltip,
+  Switch,
+  Form,
+} from "antd";
 import { EyeOutlined, EditOutlined, FilterOutlined, SearchOutlined, UndoOutlined } from "@ant-design/icons";
 import axios from "../../api/axios";
 import ViewContractBuilding from "./ViewContractBuilding";
-import moment from 'moment';
+import moment from "moment";
 
 const { Search } = Input;
 const LIST_CONTRACT_APARTMENT_URL = "";
 const { Column, ColumnGroup } = Table;
-
-const optionContract = [
-  {
-    label: "Hợp đồng còn hiệu lực",
-    value: "1",
-  },
-  {
-    label: "Hợp đồng đã kết thúc",
-    value: "2",
-  },
-];
-const optionRoom = [
-  {
-    label: "Đang trống",
-    value: "1",
-  },
-  {
-    label: "Đã hết phòng",
-    value: "2",
-  },
-];
+const style = {
+  margin: "5% 0",
+};
+const APARTMENT_DATA_GROUP = "/manager/group/all";
+const dateFormat = "DD/MM/YYYY";
 
 const ListContractApartment = () => {
-  const dateFormat = 'DD/MM/YYYY';
   const { RangePicker } = DatePicker;
   const [dataSource, setDataSource] = useState([]);
   const [textSearch, setTextSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [viewContract, setViewContract] = useState(false);
+  const [dataApartmentGroup, setDataApartmentGroup] = useState([]);
   const dateTimeSelect = [];
-  for (let i = 1; i < 17; i++) {
-    if (i < 12) {
-      dateTimeSelect.push({
-        id: i,
-        timeName: `${i} tháng`,
-        timeValue: i,
-      });
-    } else {
-      dateTimeSelect.push({
-        id: i,
-        timeName: `${i % 11} năm`,
-        timeValue: (i % 11) * 12,
-      });
-    }
-  }
+  let cookie = localStorage.getItem("Cookie");
 
   useEffect(() => {
     getAllContractExpired();
+    apartmentGroup();
   }, []);
-  let cookie = localStorage.getItem("Cookie");
+
+  const apartmentGroup = async () => {
+    setLoading(true);
+    await axios
+      .get(APARTMENT_DATA_GROUP, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie}`,
+        },
+      })
+      .then((res) => {
+        setDataApartmentGroup(res.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    setLoading(false);
+  };
+
   const getAllContractExpired = async () => {
     setLoading(true);
     const response = await axios
@@ -87,41 +92,48 @@ const ListContractApartment = () => {
   const data = [
     {
       key: "1",
+      ownerName: "Nguyễn Viết Thắng",
       apartmentName: "Trọ xanh",
-      startDate: moment().format(dateFormat),
-      endDate: moment().format(dateFormat),
-      statusContract: "Còn hiệu lực",
+      startDate: "20-12-2018",
+      endDate: "25-10-2022",
+      phoneNumber: "0987893432",
+      statusContract: "Hợp đồng còn hiệu lực",
       contractValue: 100000000,
       depositValue: 100000000,
       numberOfFloor: 10,
       numberOfRoom: 100,
-      roomStatus: "Đã hết phòng"
+      roomStatus: "Đã hết phòng",
     },
     {
       key: "2",
-      apartmentName: "Trọ xanh",
-      startDate: moment().format(dateFormat),
-      endDate: moment().format(dateFormat),
-      statusContract: "Còn hiệu lực",
+      ownerName: "Đào Minh Hà",
+      phoneNumber: "0987893432",
+      apartmentName: "Trọ sạch",
+      startDate: "20-11-2019",
+      endDate: "20-01-2023",
+      statusContract: "Hợp đồng còn hiệu lực",
       contractValue: 100000000,
       depositValue: 100000000,
       numberOfFloor: 10,
       numberOfRoom: 100,
-      roomStatus: "Đang trống"
+      roomStatus: "Đang trống",
     },
     {
       key: "3",
-      apartmentName: "Trọ xanh",
-      startDate: moment().format(dateFormat),
-      endDate: moment().format(dateFormat),
-      statusContract: "Còn hiệu lực",
+      ownerName: "Fred",
+      phoneNumber: "0987893432",
+      apartmentName: "Trọ đẹp",
+      startDate: "24-12-2020",
+      endDate: "29-12-2022",
+      statusContract: "Hợp đồng còn hiệu lực",
       contractValue: 100000000,
       depositValue: 100000000,
       numberOfFloor: 10,
       numberOfRoom: 100,
-      roomStatus: "Đang trống"
+      roomStatus: "Đang trống",
     },
   ];
+
   return (
     <div>
       <Tabs defaultActiveKey="1">
@@ -129,8 +141,8 @@ const ListContractApartment = () => {
           <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
             <Col>
               <Search
-                placeholder="Nhập tên chung cư/căn hộ để tìm kiếm"
-                style={{ marginBottom: '3%', width: 400 }}
+                placeholder="Nhập tên người cho thuê để tìm kiếm"
+                style={{ marginBottom: "3%", width: 400 }}
                 onSearch={(value) => {
                   setTextSearch(value);
                 }}
@@ -139,161 +151,171 @@ const ListContractApartment = () => {
                 }}
               />
             </Col>
-            <Col>
-              <FilterOutlined style={{ fontSize: "150%" }} />
-              <span style={{ fontSize: "16px", }}>Bộ lọc: </span>
-              <Checkbox.Group options={optionContract} />
-            </Col>
           </Row>
         </Tabs.TabPane>
         <Tabs.TabPane tab="Tìm kiếm nâng cao" key="2">
-          <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-            <Col className="gutter-row" span={6}>
-              <Row>
-                <span style={{ fontSize: "16px", }}>Giá thuê: </span>
-              </Row>
-              <Row>
-                <Select placeholder="Chọn khoảng giá" style={{ width: '100%' }}>
-                  <Select.Option>1.000.000đ - 10.000.0000đ</Select.Option>
-                </Select>
-              </Row>
-              <Row gutter={12} style={{ marginTop: '2%' }}>
-                <Col span={12}>
-                  <Row>Từ: </Row>
-                  <InputNumber
-                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                    parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
-                    addonAfter="đ"
-                    style={{ width: '100%' }}
-                    placeholder="Từ" controls={false} />
-                </Col>
-                <Col span={12}>
-                  <Row>Đến: </Row>
-                  <InputNumber
-                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                    parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
-                    addonAfter="đ"
-                    style={{ width: '100%' }}
-                    placeholder="Đến"
-                    controls={false} />
-                </Col>
-              </Row>
-            </Col>
-            <Col className="gutter-row" span={6}>
-              <Row>
-                <span style={{ fontSize: "16px", }}>Tên chung cư mini/căn hộ: </span>
-              </Row>
-              <Row>
-                <Search
-                  placeholder="Nhập tên chung cư/căn hộ để tìm kiếm"
-                  style={{ marginBottom: '2%', width: '100%' }}
-                  onSearch={(value) => {
-                    setTextSearch(value);
-                  }}
-                  onChange={(e) => {
-                    setTextSearch(e.target.value);
-                  }}
-                />
-              </Row>
-            </Col>
-            <Col className="gutter-row" span={6}>
-              <Row>
-                <span style={{ fontSize: "16px", }}>Thời gian: </span>
-              </Row>
-              <Row>
-                <Select placeholder="Chọn khoảng thời gian" style={{ width: '100%' }}>
-                  {dateTimeSelect.map((obj, index) => {
-                    return <Select.Option value={obj.timeValue}>{obj.timeName}</Select.Option>;
-                  })}
-                </Select>
-              </Row>
-              <Row gutter={12} style={{ marginTop: '2%', marginBottom: '2%' }}>
-                <Col span={12}>
-                  <Row>Từ: </Row>
-                  <DatePicker placeholder="Từ" />
-                </Col>
-                <Col span={12}>
-                  <Row>Đến: </Row>
-                  <DatePicker placeholder="Đến" />
-                </Col>
-              </Row>
-            </Col>
-            <Col className="gutter-row" span={6}>
-              <Row>
-                <span style={{ fontSize: "16px", }}>Trạng thái hợp đồng: </span>
-              </Row>
-              <Row>
-                <Checkbox.Group options={optionContract} />
-              </Row>
-              <Row>
-                <span style={{ fontSize: "16px", marginTop: '2%' }}>Trạng thái phòng: </span>
-              </Row>
-              <Row>
-                <Checkbox.Group options={optionRoom} />
-              </Row>
-            </Col>
-          </Row>
-          <Row justify="center">
-            <Col span={24}>
-              <Row gutter={12} justify="center" style={{ margin: '3% 0 1% 0' }}>
+          <Form
+            // {...formItemLayout}
+            // form={form}
+            name="filterStaff"
+            id="filterStaff"
+            // onFinish={getFilterContractRenter}
+            style={{ width: "100%" }}
+          >
+            <Row gutter={[16]}>
+              <Col span={6}>
+                <Form.Item name="full_name">
+                  <Row style={style}>
+                    <label>Tìm kiếm theo tên người cho thuê</label>
+                  </Row>
+                  <Row>
+                    <Input placeholder="Nhập tên khách thuê" autoComplete="off" />
+                  </Row>
+                </Form.Item>
+              </Col>
+              <Col span={6} offset={2}>
+                <Form.Item name="user_name">
+                  <Row style={style}>
+                    <label>Tìm kiếm theo số CCCD</label>
+                  </Row>
+                  <Row>
+                    <Input placeholder="Nhập số CCCD" autoComplete="off" />
+                  </Row>
+                </Form.Item>
+              </Col>
+              <Col span={6} offset={2}>
+                <Form.Item name="user_name">
+                  <Row style={style}>
+                    <label>Tìm kiếm theo số điện thoại</label>
+                  </Row>
+                  <Row>
+                    <Input placeholder="Nhập số điện thoại" autoComplete="off" />
+                  </Row>
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={6}>
+                <Form.Item name="date">
+                  <Row style={style}>
+                    <label>Ngày bắt đầu lập hợp đồng</label>
+                  </Row>
+                  <Row>
+                    <RangePicker
+                      format={"DD-MM-YYYY"}
+                      placeholder={["Từ", "Đến"]}
+                      // onChange={dateChange}
+                      style={{ width: "100%" }}
+                    />
+                  </Row>
+                </Form.Item>
+              </Col>
+              <Col span={6} offset={2}>
+                <Form.Item name="user_name">
+                  <Row style={style}>
+                    <label>Tìm kiếm theo tên chung cư</label>
+                  </Row>
+                  <Row>
+                    <Select
+                      showSearch
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        (option?.label.toLowerCase().trim() ?? "").includes(input.toLocaleLowerCase().trim())
+                      }
+                      filterSort={(optionA, optionB) =>
+                        (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())
+                      }
+                      onChange={(e) => {
+                        console.log(e);
+                      }}
+                      options={dataApartmentGroup?.map((obj, index) => {
+                        return { value: obj.group_id, label: obj.group_name };
+                      })}
+                      placeholder="Chọn chung cư"
+                    ></Select>
+                  </Row>
+                </Form.Item>
+              </Col>
+              <Col span={6} offset={2}>
+                <Form.Item name="deactive">
+                  <Row style={style}>
+                    <label>Hợp đồng đã kết thúc</label>
+                  </Row>
+                  <Row>
+                    <Switch />
+                  </Row>
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={14} offset={10}>
                 <Button
                   type="primary"
                   icon={<SearchOutlined />}
-                  style={{ marginRight: '1%' }}
+                  style={{ margin: "5% 1% 5% 0%" }}
+                  // onClick={getFilterContractRenter}
+                  htmlType="submit"
                 >
                   Tìm kiếm
                 </Button>
-                <Button icon={<UndoOutlined />}>
+                <Button
+                  icon={<UndoOutlined />}
+                // onClick={resetForm}
+                >
                   Đặt lại
                 </Button>
-              </Row>
-            </Col>
-          </Row>
+              </Col>
+            </Row>
+          </Form>
         </Tabs.TabPane>
       </Tabs>
       <Table dataSource={data} scroll={{ x: 1600, y: 600 }} bordered>
-        <ColumnGroup title="Thông tin chung cư mini/căn hộ">
-          <Column title="Tên chung cư mini/căn hộ" dataIndex="apartmentName" key="key" responsive={["xs"]} />
-          <Column title="Ngày hợp đồng có hiệu lực" dataIndex="startDate" key="key" />
-          <Column title="Ngày kết thúc" dataIndex="endDate" key="key" />
-          <Column
-            title="Trạng thái hợp đồng"
-            dataIndex="statusContract"
-            key="key"
-            render={(statusContract) => {
-              return <Tag color="success">{statusContract}</Tag>
-            }}
-          />
-        </ColumnGroup>
-        <ColumnGroup title="Giá trị hợp đồng">
-          <Column title="Giá thuê" dataIndex="contractValue" key="key" responsive={["md"]} />
-          <Column title="Số tiền cọc" dataIndex="depositValue" key="key" />
-        </ColumnGroup>
-        <ColumnGroup title="Thông tin tầng/phòng">
-          <Column title="Số lượng tầng" dataIndex="numberOfFloor" key="key" />
-          <Column title="Số lượng phòng" dataIndex="numberOfRoom" key="key" />
-          <Column
-            title="Trạng thái phòng"
-            dataIndex="roomStatus"
-            key="key"
-          />
-        </ColumnGroup>
+        <Column title="Tên người cho thuê" dataIndex="ownerName" key="key" />
+        <Column title="Số điện thoại" dataIndex="phoneNumber" key="key" />
 
-        <ColumnGroup title="Thao tác">
-          <Column
-            key="action"
-            render={(_, record) => {
-              return (
-                <>
-                  <EditOutlined style={{ fontSize: "20px", marginRight: "10px" }} />
-                  <EyeOutlined style={{ fontSize: "20px" }} onClick={() => {
-                    setViewContract(true);
-                  }} />
-                </>
-              );
-            }}
-          />
-        </ColumnGroup>
+        <Column title="Tên chung cư" dataIndex="apartmentName" key="key" />
+
+        <Column
+          title="Giá thuê"
+          dataIndex="contractValue"
+          key="key"
+          render={(value) => {
+            return <span>{value.toLocaleString("vn") + " đ"}</span>;
+          }}
+        />
+        <Column title="Số lượng tầng" dataIndex="numberOfFloor" key="key" />
+        <Column title="Số lượng phòng" dataIndex="numberOfRoom" key="key" />
+        <Column title="Ngày lập hợp đồng" dataIndex="startDate" key="key" />
+        <Column title="Ngày kết thúc" dataIndex="endDate" key="key" />
+        <Column
+          title="Trạng thái hợp đồng"
+          dataIndex="statusContract"
+          key="key"
+          render={(statusContract) => {
+            return <Tag color="success">{statusContract}</Tag>;
+          }}
+        />
+        <Column
+          title="Thao tác"
+          key="action"
+          render={(_, record) => {
+            return (
+              <>
+                <Tooltip title="Chỉnh sửa">
+                  <EditOutlined style={{ fontSize: "20px", color: "#46a6ff", margin: "0 5px" }} />
+                </Tooltip>
+                <Tooltip title="Xem">
+                  <EyeOutlined
+                    style={{ fontSize: "20px", color: "#46a6ff", margin: "0 5px" }}
+                    onClick={() => {
+                      setViewContract(true);
+                    }}
+                  />
+                </Tooltip>
+              </>
+            );
+          }}
+        />
       </Table>
       <ViewContractBuilding openView={viewContract} closeView={setViewContract} />
     </div>
