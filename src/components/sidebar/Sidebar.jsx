@@ -95,9 +95,10 @@ const Sidebar = () => {
             <Link to="/equiment" />
           </Menu.Item>
 
-          <Menu.Item>
+          <Menu.Item key="/invoice">
             <ProfileOutlined />
             <span>Quản lý hoá đơn</span>
+            <Link to="/invoice" />
           </Menu.Item>
           <Menu.Item key="/service">
             <GoldOutlined />
@@ -155,9 +156,10 @@ const Sidebar = () => {
             <Link to="/equiment" />
           </Menu.Item>
 
-          <Menu.Item>
+          <Menu.Item key="/invoice">
             <ProfileOutlined />
             <span>Quản lý hoá đơn</span>
+            <Link to="/invoice" />
           </Menu.Item>
           <Menu.Item key="/service">
             <GoldOutlined />

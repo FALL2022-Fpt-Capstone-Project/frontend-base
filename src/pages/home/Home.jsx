@@ -3,28 +3,29 @@ import { Button, Layout, notification, Space } from "antd";
 import "./home.scss";
 import Sidebar from "../../components/sidebar/Sidebar";
 import "./home.scss";
+import { useNavigate } from "react-router-dom";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import Breadcrumbs from "../../components/BreadCrumb ";
 const { Content, Sider, Header } = Layout;
 
 const Home = () => {
   const [api, contextHolder] = notification.useNotification();
+  const navigate = useNavigate();
   const openNotification = () => {
     const key = `open${Date.now()}`;
     const btn = (
       <Space>
         <Button type="link" size="small" onClick={() => notification.destroy()}>
-          Destroy All
+          Huỷ
         </Button>
-        <Button type="primary" size="small" onClick={() => notification.destroy(key)}>
-          Confirm
+        <Button type="primary" size="small" onClick={() => navigate("/invoice")}>
+          Đồng ý
         </Button>
       </Space>
     );
     api.open({
-      message: "Notification Title",
-      description:
-        'A function will be be called after the notification is closed (automatically after the "duration" time of manually).',
+      message: "Thông báo",
+      description: "Đã đến thời gian lập hoá đơn, bạn có muốn lập hoá đơn cho các phòng không?",
       btn,
       key,
       placement: "top",

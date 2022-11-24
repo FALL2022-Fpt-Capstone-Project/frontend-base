@@ -15,6 +15,7 @@ const breadcrumbNameMap = {
   "/manage-staff/create-staff": "Tạo mới nhân viên",
   "/manage-staff/update-staff": "Cập nhật nhân viên",
   "/service": "Dịch vụ",
+  "/invoice": "Quản lý hoá đơn",
 };
 
 const Breadcrumbs = () => {

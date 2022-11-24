@@ -45,6 +45,7 @@ const CreateStaff = ({ visible, close }) => {
       });
     }
   }
+  const reload = () => window.location.reload();
   const handleCreateEmployee = async (value) => {
     if (typeof value.roles == "undefined") {
       value.roles = "staff";
@@ -75,6 +76,7 @@ const CreateStaff = ({ visible, close }) => {
           duration: 3,
         });
         close(false);
+        reload();
       })
       .catch((e) => {
         notification.error({

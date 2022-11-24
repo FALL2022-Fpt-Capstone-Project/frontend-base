@@ -52,7 +52,6 @@ const defaultAddAsset = {
   asset_status: true,
 };
 
-
 const contract_duration = [];
 for (let i = 6; i < 17; i++) {
   if (i < 12) {
@@ -77,54 +76,53 @@ const dataFilter = {
 
 const treeData = [
   {
-    title: '0-0',
-    key: '0-0',
+    title: "0-0",
+    key: "0-0",
     children: [
       {
-        title: '0-0-0',
-        key: '0-0-0',
+        title: "0-0-0",
+        key: "0-0-0",
       },
       {
-        title: '0-0-1',
-        key: '0-0-1',
+        title: "0-0-1",
+        key: "0-0-1",
       },
       {
-        title: '0-0-2',
-        key: '0-0-2',
+        title: "0-0-2",
+        key: "0-0-2",
       },
     ],
   },
   {
-    title: '0-1',
-    key: '0-1',
+    title: "0-1",
+    key: "0-1",
   },
   {
-    title: '0-2',
-    key: '0-2',
+    title: "0-2",
+    key: "0-2",
   },
 ];
 
 const CreateContractBuilding = () => {
-  const [expandedKeys, setExpandedKeys] = useState(['0-0-0', '0-0-1']);
-  const [checkedKeys, setCheckedKeys] = useState(['0-0-0']);
+  const [expandedKeys, setExpandedKeys] = useState(["0-0-0", "0-0-1"]);
+  const [checkedKeys, setCheckedKeys] = useState(["0-0-0"]);
   const [selectedKeys, setSelectedKeys] = useState([]);
   const [autoExpandParent, setAutoExpandParent] = useState(true);
   const onExpand = (expandedKeysValue) => {
-    console.log('onExpand', expandedKeysValue);
+    console.log("onExpand", expandedKeysValue);
     // if not set autoExpandParent to false, if children expanded, parent can not collapse.
     // or, you can remove all expanded children keys.
     setExpandedKeys(expandedKeysValue);
     setAutoExpandParent(false);
   };
   const onCheck = (checkedKeysValue) => {
-    console.log('onCheck', checkedKeysValue);
+    console.log("onCheck", checkedKeysValue);
     setCheckedKeys(checkedKeysValue);
   };
   const onSelect = (selectedKeysValue, info) => {
-    console.log('onSelect', info);
+    console.log("onSelect", info);
     setSelectedKeys(selectedKeysValue);
   };
-
 
   const [listAssetType, setListAssetType] = useState([]);
   const navigate = useNavigate();
@@ -491,9 +489,9 @@ const CreateContractBuilding = () => {
             </Row>
             <div
               className="site-layout-background"
-            // style={{
-            //   minHeight: 360,
-            // }}
+              // style={{
+              //   minHeight: 360,
+              // }}
             >
               <div className="button-cover">
                 <Button
@@ -648,7 +646,8 @@ const CreateContractBuilding = () => {
                             </>
                           }
                           bordered={false}
-                          className="card-width-100 card-height">
+                          className="card-width-100 card-height"
+                        >
                           <Row>
                             <Form.Item
                               className="form-item"
@@ -669,7 +668,7 @@ const CreateContractBuilding = () => {
                               <Select
                                 showSearch
                                 filterOption={(input, option) =>
-                                  (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                                  (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
                                 }
                                 onChange={(e) => {
                                   const list_rooms = dataApartmentGroup?.find(
@@ -679,19 +678,24 @@ const CreateContractBuilding = () => {
                                   const get_floors = mapped_list_rooms
                                     ?.filter((obj, index) => mapped_list_rooms.indexOf(obj) === index)
                                     .sort((a, b) => a - b);
-                                  const floor_room = get_floors?.map((obj, index) => {
-                                    const children = list_rooms?.filter((o, i) => o.room_floor === obj)?.map((room, j) => { return [{ title: `Phòng ${room.room_name}`, value: room.room_id }] })?.map((a, b) => a[0]);
-                                    return [
-                                      {
-                                        title: `Tầng ${obj} ( Số lượng phòng: ${children.length} )`,
-                                        key: obj,
-                                        children: children
-                                      }
-                                    ]
-                                  })?.map((o, i) => o[0]);
-                                  setGroupSelect(dataApartmentGroup?.find(
-                                    (obj, index) => obj.group_id === e
-                                  ));
+                                  const floor_room = get_floors
+                                    ?.map((obj, index) => {
+                                      const children = list_rooms
+                                        ?.filter((o, i) => o.room_floor === obj)
+                                        ?.map((room, j) => {
+                                          return [{ title: `Phòng ${room.room_name}`, value: room.room_id }];
+                                        })
+                                        ?.map((a, b) => a[0]);
+                                      return [
+                                        {
+                                          title: `Tầng ${obj} ( Số lượng phòng: ${children.length} )`,
+                                          key: obj,
+                                          children: children,
+                                        },
+                                      ];
+                                    })
+                                    ?.map((o, i) => o[0]);
+                                  setGroupSelect(dataApartmentGroup?.find((obj, index) => obj.group_id === e));
                                   setNumberOfFloor(floor_room);
                                 }}
                                 placeholder="Chọn chung cư"
@@ -840,7 +844,8 @@ const CreateContractBuilding = () => {
                               </Tag>
                             </>
                           }
-                          className="card-width-100">
+                          className="card-width-100"
+                        >
                           <Row>
                             <Form.Item
                               className="form-item"
@@ -896,7 +901,11 @@ const CreateContractBuilding = () => {
                             </Form.Item>
                           </Row>
                           <Row>
-                            <p><i>Bạn chưa chọn tầng và phòng thuê, bấm <b>tiếp</b> để chọn</i></p>
+                            <p>
+                              <i>
+                                Bạn chưa chọn tầng và phòng thuê, bấm <b>tiếp</b> để chọn
+                              </i>
+                            </p>
                           </Row>
                         </Card>
                       </Col>
@@ -918,7 +927,9 @@ const CreateContractBuilding = () => {
                               </Tag>
                             </>
                           }
-                          bordered={false} className="card-width-100 card-height">
+                          bordered={false}
+                          className="card-width-100 card-height"
+                        >
                           <Row>
                             <Col xs={24} xl={12} span={12}>
                               <Form.Item
@@ -940,7 +951,7 @@ const CreateContractBuilding = () => {
                                 <Select
                                   showSearch
                                   filterOption={(input, option) =>
-                                    (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                                    (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
                                   }
                                   onChange={(e) => {
                                     const list_rooms = dataApartmentGroup?.find(
@@ -950,19 +961,24 @@ const CreateContractBuilding = () => {
                                     const get_floors = mapped_list_rooms
                                       ?.filter((obj, index) => mapped_list_rooms.indexOf(obj) === index)
                                       .sort((a, b) => a - b);
-                                    const floor_room = get_floors?.map((obj, index) => {
-                                      const children = list_rooms?.filter((o, i) => o.room_floor === obj)?.map((room, j) => { return [{ title: `Phòng ${room.room_name}`, value: room.room_id }] })?.map((a, b) => a[0]);
-                                      return [
-                                        {
-                                          title: `Tầng ${obj} ( Số lượng phòng: ${children.length} )`,
-                                          key: obj,
-                                          children: children
-                                        }
-                                      ]
-                                    })?.map((o, i) => o[0]);
-                                    setGroupSelect(dataApartmentGroup?.find(
-                                      (obj, index) => obj.group_id === e
-                                    ));
+                                    const floor_room = get_floors
+                                      ?.map((obj, index) => {
+                                        const children = list_rooms
+                                          ?.filter((o, i) => o.room_floor === obj)
+                                          ?.map((room, j) => {
+                                            return [{ title: `Phòng ${room.room_name}`, value: room.room_id }];
+                                          })
+                                          ?.map((a, b) => a[0]);
+                                        return [
+                                          {
+                                            title: `Tầng ${obj} ( Số lượng phòng: ${children.length} )`,
+                                            key: obj,
+                                            children: children,
+                                          },
+                                        ];
+                                      })
+                                      ?.map((o, i) => o[0]);
+                                    setGroupSelect(dataApartmentGroup?.find((obj, index) => obj.group_id === e));
                                     setNumberOfFloor(floor_room);
                                   }}
                                   placeholder="Chọn chung cư"
@@ -976,15 +992,28 @@ const CreateContractBuilding = () => {
                           <Divider />
                           <Row>
                             <Col span={5}>
-                              <p><b>Số lượng tầng:</b> </p>
+                              <p>
+                                <b>Số lượng tầng:</b>{" "}
+                              </p>
                             </Col>
                             <Col span={19}>
-                              <p>{groupSelect?.list_rooms?.map((obj, index) => obj.room_floor)?.filter((o, i) => groupSelect?.list_rooms?.map((obj, index) => obj.room_floor)?.indexOf(o) === i)?.length}</p>
+                              <p>
+                                {
+                                  groupSelect?.list_rooms
+                                    ?.map((obj, index) => obj.room_floor)
+                                    ?.filter(
+                                      (o, i) =>
+                                        groupSelect?.list_rooms?.map((obj, index) => obj.room_floor)?.indexOf(o) === i
+                                    )?.length
+                                }
+                              </p>
                             </Col>
                           </Row>
                           <Row>
                             <Col span={5}>
-                              <p><b>Số lượng phòng:</b> </p>
+                              <p>
+                                <b>Số lượng phòng:</b>{" "}
+                              </p>
                             </Col>
                             <Col span={19}>
                               <p>{groupSelect?.list_rooms?.length}</p>
@@ -992,7 +1021,9 @@ const CreateContractBuilding = () => {
                           </Row>
                           <Row>
                             <Col span={5}>
-                              <p><b>Địa chỉ:</b> </p>
+                              <p>
+                                <b>Địa chỉ:</b>{" "}
+                              </p>
                             </Col>
                             <Col span={19}>
                               <p>Hữu Quan, Dương Quan, Thủy Nguyên, Hải Phòng</p>
@@ -1014,7 +1045,9 @@ const CreateContractBuilding = () => {
                               </Tag>
                             </>
                           }
-                          bordered={false} className="card-width-100 card-height">
+                          bordered={false}
+                          className="card-width-100 card-height"
+                        >
                           <Tree
                             checkable
                             onExpand={onExpand}
