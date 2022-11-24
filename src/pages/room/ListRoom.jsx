@@ -28,7 +28,7 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import AddRoom from "./AddRoom";
 import AddRoomAuto from "./AddRoomAuto";
 import RoomDetail from "./RoomDetail";
@@ -86,21 +86,23 @@ function ListRoom(props) {
     const group_floor = checkedKeysValue?.map((obj, index) => obj.split("-"))?.map((o, i) => {
       return { group: parseInt(o[0]), floor: parseInt(o[1]) }
     })?.filter((room, j) => room !== undefined);
+
     const arrTotalRoom = group_floor?.map((obj, index) => {
       return roomInfor?.filter((o, i) => o.group_id === obj.group
-        && o.room_floor === obj.floor)?.length
+        && o.room_floor === obj.floor && Number.isInteger(o.group_contract_id))?.length
     });
     const totalRoomRented = group_floor?.map((obj, index) => {
       return roomInfor?.filter((o, i) => o.group_id === obj.group && o.room_floor === obj.floor
-        && o.contract_id !== null)?.length
+        && o.contract_id !== null && Number.isInteger(o.group_contract_id))?.length
     });
     const totalEmptyRoom = group_floor?.map((obj, index) => {
       return roomInfor?.filter((o, i) => o.group_id === obj.group && o.room_floor === obj.floor
-        && o.contract_id === null)?.length
+        && o.contract_id === null && Number.isInteger(o.group_contract_id))?.length
     });
     const totalPrice = group_floor?.map((obj, index) => {
-      return roomInfor?.filter((o, i) => o.group_id === obj.group && o.room_floor === obj.floor)?.map((room, j) => room.room_price).reduce(
-        (previousValue, currentValue) => previousValue + currentValue, 0)
+      return roomInfor?.filter((o, i) => o.group_id === obj.group && o.room_floor === obj.floor
+        && Number.isInteger(o.group_contract_id))?.map((room, j) => room.room_price).reduce(
+          (previousValue, currentValue) => previousValue + currentValue, 0)
     });
 
     setNumberOfRoom(arrTotalRoom?.reduce(
@@ -115,6 +117,7 @@ function ListRoom(props) {
     const dataApartment = group_floor?.map((obj, index) => {
       return dataApartmentGroup?.filter((o, i) => o.group_id === obj.group)[0]
     });
+
     const listRoom = group_floor?.map((obj, index) => {
       return roomInfor?.filter((o, i) => o.group_id === obj.group &&
         o.room_floor === obj.floor)
@@ -253,12 +256,20 @@ function ListRoom(props) {
                 />
               </Tooltip>
               <Tooltip title="Lập hợp đồng phòng">
-                <AuditOutlined
-                  onClick={() => {
-                    navigate(`/contract-renter/create`);
+
+                <Link style={{ color: 'black' }}
+                  to={{
+                    pathname: "/room/create-contract",
                   }}
-                  style={iconSize}
-                />
+                  state={{
+                    room_id: record.room_id,
+                    group_id: record.group_id,
+                    room_floor: record.room_floor,
+                    room_price: record.roomPrice,
+                  }}>
+                  <AuditOutlined style={iconSize} />
+                </Link>
+
               </Tooltip>
               <Tooltip title="Xóa phòng">
                 <DeleteOutlined style={{ fontSize: "130%", color: "red" }} />
@@ -307,10 +318,13 @@ function ListRoom(props) {
         },
       })
       .then((res) => {
-        setCheckedKeys(res.data.data?.map((obj, index) => obj.group_id.toString()));
-        setDataApartmentGroup(res.data.data);
+        const mergeGroup = res.data.data.list_group_contracted;
+        const mapped = mergeGroup?.map((obj, index) => obj.group_id);
+        const filterGroupId = mergeGroup?.filter((obj, index) => mapped.indexOf(obj.group_id) === index);
+        setCheckedKeys(filterGroupId?.map((obj, index) => obj.group_id.toString()));
+        setDataApartmentGroup(filterGroupId);
         setGroupRoom(pre => {
-          return { ...pre, group: res.data.data }
+          return { ...pre, group: filterGroupId }
         });
       })
       .catch((error) => {
@@ -351,42 +365,41 @@ function ListRoom(props) {
       })
       .then((res) => {
         setGroupRoom(pre => {
-          return { ...pre, list_rooms: res.data.data };
+          return { ...pre, list_rooms: res.data.data?.filter(room => Number.isInteger(room.group_contract_id)) };
         });
-        setNumberOfRoom(res.data.data.length);
-        setNumberOfRoomEmpty(res.data.data?.map((obj, index) => obj.contract_id === null)?.reduce(
+        setNumberOfRoom(res.data.data?.filter(room => Number.isInteger(room.group_contract_id)).length);
+        setNumberOfRoomEmpty(res.data.data?.filter(room => Number.isInteger(room.group_contract_id))?.map((obj, index) => obj.contract_id === null)?.reduce(
           (previousValue, currentValue) => previousValue + currentValue, 0));
-        setNumberOfRoomRented(res.data.data?.map((obj, index) => obj.contract_id !== null)?.reduce(
+        setNumberOfRoomRented(res.data.data?.filter(room => Number.isInteger(room.group_contract_id) &&
+          Number.isInteger(room.contract_id))?.map((obj, index) => obj.contract_id !== null)?.reduce(
+            (previousValue, currentValue) => previousValue + currentValue, 0));
+        setTotalRoomPrice(res.data.data?.filter(room => Number.isInteger(room.group_contract_id))?.map((obj, index) => obj.room_price)?.reduce(
           (previousValue, currentValue) => previousValue + currentValue, 0));
-        setTotalRoomPrice(res.data.data?.map((obj, index) => obj.room_price)?.reduce(
-          (previousValue, currentValue) => previousValue + currentValue, 0));
-        setRoomInfor(res.data.data)
+        setRoomInfor(res.data.data?.filter(room => Number.isInteger(room.group_contract_id)))
         // setDataSource(data);
       })
       .catch((error) => {
         console.log(error);
       });
-    setLoading(false);
+    setLoading(false)
   };
-
+  console.log(groupRoom);
   const treeData = dataApartmentGroup?.map((obj, index) => {
     let floor = [];
     for (let i = 1; i <= obj.total_floor; i++) {
       floor.push(i);
     }
     return {
-      title: obj.group_name + " (" + obj.total_floor + " tầng, " + obj.list_rooms.length + " phòng)",
+      title: obj.group_name + " (" + obj.total_floor + " tầng, " + obj.list_rooms.filter(room => Number.isInteger(room?.group_contract_id)).length + " phòng)",
       key: obj.group_id.toString(),
       children: floor?.map((pre, k) => {
         return {
-          title: 'Tầng ' + pre + ' (' + obj.list_rooms?.filter((u, y) => u.room_floor === pre).length + ' phòng)',
+          title: 'Tầng ' + pre + ' (' + obj.list_rooms?.filter((u, y) => u.room_floor === pre && Number.isInteger(u.group_contract_id)).length + ' phòng)',
           key: obj.group_id + '-' + pre,
         }
       })
     }
   });
-  // console.log(dataApartmentGroup);
-  console.log(groupRoom);
   return (
     <div
       className="site-layout-background"
@@ -419,7 +432,7 @@ function ListRoom(props) {
         </Col>
       </Row>
       <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-        <Col xs={24} lg={8} xl={7} span={7}>
+        <Col xs={24} lg={8} xl={8} span={8}>
           <Card
             className="card-w100-h100"
             title={<p className="text-card">Chọn chung cư để hiển thị dữ liệu</p>}
@@ -427,7 +440,7 @@ function ListRoom(props) {
           >
             <Row>
               <Col span={24}>
-                <p>Danh sách các chung cư <b>({dataApartmentGroup?.length} chung cư)</b>: </p>
+                <p>Danh sách các chung cư đã thuê <b>({dataApartmentGroup?.length} chung cư)</b>: </p>
               </Col>
             </Row>
             <Tree
@@ -443,7 +456,7 @@ function ListRoom(props) {
             />
           </Card>
         </Col>
-        <Col xs={24} lg={16} xl={17} span={17}>
+        <Col xs={24} lg={16} xl={16} span={16}>
           <Card
             className="card-w100-h100"
             title="Danh sách phòng"
@@ -490,10 +503,12 @@ function ListRoom(props) {
             <Tabs defaultActiveKey="1" style={{ marginBottom: "1%" }}>
               <Tabs.TabPane tab="Tìm kiếm nhanh" key="1">
                 <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                  <Col xs={24} sm={12} xl={10} span={10}>
+                  <Col xs={24} sm={12} xl={12} span={12}>
                     <Input.Search
-                      onSearch={(e) => { setSearchRoom(e) }}
-                      onChange={(e) => { setSearchRoom(e.target.value) }}
+                      onSearch={(e) => {
+                        setSearchRoom(e);
+                      }}
+                      // onChange={(e) => { setSearchRoom(e.target.value) }}
                       placeholder="Nhập tên phòng hoặc tên chung cư để tìm kiếm" />
                   </Col>
                 </Row>
@@ -590,9 +605,11 @@ function ListRoom(props) {
                 setRoomStatus({ ...room_status, roomStatus: filters.roomStatus });
               }}
               loading={loading}
-              dataSource={groupRoom?.list_rooms?.map((obj, index) => {
+              dataSource={groupRoom?.list_rooms?.filter(room => Number.isInteger(room.group_contract_id))?.map((obj, index) => {
                 return {
                   room_id: obj.room_id,
+                  group_id: obj.group_id,
+                  room_floor: obj.room_floor,
                   contract_id: groupRoom?.contracts?.find((o, i) => o.room_id === obj.room_id)?.contract_id,
                   groupName: groupRoom?.group?.find((o, i) => o.group_id === obj.group_id)?.group_name,
                   roomName: obj.room_name,
@@ -620,7 +637,7 @@ function ListRoom(props) {
       </Row>
 
       <AddRoom visible={addRoom} close={setAddRoom} />
-      <AddRoomAuto visible={addRoomAuto} close={setAddRoomAuto} />
+      <AddRoomAuto visible={addRoomAuto} close={setAddRoomAuto} data={dataApartmentGroup} />
       <RoomDetail visible={roomDetail} close={setSetRoomDetail} data={roomDetailData} />
     </div>
   );
