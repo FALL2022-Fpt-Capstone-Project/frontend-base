@@ -67,7 +67,7 @@ function Service(props) {
       });
     setLoading(false);
   };
-
+  console.log(dataApartmentServiceGeneral);
   useEffect(() => {
     apartmentGroup();
     getListServiceBasic();

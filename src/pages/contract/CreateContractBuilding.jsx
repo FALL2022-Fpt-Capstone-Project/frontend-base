@@ -3,7 +3,7 @@ import Sidebar from "../../components/sidebar/Sidebar";
 import "./contract.scss";
 import axios from "../../api/axios";
 import {
-  EditOutlined,
+  EditTwoTone,
   DeleteOutlined,
   PlusCircleOutlined,
   FilterOutlined,
@@ -201,7 +201,7 @@ const CreateContractBuilding = () => {
         record.asset_id < 0 ? setDisableEditAsset(false) : setDisableEditAsset(true);
         return (
           <>
-            <EditOutlined
+            <EditTwoTone
               onClick={() => {
                 setIsEditAsset(true);
                 editAssetForm.setFieldsValue({
@@ -278,9 +278,6 @@ const CreateContractBuilding = () => {
       })
       .then((res) => {
         console.log(res.data.data);
-        // asset_id, asset_name, hand_over_asset_quantity, asset_type_show_name, hand_over_asset_date_delivery
-
-        // setAssetBasic(res.data.data);
         setDataAsset(
           res.data.data?.map((obj, index) => {
             return {

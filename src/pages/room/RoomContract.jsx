@@ -35,6 +35,7 @@ import {
     notification,
     Card,
     Divider,
+    Spin,
 } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -142,38 +143,37 @@ const RoomContract = () => {
                 // withCredentials: true,
             })
             .then((res) => {
-                setDataApartmentGroup(res.data.data);
-                setDataApartmentGroupSelect(res.data.data.find((obj, index) => obj.group_id === parseInt(state?.group_id)));
+                const data = res.data.data.list_group_contracted.find((obj, index) => obj.group_id === parseInt(state?.group_id)).list_room_lease_contracted;
+                setDataApartmentGroup(res.data.data.list_group_contracted);
+                setDataApartmentGroupSelect(data[0]);
                 setRoom(
-                    res.data.data.find((obj, index) => obj.group_id === parseInt(state?.group_id))?.list_rooms?.filter(
+                    data[0]?.list_room?.filter(
                         (data) => data.room_floor === parseInt(state?.room_floor) && data.contract_id === null
                     )
                 );
                 setDataAsset(
-                    res.data.data
-                        .find((obj, index) => obj.group_id === parseInt(state?.group_id))
-                        ?.list_hand_over_assets?.filter((asset => asset.hand_over_asset_quantity > 0))?.map(
-                            (o, i) =>
-                                [
-                                    {
-                                        asset_id: o.asset_id,
-                                        asset_name: o.asset_name,
-                                        asset_type: o.asset_type,
-                                        hand_over_asset_date_delivery: moment(
-                                            o.hand_over_date_delivery,
-                                            dateFormatList
-                                        )._i,
-                                        asset_type_show_name: o.asset_type_show_name,
-                                        hand_over_asset_quantity: 1,
-                                        // hand_over_asset_status: obj.hand_over_asset_status,
-                                    },
-                                ][0]
-                        )
+                    data[0]?.list_hand_over_assets?.filter((asset => asset.hand_over_asset_quantity > 0))?.map(
+                        (o, i) =>
+                            [
+                                {
+                                    asset_id: o.asset_id,
+                                    asset_name: o.asset_name,
+                                    asset_type: o.asset_type,
+                                    hand_over_date_delivery: moment(
+                                        o.hand_over_date_delivery,
+                                        dateFormatList
+                                    )._i,
+                                    asset_type_show_name: o.asset_type_show_name,
+                                    hand_over_asset_quantity: 1,
+                                    // hand_over_asset_status: obj.hand_over_asset_status,
+                                },
+                            ][0]
+                    )
                 );
                 setFloorRoom((pre) => {
                     return { ...pre, room_floor: state?.room_floor };
                 });
-                setRoomSelect(res.data.data.find((obj, index) => obj.group_id === parseInt(state?.group_id))?.list_rooms?.find((obj) => obj.room_id === state?.room_id));
+                setRoomSelect(data[0]?.list_room?.find((obj) => obj.id === state?.room_id));
                 form.setFieldsValue({
                     group_id: state?.group_id,
                     room_floor: state?.room_floor,
@@ -221,7 +221,7 @@ const RoomContract = () => {
         },
         {
             title: "Ngày bàn giao",
-            dataIndex: "hand_over_asset_date_delivery",
+            dataIndex: "hand_over_date_delivery",
             key: "asset_id",
         },
         // {
@@ -254,9 +254,9 @@ const RoomContract = () => {
                                 editAssetForm.setFieldsValue({
                                     asset_id: record.asset_id,
                                     asset_name: record.asset_name,
-                                    hand_over_asset_date_delivery:
-                                        record.hand_over_asset_date_delivery !== null
-                                            ? moment(record.hand_over_asset_date_delivery, dateFormatList)
+                                    hand_over_date_delivery:
+                                        record.hand_over_date_delivery !== null
+                                            ? moment(record.hand_over_date_delivery, dateFormatList)
                                             : "",
                                     hand_over_asset_quantity: record.hand_over_asset_quantity,
                                     asset_type_show_name: record.asset_type_show_name,
@@ -625,7 +625,7 @@ const RoomContract = () => {
     // const [roomStatus, setRoomStatus] = useState(true);
     // const [floorStatus, setFloorStatus] = useState(true);
 
-    const getListFloor = dataApartmentGroupSelect?.list_rooms
+    const getListFloor = dataApartmentGroupSelect?.list_room
         ?.filter((obj, index) => obj.contract_id === null)
         ?.map((o, i) => o.room_floor);
 
@@ -659,11 +659,11 @@ const RoomContract = () => {
             })
         );
         console.log({
-          ...e,
-          renter_old_id: renterId !== undefined ? renterId : null,
-          list_general_service: list_general_service,
-          contract_end_date: e.contract_end_date.format("YYYY-MM-DD"),
-          contract_start_date: e.contract_start_date.format("YYYY-MM-DD"),
+            ...e,
+            renter_old_id: renterId !== undefined ? renterId : null,
+            list_general_service: list_general_service,
+            contract_end_date: e.contract_end_date.format("YYYY-MM-DD"),
+            contract_start_date: e.contract_start_date.format("YYYY-MM-DD"),
         });
 
         await axios
@@ -713,17 +713,17 @@ const RoomContract = () => {
         const duplicate = dataAsset.find(
             (asset) =>
                 asset.asset_name.toLowerCase().trim() === e.asset_name.toLowerCase().trim() &&
-                asset.hand_over_asset_date_delivery === moment(e.hand_over_asset_date_delivery).format("DD-MM-YYYY")
+                asset.hand_over_date_delivery === moment(e.hand_over_date_delivery).format("DD-MM-YYYY")
         );
         if (!duplicate) {
             setDataAsset([
                 ...dataAsset,
-                { ...e, hand_over_asset_date_delivery: moment(e.hand_over_asset_date_delivery).format("DD-MM-YYYY") },
+                { ...e, hand_over_date_delivery: moment(e.hand_over_date_delivery).format("DD-MM-YYYY") },
             ]);
             createAssetForm.setFieldsValue({
                 asset_id: assetId,
                 asset_name: "",
-                hand_over_asset_date_delivery: formAddAsset.dateOfDelivery,
+                hand_over_date_delivery: formAddAsset.dateOfDelivery,
                 hand_over_asset_quantity: formAddAsset.asset_unit,
                 asset_type_show_name: formAddAsset.asset_type,
                 // hand_over_asset_status: formAddAsset.asset_status,
@@ -745,7 +745,7 @@ const RoomContract = () => {
             (asset) =>
                 asset.asset_name.toLowerCase().trim() === e.asset_name.toLowerCase().trim() &&
                 asset.asset_type_show_name === e.asset_type_show_name &&
-                asset.hand_over_asset_date_delivery === moment(e.hand_over_asset_date_delivery).format("DD-MM-YYYY") &&
+                asset.hand_over_date_delivery === moment(e.hand_over_date_delivery).format("DD-MM-YYYY") &&
                 asset.hand_over_asset_quantity === e.hand_over_asset_quantity
             // asset.hand_over_asset_status === e.hand_over_asset_status
         );
@@ -756,7 +756,7 @@ const RoomContract = () => {
                     if (asset.asset_id === e.asset_id) {
                         return {
                             ...e,
-                            hand_over_asset_date_delivery: moment(e.hand_over_asset_date_delivery).format("DD-MM-YYYY"),
+                            hand_over_date_delivery: moment(e.hand_over_date_delivery).format("DD-MM-YYYY"),
                         };
                     } else {
                         return asset;
@@ -789,7 +789,7 @@ const RoomContract = () => {
         setOldRenterGender({ ...oldRenterGender, gender: [true, false] });
         createAssetForm.setFieldsValue({
             asset_id: assetId,
-            hand_over_asset_date_delivery: formAddAsset.dateOfDelivery,
+            hand_over_date_delivery: formAddAsset.dateOfDelivery,
             hand_over_asset_quantity: formAddAsset.asset_unit,
             asset_type_show_name: formAddAsset.asset_type,
             // hand_over_asset_status: formAddAsset.asset_status,
@@ -850,264 +850,265 @@ const RoomContract = () => {
     // console.log(dataApartmentGroupSelect);
 
     return (
-        <div className="contract">
-            <Layout
-                style={{
-                    minHeight: "100vh",
-                    minWidth: "100vh",
-                }}
-            >
-                <Sider width={250}>
-                    <p className="sider-title">QUẢN LÝ CHUNG CƯ MINI</p>
-                    <Sidebar />
-                </Sider>
-                <Layout className="site-layout">
-                    <Header className="layout-header">
-                        <Row>
-                            <Col span={24}>
-                                <p className="header-title">Tạo mới hợp đồng cho thuê</p>
-                            </Col>
-                        </Row>
-                    </Header>
-                    <Content
-                        style={{
-                            margin: "10px 16px",
-                        }}
-                    >
-                        <Breadcrumbs />
-                        <Divider />
-                        <div
-                            className="site-layout-background"
+        <Spin size="large" spinning={loading}>
+            <div className="contract">
+                <Layout
+                    style={{
+                        minHeight: "100vh",
+                        minWidth: "100vh",
+                    }}
+                >
+                    <Sider width={250}>
+                        <p className="sider-title">QUẢN LÝ CHUNG CƯ MINI</p>
+                        <Sidebar />
+                    </Sider>
+                    <Layout className="site-layout">
+                        <Header className="layout-header">
+                            <Row>
+                                <Col span={24}>
+                                    <p className="header-title">Tạo mới hợp đồng cho thuê</p>
+                                </Col>
+                            </Row>
+                        </Header>
+                        <Content
                             style={{
-                                minHeight: 360,
+                                margin: "10px 16px",
                             }}
                         >
-                            <div style={{ overflow: "auto" }}>
-                                {/* <Button htmlType="submit" style={{ float: "right" }} type="primary" form="create-contract">Tạo mới hợp đồng</Button> */}
-                                <Button
-                                    href="/room"
-                                    type="primary"
-                                    icon={<ArrowLeftOutlined />}
-                                    style={{ marginRight: 5, float: "right" }}
-                                >
-                                    Danh sách phòng
-                                </Button>
-                            </div>
-                            <Form
-                                onFinish={onFinish}
-                                onFinishFailed={onFinishContractFail}
-                                form={form}
-                                layout="horizontal"
-                                initialValues={{
-                                    size: componentSize,
+                            <Breadcrumbs />
+                            <Divider />
+                            <div
+                                className="site-layout-background"
+                                style={{
+                                    minHeight: 360,
                                 }}
-                                onValuesChange={onFormLayoutChange}
-                                size={componentSize}
-                                width={1000}
-                                id="create-contract"
                             >
-                                <Tabs activeKey={changeTab} defaultActiveKey="1">
-                                    <Tabs.TabPane
-                                        tab={
-                                            <span style={{ fontSize: "17px" }}>
-                                                1. Thông tin chung{" "}
-                                                {displayFinish.find((obj, index) => obj === 1) ? (
-                                                    <CheckCircleTwoTone style={{ fontSize: "130%" }} twoToneColor="#52c41a" />
-                                                ) : (
-                                                    ""
-                                                )}
-                                            </span>
-                                        }
-                                        key="1"
+                                <div style={{ overflow: "auto" }}>
+                                    {/* <Button htmlType="submit" style={{ float: "right" }} type="primary" form="create-contract">Tạo mới hợp đồng</Button> */}
+                                    <Button
+                                        href="/room"
+                                        type="primary"
+                                        icon={<ArrowLeftOutlined />}
+                                        style={{ marginRight: 5, float: "right" }}
                                     >
-                                        <div className="site-card-wrapper">
-                                            <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                                                <Col span={8} xs={24} xl={8}>
-                                                    <Card
-                                                        style={cardHeight}
-                                                        title={
-                                                            <Tag color="blue">
-                                                                <h3>
-                                                                    <UserOutlined style={{ fontSize: "130%" }} />
-                                                                    <span style={{ fontSize: "15px" }}>
-                                                                        <b>Thông tin người đại diện </b>
+                                        Danh sách phòng
+                                    </Button>
+                                </div>
+                                <Form
+                                    onFinish={onFinish}
+                                    onFinishFailed={onFinishContractFail}
+                                    form={form}
+                                    layout="horizontal"
+                                    initialValues={{
+                                        size: componentSize,
+                                    }}
+                                    onValuesChange={onFormLayoutChange}
+                                    size={componentSize}
+                                    width={1000}
+                                    id="create-contract"
+                                >
+                                    <Tabs activeKey={changeTab} defaultActiveKey="1">
+                                        <Tabs.TabPane
+                                            tab={
+                                                <span style={{ fontSize: "17px" }}>
+                                                    1. Thông tin chung{" "}
+                                                    {displayFinish.find((obj, index) => obj === 1) ? (
+                                                        <CheckCircleTwoTone style={{ fontSize: "130%" }} twoToneColor="#52c41a" />
+                                                    ) : (
+                                                        ""
+                                                    )}
+                                                </span>
+                                            }
+                                            key="1"
+                                        >
+                                            <div className="site-card-wrapper">
+                                                <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+                                                    <Col span={8} xs={24} xl={8}>
+                                                        <Card
+                                                            style={cardHeight}
+                                                            title={
+                                                                <Tag color="blue">
+                                                                    <h3>
+                                                                        <UserOutlined style={{ fontSize: "130%" }} />
+                                                                        <span style={{ fontSize: "15px" }}>
+                                                                            <b>Thông tin người đại diện </b>
+                                                                        </span>
+                                                                    </h3>
+                                                                </Tag>
+                                                            }
+                                                            bordered={true}
+                                                        >
+                                                            <Row>
+                                                                <Button
+                                                                    style={{
+                                                                        marginTop: "1%",
+                                                                        wordBreak: "break-all",
+                                                                        whiteSpace: "normal",
+                                                                        height: "auto",
+                                                                    }}
+                                                                    type="primary"
+                                                                    size="default"
+                                                                    onClick={() => {
+                                                                        onAdd();
+                                                                    }}
+                                                                >
+                                                                    Lấy thông tin khách thuê
+                                                                </Button>
+                                                            </Row>
+                                                            <Row>
+                                                                <Col>
+                                                                    <p>
+                                                                        <i>Lấy thông tin khách thuê của tất cả tòa nhà để việc nhập dữ liệu nhanh hơn</i>
+                                                                    </p>
+                                                                </Col>
+                                                            </Row>
+                                                            <Form.Item
+                                                                className="form-item"
+                                                                name="renter_name"
+                                                                rules={[
+                                                                    {
+                                                                        required: true,
+                                                                        message: "Vui lòng nhập tên khách thuê",
+                                                                        whitespace: true,
+                                                                    },
+                                                                ]}
+                                                                labelCol={{ span: 24 }}
+                                                                label={
+                                                                    <span>
+                                                                        <b>Họ và tên khách thuê: </b>
                                                                     </span>
-                                                                </h3>
-                                                            </Tag>
-                                                        }
-                                                        bordered={true}
-                                                    >
-                                                        <Row>
-                                                            <Button
-                                                                style={{
-                                                                    marginTop: "1%",
-                                                                    wordBreak: "break-all",
-                                                                    whiteSpace: "normal",
-                                                                    height: "auto",
-                                                                }}
-                                                                type="primary"
-                                                                size="default"
-                                                                onClick={() => {
-                                                                    onAdd();
-                                                                }}
+                                                                }
                                                             >
-                                                                Lấy thông tin khách thuê
-                                                            </Button>
-                                                        </Row>
-                                                        <Row>
-                                                            <Col>
-                                                                <p>
-                                                                    <i>Lấy thông tin khách thuê của tất cả tòa nhà để việc nhập dữ liệu nhanh hơn</i>
-                                                                </p>
-                                                            </Col>
-                                                        </Row>
-                                                        <Form.Item
-                                                            className="form-item"
-                                                            name="renter_name"
-                                                            rules={[
-                                                                {
-                                                                    required: true,
-                                                                    message: "Vui lòng nhập tên khách thuê",
-                                                                    whitespace: true,
-                                                                },
-                                                            ]}
-                                                            labelCol={{ span: 24 }}
-                                                            label={
-                                                                <span>
-                                                                    <b>Họ và tên khách thuê: </b>
-                                                                </span>
-                                                            }
-                                                        >
-                                                            {/* <span><b>Tên khách thuê: </b></span> */}
-                                                            <Input placeholder="Họ và tên khách thuê"></Input>
-                                                        </Form.Item>
-                                                        <Form.Item
-                                                            className="form-item"
-                                                            name="renter_gender"
-                                                            rules={[
-                                                                {
-                                                                    required: true,
-                                                                    message: "Vui lòng chọn giới tính",
-                                                                },
-                                                            ]}
-                                                        >
-                                                            <Radio.Group>
-                                                                <Radio value={true}>Nam</Radio>
-                                                                <Radio value={false}>Nữ</Radio>
-                                                            </Radio.Group>
-                                                        </Form.Item>
-                                                        <Form.Item
-                                                            className="form-item"
-                                                            name="renter_phone_number"
-                                                            labelCol={{ span: 24 }}
-                                                            label={
-                                                                <span>
-                                                                    <b>Số điện thoại: </b>
-                                                                </span>
-                                                            }
-                                                            rules={[
-                                                                {
-                                                                    required: true,
-                                                                    message: "Vui lòng nhập số điện thoại",
-                                                                    whitespace: true,
-                                                                },
-                                                                {
-                                                                    pattern: /^((\+84|84|0)+(3|5|7|8|9|1[2|6|8|9]))+([0-9]{8})\b/,
-                                                                    message: "Số điện thoại phải bắt đầu (+84,0,84)",
-                                                                },
-                                                            ]}
-                                                        >
-                                                            <Input placeholder="Số điện thoại"></Input>
-                                                        </Form.Item>
-                                                        <Form.Item
-                                                            className="form-item"
-                                                            name="renter_email"
-                                                            labelCol={{ span: 24 }}
-                                                            label={
-                                                                <span>
-                                                                    <b>Email: </b>
-                                                                </span>
-                                                            }
-                                                        >
-                                                            <Input placeholder="Email"></Input>
-                                                        </Form.Item>
-                                                        <Form.Item
-                                                            className="form-item"
-                                                            name="renter_identity_card"
-                                                            labelCol={{ span: 24 }}
-                                                            label={
-                                                                <span>
-                                                                    <b>CMND/CCCD: </b>
-                                                                </span>
-                                                            }
-                                                            rules={[
-                                                                {
-                                                                    required: true,
-                                                                    message: "Vui lòng nhập CMND/CCCD",
-                                                                    whitespace: true,
-                                                                },
-                                                                {
-                                                                    pattern: /^([0-9]{12})\b/,
-                                                                    message: "Vui lòng nhập đúng CMND/CCCD (12 số)",
-                                                                },
-                                                            ]}
-                                                        >
-                                                            <Input placeholder="CMND/CCCD"></Input>
-                                                        </Form.Item>
-                                                        <Form.Item
-                                                            className="form-item"
-                                                            name="license_plates"
-                                                            labelCol={{ span: 24 }}
-                                                            label={
-                                                                <span>
-                                                                    <b>Biển số xe: </b>
-                                                                </span>
-                                                            }
-                                                        >
-                                                            <Input placeholder="Biển số xe"></Input>
-                                                        </Form.Item>
-                                                        <Form.Item
-                                                            className="form-item"
-                                                            name="address_more_detail"
-                                                            labelCol={{ span: 24 }}
-                                                            label={
-                                                                <span>
-                                                                    <b>Địa chỉ chi tiết: </b>
-                                                                </span>
-                                                            }
-                                                        >
-                                                            <Input placeholder="Địa chỉ chi tiết"></Input>
-                                                        </Form.Item>
-                                                        <Form.Item
-                                                            className="form-item"
-                                                            name="contract_note"
-                                                            labelCol={{ span: 24 }}
-                                                            label={
-                                                                <span>
-                                                                    <b>Ghi chú: </b>
-                                                                </span>
-                                                            }
-                                                        >
-                                                            <TextArea maxLength={200} rows={4} placeholder="Ghi chú" value={""} />
-                                                        </Form.Item>
-                                                    </Card>
-                                                </Col>
-                                                <Col span={8} xs={24} xl={8}>
-                                                    <Card
-                                                        style={cardHeight}
-                                                        title={
-                                                            <Tag color="blue">
-                                                                <h3>
-                                                                    <AuditOutlined style={{ fontSize: "130%" }} />{" "}
-                                                                    <span style={{ fontSize: "15px" }}>
-                                                                        <b>Thông tin về hợp đồng </b>
+                                                                {/* <span><b>Tên khách thuê: </b></span> */}
+                                                                <Input placeholder="Họ và tên khách thuê"></Input>
+                                                            </Form.Item>
+                                                            <Form.Item
+                                                                className="form-item"
+                                                                name="renter_gender"
+                                                                rules={[
+                                                                    {
+                                                                        required: true,
+                                                                        message: "Vui lòng chọn giới tính",
+                                                                    },
+                                                                ]}
+                                                            >
+                                                                <Radio.Group>
+                                                                    <Radio value={true}>Nam</Radio>
+                                                                    <Radio value={false}>Nữ</Radio>
+                                                                </Radio.Group>
+                                                            </Form.Item>
+                                                            <Form.Item
+                                                                className="form-item"
+                                                                name="renter_phone_number"
+                                                                labelCol={{ span: 24 }}
+                                                                label={
+                                                                    <span>
+                                                                        <b>Số điện thoại: </b>
                                                                     </span>
-                                                                </h3>
-                                                            </Tag>
-                                                        }
-                                                        bordered={false}
-                                                    >
-                                                        {/* <Form.Item
+                                                                }
+                                                                rules={[
+                                                                    {
+                                                                        required: true,
+                                                                        message: "Vui lòng nhập số điện thoại",
+                                                                        whitespace: true,
+                                                                    },
+                                                                    {
+                                                                        pattern: /^((\+84|84|0)+(3|5|7|8|9|1[2|6|8|9]))+([0-9]{8})\b/,
+                                                                        message: "Số điện thoại phải bắt đầu (+84,0,84)",
+                                                                    },
+                                                                ]}
+                                                            >
+                                                                <Input placeholder="Số điện thoại"></Input>
+                                                            </Form.Item>
+                                                            <Form.Item
+                                                                className="form-item"
+                                                                name="renter_email"
+                                                                labelCol={{ span: 24 }}
+                                                                label={
+                                                                    <span>
+                                                                        <b>Email: </b>
+                                                                    </span>
+                                                                }
+                                                            >
+                                                                <Input placeholder="Email"></Input>
+                                                            </Form.Item>
+                                                            <Form.Item
+                                                                className="form-item"
+                                                                name="renter_identity_card"
+                                                                labelCol={{ span: 24 }}
+                                                                label={
+                                                                    <span>
+                                                                        <b>CMND/CCCD: </b>
+                                                                    </span>
+                                                                }
+                                                                rules={[
+                                                                    {
+                                                                        required: true,
+                                                                        message: "Vui lòng nhập CMND/CCCD",
+                                                                        whitespace: true,
+                                                                    },
+                                                                    {
+                                                                        pattern: /^([0-9]{12})\b/,
+                                                                        message: "Vui lòng nhập đúng CMND/CCCD (12 số)",
+                                                                    },
+                                                                ]}
+                                                            >
+                                                                <Input placeholder="CMND/CCCD"></Input>
+                                                            </Form.Item>
+                                                            <Form.Item
+                                                                className="form-item"
+                                                                name="license_plates"
+                                                                labelCol={{ span: 24 }}
+                                                                label={
+                                                                    <span>
+                                                                        <b>Biển số xe: </b>
+                                                                    </span>
+                                                                }
+                                                            >
+                                                                <Input placeholder="Biển số xe"></Input>
+                                                            </Form.Item>
+                                                            <Form.Item
+                                                                className="form-item"
+                                                                name="address_more_detail"
+                                                                labelCol={{ span: 24 }}
+                                                                label={
+                                                                    <span>
+                                                                        <b>Địa chỉ chi tiết: </b>
+                                                                    </span>
+                                                                }
+                                                            >
+                                                                <Input placeholder="Địa chỉ chi tiết"></Input>
+                                                            </Form.Item>
+                                                            <Form.Item
+                                                                className="form-item"
+                                                                name="contract_note"
+                                                                labelCol={{ span: 24 }}
+                                                                label={
+                                                                    <span>
+                                                                        <b>Ghi chú: </b>
+                                                                    </span>
+                                                                }
+                                                            >
+                                                                <TextArea maxLength={200} rows={4} placeholder="Ghi chú" value={""} />
+                                                            </Form.Item>
+                                                        </Card>
+                                                    </Col>
+                                                    <Col span={8} xs={24} xl={8}>
+                                                        <Card
+                                                            style={cardHeight}
+                                                            title={
+                                                                <Tag color="blue">
+                                                                    <h3>
+                                                                        <AuditOutlined style={{ fontSize: "130%" }} />{" "}
+                                                                        <span style={{ fontSize: "15px" }}>
+                                                                            <b>Thông tin về hợp đồng </b>
+                                                                        </span>
+                                                                    </h3>
+                                                                </Tag>
+                                                            }
+                                                            bordered={false}
+                                                        >
+                                                            {/* <Form.Item
                                                             className="form-item"
                                                             name="contract_name"
                                                             labelCol={{ span: 24 }}
@@ -1126,631 +1127,631 @@ const RoomContract = () => {
                                                         >
                                                             <Input placeholder="Tên hợp đồng"></Input>
                                                         </Form.Item> */}
-                                                        <Form.Item
-                                                            className="form-item"
-                                                            name="group_id"
-                                                            labelCol={{ span: 24 }}
-                                                            label={
-                                                                <span>
-                                                                    <b>Tòa nhà: </b>
-                                                                </span>
-                                                            }
-                                                            rules={[
-                                                                {
-                                                                    required: true,
-                                                                    message: "Vui lòng chọn tòa nhà",
-                                                                },
-                                                            ]}
-                                                        >
-                                                            <Select
-                                                                disabled
-                                                                onChange={(e) => {
-                                                                    form.setFieldsValue({
-                                                                        room_floor: "",
-                                                                        room_id: "",
-                                                                        contract_price: 0,
-                                                                        contract_deposit: 0,
-                                                                        serviceIndexInForm: null,
-                                                                    });
-                                                                    // setRoomStatus(true);
-                                                                    setDataApartmentGroupSelect(
-                                                                        dataApartmentGroup.find((obj, index) => obj.group_id === e)
-                                                                    );
-                                                                    setDataAsset(
-                                                                        dataApartmentGroup
-                                                                            .find((obj, index) => obj.group_id === e)
-                                                                            ?.list_hand_over_assets?.map(
-                                                                                (obj, index) =>
-                                                                                    [
-                                                                                        {
-                                                                                            asset_id: obj.asset_id,
-                                                                                            asset_name: obj.asset_name,
-                                                                                            asset_type: obj.asset_type,
-                                                                                            hand_over_asset_date_delivery: moment(
-                                                                                                obj.hand_over_date_delivery,
-                                                                                                dateFormatList
-                                                                                            )._i,
-                                                                                            asset_type_show_name: obj.asset_type_show_name,
-                                                                                            hand_over_asset_quantity: 1,
-                                                                                            // hand_over_asset_status: obj.hand_over_asset_status,
-                                                                                        },
-                                                                                    ][0]
-                                                                            )
-                                                                    );
-                                                                    // setFloorStatus(false);
-                                                                }}
-                                                                placeholder="Chọn tòa nhà"
-                                                            >
-                                                                {dataApartmentGroup?.map((obj, index) => {
-                                                                    return <Select.Option value={obj.group_id}>{obj.group_name}</Select.Option>;
-                                                                })}
-                                                            </Select>
-                                                        </Form.Item>
-                                                        <Form.Item
-                                                            className="form-item"
-                                                            name="room_floor"
-                                                            labelCol={{ span: 24 }}
-                                                            label={
-                                                                <span>
-                                                                    <b>Tầng: </b>
-                                                                </span>
-                                                            }
-                                                            rules={[
-                                                                {
-                                                                    required: true,
-                                                                    message: "Vui lòng chọn tầng",
-                                                                },
-                                                            ]}
-                                                        >
-                                                            <Select
-                                                                disabled
-                                                                placeholder="Chọn tầng"
-                                                                optionFilterProp="children"
-                                                                onChange={(e) => {
-                                                                    // setRoomStatus(false);
-                                                                    setRoom(
-                                                                        dataApartmentGroupSelect?.list_rooms?.filter(
-                                                                            (data) => data.room_floor === e && data.contract_id === null
-                                                                        )
-                                                                    );
-                                                                    setFloorRoom((pre) => {
-                                                                        return { ...pre, room_floor: e };
-                                                                    });
-                                                                }}
-                                                            >
-                                                                <Select.Option value="">Chọn tầng</Select.Option>
-                                                                {floors
-                                                                    ?.sort((a, b) => a - b)
-                                                                    ?.map((obj, index) => {
-                                                                        return (
-                                                                            <Select.Option key={index} value={obj}>
-                                                                                {obj}
-                                                                            </Select.Option>
-                                                                        );
-                                                                    })}
-                                                            </Select>
-                                                        </Form.Item>
-                                                        <Form.Item
-                                                            className="form-item"
-                                                            name="room_id"
-                                                            labelCol={{ span: 24 }}
-                                                            label={
-                                                                <span>
-                                                                    <b>Phòng: </b>
-                                                                </span>
-                                                            }
-                                                            rules={[
-                                                                {
-                                                                    required: true,
-                                                                    message: "Vui lòng chọn phòng",
-                                                                },
-                                                            ]}
-                                                        >
-                                                            <Select
-                                                                showSearch
-                                                                filterOption={(input, option) => (option?.children ?? "").includes(input)}
-                                                                placeholder="Chọn phòng"
-                                                                disabled
-                                                                onChange={(e) => {
-                                                                    setRoomSelect(dataApartmentGroupSelect?.list_rooms?.find((obj) => obj.room_id === e));
-                                                                    form.setFieldsValue({
-                                                                        contract_price: dataApartmentGroupSelect?.list_rooms?.find(
-                                                                            (obj) => obj.room_id === e
-                                                                        ).room_price,
-                                                                        contract_deposit: dataApartmentGroupSelect?.list_rooms?.find(
-                                                                            (obj) => obj.room_id === e
-                                                                        ).room_price,
-                                                                    });
-                                                                }}
-                                                            >
-                                                                <Select.Option value="">Chọn phòng</Select.Option>
-                                                                {room?.map((obj, index) => {
-                                                                    return (
-                                                                        <Select.Option key={index} value={obj.room_id}>
-                                                                            {obj.room_name}
-                                                                        </Select.Option>
-                                                                    );
-                                                                })}
-                                                            </Select>
-                                                        </Form.Item>
-                                                        <Form.Item
-                                                            className="form-item"
-                                                            name="contract_type"
-                                                            style={{ display: "none" }}
-                                                        ></Form.Item>
-                                                        <Form.Item
-                                                            className="form-item"
-                                                            name="contract_duration"
-                                                            labelCol={{ span: 24 }}
-                                                            label={
-                                                                <span>
-                                                                    <b>Thời hạn hợp đồng (ít nhất 1 tháng): </b>
-                                                                </span>
-                                                            }
-                                                        // rules={[
-                                                        //   {
-                                                        //     required: true,
-                                                        //     message: "Vui lòng chọn thời hạn hợp đồng",
-                                                        //   },
-                                                        // ]}
-                                                        >
-                                                            <Select
-                                                                placeholder="Thời hạn hợp đồng"
-                                                                onChange={(e) => {
-                                                                    setContractDuration(e);
-                                                                    form.setFieldsValue({
-                                                                        contract_end_date: moment(contractStartDate.add(e, "M"), dateFormatList),
-                                                                        contract_start_date: moment(contractStartDate.subtract(e, "M"), dateFormatList),
-                                                                    });
-                                                                }}
-                                                            >
-                                                                {contract_duration.map((obj, index) => {
-                                                                    return <Option value={obj.contractTermValue}>{obj.contractTermName}</Option>;
-                                                                })}
-                                                            </Select>
-                                                        </Form.Item>
-
-                                                        <Form.Item
-                                                            className="form-item"
-                                                            name="contract_start_date"
-                                                            labelCol={{ span: 24 }}
-                                                            label={
-                                                                <span>
-                                                                    <b>Ngày hợp đồng có hiệu lực: </b>
-                                                                </span>
-                                                            }
-                                                            rules={[
-                                                                {
-                                                                    required: true,
-                                                                    message: "Vui lòng chọn ngày lập hợp đồng",
-                                                                },
-                                                            ]}
-                                                        >
-                                                            <DatePicker
-                                                                onChange={(e) => {
-                                                                    setContractStartDate(e);
-                                                                    const startDate = form.getFieldsValue().contract_start_date;
-                                                                    form.setFieldsValue({
-                                                                        contract_end_date: moment(startDate).add(contractDuration, "M"),
-                                                                    });
-                                                                }}
-                                                                allowClear={false}
-                                                                style={{ width: "100%" }}
-                                                                placeholder="Ngày vào ở"
-                                                                defaultValue={moment()}
-                                                                format="DD-MM-YYYY"
-                                                            />
-                                                        </Form.Item>
-                                                        <Form.Item
-                                                            className="form-item"
-                                                            name="contract_end_date"
-                                                            labelCol={{ span: 24 }}
-                                                            label={
-                                                                <span>
-                                                                    <b>Ngày kết thúc: </b>
-                                                                </span>
-                                                            }
-                                                            rules={[
-                                                                {
-                                                                    required: true,
-                                                                    message: "Vui lòng chọn ngày kết thúc",
-                                                                },
-                                                            ]}
-                                                        >
-                                                            <DatePicker
-                                                                allowClear={false}
-                                                                style={{ width: "100%" }}
-                                                                placeholder="Ngày kết thúc"
-                                                                format="DD-MM-YYYY"
-                                                            />
-                                                        </Form.Item>
-                                                        <Form.Item
-                                                            className="form-item"
-                                                            name="contract_bill_cycle"
-                                                            labelCol={{ span: 24 }}
-                                                            label={
-                                                                <span>
-                                                                    <b>Chu kỳ tính tiền (tháng): </b>
-                                                                </span>
-                                                            }
-                                                            rules={[
-                                                                {
-                                                                    required: true,
-                                                                    message: "Vui lòng nhập chu kỳ tính tiền",
-                                                                },
-                                                            ]}
-                                                        >
-                                                            <Select
-                                                                onChange={(e) => {
-                                                                    setContractBillCycle(e);
-                                                                }}
-                                                                placeholder="Chu kỳ tính tiền"
-                                                                style={{ width: "100%" }}
-                                                            >
-                                                                {contract_duration.map((obj, index) => {
-                                                                    return <Option value={obj.contractTermValue}>{obj.contractTermName}</Option>;
-                                                                })}
-                                                            </Select>
-                                                        </Form.Item>
-                                                        <Form.Item
-                                                            className="form-item"
-                                                            name="contract_payment_cycle"
-                                                            labelCol={{ span: 24 }}
-                                                            label={
-                                                                <>
-                                                                    <span>
-                                                                        <b>Chu kỳ thanh toán: </b>
-                                                                    </span>
-                                                                </>
-                                                            }
-                                                            rules={[
-                                                                {
-                                                                    required: true,
-                                                                    message: "Vui lòng nhập chu kỳ thanh toán",
-                                                                },
-                                                            ]}
-                                                        >
-                                                            <Select placeholder="Kỳ thanh toán" style={{ width: "100%" }}>
-                                                                <Option value={15}>kỳ 15</Option>
-                                                                <Option value={30}>kỳ 30</Option>
-                                                            </Select>
-                                                        </Form.Item>
-
-                                                        <span>
-                                                            <i>
-                                                                <b>Kỳ 15:</b> Khách thuê vào từ ngày 1-15 <br /> <b>Kỳ 30:</b> Khách thuê vào từ ngày
-                                                                16-31
-                                                            </i>
-                                                        </span>
-                                                    </Card>
-                                                </Col>
-                                                <Col span={8} xs={24} xl={8}>
-                                                    <Card
-                                                        title={
-                                                            <Tag color="blue">
-                                                                <h3>
-                                                                    <DollarOutlined style={{ fontSize: "130%" }} />{" "}
-                                                                    <span style={{ fontSize: "15px" }}>
-                                                                        <b> Thông tin giá trị hợp đồng </b>
-                                                                    </span>
-                                                                </h3>
-                                                            </Tag>
-                                                        }
-                                                        bordered={false}
-                                                    >
-                                                        <Form.Item
-                                                            className="form-item"
-                                                            name="contract_price"
-                                                            labelCol={{ span: 24 }}
-                                                            label={
-                                                                <span>
-                                                                    <b>Giá phòng (VND): </b>
-                                                                </span>
-                                                            }
-                                                        // rules={[
-                                                        //   {
-                                                        //     required: true,
-                                                        //     message: "Vui lòng nhập giá phòng",
-                                                        //   },
-                                                        // ]}
-                                                        >
-                                                            <InputNumber
-                                                                controls={false}
-                                                                addonAfter="VNĐ"
-                                                                defaultValue={0}
-                                                                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                                                                parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
-                                                                style={{ width: "100%" }}
-                                                                min={0}
-                                                            />
-                                                        </Form.Item>
-                                                        <Form.Item
-                                                            className="form-item"
-                                                            name="contract_deposit"
-                                                            labelCol={{ span: 24 }}
-                                                            label={
-                                                                <span>
-                                                                    <b>Số tiền cọc (VND): </b>
-                                                                </span>
-                                                            }
-                                                            rules={[
-                                                                {
-                                                                    required: true,
-                                                                    message: "Vui lòng nhập tiền cọc",
-                                                                },
-                                                            ]}
-                                                        >
-                                                            <InputNumber
-                                                                controls={false}
-                                                                addonAfter="VNĐ"
-                                                                defaultValue={0}
-                                                                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                                                                parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
-                                                                style={{ width: "100%" }}
-                                                                min={0}
-                                                            />
-                                                        </Form.Item>
-                                                        <Row>
-                                                            <p>
-                                                                <i>
-                                                                    <b>Lưu ý:</b>
-                                                                    <br />
-                                                                    <b>- Chu kỳ thanh toán: </b> nếu bạn thu tiền 1 lần vào cuối tháng thì bạn chọn là kỳ
-                                                                    30. Trường hợp có số lượng phòng nhiều, chia làm 2 đợt thu, bạn dựa vào ngày vào của
-                                                                    khách, ví dụ: vào từ ngày 1 đến 15 của tháng thì gán kỳ 15; nếu vào từ ngày 16 đến 31
-                                                                    của tháng thì gán kỳ 30. Khi tính tiền phòng bạn sẽ tính tiền theo kỳ.
-                                                                    <br />
-                                                                    <b>- Chu kỳ tính tiền: </b> là số tháng được tính trên mỗi hóa đơn.
-                                                                    <br />
-                                                                </i>
-                                                            </p>
-                                                            <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
-                                                        </Row>
-                                                    </Card>
-                                                </Col>
-                                            </Row>
-                                        </div>
-                                    </Tabs.TabPane>
-                                    <Tabs.TabPane
-                                        tab={
-                                            <span style={{ fontSize: "17px" }}>
-                                                2. Dịch vụ{" "}
-                                                {displayFinish.find((obj, index) => obj === 2) ? (
-                                                    <CheckCircleTwoTone style={{ fontSize: "130%" }} twoToneColor="#52c41a" />
-                                                ) : (
-                                                    ""
-                                                )}
-                                            </span>
-                                        }
-                                        key="2"
-                                    >
-                                        <Row>
-                                            <Col span={23}>
-                                                <Form.Item className="form-item" name="list_general_service" labelCol={{ span: 24 }}>
-                                                    <h3>
-                                                        <b>
-                                                            Thông tin về dịch vụ sử dụng{" "}
-                                                            {dataApartmentGroupSelect?.group_name !== undefined
-                                                                ? dataApartmentGroupSelect?.group_name + " "
-                                                                : ""}
-                                                        </b>
-                                                    </h3>
-                                                </Form.Item>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col span={8}>
-                                                {dataApartmentGroupSelect?.list_general_service?.map((obj, index) => {
-                                                    return (
-                                                        <>
                                                             <Form.Item
                                                                 className="form-item"
+                                                                name="group_id"
                                                                 labelCol={{ span: 24 }}
-                                                                name={["serviceIndexInForm", `${index}`, "hand_over_service_index"]}
                                                                 label={
-                                                                    <h4>
-                                                                        {obj.service_show_name}{" "}
-                                                                        <b>
-                                                                            (
-                                                                            {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
-                                                                                obj.service_price
-                                                                            )}
-                                                                            )
-                                                                        </b>
-                                                                    </h4>
+                                                                    <span>
+                                                                        <b>Tòa nhà: </b>
+                                                                    </span>
                                                                 }
                                                                 rules={[
                                                                     {
                                                                         required: true,
-                                                                        message: `Vui lòng không để trống`,
+                                                                        message: "Vui lòng chọn tòa nhà",
+                                                                    },
+                                                                ]}
+                                                            >
+                                                                <Select
+                                                                    disabled
+                                                                    onChange={(e) => {
+                                                                        form.setFieldsValue({
+                                                                            room_floor: "",
+                                                                            room_id: "",
+                                                                            contract_price: 0,
+                                                                            contract_deposit: 0,
+                                                                            serviceIndexInForm: null,
+                                                                        });
+                                                                        // setRoomStatus(true);
+                                                                        setDataApartmentGroupSelect(
+                                                                            dataApartmentGroup.find((obj, index) => obj.group_id === e)
+                                                                        );
+                                                                        setDataAsset(
+                                                                            dataApartmentGroup
+                                                                                .find((obj, index) => obj.group_id === e)
+                                                                                ?.list_hand_over_assets?.map(
+                                                                                    (obj, index) =>
+                                                                                        [
+                                                                                            {
+                                                                                                asset_id: obj.asset_id,
+                                                                                                asset_name: obj.asset_name,
+                                                                                                asset_type: obj.asset_type,
+                                                                                                hand_over_date_delivery: moment(
+                                                                                                    obj.hand_over_date_delivery,
+                                                                                                    dateFormatList
+                                                                                                )._i,
+                                                                                                asset_type_show_name: obj.asset_type_show_name,
+                                                                                                hand_over_asset_quantity: 1,
+                                                                                                // hand_over_asset_status: obj.hand_over_asset_status,
+                                                                                            },
+                                                                                        ][0]
+                                                                                )
+                                                                        );
+                                                                        // setFloorStatus(false);
+                                                                    }}
+                                                                    placeholder="Chọn tòa nhà"
+                                                                >
+                                                                    {dataApartmentGroup?.map((obj, index) => {
+                                                                        return <Select.Option value={obj.group_id}>{obj.group_name}</Select.Option>;
+                                                                    })}
+                                                                </Select>
+                                                            </Form.Item>
+                                                            <Form.Item
+                                                                className="form-item"
+                                                                name="room_floor"
+                                                                labelCol={{ span: 24 }}
+                                                                label={
+                                                                    <span>
+                                                                        <b>Tầng: </b>
+                                                                    </span>
+                                                                }
+                                                                rules={[
+                                                                    {
+                                                                        required: true,
+                                                                        message: "Vui lòng chọn tầng",
+                                                                    },
+                                                                ]}
+                                                            >
+                                                                <Select
+                                                                    disabled
+                                                                    placeholder="Chọn tầng"
+                                                                    optionFilterProp="children"
+                                                                    onChange={(e) => {
+                                                                        // setRoomStatus(false);
+                                                                        setRoom(
+                                                                            dataApartmentGroupSelect?.list_room?.filter(
+                                                                                (data) => data.room_floor === e && data.contract_id === null
+                                                                            )
+                                                                        );
+                                                                        setFloorRoom((pre) => {
+                                                                            return { ...pre, room_floor: e };
+                                                                        });
+                                                                    }}
+                                                                >
+                                                                    <Select.Option value="">Chọn tầng</Select.Option>
+                                                                    {floors
+                                                                        ?.sort((a, b) => a - b)
+                                                                        ?.map((obj, index) => {
+                                                                            return (
+                                                                                <Select.Option key={index} value={obj}>
+                                                                                    {obj}
+                                                                                </Select.Option>
+                                                                            );
+                                                                        })}
+                                                                </Select>
+                                                            </Form.Item>
+                                                            <Form.Item
+                                                                className="form-item"
+                                                                name="room_id"
+                                                                labelCol={{ span: 24 }}
+                                                                label={
+                                                                    <span>
+                                                                        <b>Phòng: </b>
+                                                                    </span>
+                                                                }
+                                                                rules={[
+                                                                    {
+                                                                        required: true,
+                                                                        message: "Vui lòng chọn phòng",
+                                                                    },
+                                                                ]}
+                                                            >
+                                                                <Select
+                                                                    showSearch
+                                                                    filterOption={(input, option) => (option?.children ?? "").includes(input)}
+                                                                    placeholder="Chọn phòng"
+                                                                    disabled
+                                                                    onChange={(e) => {
+                                                                        setRoomSelect(dataApartmentGroupSelect?.list_room?.find((obj) => obj.id === e));
+                                                                        form.setFieldsValue({
+                                                                            contract_price: dataApartmentGroupSelect?.list_room?.find(
+                                                                                (obj) => obj.id === e
+                                                                            ).room_price,
+                                                                            contract_deposit: dataApartmentGroupSelect?.list_room?.find(
+                                                                                (obj) => obj.id === e
+                                                                            ).room_price,
+                                                                        });
+                                                                    }}
+                                                                >
+                                                                    <Select.Option value="">Chọn phòng</Select.Option>
+                                                                    {room?.map((obj, index) => {
+                                                                        return (
+                                                                            <Select.Option key={index} value={obj.id}>
+                                                                                {obj.room_name}
+                                                                            </Select.Option>
+                                                                        );
+                                                                    })}
+                                                                </Select>
+                                                            </Form.Item>
+                                                            <Form.Item
+                                                                className="form-item"
+                                                                name="contract_type"
+                                                                style={{ display: "none" }}
+                                                            ></Form.Item>
+                                                            <Form.Item
+                                                                className="form-item"
+                                                                name="contract_duration"
+                                                                labelCol={{ span: 24 }}
+                                                                label={
+                                                                    <span>
+                                                                        <b>Thời hạn hợp đồng (ít nhất 1 tháng): </b>
+                                                                    </span>
+                                                                }
+                                                            // rules={[
+                                                            //   {
+                                                            //     required: true,
+                                                            //     message: "Vui lòng chọn thời hạn hợp đồng",
+                                                            //   },
+                                                            // ]}
+                                                            >
+                                                                <Select
+                                                                    placeholder="Thời hạn hợp đồng"
+                                                                    onChange={(e) => {
+                                                                        setContractDuration(e);
+                                                                        form.setFieldsValue({
+                                                                            contract_end_date: moment(contractStartDate.add(e, "M"), dateFormatList),
+                                                                            contract_start_date: moment(contractStartDate.subtract(e, "M"), dateFormatList),
+                                                                        });
+                                                                    }}
+                                                                >
+                                                                    {contract_duration.map((obj, index) => {
+                                                                        return <Option value={obj.contractTermValue}>{obj.contractTermName}</Option>;
+                                                                    })}
+                                                                </Select>
+                                                            </Form.Item>
+
+                                                            <Form.Item
+                                                                className="form-item"
+                                                                name="contract_start_date"
+                                                                labelCol={{ span: 24 }}
+                                                                label={
+                                                                    <span>
+                                                                        <b>Ngày hợp đồng có hiệu lực: </b>
+                                                                    </span>
+                                                                }
+                                                                rules={[
+                                                                    {
+                                                                        required: true,
+                                                                        message: "Vui lòng chọn ngày lập hợp đồng",
+                                                                    },
+                                                                ]}
+                                                            >
+                                                                <DatePicker
+                                                                    onChange={(e) => {
+                                                                        setContractStartDate(e);
+                                                                        const startDate = form.getFieldsValue().contract_start_date;
+                                                                        form.setFieldsValue({
+                                                                            contract_end_date: moment(startDate).add(contractDuration, "M"),
+                                                                        });
+                                                                    }}
+                                                                    allowClear={false}
+                                                                    style={{ width: "100%" }}
+                                                                    placeholder="Ngày vào ở"
+                                                                    defaultValue={moment()}
+                                                                    format="DD-MM-YYYY"
+                                                                />
+                                                            </Form.Item>
+                                                            <Form.Item
+                                                                className="form-item"
+                                                                name="contract_end_date"
+                                                                labelCol={{ span: 24 }}
+                                                                label={
+                                                                    <span>
+                                                                        <b>Ngày kết thúc: </b>
+                                                                    </span>
+                                                                }
+                                                                rules={[
+                                                                    {
+                                                                        required: true,
+                                                                        message: "Vui lòng chọn ngày kết thúc",
+                                                                    },
+                                                                ]}
+                                                            >
+                                                                <DatePicker
+                                                                    allowClear={false}
+                                                                    style={{ width: "100%" }}
+                                                                    placeholder="Ngày kết thúc"
+                                                                    format="DD-MM-YYYY"
+                                                                />
+                                                            </Form.Item>
+                                                            <Form.Item
+                                                                className="form-item"
+                                                                name="contract_bill_cycle"
+                                                                labelCol={{ span: 24 }}
+                                                                label={
+                                                                    <span>
+                                                                        <b>Chu kỳ tính tiền (tháng): </b>
+                                                                    </span>
+                                                                }
+                                                                rules={[
+                                                                    {
+                                                                        required: true,
+                                                                        message: "Vui lòng nhập chu kỳ tính tiền",
+                                                                    },
+                                                                ]}
+                                                            >
+                                                                <Select
+                                                                    onChange={(e) => {
+                                                                        setContractBillCycle(e);
+                                                                    }}
+                                                                    placeholder="Chu kỳ tính tiền"
+                                                                    style={{ width: "100%" }}
+                                                                >
+                                                                    {contract_duration.map((obj, index) => {
+                                                                        return <Option value={obj.contractTermValue}>{obj.contractTermName}</Option>;
+                                                                    })}
+                                                                </Select>
+                                                            </Form.Item>
+                                                            <Form.Item
+                                                                className="form-item"
+                                                                name="contract_payment_cycle"
+                                                                labelCol={{ span: 24 }}
+                                                                label={
+                                                                    <>
+                                                                        <span>
+                                                                            <b>Chu kỳ thanh toán: </b>
+                                                                        </span>
+                                                                    </>
+                                                                }
+                                                                rules={[
+                                                                    {
+                                                                        required: true,
+                                                                        message: "Vui lòng nhập chu kỳ thanh toán",
+                                                                    },
+                                                                ]}
+                                                            >
+                                                                <Select placeholder="Kỳ thanh toán" style={{ width: "100%" }}>
+                                                                    <Option value={15}>kỳ 15</Option>
+                                                                    <Option value={30}>kỳ 30</Option>
+                                                                </Select>
+                                                            </Form.Item>
+
+                                                            <span>
+                                                                <i>
+                                                                    <b>Kỳ 15:</b> Khách thuê vào từ ngày 1-15 <br /> <b>Kỳ 30:</b> Khách thuê vào từ ngày
+                                                                    16-31
+                                                                </i>
+                                                            </span>
+                                                        </Card>
+                                                    </Col>
+                                                    <Col span={8} xs={24} xl={8}>
+                                                        <Card
+                                                            title={
+                                                                <Tag color="blue">
+                                                                    <h3>
+                                                                        <DollarOutlined style={{ fontSize: "130%" }} />{" "}
+                                                                        <span style={{ fontSize: "15px" }}>
+                                                                            <b> Thông tin giá trị hợp đồng </b>
+                                                                        </span>
+                                                                    </h3>
+                                                                </Tag>
+                                                            }
+                                                            bordered={false}
+                                                        >
+                                                            <Form.Item
+                                                                className="form-item"
+                                                                name="contract_price"
+                                                                labelCol={{ span: 24 }}
+                                                                label={
+                                                                    <span>
+                                                                        <b>Giá phòng (VND): </b>
+                                                                    </span>
+                                                                }
+                                                            // rules={[
+                                                            //   {
+                                                            //     required: true,
+                                                            //     message: "Vui lòng nhập giá phòng",
+                                                            //   },
+                                                            // ]}
+                                                            >
+                                                                <InputNumber
+                                                                    controls={false}
+                                                                    addonAfter="VNĐ"
+                                                                    defaultValue={0}
+                                                                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                                                    parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
+                                                                    style={{ width: "100%" }}
+                                                                    min={0}
+                                                                />
+                                                            </Form.Item>
+                                                            <Form.Item
+                                                                className="form-item"
+                                                                name="contract_deposit"
+                                                                labelCol={{ span: 24 }}
+                                                                label={
+                                                                    <span>
+                                                                        <b>Số tiền cọc (VND): </b>
+                                                                    </span>
+                                                                }
+                                                                rules={[
+                                                                    {
+                                                                        required: true,
+                                                                        message: "Vui lòng nhập tiền cọc",
                                                                     },
                                                                 ]}
                                                             >
                                                                 <InputNumber
                                                                     controls={false}
-                                                                    placeholder={
-                                                                        String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
-                                                                            ? "Nhập chỉ số hiện tại"
-                                                                            : "Số " +
-                                                                            obj.service_type_name +
-                                                                            " / " +
-                                                                            obj.service_price.toLocaleString("vn-VN", {
-                                                                                style: "currency",
-                                                                                currency: "VND",
-                                                                            })
-                                                                    }
-                                                                    addonAfter={
-                                                                        String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
-                                                                            ? "Chỉ số hiện tại"
-                                                                            : obj.service_type_name
-                                                                    }
+                                                                    addonAfter="VNĐ"
+                                                                    defaultValue={0}
+                                                                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                                                    parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
                                                                     style={{ width: "100%" }}
                                                                     min={0}
                                                                 />
                                                             </Form.Item>
-                                                        </>
-                                                    );
-                                                })}
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col span={24}>
-                                                <Table
-                                                    bordered
-                                                    rowKey={(record) => record.key}
-                                                    dataSource={dataApartmentGroupSelect?.list_general_service}
-                                                    columns={columnsService}
-                                                    loading={loading}
-                                                ></Table>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <p>
-                                                <i>
-                                                    <b>Lưu ý:</b>
-                                                    <br />
-                                                    - Trên đây là dịch vụ chung áp dụng cho tất cả các phòng trong một tòa nhà.
-                                                    <br />- Nếu bạn muốn thay đổi dịch vụ chung này cần vào mục <b>Dịch Vụ</b>
-                                                    <br />
-                                                </i>
-                                            </p>
-                                        </Row>
-                                        <Row>
-                                            <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
-                                        </Row>
-                                    </Tabs.TabPane>
-                                    <Tabs.TabPane
-                                        tab={
-                                            <span style={{ fontSize: "17px" }}>
-                                                3. Thành viên{" "}
-                                                {displayFinish.find((obj, index) => obj === 3) ? (
-                                                    <CheckCircleTwoTone style={{ fontSize: "130%" }} twoToneColor="#52c41a" />
-                                                ) : (
-                                                    ""
-                                                )}
-                                            </span>
-                                        }
-                                        key="3"
-                                    >
-                                        <Row>
-                                            <Col span={23}>
-                                                <Form.Item className="form-item" name="list_renter" labelCol={{ span: 24 }}>
-                                                    <h3>
-                                                        <b>
-                                                            Thông tin về thành viên
-                                                            {roomSelect?.room_name === undefined ? "" : " phòng " + roomSelect?.room_name}
-                                                        </b>{" "}
-                                                        (Số lượng: {dataMember.length}/{roomSelect?.room_limit_people - 1})
-                                                    </h3>
-                                                </Form.Item>
-                                            </Col>
-                                            <Col span={1}>
-                                                <PlusCircleOutlined
-                                                    style={{ fontSize: 36, marginBottom: 20, color: "#1890ff" }}
-                                                    onClick={() => {
-                                                        setIsAddMem(true);
-                                                        formAddMem.setFieldsValue({
-                                                            gender: true,
-                                                            member_id: memberId,
-                                                        });
-                                                    }}
-                                                />
-                                            </Col>
-                                            <Table
-                                                style={{ width: "100%" }}
-                                                bordered
-                                                dataSource={dataMember}
-                                                columns={columnsMember}
-                                                scroll={{ x: 800, y: 600 }}
-                                            ></Table>
-                                        </Row>
-                                    </Tabs.TabPane>
-                                    <Tabs.TabPane
-                                        tab={
-                                            <span style={{ fontSize: "17px" }}>
-                                                4. Tài sản{" "}
-                                                {displayFinish.find((obj, index) => obj === 4) ? (
-                                                    <CheckCircleTwoTone style={{ fontSize: "130%" }} twoToneColor="#52c41a" />
-                                                ) : (
-                                                    ""
-                                                )}
-                                            </span>
-                                        }
-                                        key="4"
-                                    >
-                                        <Row>
-                                            <Col span={24}>
-                                                <Form.Item className="form-item" name="list_hand_over_assets" labelCol={{ span: 24 }}>
-                                                    <p>
+                                                            <Row>
+                                                                <p>
+                                                                    <i>
+                                                                        <b>Lưu ý:</b>
+                                                                        <br />
+                                                                        <b>- Chu kỳ thanh toán: </b> nếu bạn thu tiền 1 lần vào cuối tháng thì bạn chọn là kỳ
+                                                                        30. Trường hợp có số lượng phòng nhiều, chia làm 2 đợt thu, bạn dựa vào ngày vào của
+                                                                        khách, ví dụ: vào từ ngày 1 đến 15 của tháng thì gán kỳ 15; nếu vào từ ngày 16 đến 31
+                                                                        của tháng thì gán kỳ 30. Khi tính tiền phòng bạn sẽ tính tiền theo kỳ.
+                                                                        <br />
+                                                                        <b>- Chu kỳ tính tiền: </b> là số tháng được tính trên mỗi hóa đơn.
+                                                                        <br />
+                                                                    </i>
+                                                                </p>
+                                                                <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
+                                                            </Row>
+                                                        </Card>
+                                                    </Col>
+                                                </Row>
+                                            </div>
+                                        </Tabs.TabPane>
+                                        <Tabs.TabPane
+                                            tab={
+                                                <span style={{ fontSize: "17px" }}>
+                                                    2. Dịch vụ{" "}
+                                                    {displayFinish.find((obj, index) => obj === 2) ? (
+                                                        <CheckCircleTwoTone style={{ fontSize: "130%" }} twoToneColor="#52c41a" />
+                                                    ) : (
+                                                        ""
+                                                    )}
+                                                </span>
+                                            }
+                                            key="2"
+                                        >
+                                            <Row>
+                                                <Col span={23}>
+                                                    <Form.Item className="form-item" name="list_general_service" labelCol={{ span: 24 }}>
                                                         <h3>
                                                             <b>
-                                                                Thông tin tài sản bàn giao tòa{" "}
+                                                                Thông tin về dịch vụ sử dụng{" "}
                                                                 {dataApartmentGroupSelect?.group_name !== undefined
                                                                     ? dataApartmentGroupSelect?.group_name + " "
                                                                     : ""}
-                                                                {floorRoom?.room_floor !== undefined ? "tầng " + floorRoom?.room_floor : ""}{" "}
-                                                                {roomSelect?.room_name === undefined ? "" : "phòng " + roomSelect?.room_name}
                                                             </b>
                                                         </h3>
-                                                    </p>
-                                                </Form.Item>
-                                                <Row>
-                                                    <Col>
-                                                        <Input.Search
-                                                            placeholder="Nhập tên tài sản để tìm kiếm"
-                                                            style={{ marginBottom: 8, width: 400 }}
-                                                            onSearch={(e) => {
-                                                                setSearched(e);
-                                                            }}
-                                                            onChange={(e) => {
-                                                                setSearched(e.target.value);
-                                                            }}
-                                                        />
-                                                    </Col>
-                                                </Row>
-                                                <Row>
-                                                    <Col span={22}>
-                                                        <Row>
-                                                            <FilterOutlined style={{ fontSize: "150%" }} />
-                                                            <b>Nhóm tài sản: </b>
-                                                            <Checkbox.Group
-                                                                style={{ paddingLeft: "1%" }}
-                                                                options={listAssetType?.map((obj, index) => {
-                                                                    return obj.asset_type_show_name;
-                                                                })}
-                                                                onChange={(checkedValues) => {
-                                                                    // console.log(dataFilter.asset_type_show_name);
-                                                                    dataFilter.asset_type_show_name = checkedValues;
-                                                                    setFilterAssetType(dataFilter);
-                                                                }}
-                                                            ></Checkbox.Group>
-                                                        </Row>
-                                                    </Col>
-                                                    <Col span={2}>
-                                                        <PlusCircleOutlined
-                                                            onClick={() => {
-                                                                setAddAssetInRoom(true);
-                                                            }}
-                                                            style={{ fontSize: 36, color: "#1890ff", float: "right", marginBottom: "10%" }}
-                                                        />
-                                                    </Col>
-                                                </Row>
-                                                <Row>
+                                                    </Form.Item>
+                                                </Col>
+                                            </Row>
+                                            <Row>
+                                                <Col span={8}>
+                                                    {dataApartmentGroupSelect?.list_general_service?.map((obj, index) => {
+                                                        return (
+                                                            <>
+                                                                <Form.Item
+                                                                    className="form-item"
+                                                                    labelCol={{ span: 24 }}
+                                                                    name={["serviceIndexInForm", `${index}`, "hand_over_service_index"]}
+                                                                    label={
+                                                                        <h4>
+                                                                            {obj.service_show_name}{" "}
+                                                                            <b>
+                                                                                (
+                                                                                {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
+                                                                                    obj.service_price
+                                                                                )}
+                                                                                )
+                                                                            </b>
+                                                                        </h4>
+                                                                    }
+                                                                    rules={[
+                                                                        {
+                                                                            required: true,
+                                                                            message: `Vui lòng không để trống`,
+                                                                        },
+                                                                    ]}
+                                                                >
+                                                                    <InputNumber
+                                                                        controls={false}
+                                                                        placeholder={
+                                                                            String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
+                                                                                ? "Nhập chỉ số hiện tại"
+                                                                                : "Số " +
+                                                                                obj.service_type_name +
+                                                                                " / " +
+                                                                                obj.service_price.toLocaleString("vn-VN", {
+                                                                                    style: "currency",
+                                                                                    currency: "VND",
+                                                                                })
+                                                                        }
+                                                                        addonAfter={
+                                                                            String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
+                                                                                ? "Chỉ số hiện tại"
+                                                                                : obj.service_type_name
+                                                                        }
+                                                                        style={{ width: "100%" }}
+                                                                        min={0}
+                                                                    />
+                                                                </Form.Item>
+                                                            </>
+                                                        );
+                                                    })}
+                                                </Col>
+                                            </Row>
+                                            <Row>
+                                                <Col span={24}>
                                                     <Table
                                                         bordered
-                                                        onChange={(pagination, filters, sorter, extra) => {
-                                                            setFilterAssetType(filters);
-                                                            setAssetStatus(filters);
-                                                        }}
-                                                        dataSource={dataAsset}
-                                                        columns={columns}
-                                                        scroll={{ x: 800, y: 600 }}
+                                                        rowKey={(record) => record.key}
+                                                        dataSource={dataApartmentGroupSelect?.list_general_service}
+                                                        columns={columnsService}
                                                         loading={loading}
                                                     ></Table>
-                                                </Row>
-                                            </Col>
-                                        </Row>
-                                        {/* <Row>
+                                                </Col>
+                                            </Row>
+                                            <Row>
+                                                <p>
+                                                    <i>
+                                                        <b>Lưu ý:</b>
+                                                        <br />
+                                                        - Trên đây là dịch vụ chung áp dụng cho tất cả các phòng trong một tòa nhà.
+                                                        <br />- Nếu bạn muốn thay đổi dịch vụ chung này cần vào mục <b>Dịch Vụ</b>
+                                                        <br />
+                                                    </i>
+                                                </p>
+                                            </Row>
+                                            <Row>
+                                                <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
+                                            </Row>
+                                        </Tabs.TabPane>
+                                        <Tabs.TabPane
+                                            tab={
+                                                <span style={{ fontSize: "17px" }}>
+                                                    3. Thành viên{" "}
+                                                    {displayFinish.find((obj, index) => obj === 3) ? (
+                                                        <CheckCircleTwoTone style={{ fontSize: "130%" }} twoToneColor="#52c41a" />
+                                                    ) : (
+                                                        ""
+                                                    )}
+                                                </span>
+                                            }
+                                            key="3"
+                                        >
+                                            <Row>
+                                                <Col span={23}>
+                                                    <Form.Item className="form-item" name="list_renter" labelCol={{ span: 24 }}>
+                                                        <h3>
+                                                            <b>
+                                                                Thông tin về thành viên
+                                                                {roomSelect?.room_name === undefined ? "" : " phòng " + roomSelect?.room_name}
+                                                            </b>{" "}
+                                                            (Số lượng: {dataMember.length}/{roomSelect?.room_limit_people - 1})
+                                                        </h3>
+                                                    </Form.Item>
+                                                </Col>
+                                                <Col span={1}>
+                                                    <PlusCircleOutlined
+                                                        style={{ fontSize: 36, marginBottom: 20, color: "#1890ff" }}
+                                                        onClick={() => {
+                                                            setIsAddMem(true);
+                                                            formAddMem.setFieldsValue({
+                                                                gender: true,
+                                                                member_id: memberId,
+                                                            });
+                                                        }}
+                                                    />
+                                                </Col>
+                                                <Table
+                                                    style={{ width: "100%" }}
+                                                    bordered
+                                                    dataSource={dataMember}
+                                                    columns={columnsMember}
+                                                    scroll={{ x: 800, y: 600 }}
+                                                ></Table>
+                                            </Row>
+                                        </Tabs.TabPane>
+                                        <Tabs.TabPane
+                                            tab={
+                                                <span style={{ fontSize: "17px" }}>
+                                                    4. Tài sản{" "}
+                                                    {displayFinish.find((obj, index) => obj === 4) ? (
+                                                        <CheckCircleTwoTone style={{ fontSize: "130%" }} twoToneColor="#52c41a" />
+                                                    ) : (
+                                                        ""
+                                                    )}
+                                                </span>
+                                            }
+                                            key="4"
+                                        >
+                                            <Row>
+                                                <Col span={24}>
+                                                    <Form.Item className="form-item" name="list_hand_over_assets" labelCol={{ span: 24 }}>
+                                                        <p>
+                                                            <h3>
+                                                                <b>
+                                                                    Thông tin tài sản bàn giao tòa{" "}
+                                                                    {dataApartmentGroupSelect?.group_name !== undefined
+                                                                        ? dataApartmentGroupSelect?.group_name + " "
+                                                                        : ""}
+                                                                    {floorRoom?.room_floor !== undefined ? "tầng " + floorRoom?.room_floor : ""}{" "}
+                                                                    {roomSelect?.room_name === undefined ? "" : "phòng " + roomSelect?.room_name}
+                                                                </b>
+                                                            </h3>
+                                                        </p>
+                                                    </Form.Item>
+                                                    <Row>
+                                                        <Col>
+                                                            <Input.Search
+                                                                placeholder="Nhập tên tài sản để tìm kiếm"
+                                                                style={{ marginBottom: 8, width: 400 }}
+                                                                onSearch={(e) => {
+                                                                    setSearched(e);
+                                                                }}
+                                                                onChange={(e) => {
+                                                                    setSearched(e.target.value);
+                                                                }}
+                                                            />
+                                                        </Col>
+                                                    </Row>
+                                                    <Row>
+                                                        <Col span={22}>
+                                                            <Row>
+                                                                <FilterOutlined style={{ fontSize: "150%" }} />
+                                                                <b>Nhóm tài sản: </b>
+                                                                <Checkbox.Group
+                                                                    style={{ paddingLeft: "1%" }}
+                                                                    options={listAssetType?.map((obj, index) => {
+                                                                        return obj.asset_type_show_name;
+                                                                    })}
+                                                                    onChange={(checkedValues) => {
+                                                                        // console.log(dataFilter.asset_type_show_name);
+                                                                        dataFilter.asset_type_show_name = checkedValues;
+                                                                        setFilterAssetType(dataFilter);
+                                                                    }}
+                                                                ></Checkbox.Group>
+                                                            </Row>
+                                                        </Col>
+                                                        <Col span={2}>
+                                                            <PlusCircleOutlined
+                                                                onClick={() => {
+                                                                    setAddAssetInRoom(true);
+                                                                }}
+                                                                style={{ fontSize: 36, color: "#1890ff", float: "right", marginBottom: "10%" }}
+                                                            />
+                                                        </Col>
+                                                    </Row>
+                                                    <Row>
+                                                        <Table
+                                                            bordered
+                                                            onChange={(pagination, filters, sorter, extra) => {
+                                                                setFilterAssetType(filters);
+                                                                setAssetStatus(filters);
+                                                            }}
+                                                            dataSource={dataAsset}
+                                                            columns={columns}
+                                                            scroll={{ x: 800, y: 600 }}
+                                                            loading={loading}
+                                                        ></Table>
+                                                    </Row>
+                                                </Col>
+                                            </Row>
+                                            {/* <Row>
                       <p>
                         <i>
                           <b>Lưu ý:</b>
@@ -1765,253 +1766,253 @@ const RoomContract = () => {
                     <Row>
                       <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
                     </Row> */}
-                                    </Tabs.TabPane>
-                                </Tabs>
-                            </Form>
-                            <Button
-                                style={changeTab === "1" ? { display: "none" } : { display: "inline", marginRight: "0.5%" }}
-                                type="default"
-                                onClick={() => {
-                                    setChangeTab((pre) => {
-                                        if (pre === "1") {
-                                            return "4";
-                                        } else {
-                                            return (parseInt(pre) - 1).toString();
+                                        </Tabs.TabPane>
+                                    </Tabs>
+                                </Form>
+                                <Button
+                                    style={changeTab === "1" ? { display: "none" } : { display: "inline", marginRight: "0.5%" }}
+                                    type="default"
+                                    onClick={() => {
+                                        setChangeTab((pre) => {
+                                            if (pre === "1") {
+                                                return "4";
+                                            } else {
+                                                return (parseInt(pre) - 1).toString();
+                                            }
+                                        });
+                                        if (changeTab === "4") {
+                                            setVisibleSubmit(false);
                                         }
-                                    });
-                                    if (changeTab === "4") {
-                                        setVisibleSubmit(false);
-                                    }
-                                }}
-                            >
-                                Quay lại
-                            </Button>
-                            {visibleSubmit ? (
-                                <Button htmlType="submit" style={{ marginTop: "1%" }} type="primary" form="create-contract">
-                                    Tạo mới hợp đồng
+                                    }}
+                                >
+                                    Quay lại
                                 </Button>
-                            ) : (
-                                ""
-                            )}
-                            <Button
-                                style={visibleSubmit ? { display: "none" } : { marginTop: "1%", display: "inline" }}
-                                type="primary"
-                                onClick={onNext}
-                            >
-                                Tiếp
-                            </Button>
-                            <Modal
-                                title="Thông tin khách thuê trong tất cả tòa nhà"
-                                visible={isAdd}
-                                onCancel={() => {
-                                    resetAdd();
-                                }}
-                                onOk={onOk}
-                                footer={[
-                                    <Button key="back" onClick={resetAdd}>
-                                        Đóng
-                                    </Button>,
-                                    <Button type="primary" onClick={onOk}>
-                                        Chọn
-                                    </Button>,
-                                ]}
-                                width={1100}
-                            >
-                                <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                                    <Col xs={24} lg={8} span={8}>
-                                        <Input.Search
-                                            placeholder="Nhập tên, SĐT hoặc số CMND để tìm kiếm"
-                                            style={{ marginBottom: "5%", width: "100%" }}
-                                            onSearch={(e) => {
-                                                setSearched(e);
+                                {visibleSubmit ? (
+                                    <Button htmlType="submit" style={{ marginTop: "1%" }} type="primary" form="create-contract">
+                                        Tạo mới hợp đồng
+                                    </Button>
+                                ) : (
+                                    ""
+                                )}
+                                <Button
+                                    style={visibleSubmit ? { display: "none" } : { marginTop: "1%", display: "inline" }}
+                                    type="primary"
+                                    onClick={onNext}
+                                >
+                                    Tiếp
+                                </Button>
+                                <Modal
+                                    title="Thông tin khách thuê trong tất cả tòa nhà"
+                                    visible={isAdd}
+                                    onCancel={() => {
+                                        resetAdd();
+                                    }}
+                                    onOk={onOk}
+                                    footer={[
+                                        <Button key="back" onClick={resetAdd}>
+                                            Đóng
+                                        </Button>,
+                                        <Button type="primary" onClick={onOk}>
+                                            Chọn
+                                        </Button>,
+                                    ]}
+                                    width={1100}
+                                >
+                                    <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+                                        <Col xs={24} lg={8} span={8}>
+                                            <Input.Search
+                                                placeholder="Nhập tên, SĐT hoặc số CMND để tìm kiếm"
+                                                style={{ marginBottom: "5%", width: "100%" }}
+                                                onSearch={(e) => {
+                                                    setSearched(e);
+                                                }}
+                                                onChange={(e) => {
+                                                    setSearched(e.target.value);
+                                                }}
+                                            />
+                                        </Col>
+                                        <Col xs={12} lg={8} span={8}>
+                                            <span>Giới tính: </span>
+                                            <Checkbox.Group
+                                                defaultValue={[true, false]}
+                                                onChange={(e) => {
+                                                    setOldRenterGender({ ...oldRenterGender, gender: e });
+                                                }}
+                                                options={[
+                                                    { label: "Nam", value: true },
+                                                    { label: "Nữ", value: false },
+                                                ]}
+                                            ></Checkbox.Group>
+                                        </Col>
+                                        <Col xs={12} lg={8} span={8}>
+                                            <Select
+                                                defaultValue={""}
+                                                style={{ width: '100%' }}
+                                                onChange={(e) => {
+                                                    filterRenter(e);
+                                                }}
+                                                placeholder="Chọn tòa nhà"
+                                            >
+                                                <Select.Option value="">Tất cả tòa nhà</Select.Option>
+                                                {dataApartmentGroup?.map((obj, index) => {
+                                                    return <Select.Option value={obj.group_id}>{obj.group_name}</Select.Option>;
+                                                })}
+                                            </Select>
+                                        </Col>
+                                    </Row>
+                                    <Form
+                                        labelCol={{ span: 5 }}
+                                        wrapperCol={{ span: 30 }}
+                                        layout="horizontal"
+                                        initialValues={{ size: componentSize }}
+                                        onValuesChange={onFormLayoutChange}
+                                        size={"default"}
+                                    >
+                                        <Form.Item>
+                                            <Table
+                                                bordered
+                                                loading={loading}
+                                                columns={renterColumn}
+                                                dataSource={dataOldRenter}
+                                                scroll={{ x: 1000, y: 400 }}
+                                                onChange={(pagination, filters, sorter, extra) => {
+                                                    setOldRenterGender(filters);
+                                                }}
+                                                rowKey={(record) => record.renter_id}
+                                                rowSelection={{
+                                                    type: "radio",
+                                                    onSelect: (record) => {
+                                                        setSelectOldRenter({ ...record });
+                                                    },
+                                                }}
+                                            />
+                                        </Form.Item>
+                                    </Form>
+                                </Modal>
+                                <Modal
+                                    title="Thêm tài sản mới"
+                                    visible={addAssetInRoom}
+                                    onCancel={() => {
+                                        setAddAssetInRoom(false);
+                                    }}
+                                    onOk={() => {
+                                        setAddAssetInRoom(false);
+                                    }}
+                                    width={500}
+                                    footer={[
+                                        <Button
+                                            key="back"
+                                            onClick={() => {
+                                                // setFormAddAsset(createAssetForm.getFieldsValue());
+                                                // setAddAssetInRoom(false)
+                                                setAddAssetInRoom(false);
                                             }}
-                                            onChange={(e) => {
-                                                setSearched(e.target.value);
-                                            }}
-                                        />
-                                    </Col>
-                                    <Col xs={12} lg={8} span={8}>
-                                        <span>Giới tính: </span>
-                                        <Checkbox.Group
-                                            defaultValue={[true, false]}
-                                            onChange={(e) => {
-                                                setOldRenterGender({ ...oldRenterGender, gender: e });
-                                            }}
-                                            options={[
-                                                { label: "Nam", value: true },
-                                                { label: "Nữ", value: false },
-                                            ]}
-                                        ></Checkbox.Group>
-                                    </Col>
-                                    <Col xs={12} lg={8} span={8}>
-                                        <Select
-                                            defaultValue={""}
-                                            style={{ width: '100%' }}
-                                            onChange={(e) => {
-                                                filterRenter(e);
-                                            }}
-                                            placeholder="Chọn tòa nhà"
                                         >
-                                            <Select.Option value="">Tất cả tòa nhà</Select.Option>
-                                            {dataApartmentGroup?.map((obj, index) => {
-                                                return <Select.Option value={obj.group_id}>{obj.group_name}</Select.Option>;
-                                            })}
-                                        </Select>
-                                    </Col>
-                                </Row>
-                                <Form
-                                    labelCol={{ span: 5 }}
-                                    wrapperCol={{ span: 30 }}
-                                    layout="horizontal"
-                                    initialValues={{ size: componentSize }}
-                                    onValuesChange={onFormLayoutChange}
-                                    size={"default"}
+                                            Đóng
+                                        </Button>,
+                                        <Button htmlType="submit" key="submit" form="create-asset" type="primary">
+                                            Lưu
+                                        </Button>,
+                                    ]}
                                 >
-                                    <Form.Item>
-                                        <Table
-                                            bordered
-                                            loading={loading}
-                                            columns={renterColumn}
-                                            dataSource={dataOldRenter}
-                                            scroll={{ x: 1000, y: 400 }}
-                                            onChange={(pagination, filters, sorter, extra) => {
-                                                setOldRenterGender(filters);
-                                            }}
-                                            rowKey={(record) => record.renter_id}
-                                            rowSelection={{
-                                                type: "radio",
-                                                onSelect: (record) => {
-                                                    setSelectOldRenter({ ...record });
+                                    <Form
+                                        form={createAssetForm}
+                                        onFinish={addAssetFinish}
+                                        onFinishFailed={addAssetFail}
+                                        labelCol={{ span: 5 }}
+                                        wrapperCol={{ span: 30 }}
+                                        layout="horizontal"
+                                        initialValues={{ size: componentSize }}
+                                        onValuesChange={onFormLayoutChange}
+                                        size={"default"}
+                                        id="create-asset"
+                                    >
+                                        <Form.Item className="form-item" name="asset_id" style={{ display: "none" }}></Form.Item>
+                                        <Form.Item
+                                            className="form-item"
+                                            name="asset_name"
+                                            labelCol={{ span: 24 }}
+                                            label={
+                                                <span>
+                                                    <b>Tên tài sản: </b>
+                                                </span>
+                                            }
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: "Vui lòng nhập tên tài sản",
+                                                    whitespace: true,
                                                 },
-                                            }}
-                                        />
-                                    </Form.Item>
-                                </Form>
-                            </Modal>
-                            <Modal
-                                title="Thêm tài sản mới"
-                                visible={addAssetInRoom}
-                                onCancel={() => {
-                                    setAddAssetInRoom(false);
-                                }}
-                                onOk={() => {
-                                    setAddAssetInRoom(false);
-                                }}
-                                width={500}
-                                footer={[
-                                    <Button
-                                        key="back"
-                                        onClick={() => {
-                                            // setFormAddAsset(createAssetForm.getFieldsValue());
-                                            // setAddAssetInRoom(false)
-                                            setAddAssetInRoom(false);
-                                        }}
-                                    >
-                                        Đóng
-                                    </Button>,
-                                    <Button htmlType="submit" key="submit" form="create-asset" type="primary">
-                                        Lưu
-                                    </Button>,
-                                ]}
-                            >
-                                <Form
-                                    form={createAssetForm}
-                                    onFinish={addAssetFinish}
-                                    onFinishFailed={addAssetFail}
-                                    labelCol={{ span: 5 }}
-                                    wrapperCol={{ span: 30 }}
-                                    layout="horizontal"
-                                    initialValues={{ size: componentSize }}
-                                    onValuesChange={onFormLayoutChange}
-                                    size={"default"}
-                                    id="create-asset"
-                                >
-                                    <Form.Item className="form-item" name="asset_id" style={{ display: "none" }}></Form.Item>
-                                    <Form.Item
-                                        className="form-item"
-                                        name="asset_name"
-                                        labelCol={{ span: 24 }}
-                                        label={
-                                            <span>
-                                                <b>Tên tài sản: </b>
-                                            </span>
-                                        }
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: "Vui lòng nhập tên tài sản",
-                                                whitespace: true,
-                                            },
-                                        ]}
-                                    >
-                                        <Input placeholder="Tên tài sản"></Input>
-                                    </Form.Item>
-                                    <Form.Item
-                                        className="form-item"
-                                        name="hand_over_asset_date_delivery"
-                                        labelCol={{ span: 24 }}
-                                        label={
-                                            <span>
-                                                <b>Ngày bàn giao: </b>
-                                            </span>
-                                        }
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: "Vui lòng chọn ngày bàn giao",
-                                            },
-                                        ]}
-                                    >
-                                        <DatePicker
-                                            style={{ width: "100%" }}
-                                            placeholder="Ngày bàn giao"
-                                            defaultValue={moment()}
-                                            format="DD-MM-YYYY"
-                                        />
-                                    </Form.Item>
-                                    <Form.Item
-                                        className="form-item"
-                                        name="hand_over_asset_quantity"
-                                        labelCol={{ span: 24 }}
-                                        label={
-                                            <span>
-                                                <b>Số lượng: </b>
-                                            </span>
-                                        }
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: "Vui lòng nhập số lượng",
-                                            },
-                                        ]}
-                                    >
-                                        <InputNumber defaultValue={1} style={{ width: "100%" }} min={1} />
-                                    </Form.Item>
-                                    <Form.Item
-                                        className="form-item"
-                                        name="asset_type_show_name"
-                                        labelCol={{ span: 24 }}
-                                        label={
-                                            <span>
-                                                <b>Nhóm tài sản: </b>
-                                            </span>
-                                        }
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: "Vui lòng chọn nhóm tài sản",
-                                            },
-                                        ]}
-                                    >
-                                        <Select placeholder="Chọn nhóm tài sản">
-                                            {listAssetType?.map((obj, index) => {
-                                                return (
-                                                    <Select.Option value={obj.asset_type_show_name}>{obj.asset_type_show_name}</Select.Option>
-                                                );
-                                            })}
-                                        </Select>
-                                    </Form.Item>
-                                    {/* <Form.Item
+                                            ]}
+                                        >
+                                            <Input placeholder="Tên tài sản"></Input>
+                                        </Form.Item>
+                                        <Form.Item
+                                            className="form-item"
+                                            name="hand_over_date_delivery"
+                                            labelCol={{ span: 24 }}
+                                            label={
+                                                <span>
+                                                    <b>Ngày bàn giao: </b>
+                                                </span>
+                                            }
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: "Vui lòng chọn ngày bàn giao",
+                                                },
+                                            ]}
+                                        >
+                                            <DatePicker
+                                                style={{ width: "100%" }}
+                                                placeholder="Ngày bàn giao"
+                                                defaultValue={moment()}
+                                                format="DD-MM-YYYY"
+                                            />
+                                        </Form.Item>
+                                        <Form.Item
+                                            className="form-item"
+                                            name="hand_over_asset_quantity"
+                                            labelCol={{ span: 24 }}
+                                            label={
+                                                <span>
+                                                    <b>Số lượng: </b>
+                                                </span>
+                                            }
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: "Vui lòng nhập số lượng",
+                                                },
+                                            ]}
+                                        >
+                                            <InputNumber defaultValue={1} style={{ width: "100%" }} min={1} />
+                                        </Form.Item>
+                                        <Form.Item
+                                            className="form-item"
+                                            name="asset_type_show_name"
+                                            labelCol={{ span: 24 }}
+                                            label={
+                                                <span>
+                                                    <b>Nhóm tài sản: </b>
+                                                </span>
+                                            }
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: "Vui lòng chọn nhóm tài sản",
+                                                },
+                                            ]}
+                                        >
+                                            <Select placeholder="Chọn nhóm tài sản">
+                                                {listAssetType?.map((obj, index) => {
+                                                    return (
+                                                        <Select.Option value={obj.asset_type_show_name}>{obj.asset_type_show_name}</Select.Option>
+                                                    );
+                                                })}
+                                            </Select>
+                                        </Form.Item>
+                                        {/* <Form.Item
                     className="form-item"
                     name="hand_over_asset_status"
                     labelCol={{ span: 24 }}
@@ -2036,131 +2037,131 @@ const RoomContract = () => {
                       </Radio>
                     </Radio.Group>
                   </Form.Item> */}
-                                </Form>
-                            </Modal>
+                                    </Form>
+                                </Modal>
 
-                            <Modal
-                                title="Chỉnh sửa tài sản trong phòng"
-                                visible={isEditAsset}
-                                onCancel={() => {
-                                    setIsEditAsset(false);
-                                }}
-                                onOk={() => {
-                                    setIsEditAsset(false);
-                                }}
-                                width={500}
-                                footer={[
-                                    <Button
-                                        key="back"
-                                        onClick={() => {
-                                            setIsEditAsset(false);
-                                        }}
-                                    >
-                                        Đóng
-                                    </Button>,
-                                    <Button htmlType="submit" key="submit" form="edit-asset" type="primary">
-                                        Lưu
-                                    </Button>,
-                                ]}
-                            >
-                                <Form
-                                    form={editAssetForm}
-                                    onFinish={editAssetFinish}
-                                    onFinishFailed={editAssetFail}
-                                    labelCol={{ span: 5 }}
-                                    wrapperCol={{ span: 30 }}
-                                    layout="horizontal"
-                                    initialValues={{ size: componentSize }}
-                                    onValuesChange={onFormLayoutChange}
-                                    size={"default"}
-                                    id="edit-asset"
+                                <Modal
+                                    title="Chỉnh sửa tài sản trong phòng"
+                                    visible={isEditAsset}
+                                    onCancel={() => {
+                                        setIsEditAsset(false);
+                                    }}
+                                    onOk={() => {
+                                        setIsEditAsset(false);
+                                    }}
+                                    width={500}
+                                    footer={[
+                                        <Button
+                                            key="back"
+                                            onClick={() => {
+                                                setIsEditAsset(false);
+                                            }}
+                                        >
+                                            Đóng
+                                        </Button>,
+                                        <Button htmlType="submit" key="submit" form="edit-asset" type="primary">
+                                            Lưu
+                                        </Button>,
+                                    ]}
                                 >
-                                    <Form.Item
-                                        className="form-item"
-                                        name="asset_name"
-                                        labelCol={{ span: 24 }}
-                                        label={
-                                            <span>
-                                                <b>Tên tài sản: </b>
-                                            </span>
-                                        }
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: "Vui lòng nhập tên tài sản",
-                                                whitespace: true,
-                                            },
-                                        ]}
+                                    <Form
+                                        form={editAssetForm}
+                                        onFinish={editAssetFinish}
+                                        onFinishFailed={editAssetFail}
+                                        labelCol={{ span: 5 }}
+                                        wrapperCol={{ span: 30 }}
+                                        layout="horizontal"
+                                        initialValues={{ size: componentSize }}
+                                        onValuesChange={onFormLayoutChange}
+                                        size={"default"}
+                                        id="edit-asset"
                                     >
-                                        <Input disabled={disableEditAsset} placeholder="Tên tài sản"></Input>
-                                    </Form.Item>
-                                    <Form.Item className="form-item" name="asset_id" style={{ display: "none" }}></Form.Item>
-                                    <Form.Item
-                                        className="form-item"
-                                        name="hand_over_asset_date_delivery"
-                                        labelCol={{ span: 24 }}
-                                        label={
-                                            <span>
-                                                <b>Ngày bàn giao: </b>
-                                            </span>
-                                        }
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: "Vui lòng chọn ngày bàn giao",
-                                            },
-                                        ]}
-                                    >
-                                        <DatePicker
-                                            style={{ width: "100%" }}
-                                            placeholder="Ngày bàn giao"
-                                            defaultValue={moment()}
-                                            format="DD-MM-YYYY"
-                                        />
-                                    </Form.Item>
-                                    <Form.Item
-                                        className="form-item"
-                                        name="hand_over_asset_quantity"
-                                        labelCol={{ span: 24 }}
-                                        label={
-                                            <span>
-                                                <b>Số lượng: </b>
-                                            </span>
-                                        }
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: "Vui lòng nhập số lượng",
-                                            },
-                                        ]}
-                                    >
-                                        <InputNumber defaultValue={1} style={{ width: "100%" }} min={1} />
-                                    </Form.Item>
-                                    <Form.Item
-                                        className="form-item"
-                                        name="asset_type_show_name"
-                                        labelCol={{ span: 24 }}
-                                        label={
-                                            <span>
-                                                <b>Nhóm tài sản: </b>
-                                            </span>
-                                        }
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: "Vui lòng chọn nhóm tài sản",
-                                            },
-                                        ]}
-                                    >
-                                        <Select disabled={disableEditAsset} placeholder={"Nhóm tài sản"}>
-                                            {listAssetType?.map((obj, index) => {
-                                                return (
-                                                    <Select.Option value={obj.asset_type_show_name}>{obj.asset_type_show_name}</Select.Option>
-                                                );
-                                            })}
-                                        </Select>
-                                    </Form.Item>
-                                    {/* <Form.Item
+                                        <Form.Item
+                                            className="form-item"
+                                            name="asset_name"
+                                            labelCol={{ span: 24 }}
+                                            label={
+                                                <span>
+                                                    <b>Tên tài sản: </b>
+                                                </span>
+                                            }
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: "Vui lòng nhập tên tài sản",
+                                                    whitespace: true,
+                                                },
+                                            ]}
+                                        >
+                                            <Input disabled={disableEditAsset} placeholder="Tên tài sản"></Input>
+                                        </Form.Item>
+                                        <Form.Item className="form-item" name="asset_id" style={{ display: "none" }}></Form.Item>
+                                        <Form.Item
+                                            className="form-item"
+                                            name="hand_over_date_delivery"
+                                            labelCol={{ span: 24 }}
+                                            label={
+                                                <span>
+                                                    <b>Ngày bàn giao: </b>
+                                                </span>
+                                            }
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: "Vui lòng chọn ngày bàn giao",
+                                                },
+                                            ]}
+                                        >
+                                            <DatePicker
+                                                style={{ width: "100%" }}
+                                                placeholder="Ngày bàn giao"
+                                                defaultValue={moment()}
+                                                format="DD-MM-YYYY"
+                                            />
+                                        </Form.Item>
+                                        <Form.Item
+                                            className="form-item"
+                                            name="hand_over_asset_quantity"
+                                            labelCol={{ span: 24 }}
+                                            label={
+                                                <span>
+                                                    <b>Số lượng: </b>
+                                                </span>
+                                            }
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: "Vui lòng nhập số lượng",
+                                                },
+                                            ]}
+                                        >
+                                            <InputNumber defaultValue={1} style={{ width: "100%" }} min={1} />
+                                        </Form.Item>
+                                        <Form.Item
+                                            className="form-item"
+                                            name="asset_type_show_name"
+                                            labelCol={{ span: 24 }}
+                                            label={
+                                                <span>
+                                                    <b>Nhóm tài sản: </b>
+                                                </span>
+                                            }
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: "Vui lòng chọn nhóm tài sản",
+                                                },
+                                            ]}
+                                        >
+                                            <Select disabled={disableEditAsset} placeholder={"Nhóm tài sản"}>
+                                                {listAssetType?.map((obj, index) => {
+                                                    return (
+                                                        <Select.Option value={obj.asset_type_show_name}>{obj.asset_type_show_name}</Select.Option>
+                                                    );
+                                                })}
+                                            </Select>
+                                        </Form.Item>
+                                        {/* <Form.Item
                     className="form-item"
                     name="hand_over_asset_status"
                     labelCol={{ span: 24 }}
@@ -2185,296 +2186,297 @@ const RoomContract = () => {
                       </Radio>
                     </Radio.Group>
                   </Form.Item> */}
-                                </Form>
-                            </Modal>
-                            <Modal
-                                title={
-                                    roomSelect?.room_name === undefined
-                                        ? "Thêm thành viên "
-                                        : "Thêm thành viên vào Phòng " + roomSelect?.room_name
-                                }
-                                open={isAddMem}
-                                onOk={() => {
-                                    setIsAddMem(false);
-                                }}
-                                onCancel={() => {
-                                    setIsAddMem(false);
-                                }}
-                                footer={[
-                                    <Button key="back" onClick={() => setIsAddMem(false)}>
-                                        Đóng
-                                    </Button>,
-                                    <Button htmlType="submit" key="submit" form="add-member" type="primary">
-                                        Thêm mới
-                                    </Button>,
-                                ]}
-                            >
-                                <Form
-                                    form={formAddMem}
-                                    onFinish={onFinishAddMem}
-                                    onFinishFailed={onFinishFailAddMem}
-                                    labelCol={{ span: 5 }}
-                                    wrapperCol={{ span: 30 }}
-                                    layout="horizontal"
-                                    initialValues={{ size: componentSize }}
-                                    onValuesChange={onFormLayoutChange}
-                                    size={"default"}
-                                    id="add-member"
+                                    </Form>
+                                </Modal>
+                                <Modal
+                                    title={
+                                        roomSelect?.room_name === undefined
+                                            ? "Thêm thành viên "
+                                            : "Thêm thành viên vào Phòng " + roomSelect?.room_name
+                                    }
+                                    open={isAddMem}
+                                    onOk={() => {
+                                        setIsAddMem(false);
+                                    }}
+                                    onCancel={() => {
+                                        setIsAddMem(false);
+                                    }}
+                                    footer={[
+                                        <Button key="back" onClick={() => setIsAddMem(false)}>
+                                            Đóng
+                                        </Button>,
+                                        <Button htmlType="submit" key="submit" form="add-member" type="primary">
+                                            Thêm mới
+                                        </Button>,
+                                    ]}
                                 >
-                                    <Form.Item className="form-item" name="member_id" style={{ display: "none" }}></Form.Item>
-                                    <Form.Item
-                                        className="form-item"
-                                        name="name"
-                                        labelCol={{ span: 24 }}
-                                        label={
-                                            <span>
-                                                <b>Họ và tên: </b>
-                                            </span>
-                                        }
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: "Vui lòng nhập họ tên thành viên",
-                                                whitespace: true,
-                                            },
-                                        ]}
+                                    <Form
+                                        form={formAddMem}
+                                        onFinish={onFinishAddMem}
+                                        onFinishFailed={onFinishFailAddMem}
+                                        labelCol={{ span: 5 }}
+                                        wrapperCol={{ span: 30 }}
+                                        layout="horizontal"
+                                        initialValues={{ size: componentSize }}
+                                        onValuesChange={onFormLayoutChange}
+                                        size={"default"}
+                                        id="add-member"
                                     >
-                                        <Input placeholder="Họ và tên"></Input>
-                                    </Form.Item>
-                                    <Form.Item
-                                        className="form-item"
-                                        name="gender"
-                                        labelCol={{ span: 24 }}
-                                        label={
-                                            <span>
-                                                <b>Giới tính: </b>
-                                            </span>
-                                        }
-                                    >
-                                        <Radio.Group>
-                                            <Radio value={true}>Nam</Radio>
-                                            <Radio value={false}>Nữ</Radio>
-                                        </Radio.Group>
-                                    </Form.Item>
-                                    <Form.Item
-                                        className="form-item"
-                                        name="phone_number"
-                                        labelCol={{ span: 24 }}
-                                        label={
-                                            <span>
-                                                <b>Số điện thoại: </b>
-                                            </span>
-                                        }
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: "Vui lòng nhập số điện thoại",
-                                                whitespace: true,
-                                            },
-                                            {
-                                                pattern: /^((\+84|84|0)+(3|5|7|8|9|1[2|6|8|9]))+([0-9]{8})\b/,
-                                                message: "Số điện thoại phải bắt đầu (+84,0,84)",
-                                            },
-                                        ]}
-                                    >
-                                        <Input placeholder="Số điện thoại" style={{ width: "100%" }} />
-                                    </Form.Item>
-                                    <Form.Item
-                                        className="form-item"
-                                        name="identity_card"
-                                        labelCol={{ span: 24 }}
-                                        label={
-                                            <span>
-                                                <b>CMND/CCCD: </b>
-                                            </span>
-                                        }
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: "Vui lòng nhập CMND/CCCD",
-                                                whitespace: true,
-                                            },
-                                            {
-                                                pattern: /^([0-9]{12})\b/,
-                                                message: "Vui lòng nhập đúng CMND/CCCD (12 số)",
-                                            },
-                                        ]}
-                                    >
-                                        <Input placeholder="CMND/CCCD" style={{ width: "100%" }} />
-                                    </Form.Item>
-                                    <Form.Item
-                                        className="form-item"
-                                        name="license_plates"
-                                        labelCol={{ span: 24 }}
-                                        label={
-                                            <span>
-                                                <b>Biển số xe: </b>
-                                            </span>
-                                        }
-                                    >
-                                        <Input placeholder="Biển số xe"></Input>
-                                    </Form.Item>
-                                    <Form.Item
-                                        className="form-item"
-                                        name="address_more_detail"
-                                        labelCol={{ span: 24 }}
-                                        label={
-                                            <span>
-                                                <b>Địa chỉ chi tiết: </b>
-                                            </span>
-                                        }
-                                    >
-                                        <Input placeholder="Địa chỉ chi tiết"></Input>
-                                    </Form.Item>
-                                </Form>
-                            </Modal>
-                            <Modal
-                                title="Chỉnh sửa thành viên "
-                                open={isEditMem}
-                                onOk={() => {
-                                    setIsEditMem(false);
-                                }}
-                                onCancel={() => {
-                                    setIsEditMem(false);
-                                }}
-                                footer={[
-                                    <Button
-                                        key="back"
-                                        onClick={() => {
-                                            setIsEditMem(false);
-                                        }}
-                                    >
-                                        Đóng
-                                    </Button>,
-                                    <Button htmlType="submit" key="submit" form="edit-member" type="primary">
-                                        Lưu
-                                    </Button>,
-                                ]}
-                            >
-                                <Form
-                                    form={formEditMem}
-                                    onFinish={onFinishEditMem}
-                                    onFinishFailed={onFinishFailEditMem}
-                                    labelCol={{ span: 5 }}
-                                    wrapperCol={{ span: 30 }}
-                                    layout="horizontal"
-                                    initialValues={{ size: componentSize }}
-                                    onValuesChange={onFormLayoutChange}
-                                    size={"default"}
-                                    id="edit-member"
+                                        <Form.Item className="form-item" name="member_id" style={{ display: "none" }}></Form.Item>
+                                        <Form.Item
+                                            className="form-item"
+                                            name="name"
+                                            labelCol={{ span: 24 }}
+                                            label={
+                                                <span>
+                                                    <b>Họ và tên: </b>
+                                                </span>
+                                            }
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: "Vui lòng nhập họ tên thành viên",
+                                                    whitespace: true,
+                                                },
+                                            ]}
+                                        >
+                                            <Input placeholder="Họ và tên"></Input>
+                                        </Form.Item>
+                                        <Form.Item
+                                            className="form-item"
+                                            name="gender"
+                                            labelCol={{ span: 24 }}
+                                            label={
+                                                <span>
+                                                    <b>Giới tính: </b>
+                                                </span>
+                                            }
+                                        >
+                                            <Radio.Group>
+                                                <Radio value={true}>Nam</Radio>
+                                                <Radio value={false}>Nữ</Radio>
+                                            </Radio.Group>
+                                        </Form.Item>
+                                        <Form.Item
+                                            className="form-item"
+                                            name="phone_number"
+                                            labelCol={{ span: 24 }}
+                                            label={
+                                                <span>
+                                                    <b>Số điện thoại: </b>
+                                                </span>
+                                            }
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: "Vui lòng nhập số điện thoại",
+                                                    whitespace: true,
+                                                },
+                                                {
+                                                    pattern: /^((\+84|84|0)+(3|5|7|8|9|1[2|6|8|9]))+([0-9]{8})\b/,
+                                                    message: "Số điện thoại phải bắt đầu (+84,0,84)",
+                                                },
+                                            ]}
+                                        >
+                                            <Input placeholder="Số điện thoại" style={{ width: "100%" }} />
+                                        </Form.Item>
+                                        <Form.Item
+                                            className="form-item"
+                                            name="identity_card"
+                                            labelCol={{ span: 24 }}
+                                            label={
+                                                <span>
+                                                    <b>CMND/CCCD: </b>
+                                                </span>
+                                            }
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: "Vui lòng nhập CMND/CCCD",
+                                                    whitespace: true,
+                                                },
+                                                {
+                                                    pattern: /^([0-9]{12})\b/,
+                                                    message: "Vui lòng nhập đúng CMND/CCCD (12 số)",
+                                                },
+                                            ]}
+                                        >
+                                            <Input placeholder="CMND/CCCD" style={{ width: "100%" }} />
+                                        </Form.Item>
+                                        <Form.Item
+                                            className="form-item"
+                                            name="license_plates"
+                                            labelCol={{ span: 24 }}
+                                            label={
+                                                <span>
+                                                    <b>Biển số xe: </b>
+                                                </span>
+                                            }
+                                        >
+                                            <Input placeholder="Biển số xe"></Input>
+                                        </Form.Item>
+                                        <Form.Item
+                                            className="form-item"
+                                            name="address_more_detail"
+                                            labelCol={{ span: 24 }}
+                                            label={
+                                                <span>
+                                                    <b>Địa chỉ chi tiết: </b>
+                                                </span>
+                                            }
+                                        >
+                                            <Input placeholder="Địa chỉ chi tiết"></Input>
+                                        </Form.Item>
+                                    </Form>
+                                </Modal>
+                                <Modal
+                                    title="Chỉnh sửa thành viên "
+                                    open={isEditMem}
+                                    onOk={() => {
+                                        setIsEditMem(false);
+                                    }}
+                                    onCancel={() => {
+                                        setIsEditMem(false);
+                                    }}
+                                    footer={[
+                                        <Button
+                                            key="back"
+                                            onClick={() => {
+                                                setIsEditMem(false);
+                                            }}
+                                        >
+                                            Đóng
+                                        </Button>,
+                                        <Button htmlType="submit" key="submit" form="edit-member" type="primary">
+                                            Lưu
+                                        </Button>,
+                                    ]}
                                 >
-                                    <Form.Item className="form-item" name="member_id" style={{ display: "none" }}></Form.Item>
-                                    <Form.Item
-                                        className="form-item"
-                                        name="name"
-                                        labelCol={{ span: 24 }}
-                                        label={
-                                            <span>
-                                                <b>Họ và tên: </b>
-                                            </span>
-                                        }
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: "Vui lòng nhập họ tên thành viên",
-                                                whitespace: true,
-                                            },
-                                        ]}
+                                    <Form
+                                        form={formEditMem}
+                                        onFinish={onFinishEditMem}
+                                        onFinishFailed={onFinishFailEditMem}
+                                        labelCol={{ span: 5 }}
+                                        wrapperCol={{ span: 30 }}
+                                        layout="horizontal"
+                                        initialValues={{ size: componentSize }}
+                                        onValuesChange={onFormLayoutChange}
+                                        size={"default"}
+                                        id="edit-member"
                                     >
-                                        <Input placeholder="Họ và tên"></Input>
-                                    </Form.Item>
-                                    <Form.Item
-                                        className="form-item"
-                                        name="gender"
-                                        labelCol={{ span: 24 }}
-                                        label={
-                                            <span>
-                                                <b>Giới tính: </b>
-                                            </span>
-                                        }
-                                    >
-                                        <Radio.Group>
-                                            <Radio value={true}>Nam</Radio>
-                                            <Radio value={false}>Nữ</Radio>
-                                        </Radio.Group>
-                                    </Form.Item>
-                                    <Form.Item
-                                        className="form-item"
-                                        name="phone_number"
-                                        labelCol={{ span: 24 }}
-                                        label={
-                                            <span>
-                                                <b>Số điện thoại: </b>
-                                            </span>
-                                        }
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: "Vui lòng nhập số điện thoại",
-                                                whitespace: true,
-                                            },
-                                            {
-                                                pattern: /^((\+84|84|0)+(3|5|7|8|9|1[2|6|8|9]))+([0-9]{8})\b/,
-                                                message: "Số điện thoại phải bắt đầu (+84,0,84)",
-                                            },
-                                        ]}
-                                    >
-                                        <Input placeholder="Số điện thoại" style={{ width: "100%" }} />
-                                    </Form.Item>
-                                    <Form.Item
-                                        className="form-item"
-                                        name="identity_card"
-                                        labelCol={{ span: 24 }}
-                                        label={
-                                            <span>
-                                                <b>CMND/CCCD: </b>
-                                            </span>
-                                        }
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: "Vui lòng nhập CMND/CCCD",
-                                                whitespace: true,
-                                            },
-                                            {
-                                                pattern: /^([0-9]{12})\b/,
-                                                message: "Vui lòng nhập đúng CMND/CCCD (12 số)",
-                                            },
-                                        ]}
-                                    >
-                                        <Input disabled placeholder="CMND/CCCD" style={{ width: "100%" }} />
-                                    </Form.Item>
-                                    <Form.Item
-                                        className="form-item"
-                                        name="license_plates"
-                                        labelCol={{ span: 24 }}
-                                        label={
-                                            <span>
-                                                <b>Biển số xe: </b>
-                                            </span>
-                                        }
-                                    >
-                                        <Input placeholder="Biển số xe"></Input>
-                                    </Form.Item>
-                                    <Form.Item
-                                        className="form-item"
-                                        name="address_more_detail"
-                                        labelCol={{ span: 24 }}
-                                        label={
-                                            <span>
-                                                <b>Địa chỉ chi tiết: </b>
-                                            </span>
-                                        }
-                                    >
-                                        <Input placeholder="Địa chỉ chi tiết"></Input>
-                                    </Form.Item>
-                                </Form>
-                            </Modal>
-                        </div>
-                    </Content>
+                                        <Form.Item className="form-item" name="member_id" style={{ display: "none" }}></Form.Item>
+                                        <Form.Item
+                                            className="form-item"
+                                            name="name"
+                                            labelCol={{ span: 24 }}
+                                            label={
+                                                <span>
+                                                    <b>Họ và tên: </b>
+                                                </span>
+                                            }
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: "Vui lòng nhập họ tên thành viên",
+                                                    whitespace: true,
+                                                },
+                                            ]}
+                                        >
+                                            <Input placeholder="Họ và tên"></Input>
+                                        </Form.Item>
+                                        <Form.Item
+                                            className="form-item"
+                                            name="gender"
+                                            labelCol={{ span: 24 }}
+                                            label={
+                                                <span>
+                                                    <b>Giới tính: </b>
+                                                </span>
+                                            }
+                                        >
+                                            <Radio.Group>
+                                                <Radio value={true}>Nam</Radio>
+                                                <Radio value={false}>Nữ</Radio>
+                                            </Radio.Group>
+                                        </Form.Item>
+                                        <Form.Item
+                                            className="form-item"
+                                            name="phone_number"
+                                            labelCol={{ span: 24 }}
+                                            label={
+                                                <span>
+                                                    <b>Số điện thoại: </b>
+                                                </span>
+                                            }
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: "Vui lòng nhập số điện thoại",
+                                                    whitespace: true,
+                                                },
+                                                {
+                                                    pattern: /^((\+84|84|0)+(3|5|7|8|9|1[2|6|8|9]))+([0-9]{8})\b/,
+                                                    message: "Số điện thoại phải bắt đầu (+84,0,84)",
+                                                },
+                                            ]}
+                                        >
+                                            <Input placeholder="Số điện thoại" style={{ width: "100%" }} />
+                                        </Form.Item>
+                                        <Form.Item
+                                            className="form-item"
+                                            name="identity_card"
+                                            labelCol={{ span: 24 }}
+                                            label={
+                                                <span>
+                                                    <b>CMND/CCCD: </b>
+                                                </span>
+                                            }
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: "Vui lòng nhập CMND/CCCD",
+                                                    whitespace: true,
+                                                },
+                                                {
+                                                    pattern: /^([0-9]{12})\b/,
+                                                    message: "Vui lòng nhập đúng CMND/CCCD (12 số)",
+                                                },
+                                            ]}
+                                        >
+                                            <Input disabled placeholder="CMND/CCCD" style={{ width: "100%" }} />
+                                        </Form.Item>
+                                        <Form.Item
+                                            className="form-item"
+                                            name="license_plates"
+                                            labelCol={{ span: 24 }}
+                                            label={
+                                                <span>
+                                                    <b>Biển số xe: </b>
+                                                </span>
+                                            }
+                                        >
+                                            <Input placeholder="Biển số xe"></Input>
+                                        </Form.Item>
+                                        <Form.Item
+                                            className="form-item"
+                                            name="address_more_detail"
+                                            labelCol={{ span: 24 }}
+                                            label={
+                                                <span>
+                                                    <b>Địa chỉ chi tiết: </b>
+                                                </span>
+                                            }
+                                        >
+                                            <Input placeholder="Địa chỉ chi tiết"></Input>
+                                        </Form.Item>
+                                    </Form>
+                                </Modal>
+                            </div>
+                        </Content>
+                    </Layout>
                 </Layout>
-            </Layout>
-        </div>
+            </div>
+        </Spin>
     );
 };
 export default RoomContract;

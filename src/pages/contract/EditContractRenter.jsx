@@ -139,8 +139,8 @@ const EditContractRenter = () => {
         // withCredentials: true,
       })
       .then((res) => {
-        setDataApartmentGroup(res.data.data);
-        setDataApartmentGroupSelect(res.data.data.find((obj, index) => obj.group_id === parseInt(group_id)));
+        setDataApartmentGroup(res.data.data.list_group_contracted);
+        setDataApartmentGroupSelect(res.data.data.list_group_contracted.find((obj, index) => obj.group_id === parseInt(group_id)));
         // console.log(res.data.data?.find((obj, index) => obj.group_id === parseInt(group_id))?.list_rooms);
       })
       .catch((error) => {
@@ -320,12 +320,13 @@ const EditContractRenter = () => {
           <>
             <EditTwoTone
               onClick={() => {
+                console.log(record);
                 record.asset_id < 0 ? setDisableEditAsset(false) : setDisableEditAsset(true);
                 setIsEditAsset(true);
                 editAssetForm.setFieldsValue({
                   asset_id: record.asset_id,
                   asset_name: record.asset_name,
-                  hand_over_asset_date_delivery:
+                  hand_over_date_delivery:
                     record.hand_over_date_delivery !== null
                       ? moment(record.hand_over_date_delivery, dateFormatList)
                       : "",
@@ -747,7 +748,7 @@ const EditContractRenter = () => {
       assets_additional_type: dataAsset?.asset_type_show_name,
       hand_over_asset_quantity: dataAsset?.hand_over_asset_quantity,
       hand_over_asset_status: true,
-      hand_over_date_delivery: dataAsset?.hand_over_asset_date_delivery?.format("DD-MM-YYYY"),
+      hand_over_date_delivery: dataAsset?.hand_over_date_delivery?.format("DD-MM-YYYY"),
     };
     console.log(JSON.stringify(data));
     setLoading(true);
@@ -781,11 +782,12 @@ const EditContractRenter = () => {
   };
 
   const editAssetFinish = (e) => {
+    console.log(e);
     const duplicate = dataAsset.find(
       (asset) =>
         asset.asset_name.toLowerCase().trim() === e.asset_name.toLowerCase().trim() &&
         asset.asset_type_show_name === e.asset_type_show_name &&
-        asset.hand_over_asset_date_delivery === moment(e.hand_over_asset_date_delivery).format("DD-MM-YYYY") &&
+        asset.hand_over_date_delivery === moment(e.hand_over_date_delivery).format("DD-MM-YYYY") &&
         asset.hand_over_asset_quantity === e.hand_over_asset_quantity
       // asset.hand_over_asset_status === e.hand_over_asset_status
     );
@@ -796,7 +798,7 @@ const EditContractRenter = () => {
           if (asset.asset_id === e.asset_id) {
             return {
               ...e,
-              hand_over_asset_date_delivery: moment(e.hand_over_asset_date_delivery).format("DD-MM-YYYY"),
+              hand_over_date_delivery: moment(e.hand_over_date_delivery).format("DD-MM-YYYY"),
             };
           } else {
             return asset;
@@ -824,7 +826,7 @@ const EditContractRenter = () => {
     });
     createAssetForm.setFieldsValue({
       asset_id: assetId,
-      hand_over_asset_date_delivery: formAddAsset.dateOfDelivery,
+      hand_over_date_delivery: formAddAsset.dateOfDelivery,
       hand_over_asset_quantity: formAddAsset.asset_unit,
       // asset_type_show_name: formAddAsset.asset_type,
       // hand_over_asset_status: formAddAsset.asset_status,
@@ -1174,7 +1176,7 @@ const EditContractRenter = () => {
                                                 asset_id: obj.asset_id,
                                                 asset_name: obj.asset_name,
                                                 asset_type: obj.asset_type,
-                                                hand_over_asset_date_delivery: moment(
+                                                hand_over_date_delivery: moment(
                                                   obj.hand_over_date_delivery,
                                                   dateFormatList
                                                 )._i,
@@ -1302,12 +1304,12 @@ const EditContractRenter = () => {
                                     <b>Thời hạn hợp đồng (ít nhất 1 tháng): </b>
                                   </span>
                                 }
-                                // rules={[
-                                //   {
-                                //     required: true,
-                                //     message: "Vui lòng chọn thời hạn hợp đồng",
-                                //   },
-                                // ]}
+                              // rules={[
+                              //   {
+                              //     required: true,
+                              //     message: "Vui lòng chọn thời hạn hợp đồng",
+                              //   },
+                              // ]}
                               >
                                 <Select
                                   placeholder="Thời hạn hợp đồng"
@@ -1465,12 +1467,12 @@ const EditContractRenter = () => {
                                     <b>Giá phòng (VND): </b>
                                   </span>
                                 }
-                                // rules={[
-                                //   {
-                                //     required: true,
-                                //     message: "Vui lòng nhập giá phòng",
-                                //   },
-                                // ]}
+                              // rules={[
+                              //   {
+                              //     required: true,
+                              //     message: "Vui lòng nhập giá phòng",
+                              //   },
+                              // ]}
                               >
                                 <InputNumber
                                   controls={false}
@@ -1590,12 +1592,12 @@ const EditContractRenter = () => {
                                       String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
                                         ? "Nhập chỉ số"
                                         : "Số " +
-                                          obj.service_type_name +
-                                          " / " +
-                                          obj.service_price.toLocaleString("vn-VN", {
-                                            style: "currency",
-                                            currency: "VND",
-                                          })
+                                        obj.service_type_name +
+                                        " / " +
+                                        obj.service_price.toLocaleString("vn-VN", {
+                                          style: "currency",
+                                          currency: "VND",
+                                        })
                                     }
                                     addonAfter={
                                       String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
@@ -1887,7 +1889,7 @@ const EditContractRenter = () => {
                     </Form.Item>
                     <Form.Item
                       className="form-item"
-                      name="hand_over_asset_date_delivery"
+                      name="hand_over_date_delivery"
                       labelCol={{ span: 24 }}
                       label={
                         <span>
@@ -2034,7 +2036,7 @@ const EditContractRenter = () => {
                     <Form.Item className="form-item" name="asset_id" style={{ display: "none" }}></Form.Item>
                     <Form.Item
                       className="form-item"
-                      name="hand_over_asset_date_delivery"
+                      name="hand_over_date_delivery"
                       labelCol={{ span: 24 }}
                       label={
                         <span>
