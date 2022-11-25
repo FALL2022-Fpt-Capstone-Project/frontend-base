@@ -429,7 +429,7 @@ function RoomPreview(props) {
                                         </Row>
                                         <Row>
                                             <Col span={24}>
-                                                <Button icon={<DeleteOutlined style={{ fontSize: "130%", color: "red" }} />}>Xóa phòng đã tồn tại</Button>
+                                                <Button type="danger" icon={<DeleteOutlined style={{ fontSize: "130%", color: "white" }} />}>Xóa phòng đã tồn tại</Button>
                                             </Col>
                                         </Row>
                                     </Card>

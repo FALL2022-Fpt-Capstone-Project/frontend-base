@@ -3,7 +3,7 @@ import Sidebar from "../../components/sidebar/Sidebar";
 import "./contract.scss";
 import axios from "../../api/axios";
 import {
-  EditOutlined,
+  EditTwoTone,
   DeleteOutlined,
   PlusCircleOutlined,
   FilterOutlined,
@@ -89,6 +89,9 @@ for (let i = 1; i < 17; i++) {
   }
 }
 
+
+
+
 const CreateContractBuilding = () => {
   const dataFilter = {
     id: [],
@@ -107,13 +110,10 @@ const CreateContractBuilding = () => {
     setAutoExpandParent(false);
   };
   const onCheck = (checkedKeysValue) => {
-    const data_id = checkedKeysValue
-      ?.map((obj, index) => obj.split("-"))
-      ?.map((o, i) => {
-        return { floor: parseInt(o[0]), room: parseInt(o[1]) };
-      })
-      ?.filter((room, j) => room !== undefined);
-    console.log("onCheck", checkedKeysValue);
+    const data_id = checkedKeysValue?.map((obj, index) => obj.split("-"))?.map((o, i) => {
+      return { floor: parseInt(o[0]), room: parseInt(o[1]) }
+    })?.filter((room, j) => room !== undefined);
+    console.log('onCheck', checkedKeysValue);
     setCheckedKeys(checkedKeysValue);
     setListRoomId(data_id?.map((obj, index) => obj.room).filter((o, i) => Number.isInteger(o)));
     form.setFieldsValue({
@@ -201,7 +201,7 @@ const CreateContractBuilding = () => {
         record.asset_id < 0 ? setDisableEditAsset(false) : setDisableEditAsset(true);
         return (
           <>
-            <EditOutlined
+            <EditTwoTone
               onClick={() => {
                 setIsEditAsset(true);
                 editAssetForm.setFieldsValue({
@@ -278,9 +278,6 @@ const CreateContractBuilding = () => {
       })
       .then((res) => {
         console.log(res.data.data);
-        // asset_id, asset_name, hand_over_asset_quantity, asset_type_show_name, hand_over_asset_date_delivery
-
-        // setAssetBasic(res.data.data);
         setDataAsset(
           res.data.data?.map((obj, index) => {
             return {
@@ -1192,27 +1189,20 @@ const CreateContractBuilding = () => {
                                       ?.filter((obj, index) => mapped_list_rooms.indexOf(obj) === index)
                                       .sort((a, b) => a - b);
 
-                                    const floor_room = get_floors
-                                      ?.map((obj, index) => {
-                                        const children = list_rooms
-                                          ?.filter((o, i) => o.room_floor === obj)
-                                          ?.map((room, j) => {
-                                            return [
-                                              { title: `Phòng ${room.room_name}`, key: obj + "-" + room.room_id },
-                                            ];
-                                          })
-                                          ?.map((a, b) => a[0]);
-                                        return [
-                                          {
-                                            title: `Tầng ${obj} ( Số lượng phòng: ${children.length} )`,
-                                            key: obj.toString(),
-                                            children: children,
-                                          },
-                                        ];
-                                      })
-                                      ?.map((o, i) => o[0]);
+                                    const floor_room = get_floors?.map((obj, index) => {
+                                      const children = list_rooms?.filter((o, i) => o.room_floor === obj)?.map((room, j) => { return [{ title: `Phòng ${room.room_name}`, key: obj + "-" + room.room_id }] })?.map((a, b) => a[0]);
+                                      return [
+                                        {
+                                          title: `Tầng ${obj} ( Số lượng phòng: ${children.length} )`,
+                                          key: obj.toString(),
+                                          children: children
+                                        }
+                                      ]
+                                    })?.map((o, i) => o[0]);
 
-                                    setGroupSelect(dataApartmentGroup?.find((obj, index) => obj.group_id === e));
+                                    setGroupSelect(dataApartmentGroup?.find(
+                                      (obj, index) => obj.group_id === e
+                                    ));
                                     setNumberOfFloor(floor_room);
                                     form.setFieldsValue({
                                       address_city: dataApartmentGroup?.find((obj, index) => obj.group_id === e)
@@ -1236,28 +1226,15 @@ const CreateContractBuilding = () => {
                           <Divider />
                           <Row>
                             <Col span={8}>
-                              <p>
-                                <b>Số lượng tầng:</b>{" "}
-                              </p>
+                              <p><b>Số lượng tầng:</b> </p>
                             </Col>
                             <Col span={16}>
-                              <p>
-                                {
-                                  groupSelect?.list_rooms
-                                    ?.map((obj, index) => obj.room_floor)
-                                    ?.filter(
-                                      (o, i) =>
-                                        groupSelect?.list_rooms?.map((obj, index) => obj.room_floor)?.indexOf(o) === i
-                                    )?.length
-                                }
-                              </p>
+                              <p>{groupSelect?.list_rooms?.map((obj, index) => obj.room_floor)?.filter((o, i) => groupSelect?.list_rooms?.map((obj, index) => obj.room_floor)?.indexOf(o) === i)?.length}</p>
                             </Col>
                           </Row>
                           <Row>
                             <Col span={8}>
-                              <p>
-                                <b>Số lượng phòng:</b>{" "}
-                              </p>
+                              <p><b>Số lượng phòng:</b> </p>
                             </Col>
                             <Col span={16}>
                               <p>{groupSelect?.list_rooms?.length}</p>
@@ -1275,9 +1252,7 @@ const CreateContractBuilding = () => {
                           </Row>
                           <Row>
                             <Col span={8}>
-                              <p>
-                                <b>Quận/Huyện:</b>{" "}
-                              </p>
+                              <p><b>Quận/Huyện:</b> </p>
                             </Col>
                             <Col span={16}>
                               <p>{groupSelect?.address?.address_district}</p>
@@ -1337,9 +1312,7 @@ const CreateContractBuilding = () => {
                               </Tag>
                             </>
                           }
-                          bordered={false}
-                          className="card-width-100 card-height"
-                        >
+                          bordered={false} className="card-width-100 card-height">
                           <Row>
                             <Col span={14}>
                               <p>
