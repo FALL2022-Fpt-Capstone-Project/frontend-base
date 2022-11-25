@@ -88,6 +88,14 @@ function RoomDetail({ visible, close, data }) {
                                     </Row>
                                     <Row>
                                         <Col span={12}>
+                                            <h4>Số lượng người trong phòng: </h4>
+                                        </Col>
+                                        <Col span={12}>
+                                            <p>{data?.list_renter !== undefined ? data?.list_renter?.length : 0}/{data?.room_limit_people} người {data?.list_renter?.length === data?.room_limit_people ? <>| <Tag color='red'>Đã đầy</Tag></> : ''}</p>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col span={12}>
                                             <h4>Diện tích: </h4>
                                         </Col>
                                         <Col span={12}>
