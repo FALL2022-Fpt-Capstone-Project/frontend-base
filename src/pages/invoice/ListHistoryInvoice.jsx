@@ -2,6 +2,7 @@ import { Button, Col, Form, Input, Row, Table, Tabs, Tooltip, DatePicker, Select
 import React, { useState } from "react";
 import { EditOutlined, SearchOutlined, EyeOutlined, UndoOutlined, DeleteOutlined } from "@ant-design/icons";
 import "./listHistoryInvoice.scss";
+import { Link } from "react-router-dom";
 const { RangePicker } = DatePicker;
 const { Search } = Input;
 const ListHistoryInvoice = () => {
@@ -262,13 +263,13 @@ const ListHistoryInvoice = () => {
             dataIndex: "status",
             render: (_, record) => {
               let status;
-              if (record.status === "Đã thanh toán") {
+              if (record.status === "Chưa thanh toán") {
                 status = (
                   <Tag color="default" key={record.status}>
                     Chưa thanh toán
                   </Tag>
                 );
-              } else if (record.status === "Chưa thanh toán") {
+              } else if (record.status === "Đã thanh toán") {
                 status = (
                   <Tag color="green" key={record.status}>
                     Đã thanh toán
@@ -295,7 +296,9 @@ const ListHistoryInvoice = () => {
                   {record.status === "Đã thanh toán" ? (
                     <>
                       <Tooltip title="Xem hoá đơn">
-                        <EyeOutlined className="icon" />
+                        <Link to="/detail-invoice">
+                          <EyeOutlined className="icon" />
+                        </Link>
                       </Tooltip>
                       <Tooltip title="Xoá hoá đơn">
                         <DeleteOutlined className="icon icon-delete" />

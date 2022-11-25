@@ -3,6 +3,7 @@ import { Button, Layout, notification, Space } from "antd";
 import "./home.scss";
 import Sidebar from "../../components/sidebar/Sidebar";
 import "./home.scss";
+import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import Breadcrumbs from "../../components/BreadCrumb ";
@@ -10,6 +11,7 @@ const { Content, Sider, Header } = Layout;
 
 const Home = () => {
   const [api, contextHolder] = notification.useNotification();
+  const day = moment().date();
   const navigate = useNavigate();
   const openNotification = () => {
     const key = `open${Date.now()}`;
@@ -32,7 +34,11 @@ const Home = () => {
     });
   };
   useEffect(() => {
-    openNotification();
+    if (day === 25) {
+      openNotification();
+    } else {
+      console.log("hello");
+    }
   }, []);
   const [collapsed, setCollapsed] = useState(false);
   return (

@@ -18,6 +18,7 @@ const breadcrumbNameMap = {
   "/manage-staff/update-staff": "Cập nhật nhân viên",
   "/service": "Dịch vụ",
   "/invoice": "Quản lý hoá đơn",
+  "/invoice/create-invoice-auto": "Tạo mới nhanh hoá đơn",
 };
 
 const Breadcrumbs = () => {
