@@ -1,39 +1,65 @@
 import { render } from '@testing-library/react';
 import { AutoComplete, Button, Card, Col, Form, Input, InputNumber, message, Modal, notification, Row, Select } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from '../../api/axios';
 import ListRoom from './ListRoom';
-const ADD_ROOM = "manager/room/add";
 
+const UPDATE_ROOM = "manager/room/update";
+const ROOM_INFOR = "manager/room/";
+let listFloor = [{
+    label: 'Chọn tầng',
+    value: ""
+}];
 
-function AddRoom({ reRender, visible, close, data }) {
+function UpdateRoom({ reRender, visible, close, data, dataUpdate, setDataUpdate }) {
     // const reload = () => window.location.reload();
-    const [formAddRoom] = Form.useForm();
-    const navigate = useNavigate();
+    const [formUpdateRoom] = Form.useForm();
     const [groupSelect, setGroupSelect] = useState([]);
-    const [statusSelectFloor, setStatusSelectFloor] = useState(true);
-    const [roomFloor, setRoomFloor] = useState([]);
     const [optionAutoComplete, setOptionAutoComplete] = useState([]);
+    const [roomFloor, setRoomFloor] = useState([]);
     const [value, setValue] = useState('');
     let cookie = localStorage.getItem("Cookie");
 
+
+    if (dataUpdate !== undefined && visible === true) {
+        console.log('in');
+        listFloor = [];
+        formUpdateRoom.setFieldsValue({
+            roomId: dataUpdate.room_id,
+            roomName: dataUpdate.roomName,
+            groupId: dataUpdate.group_id,
+            roomFloor: dataUpdate.roomFloor,
+            roomPrice: dataUpdate.roomPrice,
+            numberOfPeople: dataUpdate.room_limit_people,
+            roomSquare: dataUpdate.roomSquare
+        });
+
+        for (let i = 1; i <= data?.find(group => group.group_id === dataUpdate.group_id)?.total_floor; i++) {
+            listFloor.push({
+                label: 'Tầng ' + i,
+                value: i
+            })
+        };
+        // setRoomFloor(listFloor);
+        setDataUpdate();
+    }
+
     const onFinish = async (e) => {
         const data = [{
+            room_id: e.roomId,
             room_name: e.roomName,
             room_floor: e.roomFloor,
             room_limit_people: e.numberOfPeople,
-            contract_id: null,
-            group_contract_id: null,
-            group_id: e.groupId,
+            room_current_water_index: null,
+            room_current_electric_index: null,
             room_price: e.roomPrice,
             room_area: e.roomSquare,
-            is_old: true
+            is_disable: true
         }];
-        // console.log(JSON.stringify(data));
+        console.log(JSON.stringify(data));
         await axios
-            .post(
-                ADD_ROOM, data,
+            .put(
+                UPDATE_ROOM, data,
                 {
                     headers: {
                         "Content-Type": "application/json",
@@ -42,39 +68,18 @@ function AddRoom({ reRender, visible, close, data }) {
                 }
             )
             .then((res) => {
-                const key = `open${Date.now()}`;
-                const btn = (
-                    <>
-                        <Button onClick={() => {
-                            navigate('equipment', { state: res.data.data })
-                        }} type="primary">
-                            Có
-                        </Button>
-                        <Button onClick={() => {
-                            notification.close(key);
-                        }}
-                        >
-                            Không
-                        </Button>
-                    </>
-                );
                 notification.success({
-                    message: "Thêm mới thành công phòng " + e.roomName,
-                    description: "Phòng chưa có trang thiết bị bạn có muốn thêm trang biết bị ?",
-                    btn,
-                    key,
+                    message: "Cập nhật thành công phòng " + e.roomName,
                     placement: "top",
                     duration: 8,
                 });
-                console.log(res);
                 close(false);
-                formAddRoom.resetFields();
                 reRender();
             })
             .catch((error) => {
                 console.log(error);
                 notification.error({
-                    message: "Thêm mới phòng thất bại",
+                    message: "Cập nhật phòng thất bại",
                     description: error.response.data.data,
                     placement: "top",
                     duration: 3,
@@ -84,7 +89,7 @@ function AddRoom({ reRender, visible, close, data }) {
 
     const onFinishFail = (e) => {
         notification.error({
-            message: "Thêm mới phòng thất bại",
+            message: "Cập nhật phòng thất bại",
             placement: "top",
             duration: 3,
         });
@@ -93,16 +98,6 @@ function AddRoom({ reRender, visible, close, data }) {
     const onSearchAutoComplete = (searchText) => {
 
     };
-
-    const checkDuplicate = (_, value) => {
-        const check = groupSelect?.list_rooms?.find((room, index) =>
-            room.room_name.toUpperCase() === (value.toUpperCase()));
-        if (check !== undefined) {
-            return Promise.reject(new Error('Tên phòng: ' + value + ' đã có trong chung cư bạn chọn'));
-        } else {
-            return Promise.resolve();
-        }
-    }
 
     const onSelectAutoComplete = (data) => {
 
@@ -115,7 +110,7 @@ function AddRoom({ reRender, visible, close, data }) {
     return (
         <>
             <Modal
-                title={<h2>Thêm mới phòng</h2>}
+                title={<h2>Chỉnh sửa phòng</h2>}
                 open={visible}
                 onOk={() => {
                     close(false);
@@ -124,8 +119,8 @@ function AddRoom({ reRender, visible, close, data }) {
                     close(false);
                 }}
                 footer={[
-                    <Button htmlType="submit" type="primary" form="formAddRoom">
-                        Tạo phòng
+                    <Button htmlType="submit" type="primary" form="formUpdateRoom">
+                        Cập nhật
                     </Button>,
                     <Button
                         key="back"
@@ -139,18 +134,19 @@ function AddRoom({ reRender, visible, close, data }) {
                 width={500}
             >
                 <Form
-                    form={formAddRoom}
+                    form={formUpdateRoom}
                     onFinish={onFinish}
                     onFinishFailed={onFinishFail}
                     layout="horizontal"
                     size={"default"}
-                    id="formAddRoom"
+                    id="formUpdateRoom"
                 >
                     <Row>
                         <Col span={24}>
                             <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                                 <Col span={24}>
                                     <Card className='card'>
+                                        <Form.Item name="roomId" style={{ display: 'none' }}></Form.Item>
                                         <Form.Item
                                             className="form-item"
                                             name="groupId"
@@ -168,6 +164,7 @@ function AddRoom({ reRender, visible, close, data }) {
                                             ]}
                                         >
                                             <Select
+                                                disabled={true}
                                                 showSearch
                                                 placeholder="Chọn tòa nhà"
                                                 optionFilterProp="children"
@@ -176,7 +173,7 @@ function AddRoom({ reRender, visible, close, data }) {
                                                     (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                                                 }
                                                 onChange={(e) => {
-                                                    setStatusSelectFloor(false);
+                                                    formUpdateRoom.setFieldsValue({ groupId: e, roomFloor: "", roomName: "" })
                                                     let listFloor = [{
                                                         label: 'Chọn tầng',
                                                         value: ""
@@ -190,7 +187,6 @@ function AddRoom({ reRender, visible, close, data }) {
                                                         })
                                                     }
                                                     setRoomFloor(listFloor);
-                                                    formAddRoom.setFieldsValue({ roomFloor: "", roomName: "" })
                                                 }}
                                                 options={data?.map((obj, index) => {
                                                     return {
@@ -217,19 +213,9 @@ function AddRoom({ reRender, visible, close, data }) {
                                             ]}
                                         >
                                             <Select
-                                                onChange={(e) => {
-                                                    let suggestRoomName = [];
-                                                    for (let i = 0; i <= 10; i++) {
-                                                        if (groupSelect?.list_rooms?.find(obj => obj.room_name === (e * 100 + i).toString()) === undefined)
-                                                            suggestRoomName.push({
-                                                                value: (e * 100 + i).toString()
-                                                            })
-                                                    };
-                                                    setOptionAutoComplete(suggestRoomName)
-                                                }}
-                                                disabled={statusSelectFloor}
+                                                // disabled={statusSelectFloor}
                                                 placeholder="Chọn tầng"
-                                                options={roomFloor}
+                                                options={roomFloor.length === 0 ? listFloor : roomFloor}
                                             />
                                         </Form.Item>
                                         <Form.Item
@@ -246,9 +232,6 @@ function AddRoom({ reRender, visible, close, data }) {
                                                     required: true,
                                                     message: "Vui lòng nhập tên phòng",
                                                 },
-                                                {
-                                                    validator: checkDuplicate,
-                                                }
                                             ]}
                                         >
                                             <AutoComplete
@@ -348,4 +331,4 @@ function AddRoom({ reRender, visible, close, data }) {
     );
 }
 
-export default AddRoom;
+export default UpdateRoom;

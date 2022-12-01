@@ -237,6 +237,9 @@ function RoomDetail({ visible, close, data }) {
                             })}
                         </Row>
                     </Tabs.TabPane>
+                    <Tabs.TabPane tab={<span style={sizeHeader}>Trang thiết bị trong phòng</span>} key="3">
+
+                    </Tabs.TabPane>
                 </Tabs>
             </Modal>
         </>

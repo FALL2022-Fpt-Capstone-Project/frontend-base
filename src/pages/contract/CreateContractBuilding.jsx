@@ -391,8 +391,6 @@ const CreateContractBuilding = () => {
       rack_renter_address: e.address_more_detail,
       rack_renter_note: "",
     };
-    console.log(data);
-    console.log(JSON.stringify(data));
     await axios
       .post(ADD_NEW_CONTRACT, data, {
         headers: {
@@ -601,9 +599,9 @@ const CreateContractBuilding = () => {
             </Row>
             <div
               className="site-layout-background"
-              // style={{
-              //   minHeight: 360,
-              // }}
+            // style={{
+            //   minHeight: 360,
+            // }}
             >
               <div className="button-cover">
                 <Button
@@ -954,12 +952,12 @@ const CreateContractBuilding = () => {
                                   <b>Thời hạn hợp đồng (ít nhất 6 tháng): </b>
                                 </span>
                               }
-                              // rules={[
-                              //   {
-                              //     required: true,
-                              //     message: "Vui lòng chọn thời hạn hợp đồng",
-                              //   },
-                              // ]}
+                            // rules={[
+                            //   {
+                            //     required: true,
+                            //     message: "Vui lòng chọn thời hạn hợp đồng",
+                            //   },
+                            // ]}
                             >
                               <Select
                                 placeholder="Thời hạn hợp đồng"
@@ -1397,7 +1395,7 @@ const CreateContractBuilding = () => {
                           <b>Lưu ý:</b>
                           <br />
                           - Trên đây là dịch vụ chung áp dụng cho tất cả các phòng trong một tòa nhà.
-                          <br />- Nếu bạn muốn thay đổi dịch vụ chung này cần vào mục <b>Dịch Vụ</b>
+                          <br />- Nếu bạn muốn thay đổi dịch vụ chung này cần vào mục <a href="/service">Dịch Vụ</a>
                           <br />
                         </i>
                       </p>
@@ -1464,9 +1462,9 @@ const CreateContractBuilding = () => {
                               onSearch={(e) => {
                                 setSearched(e);
                               }}
-                              // onChange={(e) => {
-                              //   setSearched(e.target.value);
-                              // }}
+                            // onChange={(e) => {
+                            //   setSearched(e.target.value);
+                            // }}
                             />
                           </Col>
                           <Col xs={22} xl={14} span={14}>
@@ -1655,6 +1653,10 @@ const CreateContractBuilding = () => {
                         required: true,
                         message: "Vui lòng nhập số lượng",
                       },
+                      {
+                        pattern: new RegExp(/^[0-9]*$/),
+                        message: "Vui lòng nhập số nguyên",
+                      }
                     ]}
                   >
                     <InputNumber defaultValue={1} style={{ width: "100%" }} min={1} />
@@ -1915,6 +1917,10 @@ const CreateContractBuilding = () => {
                         required: true,
                         message: "Vui lòng nhập số lượng",
                       },
+                      {
+                        pattern: new RegExp(/^[0-9]*$/),
+                        message: "Vui lòng nhập số nguyên",
+                      }
                     ]}
                   >
                     <InputNumber defaultValue={1} style={{ width: "100%" }} min={1} />

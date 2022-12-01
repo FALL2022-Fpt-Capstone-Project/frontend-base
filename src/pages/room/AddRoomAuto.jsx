@@ -13,11 +13,11 @@ function AddRoomAuto({ visible, close, data }) {
     const onFinishFail = (e) => {
 
     };
-    console.log(data);
+    // console.log(data)
     return (
         <>
             <Modal
-                title="Thêm mới phòng nhanh"
+                title={<h2>Thêm mới phòng nhanh</h2>}
                 open={visible}
                 onOk={() => {
                     close(false);
@@ -188,11 +188,12 @@ function AddRoomAuto({ visible, close, data }) {
                             rules={[
                                 {
                                     required: true,
-                                    message: "Vui lòng nhập số lượng",
+                                    message: "Vui lòng nhập số lượng người tối đa",
                                 },
                             ]}
                         >
                             <InputNumber
+                                min={1}
                                 addonAfter="Người"
                                 style={{ width: "100%" }}
                                 controls={false}
@@ -216,6 +217,7 @@ function AddRoomAuto({ visible, close, data }) {
                             ]}
                         >
                             <InputNumber
+                                min={1}
                                 style={{ width: "100%" }}
                                 addonAfter="m2"
                                 controls={false}
