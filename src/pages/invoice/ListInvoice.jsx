@@ -53,7 +53,7 @@ const ListInvoice = () => {
   const [buildingFilter, setBuildingFilter] = useState("");
   const [dataSource, setDataSource] = useState([
     {
-      building_name: "Trọ xanh",
+      building_name: "Chung cư Hoàng Nam",
       building_total_floor: 101,
       building_total_rooms: 400,
       building_empty_rooms: 30,
@@ -63,7 +63,7 @@ const ListInvoice = () => {
       address_more_detail: 2000000,
     },
     {
-      building_name: "Trọ xanh",
+      building_name: "Chung cư Hoàng Nam",
       building_total_floor: 102,
       building_total_rooms: 500,
       building_empty_rooms: 60,
@@ -73,7 +73,7 @@ const ListInvoice = () => {
       address_more_detail: 3000000,
     },
     {
-      building_name: "Trọ xanh",
+      building_name: "Chung cư Hoàng Nam",
       building_total_floor: 103,
       building_total_rooms: 500,
       building_empty_rooms: 60,
@@ -83,7 +83,7 @@ const ListInvoice = () => {
       address_more_detail: 3000000,
     },
     {
-      building_name: "Trọ xanh",
+      building_name: "Chung cư Hoàng Nam",
       building_total_floor: 104,
       building_total_rooms: 500,
       building_empty_rooms: 60,
@@ -213,16 +213,6 @@ const ListInvoice = () => {
                       </Row>
                     </Col>
                   </Form.Item>
-                  <Form.Item name="deactive" className="form-item-renter form-item-renter-deactive">
-                    <Row>
-                      <label htmlFor="" className="search-name">
-                        Tìm kiếm theo trạng thái hoá đơn
-                      </label>
-                    </Row>
-                    <Row>
-                      <Checkbox.Group options={plainOptions} />
-                    </Row>
-                  </Form.Item>
                 </Row>
               </Row>
               <Row style={{ marginBottom: "20px" }}>
@@ -271,12 +261,12 @@ const ListInvoice = () => {
             dataIndex: "chu_ky",
           },
           {
-            title: "Số điện kỳ trước",
+            title: "Số điện",
             dataIndex: "building_total_rooms",
           },
 
           {
-            title: "Số nước kỳ trước",
+            title: "Số nước",
             dataIndex: "building_empty_rooms",
           },
 

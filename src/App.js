@@ -20,6 +20,8 @@ import AddMemInRoom from "./pages/room/AddMemInRoom";
 import Invoice from "./pages/invoice/Invoice";
 import RoomPreview from "./pages/room/RoomPreview";
 import RoomEquipment from "./pages/room/RoomEquipment";
+import AddAutoInvoice from "./pages/invoice/AddAutoInvoice";
+import DetailInvoice from "./pages/invoice/DetailInvoice";
 const ROLES = {
   User: "ROLE_STAFF",
   Admin: "ROLE_ADMIN",
@@ -84,6 +86,12 @@ const App = () => {
         </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
           <Route path="invoice" element={<Invoice />} />
+        </Route>
+        <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
+          <Route path="invoice/create-invoice-auto" element={<AddAutoInvoice />} />
+        </Route>
+        <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
+          <Route path="detail-invoice" element={<DetailInvoice />} />
         </Route>
       </Routes>
     </div>

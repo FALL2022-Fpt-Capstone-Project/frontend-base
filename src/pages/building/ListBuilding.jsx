@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Col, Input, notification, Row, Select, Spin, Table, Tag, Tooltip } from "antd";
+import { Col, Input, notification, Popconfirm, Row, Select, Spin, Table, Tag, Tooltip } from "antd";
 import "./building.scss";
 import axios from "../../api/axios";
 import { DeleteOutlined, EditOutlined, EyeOutlined, AuditOutlined, ContainerOutlined } from "@ant-design/icons";
@@ -274,26 +274,31 @@ const ListBuilding = () => {
                     <Tooltip title="Xem hợp đồng">
                       <ContainerOutlined className="icon" />
                     </Tooltip>
-                    <Tooltip title="Xem">
+                    <Tooltip title="Xem chi tiết chung cư">
                       <EyeOutlined className="icon" onClick={() => onClickDetailBuilding(record.group_id)} />
                     </Tooltip>
                   </>
                 ) : (
                   <>
-                    <Tooltip title="Chỉnh sửa">
+                    <Tooltip title="Chỉnh sửa chung cư">
                       <EditOutlined className="icon" onClick={() => onClickUpdateBuilding(record.group_id)} />
                     </Tooltip>
                     <Tooltip title="Lập hợp đồng">
                       <AuditOutlined className="icon" />
                     </Tooltip>
-                    <Tooltip title="Xem">
+                    <Tooltip title="Xem chi tiết chung cư">
                       <EyeOutlined className="icon" onClick={() => onClickDetailBuilding(record.group_id)} />
                     </Tooltip>
-                    <Tooltip title="Xoá">
-                      <DeleteOutlined
-                        className="icon icon-delete"
-                        onClick={() => handleDeleteBuilding(record.group_id)}
-                      />
+                    <Tooltip title="Xoá chung cư">
+                      <Popconfirm
+                        title="Bạn có muốn xoá chung cư này không?"
+                        okText="Đồng ý"
+                        cancelText="Không"
+                        placement="topRight"
+                        onConfirm={() => handleDeleteBuilding(record.group_id)}
+                      >
+                        <DeleteOutlined className="icon icon-delete" />
+                      </Popconfirm>
                     </Tooltip>
                   </>
                 );

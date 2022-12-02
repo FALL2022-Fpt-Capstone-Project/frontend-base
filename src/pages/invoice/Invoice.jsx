@@ -9,10 +9,6 @@ import { PlusCircleOutlined } from "@ant-design/icons";
 const { Content, Sider, Header } = Layout;
 const Invoice = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [createInvoice, setCreateInvoice] = useState(false);
-  const onClickCreateInvoice = () => {
-    setCreateInvoice(true);
-  };
   return (
     <div className="invoice">
       <Layout
@@ -36,7 +32,7 @@ const Invoice = () => {
                 type="primary"
                 icon={<PlusCircleOutlined />}
                 size="middle"
-                // onClick={onClickCreateInvoice}
+                href="/invoice/create-invoice-auto"
                 className="button-add"
               >
                 Tạo mới nhanh hoá đơn

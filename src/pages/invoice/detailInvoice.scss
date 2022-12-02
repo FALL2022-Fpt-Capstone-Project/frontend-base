@@ -1,0 +1,22 @@
+.invoice {
+  background-color: #f7fafc;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+.detail-invoice {
+  background-color: #fff;
+  padding: 20px;
+  margin-top: 10px;
+  width: 1000px;
+}
+.title-invoice {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.table-invoice {
+  margin-top: 30px;
+}
