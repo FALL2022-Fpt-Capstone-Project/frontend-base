@@ -682,6 +682,10 @@ const CreateBuilding = ({ visible, close, data }) => {
                     }}
                     onChange={cityChange}
                     options={optionsCity}
+                    showSearch
+                    filterOption={(input, option) =>
+                      (option?.label?.toLowerCase().trim() ?? "").includes(input?.toLowerCase().trim())
+                    }
                   />
                 </Form.Item>
                 <Form.Item
@@ -707,6 +711,10 @@ const CreateBuilding = ({ visible, close, data }) => {
                     disabled={disabledDistrict}
                     onChange={districtChange}
                     // options={optionsDistrict}
+                    showSearch
+                    filterOption={(input, option) =>
+                      (option?.label?.toLowerCase().trim() ?? "").includes(input?.toLowerCase().trim())
+                    }
                   >
                     <Select.Option value="">Chọn Quận/Huyện</Select.Option>
                     {building_address_district?.map((obj, index) => {
@@ -740,6 +748,10 @@ const CreateBuilding = ({ visible, close, data }) => {
                     }}
                     disabled={disabledWard}
                     onChange={wardChange}
+                    showSearch
+                    filterOption={(input, option) =>
+                      (option?.label?.toLowerCase().trim() ?? "").includes(input?.toLowerCase().trim())
+                    }
                   >
                     <Select.Option value="">Chọn Phường/Xã</Select.Option>
                     {building_address_wards?.map((obj, index) => {

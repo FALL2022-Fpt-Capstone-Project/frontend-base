@@ -39,7 +39,7 @@ const ListContractExpired = ({ duration }) => {
       setLoading(true);
       const response = await axios
         .get(LIST_CONTRACT_EXPIRED_URL, {
-          params: { filter: "expired", duration: duration },
+          params: { status: 3, duration: duration },
           headers: {
             "Content-Type": "application/json",
             // "Access-Control-Allow-Origin": "*",

@@ -1,14 +1,24 @@
-import { Button, Col, Divider, Layout, Row, Statistic } from "antd";
+import { Button, Col, Divider, Layout, Modal, Row, Statistic } from "antd";
 import React, { useState } from "react";
 import "./invoice.scss";
 import Breadcrumbs from "../../components/BreadCrumb ";
 import Sidebar from "../../components/sidebar/Sidebar";
 import ListInvoice from "./ListInvoice";
 import { PlusCircleOutlined } from "@ant-design/icons";
+import ListInvoiceDebt from "./ListInvoiceDebt";
+import ListInvoiceUnpaid from "./ListInvoiceUnpaid";
 
 const { Content, Sider, Header } = Layout;
 const Invoice = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [isModalUnpaidOpen, setIsModalUnpaidOpen] = useState(false);
+  const [isModalDebtOpen, setIsModalDebtOpen] = useState(false);
+  const showModalUnpaid = () => {
+    setIsModalUnpaidOpen(true);
+  };
+  const showModalDebt = () => {
+    setIsModalDebtOpen(true);
+  };
   return (
     <div className="invoice">
       <Layout
@@ -38,6 +48,9 @@ const Invoice = () => {
                     }
                     value={2}
                   />
+                  <p className="show-more" onClick={showModalDebt}>
+                    Xem chi tiết
+                  </p>
                 </Col>
                 <Col span={8}>
                   <Statistic
@@ -47,8 +60,11 @@ const Invoice = () => {
                         {/* <Button icon={<ArrowRightOutlined />} style={{ borderRadius: "50%" }}></Button> */}
                       </>
                     }
-                    value={5}
+                    value={4}
                   />
+                  <p className="show-more" onClick={showModalUnpaid}>
+                    Xem chi tiết
+                  </p>
                 </Col>
                 <Col span={8}>
                   <Statistic
@@ -79,6 +95,36 @@ const Invoice = () => {
           </Content>
         </Layout>
       </Layout>
+      <Modal
+        title="Danh sách hoá đơn còn nợ"
+        // style={{ maxwidth: 900 }}
+        width={1300}
+        visible={isModalDebtOpen}
+        onOk={() => setIsModalDebtOpen(false)}
+        onCancel={() => setIsModalDebtOpen(false)}
+        footer={[
+          <Button key="back" onClick={() => setIsModalDebtOpen(false)}>
+            Quay lại
+          </Button>,
+        ]}
+      >
+        <ListInvoiceDebt />
+      </Modal>
+      <Modal
+        title="Danh sách hoá đơn chưa thanh toán"
+        // style={{ maxwidth: 900 }}
+        width={1300}
+        visible={isModalUnpaidOpen}
+        onOk={() => setIsModalUnpaidOpen(false)}
+        onCancel={() => setIsModalUnpaidOpen(false)}
+        footer={[
+          <Button key="back" onClick={() => setIsModalUnpaidOpen(false)}>
+            Quay lại
+          </Button>,
+        ]}
+      >
+        <ListInvoiceUnpaid />
+      </Modal>
     </div>
   );
 };

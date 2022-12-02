@@ -38,7 +38,7 @@ const ListContractRenterAlmostExpired = ({ duration }) => {
       setLoading(true);
       const response = await axios
         .get(LIST_CONTRACT_ALMOST_EXPIRED_URL, {
-          params: { filter: "almostExpired", duration: duration },
+          params: { status: 1, duration: duration },
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${cookie}`,
