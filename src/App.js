@@ -18,8 +18,8 @@ import EditContractRenter from "./pages/contract/EditContractRenter";
 import CreateContractBuilding from "./pages/contract/CreateContractBuilding";
 import AddMemInRoom from "./pages/room/AddMemInRoom";
 import Invoice from "./pages/invoice/Invoice";
-import RoomContract from "./pages/room/RoomContract";
 import RoomPreview from "./pages/room/RoomPreview";
+import RoomEquipment from "./pages/room/RoomEquipment";
 const ROLES = {
   User: "ROLE_STAFF",
   Admin: "ROLE_ADMIN",
@@ -44,13 +44,13 @@ const App = () => {
           <Route path="room" element={<Room />} />
         </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
+          <Route path="room/equipment" element={<RoomEquipment />} />
+        </Route>
+        <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
           <Route path="room/member/:room_id" element={<AddMemInRoom />} />
         </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
           <Route path="room/preview" element={<RoomPreview />} />
-        </Route>
-        <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
-          <Route path="room/create-contract" element={<RoomContract />} />
         </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
           <Route path="contract-apartment" element={<ContractApartment />} />

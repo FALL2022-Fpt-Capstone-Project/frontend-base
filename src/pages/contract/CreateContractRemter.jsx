@@ -1416,12 +1416,12 @@ const CreateContractRenter = () => {
                                   <b>Giá phòng (VND): </b>
                                 </span>
                               }
-                            // rules={[
-                            //   {
-                            //     required: true,
-                            //     message: "Vui lòng nhập giá phòng",
-                            //   },
-                            // ]}
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Vui lòng nhập giá phòng",
+                                },
+                              ]}
                             >
                               <InputNumber
                                 controls={false}
@@ -1579,7 +1579,7 @@ const CreateContractRenter = () => {
                           <b>Lưu ý:</b>
                           <br />
                           - Trên đây là dịch vụ chung áp dụng cho tất cả các phòng trong một tòa nhà.
-                          <br />- Nếu bạn muốn thay đổi dịch vụ chung này cần vào mục <b>Dịch Vụ</b>
+                          <br />- Nếu bạn muốn thay đổi dịch vụ chung này cần vào mục <a href="/service">Dịch Vụ</a>
                           <br />
                         </i>
                       </p>
@@ -1952,6 +1952,10 @@ const CreateContractRenter = () => {
                         required: true,
                         message: "Vui lòng nhập số lượng",
                       },
+                      {
+                        pattern: new RegExp(/^[0-9]*$/),
+                        message: "Vui lòng nhập số nguyên",
+                      }
                     ]}
                   >
                     <InputNumber defaultValue={1} style={{ width: "100%" }} min={1} />
@@ -2101,6 +2105,10 @@ const CreateContractRenter = () => {
                         required: true,
                         message: "Vui lòng nhập số lượng",
                       },
+                      {
+                        pattern: new RegExp(/^[0-9]*$/),
+                        message: "Vui lòng nhập số nguyên",
+                      }
                     ]}
                   >
                     <InputNumber defaultValue={1} style={{ width: "100%" }} min={1} />

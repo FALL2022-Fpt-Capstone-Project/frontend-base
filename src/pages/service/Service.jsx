@@ -67,7 +67,7 @@ function Service(props) {
       });
     setLoading(false);
   };
-  console.log(dataApartmentServiceGeneral);
+
   useEffect(() => {
     apartmentGroup();
     getListServiceBasic();
@@ -366,7 +366,6 @@ function Service(props) {
         });
       });
   };
-  console.log(dataApartmentServiceGeneral);
 
   const customizeRenderEmpty = () => (
     <div style={{ textAlign: "center" }}>
