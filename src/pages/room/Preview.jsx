@@ -5,9 +5,11 @@ import {
     Input,
     Button,
     Form,
+    Select,
     Tag,
     Row,
     Col,
+    Checkbox,
     Tabs,
     Statistic,
     Divider,
@@ -16,24 +18,31 @@ import {
     Card,
     Spin,
     Modal,
-    message,
+    notification,
+    Popover,
 } from "antd";
 import {
     EyeTwoTone,
     DownOutlined,
+    SearchOutlined,
+    UndoOutlined,
     ArrowLeftOutlined,
     DeleteOutlined,
     UserOutlined,
-    EditOutlined,
+    DollarCircleOutlined,
     EditTwoTone,
     HomeOutlined,
+    BulbOutlined,
+    MoreOutlined,
     MinusCircleFilled
 } from "@ant-design/icons";
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import AddRoom from "./AddRoom";
 import AddRoomAuto from "./AddRoomAuto";
 import RoomDetail from "./RoomDetail";
+import IncreaseRoomPrice from "./IncreaseRoomPrice";
+import UpdateRoom from "./UpdateRoom";
 const style = {
     marginBottom: "3%",
 };
@@ -44,16 +53,35 @@ const iconSize = {
     fontSize: "130%",
     marginRight: "8%",
 };
+const width100 = {
+    width: '100%',
+    display: 'flex',
+    float: 'left'
+}
 
 const APARTMENT_DATA_GROUP = "/manager/group/all";
 const ROOM_INFOR = "manager/room/";
 const GET_ALL_CONTRACT = "manager/contract";
-const ALL_FLOOR = "config/floor;"
+const DELETE_ROOM = "manager/room/delete/";
+const DELETE_LIST_ROOM = "manager/room/delete/list";
+
+let optionFloor = [{ label: 'Tất cả các tầng', value: "" }];
+for (let i = 1; i <= 10; i++) {
+    optionFloor.push({
+        value: i,
+        label: i + " Tầng",
+    });
+};
 
 function Preview(props) {
 
-    const [form] = Form.useForm();
+    const { state } = useLocation();
+    console.log(state);
+
+    const [componentSize, setComponentSize] = useState("default");
+    const [formFilter] = Form.useForm();
     const [addRoom, setAddRoom] = useState(false);
+    const [updateRoom, setUpdateRoom] = useState(false);
     const [editRoom, setEditRoom] = useState(false);
     const [addRoomAuto, setAddRoomAuto] = useState(false);
     const [roomDetail, setSetRoomDetail] = useState(false);
@@ -69,109 +97,49 @@ function Preview(props) {
     const [searchRoom, setSearchRoom] = useState("");
     const [roomDetailData, setRoomDetailData] = useState([]);
     const [rowSelected, setRowSelected] = useState([]);
-    const [allFloor, setAllFloor] = useState([]);
+    const [listRoomId, setListRoomId] = useState([]);
     const [groupIdSelect, setGroupIdSelect] = useState("");
+    const [increaseRoomPrice, setIncreaseRoomPrice] = useState(false);
+    const [textCardGroup, setTextCardGroup] = useState("Danh sách phòng tạo mới");
+    const [room_status, setRoomStatus] = useState([]);
+    const [dataRoomUpdate, setDataRoomUpdate] = useState();
+    const [filterSave, setFilterSave] = useState();
+    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
     let cookie = localStorage.getItem("Cookie");
     const navigate = useNavigate();
 
-    //Tree
-    const [expandedKeys, setExpandedKeys] = useState([]);
-    const [checkedKeys, setCheckedKeys] = useState([]);
-    const [selectedKeys, setSelectedKeys] = useState([]);
-    const [autoExpandParent, setAutoExpandParent] = useState(true);
-    const [room_status, setRoomStatus] = useState([]);
-    const onExpand = (expandedKeysValue) => {
-        console.log('onExpand', expandedKeysValue);
-        // if not set autoExpandParent to false, if children expanded, parent can not collapse.
-        // or, you can remove all expanded children keys.
-        setExpandedKeys(expandedKeysValue);
-        setAutoExpandParent(false);
+    const onFormLayoutChange = ({ size }) => {
+        setComponentSize(size);
     };
 
-    const onCheck = (checkedKeysValue) => {
-        console.log('onCheck', checkedKeysValue);
-        setCheckedKeys(checkedKeysValue);
-        const group_floor = checkedKeysValue?.map((obj, index) => obj.split("-"))?.map((o, i) => {
-            return { group: parseInt(o[0]), floor: parseInt(o[1]) }
-        })?.filter((room, j) => room !== undefined);
-
-        const arrTotalRoom = group_floor?.map((obj, index) => {
-            return roomInfor?.filter((o, i) => o.group_id === obj.group
-                && o.room_floor === obj.floor)?.length
-        });
-        const totalRoomRented = group_floor?.map((obj, index) => {
-            return roomInfor?.filter((o, i) => o.group_id === obj.group && o.room_floor === obj.floor
-                && Number.isInteger(o.contract_id))?.length
-        });
-        const totalEmptyRoom = group_floor?.map((obj, index) => {
-            return roomInfor?.filter((o, i) => o.group_id === obj.group && o.room_floor === obj.floor
-                && o.contract_id === null)?.length
-        });
-        const totalPrice = group_floor?.map((obj, index) => {
-            return roomInfor?.filter((o, i) => o.group_id === obj.group && o.room_floor === obj.floor)
-                ?.map((room, j) => room.room_price).reduce(
-                    (previousValue, currentValue) => previousValue + currentValue, 0)
-        });
-
-        setNumberOfRoom(arrTotalRoom?.reduce(
-            (previousValue, currentValue) => previousValue + currentValue, 0));
-        setNumberOfRoomEmpty(totalEmptyRoom?.reduce(
-            (previousValue, currentValue) => previousValue + currentValue, 0));
-        setTotalRoomPrice(totalPrice?.reduce(
-            (previousValue, currentValue) => previousValue + currentValue, 0));
-        setNumberOfRoomRented(totalRoomRented?.reduce(
-            (previousValue, currentValue) => previousValue + currentValue, 0));
-
-        const dataApartment = group_floor?.map((obj, index) => {
-            return dataApartmentGroup?.filter((o, i) => o.group_id === obj.group)[0]
-        });
-
-        const listRoom = group_floor?.map((obj, index) => {
-            return roomInfor?.filter((o, i) => o.group_id === obj.group &&
-                o.room_floor === obj.floor)
-        });
-        const listContract = group_floor?.map((obj, index) => {
-            return contractRoom?.filter((o, i) => o.group_id === obj.group &&
-                o.room_floor === obj.floor)
-        });
-        setGroupRoom(pre => {
-            return { contracts: listContract.flat(1), group: dataApartment.flat(1), list_rooms: listRoom.flat(1) }
-        });
+    const onClickAddRoom = (e) => {
+        setAddRoom(true);
     };
-
-    const onSelect = (selectedKeysValue, info) => {
-        console.log('onSelect', info);
-        setSelectedKeys(selectedKeysValue);
-    };
-    //Tree
-    const onClickEditRoom = (e) => {
-        setEditRoom(true);
+    const onClickAddRoomAuto = (e) => {
+        setAddRoomAuto(true);
     };
 
     const columns = [
         {
             title: "Tên chung cư",
             dataIndex: "groupName",
-            key: "room_id",
+            key: "key",
         },
         {
             title: "Tên phòng",
             dataIndex: "roomName",
-            key: "room_id",
+            key: "key",
             filteredValue: [searchRoom],
             onFilter: (value, record) => {
                 return String(record.roomName.trim()).toLowerCase()?.includes(value.trim().toLowerCase()) ||
                     String(record.groupName.trim()).toLowerCase()?.includes(value.trim().toLowerCase());
             },
-            render: (roomName) => {
-                return 'Phòng ' + roomName
-            }
         },
         {
             title: "Tầng",
             dataIndex: "roomFloor",
-            key: "room_id",
+            key: "key",
             render: (roomFloor) => {
                 return 'Tầng ' + roomFloor
             }
@@ -179,15 +147,17 @@ function Preview(props) {
         {
             title: "Giá phòng",
             dataIndex: "roomPrice",
-            key: "room_id",
+            key: "key",
             render: (roomPrice) => {
                 return <span>{new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(roomPrice)}</span>;
             },
+            // defaultSortOrder: 'ascend',
+            // sorter: (a, b) => a.roomPrice - b.roomPrice
         },
         {
             title: "Tiền cọc",
             dataIndex: "roomDeposit",
-            key: "room_id",
+            key: "key",
             render: (roomDeposit) => {
                 return (
                     roomDeposit ?
@@ -196,24 +166,6 @@ function Preview(props) {
                 );
             },
         },
-        // {
-        //   title: "Thời hạn hợp đồng",
-        //   dataIndex: "durationContract",
-        //   key: "room_id",
-        //   render: (durationContract) => {
-        //     if (durationContract < 12) {
-        //       return durationContract + ' tháng'
-        //     } else {
-        //       if (durationContract > 12) {
-        //         return durationContract % 12 !== 0 ?
-        //           Math.floor(durationContract / 12) + ' năm ' + durationContract % 12 + ' tháng' :
-        //           Math.floor(durationContract / 12) + ' năm '
-        //       } else {
-        //         return 'Chưa vào ở';
-        //       }
-        //     }
-        //   }
-        // },
         {
             title: "Trạng thái",
             dataIndex: "roomStatus",
@@ -229,59 +181,181 @@ function Preview(props) {
             },
         },
         {
-            title: "Thao tác",
-            key: "room_id",
+            // title: "Thao tác",
+            width: 50,
+            key: "key",
             render: (record) => {
-                if (!record.roomStatus) {
-                    return (
-                        <>
-                            <Tooltip title="Xem chi tiết">
-                                <EyeTwoTone
-                                    onClick={() => {
-                                        setSetRoomDetail(true);
-                                        setRoomDetailData(record);
-                                    }}
-                                    style={iconSize}
-                                />
+                return <>
+                    <Row justify="center">
+                        <Popover
+                            // open={operation}
+                            // onOpenChange={handleOpenChange}
+                            placement="left"
+                            trigger="click"
+                            title={"Thao tác"}
+                            content={
+                                <div>
+                                    <Row>
+                                        <Col span={24}>
+                                            <Button
+                                                style={width100}
+                                                onClick={() => {
+                                                    setSetRoomDetail(true);
+                                                    setRoomDetailData(record);
+                                                    // setOperation(false);
+                                                }}
+                                                icon={
+                                                    <EyeTwoTone
+                                                        style={iconSize}
+                                                    />
+                                                }>
+                                                Xem chi tiết
+                                            </Button>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col span={24}>
+                                            <Button
+                                                style={width100}
+                                                onClick={() => {
+                                                    setUpdateRoom(true);
+                                                    setDataRoomUpdate(record);
+                                                }}
+                                                icon={
+                                                    <EditTwoTone
+                                                        style={iconSize}
+                                                    />
+                                                }>
+                                                Chỉnh sửa phòng
+                                            </Button>
+                                        </Col>
+                                    </Row>
+                                    {
+                                        !record.roomStatus
+                                            ?
+                                            <>
+                                                <Row>
+                                                    <Col span={24}>
+                                                        <Button
+                                                            style={width100}
+                                                            onClick={() => {
+                                                                onDeleteRoom(record);
+                                                            }}
+                                                            icon={
+                                                                <DeleteOutlined style={{
+                                                                    fontSize: "130%",
+                                                                    marginRight: "8%",
+                                                                    color: 'red'
+                                                                }} />
+                                                            }>
+                                                            Xóa phòng
+                                                        </Button>
+                                                    </Col>
+                                                </Row>
+                                            </>
+                                            :
+                                            <Row>
+                                                <Col span={24}>
+                                                    <Button
+                                                        style={width100}
+                                                        onClick={() => {
+                                                            navigate(`/room/member/${record.room_id}`);
+                                                        }}
+                                                        icon={
+                                                            <UserOutlined
+                                                                style={iconSize}
+                                                            />
+                                                        }>
+                                                        Thêm thành viên
+                                                    </Button>
+                                                </Col>
+                                            </Row>
+                                    }
+                                    <Row>
+                                        <Col span={24}>
+                                            <Button
+                                                disabled
+                                                onClick={() => {
+                                                    navigate('equipment', { state: [record] })
+                                                }}
+                                                style={width100}
+                                                icon={
+                                                    <BulbOutlined style={iconSize} />
+                                                }>
+                                                Trang thiết bị
+                                            </Button>
+                                        </Col>
+                                    </Row>
+                                </div>
+                            }>
+                            <Tooltip title="Thao tác">
+                                <MoreOutlined onClick={() => {
+                                    // setOperation(true);
+                                }} style={{ color: 'black', borderRadius: "50%", border: '1px solid black', fontSize: '200%' }} />
                             </Tooltip>
-                            <Tooltip title="Chỉnh sửa phòng">
-                                <EditTwoTone onClick={() => { }} style={iconSize} />
-                            </Tooltip>
-                            <Tooltip title="Xóa phòng">
-                                <DeleteOutlined
-                                    style={{
-                                        fontSize: "130%",
-                                        marginRight: "8%",
-                                        color: 'red'
-                                    }}
-                                    onClick={() => {
-                                        onDeleteRoom(record);
-                                    }}
-                                />
-                            </Tooltip>
-                        </>
-                    );
-                } else {
-                    return (
-                        <>
-                            <Tooltip title="Xem chi tiết">
-                                <EyeTwoTone
-                                    onClick={() => {
-                                        setSetRoomDetail(true);
-                                        setRoomDetailData(record);
-                                    }}
-                                    style={iconSize}
-                                />
-                            </Tooltip>
-                            <Tooltip title="Chỉnh sửa phòng">
-                                <EditTwoTone onClick={() => { }} style={iconSize} />
-                            </Tooltip>
-                        </>
-                    );
-                }
+                        </Popover>
+                    </Row>
+                </>
             },
         },
     ];
+    const onDeleteRoomAPI = async (room_id, room_name) => {
+        // let cookie = localStorage.getItem("Cookie");
+        await axios
+            .delete(DELETE_ROOM + room_id, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${cookie}`,
+                },
+            })
+            .then((res) => {
+                notification.success({
+                    message: ` Xóa phòng ${room_name} thành công`,
+                    placement: "top",
+                    duration: 3,
+                });
+                apartmentGroup();
+                getRoomInfor(groupIdSelect);
+                getAllContract();
+            })
+            .catch((error) => {
+                notification.error({
+                    message: "Xóa phòng thất bại",
+                    placement: "top",
+                    duration: 3,
+                });
+            });
+    };
+
+    const onDeleteListRoomAPI = async () => {
+        // let cookie = localStorage.getItem("Cookie");
+        await axios
+            .delete(DELETE_LIST_ROOM + "?roomId=" + listRoomId,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${cookie}`,
+                    },
+                })
+            .then((res) => {
+                notification.success({
+                    message: ` Xóa phòng thành công`,
+                    placement: "top",
+                    duration: 3,
+                });
+                apartmentGroup();
+                getRoomInfor(groupIdSelect);
+                getAllContract();
+                setListRoomId([]);
+            })
+            .catch((error) => {
+                notification.error({
+                    message: "Xóa phòng thất bại",
+                    placement: "top",
+                    duration: 3,
+                });
+            });
+    };
 
     const onDeleteRoom = (record) => {
         Modal.confirm({
@@ -289,20 +363,21 @@ function Preview(props) {
             okText: "Có",
             cancelText: "Hủy",
             onOk: () => {
-
+                onDeleteRoomAPI(record.room_id, record.roomName)
             },
         });
     };
 
     const rowSelection = {
+        selectedRowKeys,
         onChange: (selectedRowKeys, selectedRows) => {
             setRowSelected(selectedRows);
             console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+            setListRoomId(selectedRows.map(room => room.room_id));
+            setSelectedRowKeys(selectedRowKeys);
         },
         getCheckboxProps: (record) => ({
-            disabled: record.name === 'Disabled User',
-            // Column configuration not to be checked
-            name: record.name,
+            disabled: record.roomStatus === true,
         }),
     };
 
@@ -310,7 +385,13 @@ function Preview(props) {
         apartmentGroup();
         getRoomInfor();
         getAllContract();
-        setRoomStatus({ ...room_status, roomStatus: [true, false] })
+        setRoomStatus({ ...room_status, roomStatus: [true, false] });
+        formFilter.setFieldsValue({
+            roomGroup: "",
+            roomFloor: "",
+            roomPrice: "",
+            roomStatus: [true, false]
+        })
     }, []);
 
 
@@ -324,8 +405,9 @@ function Preview(props) {
                 },
             })
             .then((res) => {
-                const mergeGroup = res.data.data.list_group_contracted?.concat(res.data.data.list_group_non_contracted);
-                setCheckedKeys(mergeGroup?.map((obj, index) => obj.group_id.toString()));
+                const mergeGroup = res.data.data.list_group_contracted?.concat(res.data.data.list_group_non_contracted)
+                    ?.filter(group => group.group_id === state.groupId);
+                // setCheckedKeys(mergeGroup?.map((obj, index) => obj.group_id.toString ()));
                 setDataApartmentGroup(mergeGroup);
                 setGroupRoom(pre => {
                     return { ...pre, group: mergeGroup }
@@ -334,11 +416,11 @@ function Preview(props) {
             .catch((error) => {
                 console.log(error);
             });
-        setLoading(false);
+        // setLoading(false);
     };
-
+    // console.log(groupRoom);
     const getAllContract = async () => {
-        setLoading(true);
+        // setLoading(true);
         await axios
             .get(GET_ALL_CONTRACT, {
                 headers: {
@@ -358,7 +440,7 @@ function Preview(props) {
         setLoading(false);
     };
 
-    const getRoomInfor = async (group_id) => {
+    const getRoomInfor = async (group_id = "", sortRoom = "", roomFloor = "", roomStatus = []) => {
         setLoading(true);
         await axios
             .get(ROOM_INFOR, {
@@ -368,11 +450,25 @@ function Preview(props) {
                 },
             })
             .then((res) => {
-                const room_data = group_id === undefined || group_id === "" ? res.data.data :
-                    res.data.data?.filter((room, index) => room.group_id === group_id)
+                setSelectedRowKeys(state.list_rooms.list_generate_room?.filter(room => room.is_duplicate === false)?.map((o, i) => i))
+                setListRoomId(state.list_rooms.list_generate_room?.filter(room => room.is_duplicate === false)?.map((o, i) => i));
+                let room_data = group_id === undefined || group_id === "" ? state.list_rooms.list_generate_room :
+                    state.list_rooms.list_generate_room?.filter((room, index) => room.group_id === group_id);
+
+                room_data = typeof sortRoom == "boolean" ? (room_data.sort((a, b) => sortRoom ? a.room_price - b.room_price :
+                    b.room_price - a.room_price)) : room_data;
+
+                room_data = roomStatus.length === 1 ? (room_data.filter(room => roomStatus[0] ?
+                    Number.isInteger(room.contract_id) : room.contract_id === null)) : room_data;
+
+                room_data = Number.isInteger(roomFloor) ? room_data?.filter(room => room.room_floor === roomFloor) : room_data;
+
                 setGroupRoom(pre => {
-                    return { ...pre, list_rooms: room_data };
+                    return {
+                        ...pre, list_rooms: room_data
+                    };
                 });
+
                 setNumberOfRoom(room_data.length);
                 setNumberOfRoomEmpty(room_data?.filter((obj, index) => obj.contract_id === null)?.length);
                 setNumberOfRoomRented(room_data?.filter(room => Number.isInteger(room.contract_id))?.length);
@@ -388,29 +484,64 @@ function Preview(props) {
     };
 
     const treeData = dataApartmentGroup?.map((obj, index) => {
-        console.log(obj.total_floor);
         let floor = [];
         for (let i = 1; i <= obj.total_floor; i++) {
             floor.push(i);
         }
+        const list_rooms = obj.list_rooms.concat(state?.list_rooms?.list_generate_room)
         return {
-            title: <span>{obj.group_name} <b style={{ fontWeight: 600 }}>{" ( " + obj.total_floor + " tầng, " + obj.list_rooms?.length + " phòng )"}</b></span>,
+            title:
+                <>
+                    <span>{obj.group_name}
+                        <b style={{ fontWeight: 600 }}>{" ( " + obj.total_floor + " tầng, " + obj.list_rooms?.length + " phòng )"}
+                        </b>
+                    </span>
+                    <span style={{ color: 'green' }}> + {list_rooms?.filter((u, y) => u.is_duplicate === false).length}</span>
+                    <span style={{ color: 'red' }}> - {list_rooms?.filter((u, y) => u.is_duplicate === true).length}</span>
+                </>,
             key: obj.group_id.toString(),
             icon: <HomeOutlined />,
             children: floor?.map((pre, k) => {
                 return {
-                    title: <span>{'Tầng ' + pre} <b style={{ fontWeight: 600 }}> {"( " + obj.list_rooms?.filter((u, y) => u.room_floor === pre).length + " phòng )"} </b></span>,
+                    title:
+                        <>
+                            <span>{'Tầng ' + pre}
+                                <b style={{ fontWeight: 600 }}> {"( " + obj.list_rooms?.filter((u, y) => u.room_floor === pre).length + " phòng )"} </b>
+                            </span>
+                            <span style={{ color: 'green' }}> + {list_rooms?.filter((u, y) => u.room_floor === pre && u.is_duplicate === false).length}</span>
+                            <span style={{ color: 'red' }}> - {list_rooms?.filter((u, y) => u.room_floor === pre && u.is_duplicate === true).length}</span>
+                        </>,
                     key: obj.group_id + '-' + pre,
-                    children: obj.list_rooms?.filter(rooms => rooms.room_floor === pre)?.map((room, j) => {
+                    children: list_rooms?.filter(rooms => rooms.room_floor === pre)?.map((room, j) => {
                         return {
-                            title: 'Phòng ' + room.room_name,
-                            key: obj.group_id.toString() + "-" + pre.toString() + "-" + room.room_id
+                            title: <span style={room.is_duplicate === false ? { color: 'green' } : (room.room_id === null ? { color: 'red' } : { color: 'black' })}>{'Phòng ' + room.room_name}</span>,
+                            key: obj.group_id.toString() + "-" + pre.toString() + "-" + j.toString()
                         }
                     })
                 }
             })
         }
     });
+
+    const onFinishFilter = (e) => {
+        setFilterSave(e);
+        setRoomStatus({ ...room_status, roomStatus: e.roomStatus });
+        getRoomInfor(e.roomGroup, e.roomPrice, e.roomFloor, e.roomStatus);
+        setTextCardGroup(e.roomGroup === "" ? 'Danh sách phòng' : 'Danh sách phòng ( ' + dataApartmentGroup?.find(group => group.group_id === e.roomGroup).group_name + ' )');
+    }
+    const onFinishFailFilter = (e) => {
+        console.log(e);
+    }
+
+    const reload = () => {
+        apartmentGroup();
+        if (filterSave === undefined) {
+            getRoomInfor()
+        } else {
+            getRoomInfor(filterSave.roomGroup, filterSave.roomPrice, filterSave.roomFloor, filterSave.roomStatus);
+        };
+        getAllContract();
+    }
     return (
         <Spin spinning={loading} size="large">
             <div
@@ -438,19 +569,31 @@ function Preview(props) {
                     <Col xs={24} lg={24} xl={8} span={8}>
                         <Card
                             className="card-w100-h100"
-                            title={<p className="text-card">Thông tin chung các phòng</p>}
+                            title={<p className="text-card">Thông tin chung cư bạn đã chọn</p>}
                             bordered={false}
                         >
+                            {/* <Row>
+                                <Col span={24}>
+                                    <p>Tổng số chung cư: <span style={{ fontWeight: 600 }}>{dataApartmentGroup?.length} chung cư</span></p>
+                                </Col>
+                            </Row> */}
+                            <Row>
+                                <Col span={24}>
+                                    <p>Địa chỉ chung cư: {dataApartmentGroup[0]?.address?.address_wards + ", "
+                                        + dataApartmentGroup[0]?.address?.address_district + ", "
+                                        + dataApartmentGroup[0]?.address?.address_city}</p>
+                                </Col>
+                            </Row>
                             <Tree
                                 showIcon
                                 checkable={false}
-                                onExpand={onExpand}
-                                expandedKeys={expandedKeys}
-                                autoExpandParent={autoExpandParent}
-                                onCheck={onCheck}
-                                checkedKeys={checkedKeys}
-                                onSelect={onSelect}
-                                selectedKeys={selectedKeys}
+                                // onExpand={onExpand}
+                                // expandedKeys={expandedKeys}
+                                // autoExpandParent={autoExpandParent}
+                                // onCheck={onCheck}
+                                // checkedKeys={checkedKeys}
+                                // onSelect={onSelect}
+                                // selectedKeys={selectedKeys}
                                 treeData={treeData}
                                 switcherIcon={<DownOutlined />}
                             />
@@ -459,7 +602,7 @@ function Preview(props) {
                     <Col xs={24} lg={24} xl={16} span={16}>
                         <Card
                             className="card-w100-h100"
-                            title="Danh sách phòng"
+                            title={textCardGroup}
                             bordered={false}
                         >
                             <Row style={{ marginBottom: "2%" }} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
@@ -505,9 +648,155 @@ function Preview(props) {
                                                     setSearchRoom(e);
                                                 }}
                                                 // onChange={(e) => { setSearchRoom(e.target.value) }}
-                                                placeholder="Nhập tên phòng để tìm kiếm" />
+                                                placeholder="Nhập tên phòng hoặc tên chung cư để tìm kiếm" />
                                         </Col>
                                     </Row>
+                                </Tabs.TabPane>
+                                <Tabs.TabPane tab="Tìm kiếm nâng cao" key="2">
+                                    <Form
+                                        form={formFilter}
+                                        onFinish={onFinishFilter}
+                                        onFinishFailed={onFinishFailFilter}
+                                        layout="horizontal"
+                                        initialValues={{
+                                            size: componentSize,
+                                        }}
+                                        onValuesChange={onFormLayoutChange}
+                                        size={componentSize}
+                                        width={1000}
+                                        id="filterRoom">
+                                        <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+                                            <Col span={8}>
+                                                <Row style={style}>
+                                                    <span>Tìm kiếm theo chung cư </span>
+                                                </Row>
+                                                <Row>
+                                                    <Col span={24}>
+                                                        <Form.Item
+                                                            className="form-item"
+                                                            name="roomGroup"
+                                                            labelCol={{ span: 24 }}
+                                                        >
+                                                            <Select
+                                                                defaultValue={""}
+                                                                placeholder="Chọn chung cư"
+                                                                showSearch
+                                                                filterOption={(input, option) =>
+                                                                    (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                                                                }
+                                                                style={{ width: "100%", marginBottom: "5%" }}
+                                                                onChange={(e) => {
+                                                                    setGroupIdSelect(e);
+                                                                }}
+                                                                options={[...dataApartmentGroup?.map(group => {
+                                                                    return { label: group.group_name, value: group.group_id }
+                                                                }), {
+                                                                    label: 'Tất cả chung cư',
+                                                                    value: ""
+                                                                },]} />
+
+                                                        </Form.Item>
+                                                    </Col>
+                                                </Row>
+                                                <Row style={style}>
+                                                    <span>Tìm kiếm theo giá phòng </span>
+                                                </Row>
+                                                <Row gutter={12} style={{ marginTop: "1%" }}>
+                                                    <Col span={24}>
+                                                        <Row>
+                                                            <Col span={24}>
+                                                                <Form.Item
+                                                                    className="form-item"
+                                                                    name="roomPrice"
+                                                                    labelCol={{ span: 24 }}
+                                                                >
+                                                                    <Select
+                                                                        placeholder="Sắp xếp theo giá phòng"
+                                                                        options={[
+                                                                            { label: 'Tất cả các giá phòng', value: "" },
+                                                                            { label: 'Giá phòng từ thấp đến cao', value: true },
+                                                                            { label: 'Giá phòng từ cao đến thấp', value: false },
+                                                                        ]}
+                                                                        style={{ width: "100%" }}>
+                                                                    </Select>
+                                                                </Form.Item>
+                                                            </Col>
+                                                        </Row>
+                                                    </Col>
+                                                </Row>
+                                            </Col>
+                                            <Col span={8}>
+                                                <Row style={style}>
+                                                    <span>Tìm kiếm theo tầng </span>
+                                                </Row>
+                                                <Row>
+                                                    <Col span={24}>
+                                                        <Form.Item
+                                                            className="form-item"
+                                                            name="roomFloor"
+                                                            labelCol={{ span: 24 }}
+                                                        >
+                                                            <Select
+                                                                defaultValue={""}
+                                                                options={optionFloor}
+                                                                placeholder="Chọn tầng"
+                                                                style={{ width: "100%" }}>
+                                                            </Select>
+                                                        </Form.Item>
+                                                    </Col>
+                                                </Row>
+                                            </Col>
+                                            <Col span={8}>
+                                                <Row style={style}>
+                                                    <span>Trạng thái phòng </span>
+                                                </Row>
+                                                <Row>
+                                                    <Col span={24}>
+                                                        <Form.Item
+                                                            className="form-item"
+                                                            name="roomStatus"
+                                                            labelCol={{ span: 24 }}
+                                                        >
+                                                            <Checkbox.Group
+                                                                defaultValue={[true, false]}
+                                                                style={{ marginBottom: "15%" }} options={[
+                                                                    { label: "Đang ở", value: true },
+                                                                    { label: "Đang trống", value: false },
+                                                                ]}></Checkbox.Group>
+                                                        </Form.Item>
+                                                    </Col>
+                                                </Row>
+                                            </Col>
+                                        </Row>
+                                        <Row justify="center">
+                                            <Col span={24}>
+                                                <Row gutter={12} justify="center" style={{ margin: "3% 0 3% 0" }}>
+                                                    <Button
+                                                        htmlType="submit"
+                                                        key="submit"
+                                                        form="filterRoom"
+                                                        type="primary"
+                                                        icon={<SearchOutlined />} style={{ marginRight: "1%" }}>
+                                                        Tìm kiếm
+                                                    </Button>
+                                                    <Button
+                                                        onClick={() => {
+                                                            setFilterSave();
+                                                            apartmentGroup();
+                                                            getRoomInfor();
+                                                            getAllContract();
+                                                            setRoomStatus({ ...room_status, roomStatus: [true, false] });
+                                                            formFilter.setFieldsValue({
+                                                                roomGroup: "",
+                                                                roomFloor: "",
+                                                                roomPrice: "",
+                                                                roomStatus: [true, false]
+                                                            })
+                                                        }} icon={<UndoOutlined />}>Đặt lại</Button>
+                                                </Row>
+                                            </Col>
+                                        </Row>
+                                    </Form>
                                 </Tabs.TabPane>
                             </Tabs>
                             <Row>
@@ -517,25 +806,26 @@ function Preview(props) {
                                             fontSize: "130%",
                                             margin: "1% 0",
                                             color: 'red'
-                                        }} /> Những phòng đã tồn tại trong tòa nhà
+                                        }} /> <i style={{ color: 'red' }}>Những phòng đã tồn tại trong tòa nhà</i>
                                     </span>
                                 </Col>
                             </Row>
                             <Table
+                                rowClassName={(record) => record.is_duplicate === false ? 'data-row' : 'data-row active-row'}
                                 rowSelection={{
                                     type: 'checkbox',
                                     ...rowSelection,
                                 }}
-                                rowClassName={(record) => record.roomStatus ? 'data-row' : 'data-row active-row'}
-                                rowKey={(record) => record.room_id}
+                                rowKey={(record) => record.key}
                                 bordered
                                 onChange={(pagination, filters, sorter, extra) => {
-                                    console.log(filters.roomStatus)
                                     setRoomStatus({ ...room_status, roomStatus: filters.roomStatus });
                                 }}
                                 loading={loading}
                                 dataSource={groupRoom?.list_rooms?.map((obj, index) => {
                                     return {
+                                        is_duplicate: obj.is_duplicate,
+                                        key: index,
                                         room_id: obj.room_id,
                                         group_id: obj.group_id,
                                         room_floor: obj.room_floor,
@@ -559,14 +849,34 @@ function Preview(props) {
                                         endDate: groupRoom?.contracts?.find((o, i) => o.room_id === obj.room_id)?.contract_end_date
                                     }
                                 })}
-                                pagination={{ defaultPageSize: 10, showSizeChanger: true, pageSizeOptions: ['10', '20', '30'] }}
+                                // pagination={{ defaultPageSize: 10, showSizeChanger: true, pageSizeOptions: ['10', '20', '30'] }}
                                 columns={columns}
-                                scroll={{ x: 1000, y: 800 }}></Table>
+                                scroll={{ x: 800, y: 800 }}></Table>
+                            <Row>
+                                <p>Tổng số phòng đã chọn: {listRoomId?.length}</p>
+                            </Row>
                             <Row>
                                 <Col span={24}>
-                                    <Button onClick={onClickEditRoom} style={{ marginRight: "1%" }}
-                                        icon={<EditOutlined style={textSize} />} type="primary">Chỉnh sửa phòng đã chọn</Button>
-                                    <Button type="danger" icon={<DeleteOutlined style={{ fontSize: "130%", color: "white" }} />}>Xóa phòng đã chọn</Button>
+                                    <Button
+                                        disabled={listRoomId.length === 0 ? true : false}
+                                        onClick={() => {
+                                            Modal.confirm({
+                                                title: `Bạn có chắc chắn muốn xóa các phòng đã chọn ?`,
+                                                okText: "Có",
+                                                cancelText: "Hủy",
+                                                onOk: () => {
+                                                    onDeleteListRoomAPI()
+                                                },
+                                            });
+                                        }}
+                                        type="danger" icon={<DeleteOutlined style={{ fontSize: "130%", color: "white" }}
+                                        />}>Xóa phòng đã chọn</Button>
+                                    <Button onClick={() => {
+                                        setIncreaseRoomPrice(true);
+                                    }} style={{ marginLeft: "1%" }}
+                                        icon={<DollarCircleOutlined style={textSize} />} type="primary">
+                                        Tăng/Giảm giá phòng
+                                    </Button>
                                 </Col>
                             </Row>
                         </Card>
@@ -575,9 +885,11 @@ function Preview(props) {
                 <Row>
                     <Button type="primary" style={{ marginTop: '1%' }}>Tạo mới</Button>
                 </Row>
-                <AddRoom visible={addRoom} close={setAddRoom} />
+                <AddRoom reRender={reload} visible={addRoom} close={setAddRoom} data={dataApartmentGroup} />
+                <UpdateRoom reRender={reload} visible={updateRoom} close={setUpdateRoom} data={dataApartmentGroup} dataUpdate={dataRoomUpdate} setDataUpdate={setDataRoomUpdate} />
                 <AddRoomAuto visible={addRoomAuto} close={setAddRoomAuto} data={dataApartmentGroup} />
                 <RoomDetail visible={roomDetail} close={setSetRoomDetail} data={roomDetailData} />
+                <IncreaseRoomPrice visible={increaseRoomPrice} close={setIncreaseRoomPrice} />
             </div>
         </Spin>
     );

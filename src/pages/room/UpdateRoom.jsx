@@ -54,7 +54,6 @@ function UpdateRoom({ reRender, visible, close, data, dataUpdate, setDataUpdate 
             room_current_electric_index: null,
             room_price: e.roomPrice,
             room_area: e.roomSquare,
-            is_disable: true
         }];
         console.log(JSON.stringify(data));
         await axios

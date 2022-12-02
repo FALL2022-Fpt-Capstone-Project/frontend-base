@@ -22,11 +22,11 @@ const textSize = {
     fontSize: 15,
 };
 const LIST_ASSET_TYPE = "manager/asset/type";
-const ADD_ASSET = "manager/asset/hand-over/add/";
+const ADD_ASSET = "manager/asset/room/add";
 
 function RoomEquipment(data) {
     const { state } = useLocation();
-    console.log(state);
+    console.log(state[0]);
     const dataFilter = {
         id: [],
         asset_type: [],
@@ -48,9 +48,18 @@ function RoomEquipment(data) {
     const [componentSize, setComponentSize] = useState("default");
     let cookie = localStorage.getItem("Cookie");
 
+
+
     useEffect(() => {
         getAssetType();
+        loadDefault();
     }, []);
+
+    const loadDefault = () => {
+        createAssetForm.setFieldsValue({
+            hand_over_asset_quantity: 1,
+        });
+    };
 
     const getAssetType = async () => {
         setLoading(true);
@@ -64,6 +73,7 @@ function RoomEquipment(data) {
                 // withCredentials: true,
             })
             .then((res) => {
+                console.log(res.data.data);
                 setListAssetType(res.data.data);
                 createAssetForm.setFieldsValue({
                     asset_type_show_name: res.data.data?.find(
@@ -107,11 +117,11 @@ function RoomEquipment(data) {
             filteredValue: filterAssetType.asset_type_show_name || null,
             onFilter: (value, record) => record.asset_type_show_name.indexOf(value) === 0,
         },
-        {
-            title: "Ngày bàn giao",
-            dataIndex: "hand_over_date_delivery",
-            key: "asset_id",
-        },
+        // {
+        //     title: "Ngày bàn giao",
+        //     dataIndex: "hand_over_date_delivery",
+        //     key: "asset_id",
+        // },
         {
             title: "Thao tác",
             key: "asset_id",
@@ -126,10 +136,10 @@ function RoomEquipment(data) {
                                 editAssetForm.setFieldsValue({
                                     asset_id: record.asset_id,
                                     asset_name: record.asset_name,
-                                    hand_over_date_delivery:
-                                        record.hand_over_date_delivery !== null
-                                            ? moment(record.hand_over_date_delivery, dateFormatList)
-                                            : "",
+                                    // hand_over_date_delivery:
+                                    //     record.hand_over_date_delivery !== null
+                                    //         ? moment(record.hand_over_date_delivery, dateFormatList)
+                                    //         : "",
                                     hand_over_asset_quantity: record.hand_over_asset_quantity,
                                     asset_type_show_name: record.asset_type_show_name,
                                     // hand_over_asset_status: record.hand_over_asset_status,
@@ -165,17 +175,16 @@ function RoomEquipment(data) {
 
     const addAssetFinish = async (dataAsset) => {
         const data = {
-            asset_id: dataAsset?.asset_id,
-            assets_additional_name: dataAsset?.asset_name,
-            assets_additional_type: dataAsset?.asset_type_show_name,
-            hand_over_asset_quantity: dataAsset?.hand_over_asset_quantity,
-            hand_over_asset_status: true,
-            hand_over_date_delivery: dataAsset?.hand_over_date_delivery?.format("DD-MM-YYYY"),
+            asset_name: dataAsset.asset_name,
+            asset_type_id: dataAsset.asset_type_show_name,
+            asset_quantity: dataAsset.hand_over_asset_quantity,
+            room_id: state[0].room_id
+            // hand_over_date_delivery: dataAsset?.hand_over_date_delivery?.format("DD-MM-YYYY"),
         };
         console.log(JSON.stringify(data));
         setLoading(true);
         await axios
-            .post(ADD_ASSET + state.room_id, data, {
+            .post(ADD_ASSET, [data], {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${cookie}`,
@@ -209,7 +218,7 @@ function RoomEquipment(data) {
             (asset) =>
                 asset.asset_name.toLowerCase().trim() === e.asset_name.toLowerCase().trim() &&
                 asset.asset_type_show_name === e.asset_type_show_name &&
-                asset.hand_over_date_delivery === moment(e.hand_over_date_delivery).format("DD-MM-YYYY") &&
+                // asset.hand_over_date_delivery === moment(e.hand_over_date_delivery).format("DD-MM-YYYY") &&
                 asset.hand_over_asset_quantity === e.hand_over_asset_quantity
             // asset.hand_over_asset_status === e.hand_over_asset_status
         );
@@ -220,7 +229,7 @@ function RoomEquipment(data) {
                     if (asset.asset_id === e.asset_id) {
                         return {
                             ...e,
-                            hand_over_date_delivery: moment(e.hand_over_date_delivery).format("DD-MM-YYYY"),
+                            // hand_over_date_delivery: moment(e.hand_over_date_delivery).format("DD-MM-YYYY"),
                         };
                     } else {
                         return asset;
@@ -282,7 +291,7 @@ function RoomEquipment(data) {
                                             <p>
                                                 <h3>
                                                     <b>
-                                                        Danh sách trang thiết bị phòng {state.roomName}
+                                                        Danh sách trang thiết bị trong phòng {state[0].roomName}
                                                     </b>
                                                 </h3>
                                             </p>
@@ -381,7 +390,6 @@ function RoomEquipment(data) {
                                         size={"default"}
                                         id="create-asset"
                                     >
-                                        <Form.Item className="form-item" name="asset_id" style={{ display: "none" }}></Form.Item>
                                         <Form.Item
                                             className="form-item"
                                             name="asset_name"
@@ -403,29 +411,6 @@ function RoomEquipment(data) {
                                         </Form.Item>
                                         <Form.Item
                                             className="form-item"
-                                            name="hand_over_date_delivery"
-                                            labelCol={{ span: 24 }}
-                                            label={
-                                                <span>
-                                                    <b>Ngày bàn giao: </b>
-                                                </span>
-                                            }
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: "Vui lòng chọn ngày bàn giao",
-                                                },
-                                            ]}
-                                        >
-                                            <DatePicker
-                                                style={{ width: "100%" }}
-                                                placeholder="Ngày bàn giao"
-                                                defaultValue={moment()}
-                                                format="DD-MM-YYYY"
-                                            />
-                                        </Form.Item>
-                                        <Form.Item
-                                            className="form-item"
                                             name="hand_over_asset_quantity"
                                             labelCol={{ span: 24 }}
                                             label={
@@ -444,7 +429,7 @@ function RoomEquipment(data) {
                                                 }
                                             ]}
                                         >
-                                            <InputNumber defaultValue={1} style={{ width: "100%" }} min={1} />
+                                            <InputNumber placeholder="Nhập số lượng tài sản" style={{ width: "100%" }} min={1} />
                                         </Form.Item>
                                         <Form.Item
                                             className="form-item"
@@ -525,30 +510,6 @@ function RoomEquipment(data) {
                                         >
                                             <Input disabled={disableEditAsset} placeholder="Tên tài sản"></Input>
                                         </Form.Item>
-                                        <Form.Item className="form-item" name="asset_id" style={{ display: "none" }}></Form.Item>
-                                        <Form.Item
-                                            className="form-item"
-                                            name="hand_over_date_delivery"
-                                            labelCol={{ span: 24 }}
-                                            label={
-                                                <span>
-                                                    <b>Ngày bàn giao: </b>
-                                                </span>
-                                            }
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: "Vui lòng chọn ngày bàn giao",
-                                                },
-                                            ]}
-                                        >
-                                            <DatePicker
-                                                style={{ width: "100%" }}
-                                                placeholder="Ngày bàn giao"
-                                                defaultValue={moment()}
-                                                format="DD-MM-YYYY"
-                                            />
-                                        </Form.Item>
                                         <Form.Item
                                             className="form-item"
                                             name="hand_over_asset_quantity"
@@ -569,7 +530,7 @@ function RoomEquipment(data) {
                                                 }
                                             ]}
                                         >
-                                            <InputNumber defaultValue={1} style={{ width: "100%" }} min={1} />
+                                            <InputNumber style={{ width: "100%" }} min={1} />
                                         </Form.Item>
                                         <Form.Item
                                             className="form-item"
@@ -590,7 +551,7 @@ function RoomEquipment(data) {
                                             <Select disabled={disableEditAsset} placeholder={"Nhóm tài sản"}>
                                                 {listAssetType?.map((obj, index) => {
                                                     return (
-                                                        <Select.Option value={obj.asset_type_show_name}>{obj.asset_type_show_name}</Select.Option>
+                                                        <Select.Option value={obj.id}>{obj.asset_type_show_name}</Select.Option>
                                                     );
                                                 })}
                                             </Select>

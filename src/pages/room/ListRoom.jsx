@@ -348,7 +348,7 @@ function ListRoom(props) {
                     <Col span={24}>
                       <Button
                         onClick={() => {
-                          navigate('equipment', { state: record })
+                          navigate('equipment', { state: [record] })
                         }}
                         style={width100}
                         icon={
@@ -634,7 +634,7 @@ function ListRoom(props) {
     };
     getAllContract();
   }
-
+  console.log(groupRoom);
   return (
     <Spin spinning={loading} size="large">
       <div
@@ -932,7 +932,7 @@ function ListRoom(props) {
                 })}
                 // pagination={{ defaultPageSize: 10, showSizeChanger: true, pageSizeOptions: ['10', '20', '30'] }}
                 columns={columns}
-                scroll={{ x: 1000, y: 800 }}></Table>
+                scroll={{ x: 800, y: 800 }}></Table>
               <Row>
                 <p>Tổng số phòng đã chọn: {listRoomId?.length}</p>
               </Row>
@@ -969,7 +969,7 @@ function ListRoom(props) {
         <RoomDetail visible={roomDetail} close={setSetRoomDetail} data={roomDetailData} />
         <IncreaseRoomPrice visible={increaseRoomPrice} close={setIncreaseRoomPrice} />
       </div>
-    </Spin >
+    </Spin>
   );
 }
 

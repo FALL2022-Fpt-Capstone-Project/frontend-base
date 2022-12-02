@@ -22,7 +22,7 @@ function RoomPreview(props) {
                 </Sider>
                 <Layout className="site-layout">
                     <Header className="layout-header">
-                        <p className="header-title">Quản lý danh sách phòng</p>
+                        <p className="header-title">Xem trước tạo mới phòng nhanh</p>
                     </Header>
                     <Content
                         style={{

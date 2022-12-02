@@ -1212,6 +1212,8 @@ const CreateContractBuilding = () => {
                                       address_wards: dataApartmentGroup?.find((obj, index) => obj.group_id === e)
                                         ?.address?.address_wards,
                                     });
+                                    setCheckedKeys([]);
+                                    setListRoomId([]);
                                   }}
                                   placeholder="Chọn chung cư"
                                   options={dataApartmentGroup?.map((obj, index) => {

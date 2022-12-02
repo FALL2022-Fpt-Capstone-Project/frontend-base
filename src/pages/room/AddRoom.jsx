@@ -1,9 +1,7 @@
-import { render } from '@testing-library/react';
 import { AutoComplete, Button, Card, Col, Form, Input, InputNumber, message, Modal, notification, Row, Select } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from '../../api/axios';
-import ListRoom from './ListRoom';
 const ADD_ROOM = "manager/room/add";
 
 
@@ -28,9 +26,8 @@ function AddRoom({ reRender, visible, close, data }) {
             group_id: e.groupId,
             room_price: e.roomPrice,
             room_area: e.roomSquare,
-            is_old: true
+            is_old: false
         }];
-        // console.log(JSON.stringify(data));
         await axios
             .post(
                 ADD_ROOM, data,
@@ -42,11 +39,17 @@ function AddRoom({ reRender, visible, close, data }) {
                 }
             )
             .then((res) => {
+                console.log(res.data.data);
                 const key = `open${Date.now()}`;
                 const btn = (
                     <>
                         <Button onClick={() => {
-                            navigate('equipment', { state: res.data.data })
+                            navigate('equipment', {
+                                state: res.data.data?.map(room => {
+                                    return { ...room, roomName: room.room_name }
+                                })
+                            });
+                            notification.close(key);
                         }} type="primary">
                             Có
                         </Button>
@@ -64,7 +67,7 @@ function AddRoom({ reRender, visible, close, data }) {
                     btn,
                     key,
                     placement: "top",
-                    duration: 8,
+                    duration: 6,
                 });
                 console.log(res);
                 close(false);
@@ -100,7 +103,7 @@ function AddRoom({ reRender, visible, close, data }) {
         if (check !== undefined) {
             return Promise.reject(new Error('Tên phòng: ' + value + ' đã có trong chung cư bạn chọn'));
         } else {
-            return Promise.resolve();
+            return Promise.resolve(new Error('Vui lòng nhập tên phòng'));
         }
     }
 
@@ -124,9 +127,6 @@ function AddRoom({ reRender, visible, close, data }) {
                     close(false);
                 }}
                 footer={[
-                    <Button htmlType="submit" type="primary" form="formAddRoom">
-                        Tạo phòng
-                    </Button>,
                     <Button
                         key="back"
                         onClick={() => {
@@ -134,6 +134,9 @@ function AddRoom({ reRender, visible, close, data }) {
                         }}
                     >
                         Đóng
+                    </Button>,
+                    <Button htmlType="submit" type="primary" form="formAddRoom">
+                        Tạo phòng
                     </Button>,
                 ]}
                 width={500}
@@ -146,200 +149,195 @@ function AddRoom({ reRender, visible, close, data }) {
                     size={"default"}
                     id="formAddRoom"
                 >
-                    <Row>
+                    <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                         <Col span={24}>
-                            <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                                <Col span={24}>
-                                    <Card className='card'>
-                                        <Form.Item
-                                            className="form-item"
-                                            name="groupId"
-                                            labelCol={{ span: 24 }}
-                                            label={
-                                                <span>
-                                                    <b>Chọn chung cư: </b>
-                                                </span>
+                            <Card className='card'>
+                                <Form.Item
+                                    className="form-item"
+                                    name="groupId"
+                                    labelCol={{ span: 24 }}
+                                    label={
+                                        <span>
+                                            <b>Chọn chung cư: </b>
+                                        </span>
+                                    }
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Vui lòng chọn tòa nhà",
+                                        },
+                                    ]}
+                                >
+                                    <Select
+                                        showSearch
+                                        placeholder="Chọn tòa nhà"
+                                        optionFilterProp="children"
+                                        filterOption={(input, option) => (option?.label.toLowerCase().trim() ?? '').includes(input.toLowerCase().trim())}
+                                        filterSort={(optionA, optionB) =>
+                                            (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                                        }
+                                        onChange={(e) => {
+                                            setStatusSelectFloor(false);
+                                            let listFloor = [{
+                                                label: 'Chọn tầng',
+                                                value: ""
+                                            }];
+                                            setGroupSelect(data?.find(group => group.group_id === e));
+                                            const totalFloor = data?.find(group => group.group_id === e).total_floor;
+                                            for (let i = 1; i <= totalFloor; i++) {
+                                                listFloor.push({
+                                                    label: 'Tầng ' + i,
+                                                    value: i
+                                                })
                                             }
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: "Vui lòng chọn tòa nhà",
-                                                },
-                                            ]}
-                                        >
-                                            <Select
-                                                showSearch
-                                                placeholder="Chọn tòa nhà"
-                                                optionFilterProp="children"
-                                                filterOption={(input, option) => (option?.label ?? '').includes(input)}
-                                                filterSort={(optionA, optionB) =>
-                                                    (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
-                                                }
-                                                onChange={(e) => {
-                                                    setStatusSelectFloor(false);
-                                                    let listFloor = [{
-                                                        label: 'Chọn tầng',
-                                                        value: ""
-                                                    }];
-                                                    setGroupSelect(data?.find(group => group.group_id === e));
-                                                    const totalFloor = data?.find(group => group.group_id === e).total_floor;
-                                                    for (let i = 1; i <= totalFloor; i++) {
-                                                        listFloor.push({
-                                                            label: 'Tầng ' + i,
-                                                            value: i
-                                                        })
-                                                    }
-                                                    setRoomFloor(listFloor);
-                                                    formAddRoom.setFieldsValue({ roomFloor: "", roomName: "" })
-                                                }}
-                                                options={data?.map((obj, index) => {
-                                                    return {
-                                                        value: obj.group_id,
-                                                        label: obj.group_name
-                                                    }
-                                                })}
-                                            />
-                                        </Form.Item>
-                                        <Form.Item
-                                            className="form-item"
-                                            name="roomFloor"
-                                            labelCol={{ span: 24 }}
-                                            label={
-                                                <span>
-                                                    <b>Chọn tầng: </b>
-                                                </span>
+                                            setRoomFloor(listFloor);
+                                            formAddRoom.setFieldsValue({ roomFloor: "", roomName: "" })
+                                        }}
+                                        options={data?.map((obj, index) => {
+                                            return {
+                                                value: obj.group_id,
+                                                label: obj.group_name
                                             }
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: "Vui lòng chọn tầng",
-                                                },
-                                            ]}
-                                        >
-                                            <Select
-                                                onChange={(e) => {
-                                                    let suggestRoomName = [];
-                                                    for (let i = 0; i <= 10; i++) {
-                                                        if (groupSelect?.list_rooms?.find(obj => obj.room_name === (e * 100 + i).toString()) === undefined)
-                                                            suggestRoomName.push({
-                                                                value: (e * 100 + i).toString()
-                                                            })
-                                                    };
-                                                    setOptionAutoComplete(suggestRoomName)
-                                                }}
-                                                disabled={statusSelectFloor}
-                                                placeholder="Chọn tầng"
-                                                options={roomFloor}
-                                            />
-                                        </Form.Item>
-                                        <Form.Item
-                                            className="form-item"
-                                            name="roomName"
-                                            labelCol={{ span: 24 }}
-                                            label={
-                                                <span>
-                                                    <b>Tên phòng: </b>
-                                                </span>
-                                            }
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: "Vui lòng nhập tên phòng",
-                                                },
-                                                {
-                                                    validator: checkDuplicate,
-                                                }
-                                            ]}
-                                        >
-                                            <AutoComplete
-                                                filterOption={(inputValue, option) =>
-                                                    option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
-                                                }
-                                                options={optionAutoComplete}
-                                                onSelect={onSelectAutoComplete}
-                                                onChange={onChangeAutoComplete}
-                                                onSearch={onSearchAutoComplete}
-                                                placeholder="Nhập tên phòng"
-                                            />
-                                        </Form.Item>
-                                        <Form.Item
-                                            className="form-item"
-                                            name="roomPrice"
-                                            labelCol={{ span: 24 }}
-                                            label={
-                                                <span>
-                                                    <b>Giá phòng: </b>
-                                                </span>
-                                            }
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: "Vui lòng nhập giá phòng",
-                                                },
-                                            ]}>
-                                            <InputNumber
-                                                placeholder='Nhập giá phòng'
-                                                controls={false}
-                                                addonAfter="VNĐ"
-                                                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                                                parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
-                                                style={{ width: "100%" }}
-                                                min={0}
-                                            />
-                                        </Form.Item>
-                                        <Form.Item
-                                            className="form-item"
-                                            name="numberOfPeople"
-                                            labelCol={{ span: 24 }}
-                                            label={
-                                                <span>
-                                                    <b>Số lượng người tối đa / phòng: </b>
-                                                </span>
-                                            }
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: "Vui lòng nhập số lượng",
-                                                },
-                                                {
-                                                    pattern: new RegExp(/^[0-9]*$/),
-                                                    message: "Vui lòng nhập số nguyên",
-                                                }
-                                            ]}
-                                        >
-                                            <InputNumber
-                                                min={1}
-                                                addonAfter="Người"
-                                                style={{ width: "100%" }}
-                                                controls={false}
-                                                placeholder='Nhập số lượng người tối đa của phòng' />
-                                        </Form.Item>
-                                        <Form.Item
-                                            className="form-item"
-                                            name="roomSquare"
-                                            labelCol={{ span: 24 }}
-                                            label={
-                                                <span>
-                                                    <b>Diện tích (m2): </b>
-                                                </span>
-                                            }
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: "Vui lòng nhập diện tích phòng",
-                                                },
-                                            ]}
-                                        >
-                                            <InputNumber
-                                                style={{ width: "100%" }}
-                                                addonAfter="m2"
-                                                controls={false}
-                                                placeholder='Nhập diện tích phòng' />
-                                        </Form.Item>
-                                    </Card>
-                                </Col>
-                            </Row>
-
+                                        })}
+                                    />
+                                </Form.Item>
+                                <Form.Item
+                                    className="form-item"
+                                    name="roomFloor"
+                                    labelCol={{ span: 24 }}
+                                    label={
+                                        <span>
+                                            <b>Chọn tầng: </b>
+                                        </span>
+                                    }
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Vui lòng chọn tầng",
+                                        },
+                                    ]}
+                                >
+                                    <Select
+                                        onChange={(e) => {
+                                            let suggestRoomName = [];
+                                            for (let i = 0; i <= 10; i++) {
+                                                if (groupSelect?.list_rooms?.find(obj => obj.room_name === (e * 100 + i).toString()) === undefined)
+                                                    suggestRoomName.push({
+                                                        value: (e * 100 + i).toString()
+                                                    })
+                                            };
+                                            setOptionAutoComplete(suggestRoomName)
+                                        }}
+                                        disabled={statusSelectFloor}
+                                        placeholder="Chọn tầng"
+                                        options={roomFloor}
+                                    />
+                                </Form.Item>
+                                <Form.Item
+                                    className="form-item"
+                                    name="roomName"
+                                    labelCol={{ span: 24 }}
+                                    label={
+                                        <span>
+                                            <b>Tên phòng: </b>
+                                        </span>
+                                    }
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Vui lòng nhập tên phòng",
+                                        },
+                                        {
+                                            validator: checkDuplicate,
+                                        }
+                                    ]}
+                                >
+                                    <AutoComplete
+                                        filterOption={(inputValue, option) =>
+                                            option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                                        }
+                                        options={optionAutoComplete}
+                                        onSelect={onSelectAutoComplete}
+                                        onChange={onChangeAutoComplete}
+                                        onSearch={onSearchAutoComplete}
+                                        placeholder="Nhập tên phòng"
+                                    />
+                                </Form.Item>
+                                <Form.Item
+                                    className="form-item"
+                                    name="roomPrice"
+                                    labelCol={{ span: 24 }}
+                                    label={
+                                        <span>
+                                            <b>Giá phòng: </b>
+                                        </span>
+                                    }
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Vui lòng nhập giá phòng",
+                                        },
+                                    ]}>
+                                    <InputNumber
+                                        placeholder='Nhập giá phòng'
+                                        controls={false}
+                                        addonAfter="VNĐ"
+                                        formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                        parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
+                                        style={{ width: "100%" }}
+                                        min={0}
+                                    />
+                                </Form.Item>
+                                <Form.Item
+                                    className="form-item"
+                                    name="numberOfPeople"
+                                    labelCol={{ span: 24 }}
+                                    label={
+                                        <span>
+                                            <b>Số lượng người tối đa / phòng: </b>
+                                        </span>
+                                    }
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Vui lòng nhập số lượng",
+                                        },
+                                        {
+                                            pattern: new RegExp(/^[0-9]*$/),
+                                            message: "Vui lòng nhập số nguyên",
+                                        }
+                                    ]}
+                                >
+                                    <InputNumber
+                                        min={1}
+                                        addonAfter="Người"
+                                        style={{ width: "100%" }}
+                                        controls={false}
+                                        placeholder='Nhập số lượng người tối đa của phòng' />
+                                </Form.Item>
+                                <Form.Item
+                                    className="form-item"
+                                    name="roomSquare"
+                                    labelCol={{ span: 24 }}
+                                    label={
+                                        <span>
+                                            <b>Diện tích (m2): </b>
+                                        </span>
+                                    }
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Vui lòng nhập diện tích phòng",
+                                        },
+                                    ]}
+                                >
+                                    <InputNumber
+                                        style={{ width: "100%" }}
+                                        addonAfter="m2"
+                                        controls={false}
+                                        placeholder='Nhập diện tích phòng' />
+                                </Form.Item>
+                            </Card>
                         </Col>
                     </Row>
                 </Form>
