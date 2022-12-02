@@ -652,7 +652,6 @@ const EditContractRenter = () => {
   const [roomSelect, setRoomSelect] = useState();
 
   const onFinish = async (e) => {
-    console.log(dataContractById);
     const listServiceOfBuilding = Object.values(e.serviceIndexInForm);
 
     listServiceOfBuilding.push({
@@ -677,7 +676,9 @@ const EditContractRenter = () => {
             listServiceOfBuilding[listServiceOfBuilding.length - 2].hand_over_general_service_id[index],
         };
       })
-      .filter((o, i) => i !== listServiceOfBuilding.length - 1);
+      .filter((o, i) => i !== listServiceOfBuilding.length - 1 &&
+        i !== listServiceOfBuilding.length - 2 &&
+        i !== listServiceOfBuilding.length - 3);
 
     // console.log(
     //   JSON.stringify({
@@ -1639,7 +1640,7 @@ const EditContractRenter = () => {
                             <b>Lưu ý:</b>
                             <br />
                             - Trên đây là dịch vụ chung áp dụng cho tất cả các phòng trong một tòa nhà.
-                            <br />- Nếu bạn muốn thay đổi dịch vụ chung này cần vào mục <b>Dịch Vụ</b>
+                            <br />- Nếu bạn muốn thay đổi dịch vụ chung này cần vào mục <a href="/service">Dịch Vụ</a>
                             <br />
                           </i>
                         </p>
@@ -1924,6 +1925,10 @@ const EditContractRenter = () => {
                           required: true,
                           message: "Vui lòng nhập số lượng",
                         },
+                        {
+                          pattern: new RegExp(/^[0-9]*$/),
+                          message: "Vui lòng nhập số nguyên",
+                      }
                       ]}
                     >
                       <InputNumber defaultValue={1} style={{ width: "100%" }} min={1} />
@@ -2071,6 +2076,10 @@ const EditContractRenter = () => {
                           required: true,
                           message: "Vui lòng nhập số lượng",
                         },
+                        {
+                          pattern: new RegExp(/^[0-9]*$/),
+                          message: "Vui lòng nhập số nguyên",
+                      }
                       ]}
                     >
                       <InputNumber defaultValue={1} style={{ width: "100%" }} min={1} />
