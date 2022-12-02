@@ -19,7 +19,6 @@ import {
   Spin,
   Modal,
   notification,
-  Popconfirm,
   Popover,
 } from "antd";
 import {
@@ -37,7 +36,7 @@ import {
   MoreOutlined
 } from "@ant-design/icons";
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import AddRoom from "./AddRoom";
 import AddRoomAuto from "./AddRoomAuto";
 import RoomDetail from "./RoomDetail";
@@ -588,7 +587,7 @@ function ListRoom(props) {
       .catch((error) => {
         console.log(error);
       });
-    setLoading(false)
+    setLoading(false);
   };
 
   const treeData = dataApartmentGroup?.map((obj, index) => {
