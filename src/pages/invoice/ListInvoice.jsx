@@ -1,6 +1,6 @@
 import { Button, Col, Form, Input, Row, Table, Tabs, Tooltip, DatePicker, Select, Tag, Checkbox, Modal } from "antd";
 import React, { useEffect, useState } from "react";
-import { SearchOutlined, DollarCircleOutlined, UndoOutlined, AccountBookOutlined } from "@ant-design/icons";
+import { SearchOutlined, UndoOutlined, AccountBookOutlined, ProfileOutlined } from "@ant-design/icons";
 import "./listInvoice.scss";
 import axios from "../../api/axios";
 import ListHistoryInvoice from "./ListHistoryInvoice";
@@ -26,7 +26,7 @@ const ListInvoice = () => {
       label: "Kỳ 30",
     },
   ];
-  const plainOptions = ["Đã thanh toán", "Chưa thanh toán", "Đang nợ"];
+  const plainOptions = ["Đã thanh toán hết", "Chưa thanh toán hết"];
   const formItemLayout = {
     labelCol: {
       xs: {
@@ -59,8 +59,8 @@ const ListInvoice = () => {
       building_empty_rooms: 30,
       chu_ky: "Kỳ 30",
       total_people: "Nguyễn Hải Phương",
-      status: "Đã thanh toán",
       address_more_detail: 2000000,
+      status: "Chưa thanh toán hết hoá đơn",
     },
     {
       building_name: "Chung cư Hoàng Nam",
@@ -69,7 +69,7 @@ const ListInvoice = () => {
       building_empty_rooms: 60,
       chu_ky: "Kỳ 15",
       total_people: "Nguyễn Đức Pháp",
-      status: "Chưa thanh toán",
+      status: "Chưa thanh toán hết hoá đơn",
       address_more_detail: 3000000,
     },
     {
@@ -79,7 +79,7 @@ const ListInvoice = () => {
       building_empty_rooms: 60,
       chu_ky: "Kỳ 30",
       total_people: "Phạm Đặng Thành",
-      status: "Đang nợ",
+      status: "Đã thanh toán hết hoá đơn",
       address_more_detail: 3000000,
     },
     {
@@ -89,7 +89,7 @@ const ListInvoice = () => {
       building_empty_rooms: 60,
       chu_ky: "Kỳ 15",
       total_people: "Nguyễn Văn Toan",
-      status: "Đã thanh toán",
+      status: "Đã thanh toán hết hoá đơn",
 
       address_more_detail: 3000000,
     },
@@ -213,6 +213,16 @@ const ListInvoice = () => {
                       </Row>
                     </Col>
                   </Form.Item>
+                  <Form.Item name="deactive" className="form-item-renter">
+                    <Row>
+                      <label htmlFor="" className="search-name">
+                        Tìm kiếm theo trạng thái hoá đơn
+                      </label>
+                    </Row>
+                    <Row>
+                      <Checkbox.Group options={plainOptions} />
+                    </Row>
+                  </Form.Item>
                 </Row>
               </Row>
               <Row style={{ marginBottom: "20px" }}>
@@ -277,7 +287,27 @@ const ListInvoice = () => {
               return value.toLocaleString("vn") + " đ";
             },
           },
-
+          {
+            title: "Trạng thái hoá đơn",
+            dataIndex: "status",
+            render: (_, record) => {
+              let status;
+              if (record.status === "Chưa thanh toán hết hoá đơn") {
+                status = (
+                  <Tag color="red" key={record.status}>
+                    Chưa thanh toán hết hoá đơn
+                  </Tag>
+                );
+              } else if (record.status === "Đã thanh toán hết hoá đơn") {
+                status = (
+                  <Tag color="green" key={record.status}>
+                    Đã thanh toán hết hoá đơn
+                  </Tag>
+                );
+              }
+              return <>{status}</>;
+            },
+          },
           {
             title: "Thao tác",
             dataIndex: "action",
@@ -288,7 +318,7 @@ const ListInvoice = () => {
                     <AccountBookOutlined className="icon" onClick={showModalHistory} />
                   </Tooltip>
                   <Tooltip title="Tạo hoá đơn">
-                    <DollarCircleOutlined className="icon" onClick={onClickCreateInvoice} />
+                    <ProfileOutlined className="icon" onClick={onClickCreateInvoice} />
                   </Tooltip>
                 </>
               );

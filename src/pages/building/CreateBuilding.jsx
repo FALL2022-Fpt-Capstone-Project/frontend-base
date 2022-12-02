@@ -1,4 +1,21 @@
-import { Button, Card, Col, Form, Input, InputNumber, Modal, Row, Select, Checkbox, notification } from "antd";
+import {
+  Button,
+  Card,
+  Col,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Row,
+  Select,
+  Checkbox,
+  notification,
+  AutoComplete,
+  Space,
+  Table,
+} from "antd";
+import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+
 import TextArea from "antd/lib/input/TextArea";
 import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
@@ -7,19 +24,22 @@ const GET_LIST_SERVICE_BASIC = "manager/service/basics";
 const LIST_SERVICE_CACUL_METHOD = "manager/service/types";
 const CheckboxGroup = Checkbox.Group;
 const ADD_BUILDING_URL = "manager/group/add";
+const LIST_BUILDING_URL = "manager/group/all";
+const LIST_ASSET_URL = "manager/asset/";
+const LIST_ASSET_TYPE_URL = "manager/asset/type";
 
 const CreateBuilding = ({ visible, close, data }) => {
   const [form] = Form.useForm();
 
-  const [group_name, setBuildingName] = useState("");
-  const [total_floor, setBuildingFloor] = useState("");
-  const [total_room_per_floor, setBuildingRoom] = useState("");
+  const [group_name, setGroupName] = useState("");
+  const [total_floor, setBuildingFloor] = useState(1);
+  const [total_room_per_floor, setBuildingRoom] = useState(1);
   const [building_address_city, setBuildingCity] = useState("");
   const [room_name_convention, setRoomNameConvention] = useState("");
-  const [room_area, setRoomArea] = useState("");
-  const [room_limited_people, setRoomPeople] = useState("");
-  const [room_price, setRoomRate] = useState("");
-
+  const [room_area, setRoomArea] = useState(25);
+  const [room_limited_people, setRoomPeople] = useState(1);
+  const [room_price, setRoomRate] = useState(3000000);
+  const [buildingName, setBuildingName] = useState();
   const [address_city, setCity] = useState("");
   const [address_district, setDistrict] = useState("");
   const [address_ward, setWard] = useState("");
@@ -34,16 +54,20 @@ const CreateBuilding = ({ visible, close, data }) => {
   const [listServiceName, setListServiceName] = useState([]);
   const [serviceCalMethod, setServiceCalCuMethod] = useState([]);
   const [service, setService] = useState([1, 2]);
+  const [asset, setAsset] = useState([1, 2]);
   const [electric, setElectric] = useState(1);
   const [water, setWater] = useState(1);
   const [park, setPark] = useState();
   const [internet, setInternet] = useState();
   const [clean, setClean] = useState();
-  const [electricPrice, setElectricPrice] = useState();
-  const [waterPrice, setWaterPrice] = useState();
-  const [parkPrice, setParkPrice] = useState();
-  const [internetPrice, setInternetPrice] = useState();
-  const [cleanPrice, setCleanPrice] = useState();
+  const [electricPrice, setElectricPrice] = useState(0);
+  const [waterPrice, setWaterPrice] = useState(0);
+  const [parkPrice, setParkPrice] = useState(0);
+  const [internetPrice, setInternetPrice] = useState(0);
+  const [cleanPrice, setCleanPrice] = useState(0);
+  const [listAssetName, setListAssetName] = useState();
+  const [listAssetTypeName, setListAssetTypeName] = useState();
+  // const [selectedRowKeys, setSelectedRowKeys] = useState([0, 1]);
   let optionRoom = [];
   let optionFloor = [];
   for (let i = 1; i <= 10; i++) {
@@ -96,6 +120,7 @@ const CreateBuilding = ({ visible, close, data }) => {
         general_service_price: cleanPrice,
       });
     }
+    let list_additional_asset = value.list_additional_asset;
     const building = {
       group_name,
       total_room_per_floor,
@@ -110,6 +135,8 @@ const CreateBuilding = ({ visible, close, data }) => {
       room_area,
       room_limited_people,
       room_price,
+      list_asset,
+      list_additional_asset,
     };
     const response = await axios
       .post(ADD_BUILDING_URL, building, {
@@ -123,6 +150,7 @@ const CreateBuilding = ({ visible, close, data }) => {
         notification.success({
           message: "Thêm mới chung cư thành công",
           duration: 3,
+          placement: "top",
         });
         close(false);
         reload();
@@ -130,9 +158,10 @@ const CreateBuilding = ({ visible, close, data }) => {
       .catch((e) => {
         console.log(e.request);
         notification.error({
-          message: "Thêm mới nhân viên thất bại",
+          message: "Thêm mới chung cư thất bại",
           description: "Vui lòng kiểm tra lại thông tin và thử lại.",
           duration: 3,
+          placement: "top",
         });
       });
     console.log(JSON.stringify(response?.data));
@@ -150,7 +179,6 @@ const CreateBuilding = ({ visible, close, data }) => {
         })
         .then((res) => {
           setListServiceName(res.data.data);
-          console.log(res.data.data);
         })
         .catch((error) => {
           console.log(error);
@@ -158,6 +186,48 @@ const CreateBuilding = ({ visible, close, data }) => {
     };
     getListServiceBasic();
   }, []);
+  useEffect(() => {
+    const getListAssetTypeBasic = async () => {
+      await axios
+        .get(LIST_ASSET_TYPE_URL, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cookie}`,
+          },
+        })
+        .then((res) => {
+          setListAssetTypeName(res.data.data);
+          // console.log(res.data.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+    getListAssetTypeBasic();
+  }, []);
+  useEffect(() => {
+    const getListAssetBasic = async () => {
+      await axios
+        .get(LIST_ASSET_URL, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cookie}`,
+          },
+        })
+        .then((res) => {
+          setListAssetName(res.data.data);
+          console.log(res.data.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+    getListAssetBasic();
+  }, []);
+  // console.log(listAssetName.length);
+  for (let i = 0; i < listAssetName?.length; i++) {
+    Object.assign(listAssetName[i], { key: i });
+  }
 
   useEffect(() => {
     const getListServiceCaculMethod = async () => {
@@ -170,7 +240,6 @@ const CreateBuilding = ({ visible, close, data }) => {
         })
         .then((res) => {
           setServiceCalCuMethod(res.data.data);
-          console.log(res.data.data);
         })
         .catch((error) => {
           console.log(error);
@@ -232,6 +301,25 @@ const CreateBuilding = ({ visible, close, data }) => {
     getDistric();
   }, [building_address_district_id]);
 
+  useEffect(() => {
+    const getAllBuilding = async () => {
+      const response = await axios
+        .get(LIST_BUILDING_URL, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cookie}`,
+          },
+        })
+        .then((res) => {
+          setBuildingName(res.data.data.list_group_contracted.concat(res.data.data.list_group_non_contracted));
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+    getAllBuilding();
+  }, [cookie]);
+
   let optionsCity = [];
   for (let i = 0; i < building_address_city.length; i++) {
     optionsCity.push({
@@ -239,7 +327,17 @@ const CreateBuilding = ({ visible, close, data }) => {
       value: building_address_city[i].code,
     });
   }
-
+  let optionBuilding = [];
+  for (let i = 0; i < buildingName?.length; i++) {
+    optionBuilding.push({
+      label: buildingName[i].group_name,
+      value: buildingName[i].group_name,
+    });
+  }
+  const building = [];
+  for (let i = 0; i < buildingName?.length; i++) {
+    building.push(buildingName[i].group_name);
+  }
   const cityChange = (value, option) => {
     setBuildingDistrict([]);
     setBuildingCityId(value);
@@ -250,7 +348,6 @@ const CreateBuilding = ({ visible, close, data }) => {
     setCity(option.label);
   };
   const districtChange = (value, option) => {
-    console.log(value);
     setBuildingDistrictId(value);
     setDisableWard(false);
     form.setFieldsValue({ ward: "" });
@@ -267,9 +364,7 @@ const CreateBuilding = ({ visible, close, data }) => {
   };
   const serviceChange = (checkedValues) => {
     setService(checkedValues);
-    console.log(checkedValues);
   };
-
   const electricChange = (value) => {
     setElectric(value);
   };
@@ -310,11 +405,23 @@ const CreateBuilding = ({ visible, close, data }) => {
     setCleanPrice(value);
   };
 
-  const onFinish = (e) => {
-    close(false);
-  };
   const reload = () => window.location.reload();
-  const onFinishFail = (e) => {};
+
+  const list_asset = [];
+
+  const rowSelection = {
+    // ...selectedRowKeys,
+    onChange: (selectedRowKeys, selectedRows) => {
+      console.log(`selectedRowKeys: ${selectedRowKeys}`, "selectedRows: ", selectedRows);
+      setAsset(selectedRows);
+    },
+  };
+  for (let i = 0; i < asset?.length; i++) {
+    list_asset.push({
+      asset_name: asset[i].basic_asset_name,
+      asset_type_id: asset[i].asset_type_id,
+    });
+  }
   return (
     <>
       <Modal
@@ -346,11 +453,18 @@ const CreateBuilding = ({ visible, close, data }) => {
         <Form
           form={form}
           onFinish={handleCreateBuilding}
-          onFinishFailed={onFinishFail}
           layout="horizontal"
           size={"default"}
           id="createBuilding"
           autoComplete="off"
+          scrollToFirstError
+          initialValues={{
+            building_total_floor: 1,
+            building_total_room: 1,
+            room_rate: 3000000,
+            room_people: 1,
+            room_area: 25,
+          }}
         >
           <Row gutter={24}>
             <Col span={12}>
@@ -371,9 +485,28 @@ const CreateBuilding = ({ visible, close, data }) => {
                       required: true,
                       message: "Vui lòng nhập tên chung cư!",
                     },
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        const includesValue = building.some((element) => {
+                          return element?.toLowerCase() === value.toLowerCase();
+                        });
+                        if (includesValue) {
+                          return Promise.reject(new Error("Tên chung cư đã tồn tại trong hệ thống!"));
+                        } else {
+                          return Promise.resolve();
+                        }
+                      },
+                    }),
                   ]}
                 >
-                  <Input onChange={(e) => setBuildingName(e.target.value)} placeholder="Nhập tên chung cư" />
+                  <AutoComplete
+                    options={optionBuilding}
+                    style={{ width: "100%" }}
+                    placeholder="Nhập tên chung cư"
+                    filterOption={true}
+                    onChange={(value) => setGroupName(value)}
+                  />
+                  {/* <Input onChange={(e) => setGroupName(e.target.value)} placeholder="Nhập tên chung cư" /> */}
                 </Form.Item>
                 <Form.Item
                   name="building_total_floor"
@@ -386,17 +519,19 @@ const CreateBuilding = ({ visible, close, data }) => {
                   rules={[
                     {
                       required: true,
-                      message: "Vui lòng chọn số lượng tầng!",
+                      message: "Vui lòng nhập số lượng tầng lớn hơn 0 và nhỏ hơn 10!",
                     },
                   ]}
                 >
-                  <Select
-                    style={{
-                      width: "100%",
-                    }}
-                    onChange={changeFloor}
+                  <InputNumber
                     placeholder="Nhập số lượng tầng của chung cư"
-                    options={optionFloor}
+                    controls={false}
+                    defaultValue={1}
+                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
+                    style={{ width: "100%" }}
+                    min={1}
+                    onChange={changeFloor}
                   />
                 </Form.Item>
                 <Form.Item
@@ -410,17 +545,19 @@ const CreateBuilding = ({ visible, close, data }) => {
                   rules={[
                     {
                       required: true,
-                      message: "Vui lòng chọn số lượng phòng!",
+                      message: "Vui lòng nhập số lượng phòng lớn hơn 0 và nhỏ hơn 10!",
                     },
                   ]}
                 >
-                  <Select
-                    style={{
-                      width: "100%",
-                    }}
+                  <InputNumber
+                    placeholder="Nhập số lượng phòng"
+                    controls={false}
+                    defaultValue={1}
+                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
+                    style={{ width: "100%" }}
+                    min={1}
                     onChange={changeRoom}
-                    placeholder="Nhập số lượng phòng mỗi tầng"
-                    options={optionRoom}
                   />
                 </Form.Item>
                 <Form.Item
@@ -457,7 +594,7 @@ const CreateBuilding = ({ visible, close, data }) => {
                   rules={[
                     {
                       required: true,
-                      message: "Vui lòng nhập giá phòng",
+                      message: "Vui lòng nhập giá phòng!",
                     },
                   ]}
                 >
@@ -465,7 +602,7 @@ const CreateBuilding = ({ visible, close, data }) => {
                     placeholder="Nhập giá phòng"
                     controls={false}
                     addonAfter="VNĐ"
-                    defaultValue={0}
+                    defaultValue={3000000}
                     formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                     parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
                     style={{ width: "100%" }}
@@ -485,13 +622,14 @@ const CreateBuilding = ({ visible, close, data }) => {
                   rules={[
                     {
                       required: true,
-                      message: "Vui lòng nhập số lượng",
+                      message: "Vui lòng nhập số lượng người tối đa trong phòng!",
                     },
                   ]}
                 >
                   <InputNumber
                     addonAfter="Người"
                     style={{ width: "100%" }}
+                    defaultValue={1}
                     controls={false}
                     placeholder="Nhập số lượng người tối đa của phòng"
                     onChange={roomPeopleChange}
@@ -509,7 +647,7 @@ const CreateBuilding = ({ visible, close, data }) => {
                   rules={[
                     {
                       required: true,
-                      message: "Vui lòng nhập diện tích phòng",
+                      message: "Vui lòng nhập diện tích phòng!",
                     },
                   ]}
                 >
@@ -519,6 +657,7 @@ const CreateBuilding = ({ visible, close, data }) => {
                     controls={false}
                     placeholder="Nhập diện tích phòng"
                     onChange={roomAreaChange}
+                    defaultValue={25}
                   />
                 </Form.Item>
                 <Form.Item
@@ -862,6 +1001,96 @@ const CreateBuilding = ({ visible, close, data }) => {
                     </Col>
                   </Row>
                 </Form.Item>
+              </Card>
+              <Card title="Tài sản chung" className="card card-asset">
+                <Form.Item name="asset">
+                  <Row>
+                    <Col span={24}>
+                      <Table
+                        columns={[
+                          {
+                            title: "Tên tài sản",
+                            dataIndex: "basic_asset_name",
+                            key: "basic_asset_id",
+                            width: "40%",
+                          },
+                          {
+                            title: "Loại tài sản",
+                            dataIndex: "asset_type_show_name",
+                            key: "asset_type_id",
+                          },
+                        ]}
+                        rowSelection={{
+                          ...rowSelection,
+                        }}
+                        dataSource={listAssetName}
+                      />
+                    </Col>
+                  </Row>
+                </Form.Item>
+                <Form.List name="list_additional_asset">
+                  {(fields, { add, remove }) => (
+                    <>
+                      {fields.map(({ key, name, ...restField }) => (
+                        <Row>
+                          <Col span={8}>
+                            <Form.Item
+                              {...restField}
+                              name={[name, "asset_name"]}
+                              rules={[
+                                {
+                                  required: true,
+                                  whitespace: true,
+                                  message: "Vui lòng nhập tên tài sản, hoặc xoá trường này",
+                                },
+                              ]}
+                            >
+                              <Input placeholder="Nhập tên tài sản" />
+                            </Form.Item>
+                          </Col>
+                          <Col span={8} offset={1}>
+                            <Form.Item
+                              {...restField}
+                              name={[name, "asset_type_id"]}
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Vui lòng chọn loại tài sản!",
+                                },
+                              ]}
+                            >
+                              <Select
+                                style={{
+                                  width: "100%",
+                                }}
+                                defaultValue="Chọn loại tài sản"
+                                // onChange={internetChange}
+                              >
+                                {listAssetTypeName?.map((obj, index) => {
+                                  return (
+                                    <>
+                                      <Select.Option key={index} value={obj.id}>
+                                        {obj.asset_type_show_name}
+                                      </Select.Option>
+                                    </>
+                                  );
+                                })}
+                              </Select>
+                            </Form.Item>
+                          </Col>
+                          <Col span={4} offset={1}>
+                            <DeleteOutlined className="dynamic-delete-button" onClick={() => remove(name)} />
+                          </Col>
+                        </Row>
+                      ))}
+                      <Form.Item>
+                        <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                          Thêm tài sản mới
+                        </Button>
+                      </Form.Item>
+                    </>
+                  )}
+                </Form.List>
               </Card>
             </Col>
           </Row>

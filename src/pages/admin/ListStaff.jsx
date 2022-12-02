@@ -20,6 +20,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import "./listStaff.scss";
 import { EditOutlined, EyeOutlined, SearchOutlined, UndoOutlined } from "@ant-design/icons";
 import UpdateStaff from "./UpdateStaff";
+import DetailStaff from "./DetailStaff";
 const { Search } = Input;
 const { RangePicker } = DatePicker;
 const ListStaff = () => {
@@ -29,29 +30,23 @@ const ListStaff = () => {
   const [deactive, setDeactive] = useState(false);
   const [roles, setRoles] = useState("");
   const [rolesFilter, setRolesFilter] = useState("");
-  const [roleInfo, setRoleInfo] = useState("");
   const [full_name, setFullname] = useState("");
   const [user_name, setUsername] = useState("");
   const [phone_number, setPhonenumber] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [user, setUser] = useState([]);
   const [id, setId] = useState();
   const LIST_EMPLOYEE_URL = "manager/staff";
   const LIST_ROLES_URL = "manager/staff/roles";
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [updateStaff, setUpdateStaff] = useState(false);
+  const [detailStaff, setDetailStaff] = useState(false);
   const onClickUpdateStaff = (id) => {
     setUpdateStaff(true);
     setId(id);
   };
-  const showModal = (id) => {
-    setIsModalOpen(true);
+  const onClickDetailStaff = (id) => {
+    setDetailStaff(true);
     setId(id);
-    console.log(id);
-  };
-  const handleCancel = () => {
-    setIsModalOpen(false);
   };
   const formItemLayout = {
     labelCol: {
@@ -131,24 +126,6 @@ const ListStaff = () => {
       });
     }
   }
-
-  useEffect(() => {
-    axios
-      .get(`manager/staff/${id}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${cookie}`,
-        },
-      })
-      .then((res) => {
-        setUser(res.data.data);
-        setRoleInfo(res.data.data.role_name);
-        console.log(res.data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  }, [id]);
 
   const getFilterEmployees = async (value) => {
     const data = {
@@ -455,11 +432,11 @@ const ListStaff = () => {
                   <Tooltip title="Chỉnh sửa">
                     <EditOutlined className="icon" onClick={() => onClickUpdateStaff(record.account_id)} />
                   </Tooltip>
-                  <Tooltip title="Xem">
+                  <Tooltip title="Xem thông tin">
                     <EyeOutlined
                       className="icon"
                       onClick={() => {
-                        showModal(record.account_id);
+                        onClickDetailStaff(record.account_id);
                       }}
                     />
                   </Tooltip>
@@ -471,88 +448,7 @@ const ListStaff = () => {
         pagination={{ pageSize: 10 }}
         loading={loading}
       />
-      <Modal
-        title={<h2>Thông tin cá nhân</h2>}
-        className="modalStyle"
-        open={isModalOpen}
-        onCancel={handleCancel}
-        width="500px"
-        footer={[
-          <>
-            <Button onClick={handleCancel}>Quay lại</Button>
-            <Button
-              type="primary"
-              icon={<EditOutlined />}
-              style={{ margin: "20px 20px" }}
-              size="middle"
-              className="button-add"
-              onClick={() => onClickUpdateStaff(id)}
-            >
-              Sửa thông tin
-            </Button>
-          </>,
-        ]}
-      >
-        <div
-          className="basic-info"
-          style={{
-            marginLeft: "3%",
-          }}
-        >
-          <Card className="card">
-            <Row>
-              <Row className="detail-row">
-                <Col span={10}>
-                  <h4>Họ và tên: </h4>
-                </Col>
-                <Col span={14}>
-                  <p>{user.full_name}</p>
-                </Col>
-              </Row>
-              <Row className="detail-row">
-                <Col span={10}>
-                  <h4>Tên đăng nhập:</h4>
-                </Col>
-
-                <Col span={14}>
-                  <p>{user.user_name}</p>
-                </Col>
-              </Row>
-              <Row className="detail-row">
-                <Col span={10}>
-                  <h4>Giới tính: </h4>
-                </Col>
-
-                <Col span={14}>{user.gender ? <p>Nam</p> : <p>Nữ</p>}</Col>
-              </Row>
-              <Row className="detail-row">
-                <Col span={10}>
-                  <h4>Chức vụ: </h4>
-                </Col>
-                <Col span={14}>{roleInfo === "ROLE_ADMIN" ? <p>ADMIN</p> : <p>Nhân viên</p>}</Col>
-              </Row>
-              <Row className="detail-row">
-                <Col span={10}>
-                  <h4>Số điện thoại:</h4>
-                </Col>
-
-                <Col span={14}>
-                  <p>{user.phone_number}</p>
-                </Col>
-              </Row>
-              <Row className="detail-row">
-                <Col span={10}>
-                  <h4>Địa chỉ chi tiết:</h4>
-                </Col>
-
-                <Col span={14}>
-                  <p>{user.address_more_detail}</p>
-                </Col>
-              </Row>
-            </Row>
-          </Card>
-        </div>
-      </Modal>
+      <DetailStaff visible={detailStaff} close={setDetailStaff} id={id} />
       <UpdateStaff visible={updateStaff} close={setUpdateStaff} id={id} />
     </div>
   );

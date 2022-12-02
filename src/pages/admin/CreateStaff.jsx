@@ -74,15 +74,19 @@ const CreateStaff = ({ visible, close }) => {
         notification.success({
           message: "Thêm mới nhân viên thành công",
           duration: 3,
+          placement: "top",
         });
         close(false);
-        reload();
+        setTimeout(() => {
+          reload();
+        }, "3000");
       })
       .catch((e) => {
         notification.error({
           message: "Thêm mới nhân viên thất bại",
           description: "Vui lòng kiểm tra lại thông tin và thử lại.",
           duration: 3,
+          placement: "top",
         });
       }, close(false));
     // console.log(JSON.stringify(response?.data));

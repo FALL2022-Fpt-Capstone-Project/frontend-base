@@ -1,4 +1,4 @@
-import { Button, Divider, Layout } from "antd";
+import { Button, Col, Divider, Layout, Row, Statistic } from "antd";
 import React, { useState } from "react";
 import "./invoice.scss";
 import Breadcrumbs from "../../components/BreadCrumb ";
@@ -27,6 +27,41 @@ const Invoice = () => {
           <Content className="layout-content">
             <Breadcrumbs />
             <Divider />
+            <div>
+              <Row style={{ marginBottom: "2%" }} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+                <Col span={8}>
+                  <Statistic
+                    title={
+                      <>
+                        <span className="invoice-statistic">Số hoá đơn còn nợ </span>
+                      </>
+                    }
+                    value={2}
+                  />
+                </Col>
+                <Col span={8}>
+                  <Statistic
+                    title={
+                      <>
+                        <span className="invoice-statistic">Số hoá đơn chưa thanh toán </span>
+                        {/* <Button icon={<ArrowRightOutlined />} style={{ borderRadius: "50%" }}></Button> */}
+                      </>
+                    }
+                    value={5}
+                  />
+                </Col>
+                <Col span={8}>
+                  <Statistic
+                    title={
+                      <>
+                        <span className="invoice-statistic">Tổng số tiền đã thu tháng này </span>
+                      </>
+                    }
+                    value={new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(132990000)}
+                  />
+                </Col>
+              </Row>
+            </div>
             <div>
               <Button
                 type="primary"
