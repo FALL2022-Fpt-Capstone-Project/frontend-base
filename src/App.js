@@ -22,6 +22,7 @@ import RoomPreview from "./pages/room/RoomPreview";
 import RoomEquipment from "./pages/room/RoomEquipment";
 import AddAutoInvoice from "./pages/invoice/AddAutoInvoice";
 import DetailInvoice from "./pages/invoice/DetailInvoice";
+
 const ROLES = {
   User: "ROLE_STAFF",
   Admin: "ROLE_ADMIN",
