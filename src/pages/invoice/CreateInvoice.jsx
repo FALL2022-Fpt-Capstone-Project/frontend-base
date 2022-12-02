@@ -1,5 +1,18 @@
-import { Form, Input, Card, Radio, Select, notification, Button, Modal, DatePicker, Col, Row, InputNumber } from "antd";
-import dayjs from "dayjs";
+import {
+  Form,
+  Input,
+  Card,
+  Radio,
+  Checkbox,
+  notification,
+  Button,
+  Modal,
+  DatePicker,
+  Col,
+  Row,
+  InputNumber,
+} from "antd";
+import "./invoice.scss";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
@@ -36,10 +49,31 @@ const CreateInvoice = ({ visible, close }) => {
   let price = 3000000 * room_month + (3000000 / 30) * room_day;
   console.log(price.toLocaleString("vn") + " đ");
   let price_format = price.toLocaleString("vn") + " đ";
+
+  const service = [
+    {
+      service_name: "Dịch vụ điện",
+      service_price: 1700,
+      current: 100,
+      new: 200,
+    },
+    {
+      service_name: "Dịch vụ nước",
+      service_price: 1700,
+      current: 100,
+      new: 200,
+    },
+    // {
+    //   service_name: "Dịch vụ xe",
+    //   service_price: 1700,
+    //   service_type: "Người"
+    // },
+  ];
+
   return (
     <>
       <Modal
-        title={<h2>Tạo hoá đơn cho phòng 101, trọ xanh</h2>}
+        title={<h2>Tạo hoá đơn cho phòng 101, Trọ xanh</h2>}
         open={visible}
         destroyOnClose={true}
         afterClose={() => form.resetFields()}
@@ -50,17 +84,28 @@ const CreateInvoice = ({ visible, close }) => {
           close(false);
         }}
         footer={[
-          <Button
-            key="back"
-            onClick={() => {
-              close(false);
-            }}
-          >
-            Đóng
-          </Button>,
-          <Button htmlType="submit" key="submit" form="createInvoice" type="primary">
-            Tạo mới
-          </Button>,
+          <>
+            <Row>
+              <Col span={12} style={{ marginLeft: "-100px" }}>
+                <p>Tổng cộng hoá đơn:</p>
+                <p className="total_price">3,000,000 đ</p>
+              </Col>
+              <Col span={12} style={{ marginLeft: "100px" }}>
+                <Button
+                  key="back"
+                  onClick={() => {
+                    close(false);
+                  }}
+                >
+                  Đóng
+                </Button>
+
+                <Button htmlType="submit" key="submit" form="createInvoice" type="primary">
+                  Tạo mới
+                </Button>
+              </Col>
+            </Row>
+          </>,
         ]}
       >
         <Form
@@ -118,103 +163,201 @@ const CreateInvoice = ({ visible, close }) => {
             <span>
               <b>Tiền thuê phòng:</b>
             </span>
-            <Form.Item
-              className="form-item"
-              name="room_month"
-              labelCol={{ span: 24 }}
-              label={
-                <span>
-                  <b>Số tháng:</b>
-                </span>
-              }
-            >
-              <InputNumber
-                style={{ width: "100%" }}
-                controls={false}
-                placeholder="Nhập số lượng người tối đa của phòng"
-                onChange={monthChange}
-              />
-            </Form.Item>
             <Row>
               <Col span={24}>
                 <p>
                   <i>
-                    <p>
-                      <span>{room_month} tháng</span>, <span>{room_day} ngày</span> x 3,000,000
+                    <p className="description">
+                      <span>Nhập số tháng và số ngày lẻ (nếu có). </span>
+                      <span>Ví dụ hóa đơn cho 1 tháng rưỡi -> nhập 1 tháng, 15 ngày.</span>
                     </p>
-                    <p>{price_format}</p>
                   </i>
                 </p>
               </Col>
             </Row>
-            <Form.Item
-              className="form-item"
-              name="room_day"
-              labelCol={{ span: 24 }}
-              label={
-                <span>
-                  <b>Số ngày lẻ:</b>
-                </span>
-              }
-            >
-              <InputNumber
-                style={{ width: "100%" }}
-                controls={false}
-                placeholder="Nhập số lượng người tối đa của phòng"
-                onChange={dayChange}
-              />
+            <Row gutter={12}>
+              <Col span={12}>
+                <Form.Item
+                  className="form-item"
+                  name="room_month"
+                  labelCol={{ span: 24 }}
+                  label={
+                    <span>
+                      <b>Số tháng:</b>
+                    </span>
+                  }
+                >
+                  <InputNumber
+                    style={{ width: "100%" }}
+                    controls={false}
+                    placeholder="Nhập số tháng"
+                    onChange={monthChange}
+                    defaultValue={1}
+                    min={0}
+                    max={12}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  className="form-item"
+                  name="room_day"
+                  labelCol={{ span: 24 }}
+                  label={
+                    <span>
+                      <b>Số ngày lẻ:</b>
+                    </span>
+                  }
+                >
+                  <InputNumber
+                    style={{ width: "100%" }}
+                    controls={false}
+                    placeholder="Nhập số ngày lẻ"
+                    onChange={dayChange}
+                    defaultValue={0}
+                    min={0}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Card className="card card-price">
+              <Row>
+                <Col span={13}>
+                  <p>Tính tiền phòng</p>
+                </Col>
+                <Col span={7} offset={4}>
+                  <p>Thành tiền</p>
+                </Col>
+              </Row>
+              <Row>
+                <Col span={13}>
+                  <b>
+                    <span>{room_month} tháng</span>, <span>{room_day} ngày</span> x 3,000,000 đ
+                  </b>
+                </Col>
+                <Col span={7} offset={4}>
+                  <b>{price_format}</b>
+                </Col>
+              </Row>
+            </Card>
+            <span>
+              <b>Tiền dịch vụ:</b>
+            </span>
+            <Row>
+              <Col span={24}>
+                <p className="description">
+                  <span>Tiền dịch vụ khách thuê sử dụng</span>
+                </p>
+              </Col>
+            </Row>
+            <Form.Item className="form-item" name="phone_number" labelCol={{ span: 24 }}>
+              {service?.map((obj, idx) => {
+                return (
+                  <Checkbox.Group>
+                    <Card className="card card-service">
+                      <Checkbox>
+                        <Row>
+                          <Col span={10}>
+                            <b>{obj.service_name}</b>
+                          </Col>
+                          <Col span={10} offset={4}>
+                            <InputNumber defaultValue={obj.current} addonAfter="Số cũ" />
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col span={10}>
+                            <span>Giá: </span>
+                            <b>{obj.service_price}</b>
+                          </Col>
+                          <Col span={10} offset={4} style={{ marginTop: "5px" }}>
+                            <InputNumber defaultValue={obj.new} addonAfter="Số mới" />
+                          </Col>
+                        </Row>
+                      </Checkbox>
+                    </Card>
+                  </Checkbox.Group>
+                );
+              })}
             </Form.Item>
-            <Form.Item
-              className="form-item"
-              name="phone_number"
-              labelCol={{ span: 24 }}
-              label={
-                <span>
-                  <b>Số điện thoại: </b>
-                </span>
-              }
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng nhập số điện thoại",
-                  whitespace: true,
-                },
-                {
-                  pattern: /^((\+84|84|0)+(3|5|7|8|9|1[2|6|8|9]))+([0-9]{8})\b/,
-                  message: "Số điện thoại phải bắt đầu (+84,0,84)",
-                },
-              ]}
-            >
-              <Input placeholder="Số điện thoại" style={{ width: "100%" }} autoComplete="off" />
-            </Form.Item>
-
-            {/* <Form.Item
-            className="form-item"
-            name="gender"
-            labelCol={{ span: 24 }}
-            label={
-              <span>
-                <b>Giới tính:</b>
-              </span>
-            }
-          >
-            <Radio.Group onChange={genderChange} defaultValue={true}>
-              <Radio value={true}>Nam</Radio>
-              <Radio value={false}>Nữ</Radio>
+            <Card className="card card-price">
+              <Row>
+                <Col span={13}>
+                  <p>Tính tiền dịch vụ</p>
+                </Col>
+                <Col span={7} offset={4}>
+                  <p>Thành tiền</p>
+                </Col>
+              </Row>
+              <Row>
+                <Col span={13}>
+                  <b>2 dịch vụ</b>
+                </Col>
+                <Col span={7} offset={4}>
+                  <b>340,000 đ</b>
+                </Col>
+              </Row>
+            </Card>
+            <span>
+              <b>Cộng thêm / Giảm trừ:</b>
+            </span>
+            <Row>
+              <Col span={24}>
+                <p className="description">
+                  <span>Thường dành cho các trường hợp đặc biệt. Ví dụ cộng thêm ngày tết, giảm trừ covid...</span>
+                </p>
+              </Col>
+            </Row>
+            <Radio.Group defaultValue={1}>
+              <Radio value={1} className="radio-add">
+                Cộng thêm
+              </Radio>
+              <Radio value={2} className="radio-add">
+                Giảm trừ
+              </Radio>
             </Radio.Group>
-          </Form.Item> */}
+
             <Form.Item
               className="form-item"
               name="address_more_detail"
               labelCol={{ span: 24 }}
               label={
                 <span>
-                  <b>Địa chỉ: </b>
+                  <b>Số tiền: </b>
                 </span>
               }
             >
-              <Input autoComplete="off" placeholder="Nhập địa chỉ" />
+              <InputNumber style={{ width: "100%" }} controls={false} placeholder="Nhập số tiền" />
             </Form.Item>
+            <Form.Item
+              className="form-item"
+              name="address_more_detail"
+              labelCol={{ span: 24 }}
+              label={
+                <span>
+                  <b>Lý do: </b>
+                </span>
+              }
+            >
+              <Input autoComplete="off" placeholder="Nhập lý do" />
+            </Form.Item>
+            <Card className="card card-price">
+              <Row>
+                <Col span={13}>
+                  <p>Cộng thêm</p>
+                </Col>
+                <Col span={7} offset={4}>
+                  <p>Thành tiền</p>
+                </Col>
+              </Row>
+              <Row>
+                <Col span={13}>
+                  <p>Lý do:</p>
+                </Col>
+                <Col span={7} offset={4}>
+                  <b>0 đ</b>
+                </Col>
+              </Row>
+            </Card>
           </Card>
         </Form>
       </Modal>

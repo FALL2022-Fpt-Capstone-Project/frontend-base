@@ -248,6 +248,7 @@ const DetailBuilding = ({ visible, close, id }) => {
                     },
                   },
                 ]}
+                pagination={{ pageSize: 5 }}
                 loading={loading}
               />
             </Card>

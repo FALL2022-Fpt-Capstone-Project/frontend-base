@@ -31,3 +31,33 @@
     }
   }
 }
+.description {
+  font-size: 14px;
+}
+.card {
+  border: 1px solid #c0c0c0;
+  border-radius: 10px;
+}
+.card-left {
+  width: 100%;
+}
+.card-price {
+  background-color: #eef6e4;
+  margin-bottom: 10px;
+}
+.card-service {
+  margin-top: 10px;
+}
+.ant-form .radio-add {
+  font-size: 16px;
+}
+.total_price {
+  color: red;
+  font-weight: bold;
+  font-size: 18px;
+  margin-top: -10px;
+  margin-left: -50px;
+}
+.btn-add-invoice {
+  margin-top: 20px;
+}

@@ -23,6 +23,7 @@ const Sidebar = () => {
   const [user, setUser] = useState([]);
   const [contractRenterLink, setContractRenterLink] = useState("/contract-renter");
   const [contractApartmentLink, setContractApartmentLink] = useState("/contract-apartment");
+  const [invoiceLink, setInvoiceLink] = useState("/invoice");
   const [updateStaff, setUpdateStaff] = useState(false);
   const onClickUpdateStaff = (id) => {
     setUpdateStaff(true);
@@ -47,6 +48,11 @@ const Sidebar = () => {
   useEffect(() => {
     if (location.pathname.includes("/contract-apartment/create")) {
       setContractApartmentLink("/contract-apartment/create");
+    }
+  }, [location.pathname]);
+  useEffect(() => {
+    if (location.pathname.includes("/invoice/create-invoice-auto")) {
+      setInvoiceLink("/invoice/create-invoice-auto");
     }
   }, [location.pathname]);
 
@@ -95,7 +101,7 @@ const Sidebar = () => {
             <Link to="/equiment" />
           </Menu.Item>
 
-          <Menu.Item key="/invoice">
+          <Menu.Item key={invoiceLink}>
             <ProfileOutlined />
             <span>Quản lý hoá đơn</span>
             <Link to="/invoice" />
@@ -156,7 +162,7 @@ const Sidebar = () => {
             <Link to="/equiment" />
           </Menu.Item>
 
-          <Menu.Item key="/invoice">
+          <Menu.Item key={invoiceLink}>
             <ProfileOutlined />
             <span>Quản lý hoá đơn</span>
             <Link to="/invoice" />
