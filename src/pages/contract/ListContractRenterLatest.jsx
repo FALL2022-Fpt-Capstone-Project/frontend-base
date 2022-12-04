@@ -38,7 +38,7 @@ const ListContractRenterLatest = ({ duration }) => {
       setLoading(true);
       const response = await axios
         .get(LIST_CONTRACT_LATEST_URL, {
-          params: { filter: "latest", duration: duration },
+          params: { status: 2, duration: duration },
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${cookie}`,

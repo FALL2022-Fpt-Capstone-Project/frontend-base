@@ -1,20 +1,16 @@
 import React, { useEffect, useState } from "react";
-import Sidebar from "../../components/sidebar/Sidebar";
 import "./detailStaff.scss";
-import { Layout, Modal, Button, Row, Col } from "antd";
+import { Modal, Button, Row, Col, Card } from "antd";
 import axios from "../../api/axios";
 import { EditOutlined } from "@ant-design/icons";
-import { Link, useParams, useNavigate, NavLink } from "react-router-dom";
-const { Content, Sider, Header } = Layout;
-const DetailStaff = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const [collapsed, setCollapsed] = useState(false);
-  const goBack = () => navigate("/home");
+import UpdateStaff from "./UpdateStaff";
+const DetailStaff = ({ visible, close, id }) => {
   const [user, setUser] = useState([]);
-  const [roles, setRole] = useState();
+  const [updateStaff, setUpdateStaff] = useState(false);
+  const onClickUpdateStaff = (id) => {
+    setUpdateStaff(true);
+  };
   let cookie = localStorage.getItem("Cookie");
-  let checkRole = localStorage.getItem("Role");
   useEffect(() => {
     axios
       .get(`manager/staff/${id}`, {
@@ -24,252 +20,114 @@ const DetailStaff = () => {
         },
       })
       .then((res) => {
-        let roles = res.data.body.role[0];
-        let role = roles.toString().slice(5);
-        setUser(res.data.body);
-        setRole(role);
-
-        console.log(res.data);
+        setUser(res.data.data);
+      })
+      .catch((e) => {
+        console.log(e);
       });
-  }, []);
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
+  }, [id, cookie]);
 
   return (
-    <div className="detail-staff">
-      <Layout
-        style={{
-          minHeight: "100vh",
+    <>
+      <Modal
+        title={<h2>Thông tin cá nhân</h2>}
+        className="modalStyle"
+        open={visible}
+        width="500px"
+        onOk={() => {
+          close(false);
         }}
-      >
-        <Sider width={250} collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-          <p className="sider-title">QUẢN LÝ CHUNG CƯ MINI</p>
-          <Sidebar />
-        </Sider>
-        <Layout className="site-layout">
-          <Header
-            className="layout-header"
-            style={{
-              margin: "0 16px",
-            }}
-          >
-            <p className="header-title">Thông tin cá nhân</p>
-          </Header>
-          <Content className="layout-content">
-            <Button type="primary" onClick={showModal}>
-              Open Modal
-            </Button>
-            <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-              <div
-                className="basic-info"
-                style={{
-                  marginLeft: "3%",
-                }}
-              >
-                <Row>
-                  <img
-                    src="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png"
-                    style={{ width: "100px", marginBottom: "10px" }}
-                    alt=""
-                  />
-                </Row>
-                <Row>
-                  <Col>
-                    <p style={{ fontSize: "16px", fontWeight: "bold" }}>Họ và tên: </p>
-                  </Col>
-
-                  <Col>
-                    <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.full_name}</p>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col>
-                    <p style={{ fontSize: "16px", fontWeight: "bold" }}>Tên đăng nhập: </p>
-                  </Col>
-
-                  <Col>
-                    <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.user_name}</p>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col>
-                    <p style={{ fontSize: "16px", fontWeight: "bold" }}>Giới tính: </p>
-                  </Col>
-
-                  <Col>
-                    <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.gender}</p>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col>
-                    <p style={{ fontSize: "16px", fontWeight: "bold" }}>Chức vụ: </p>
-                  </Col>
-                  <Col>
-                    {roles === "ADMIN" ? (
-                      <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>ADMIN</p>
-                    ) : (
-                      <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>Nhân viên</p>
-                    )}
-                  </Col>
-                </Row>
-                <Row>
-                  <Col>
-                    <p style={{ fontSize: "16px", fontWeight: "bold" }}>Số điện thoại: </p>
-                  </Col>
-
-                  <Col>
-                    <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.phone_number}</p>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col>
-                    <p style={{ fontSize: "16px", fontWeight: "bold" }}>Địa chỉ: </p>
-                  </Col>
-
-                  <Col>
-                    <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>
-                      {user.address_wards}, {user.address_district}, {user.address_city}
-                    </p>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col>
-                    <p style={{ fontSize: "16px", fontWeight: "bold" }}>Địa chỉ chi tiết: </p>
-                  </Col>
-
-                  <Col>
-                    <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.address_more_detail}</p>
-                  </Col>
-                </Row>
-              </div>
-            </Modal>
-            <div
-              className="basic-info"
-              style={{
-                marginLeft: "3%",
-                border: "1px solid #000",
-                paddingLeft: "10px",
-                paddingTop: "10px",
-                width: "400px",
+        onCancel={() => {
+          close(false);
+        }}
+        footer={[
+          <>
+            <Button
+              key="back"
+              onClick={() => {
+                close(false);
               }}
             >
-              <Row>
-                <img
-                  src="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png"
-                  style={{ width: "100px", marginBottom: "10px" }}
-                  alt=""
-                />
-              </Row>
-              <Row>
-                <Col>
-                  <p style={{ fontSize: "16px", fontWeight: "bold" }}>Họ và tên: </p>
-                </Col>
-
-                <Col>
-                  <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.full_name}</p>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <p style={{ fontSize: "16px", fontWeight: "bold" }}>Tên đăng nhập: </p>
-                </Col>
-
-                <Col>
-                  <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.user_name}</p>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <p style={{ fontSize: "16px", fontWeight: "bold" }}>Giới tính: </p>
-                </Col>
-
-                <Col>
-                  <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.gender}</p>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <p style={{ fontSize: "16px", fontWeight: "bold" }}>Chức vụ: </p>
-                </Col>
-                <Col>
-                  {roles === "ADMIN" ? (
-                    <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>ADMIN</p>
-                  ) : (
-                    <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>Nhân viên</p>
-                  )}
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <p style={{ fontSize: "16px", fontWeight: "bold" }}>Số điện thoại: </p>
-                </Col>
-
-                <Col>
-                  <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.phone_number}</p>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <p style={{ fontSize: "16px", fontWeight: "bold" }}>Địa chỉ: </p>
-                </Col>
-
-                <Col>
-                  <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>
-                    {user.address_wards}, {user.address_district}, {user.address_city}
-                  </p>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <p style={{ fontSize: "16px", fontWeight: "bold" }}>Địa chỉ chi tiết: </p>
-                </Col>
-
-                <Col>
-                  <p style={{ fontSize: "14px", padding: "3px 0 0 5px" }}>{user.address_more_detail}</p>
-                </Col>
-              </Row>
-            </div>
-
-            <div style={{ marginLeft: "3%" }}>
-              {checkRole === "ROLE_ADMIN" ? (
-                <Link to="/manage-staff">
-                  <Button>Quay lại</Button>
-                </Link>
-              ) : (
-                <Button onClick={goBack}>Quay lại</Button>
-              )}
-              <NavLink to={`/manage-staff/update-staff/${id}`}>
-                <Button
-                  type="primary"
-                  icon={<EditOutlined />}
-                  style={{ margin: "20px 20px" }}
-                  size="middle"
-                  className="button-add"
-                >
-                  Sửa thông tin
-                </Button>
-              </NavLink>
-            </div>
-            <div
-              className="site-layout-background"
-              style={{
-                padding: 24,
-                minHeight: 360,
+              Đóng
+            </Button>
+            <Button
+              type="primary"
+              icon={<EditOutlined />}
+              style={{ margin: "20px 20px" }}
+              size="middle"
+              className="button-add"
+              onClick={() => {
+                onClickUpdateStaff(id);
+                close(false);
               }}
-            ></div>
-          </Content>
-        </Layout>
-      </Layout>
-    </div>
+            >
+              Sửa thông tin
+            </Button>
+          </>,
+        ]}
+      >
+        <div
+          className="basic-info"
+          style={{
+            marginLeft: "3%",
+          }}
+        >
+          <Card className="card">
+            <Row>
+              <Row className="detail-row">
+                <Col span={10}>
+                  <h4>Họ và tên: </h4>
+                </Col>
+                <Col span={14}>
+                  <p>{user.full_name}</p>
+                </Col>
+              </Row>
+              <Row className="detail-row">
+                <Col span={10}>
+                  <h4>Tên đăng nhập:</h4>
+                </Col>
+
+                <Col span={14}>
+                  <p>{user.user_name}</p>
+                </Col>
+              </Row>
+              <Row className="detail-row">
+                <Col span={10}>
+                  <h4>Giới tính: </h4>
+                </Col>
+
+                <Col span={14}>{user.gender ? <p>Nam</p> : <p>Nữ</p>}</Col>
+              </Row>
+              <Row className="detail-row">
+                <Col span={10}>
+                  <h4>Chức vụ: </h4>
+                </Col>
+                <Col span={14}>{user.role_name === "ROLE_ADMIN" ? <p>ADMIN</p> : <p>Nhân viên</p>}</Col>
+              </Row>
+              <Row className="detail-row">
+                <Col span={10}>
+                  <h4>Số điện thoại:</h4>
+                </Col>
+
+                <Col span={14}>
+                  <p>{user.phone_number}</p>
+                </Col>
+              </Row>
+              <Row className="detail-row">
+                <Col span={10}>
+                  <h4>Địa chỉ chi tiết:</h4>
+                </Col>
+
+                <Col span={14}>
+                  <p>{user.address_more_detail}</p>
+                </Col>
+              </Row>
+            </Row>
+          </Card>
+        </div>
+      </Modal>
+      <UpdateStaff visible={updateStaff} close={setUpdateStaff} id={id} />
+    </>
   );
 };
 

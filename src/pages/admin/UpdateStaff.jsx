@@ -2,7 +2,6 @@ import { Form, Input, Radio, Select, notification, Switch, Button, Modal, Card }
 import "./updateStaff.scss";
 import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
-import { NavLink, useNavigate, useParams } from "react-router-dom";
 const { Option } = Select;
 
 const UpdateStaff = ({ visible, close, id }) => {
@@ -16,10 +15,7 @@ const UpdateStaff = ({ visible, close, id }) => {
   const [roles, setRoles] = useState("");
 
   const [form] = Form.useForm();
-  // const { id } = useParams();
-  const navigate = useNavigate();
   let cookie = localStorage.getItem("Cookie");
-  let roleInfo = localStorage.getItem("Role");
   useEffect(() => {
     axios
       .get(`manager/staff/${id}`, {
@@ -48,9 +44,8 @@ const UpdateStaff = ({ visible, close, id }) => {
         setGender(res.data.data?.gender);
         setRoles(roleFinal);
         setDeactivate(res.data.data?.is_deactivate);
-        console.log(res);
       });
-  }, [id]);
+  }, [id, cookie]);
   const data = {
     full_name: full_name,
     user_name: user_name,
@@ -61,7 +56,6 @@ const UpdateStaff = ({ visible, close, id }) => {
     roles: roles,
     password: password,
   };
-  console.log(id);
   function Update(e) {
     axios
       .put(`manager/staff/update/${id}`, data, {
@@ -74,19 +68,24 @@ const UpdateStaff = ({ visible, close, id }) => {
         notification.success({
           message: "Cập nhật thông tin nhân viên thành công",
           duration: 3,
+          placement: "top",
         });
         close(false);
-        reload();
+        setTimeout(() => {
+          reload();
+        }, "3000");
       })
       .catch((e) =>
         notification.error({
           message: "Cập nhật thông tin thất bại",
           description: "Vui lòng kiểm tra lại thông tin và thử lại.",
           duration: 3,
+          placement: "top",
         })
       );
     console.log(data);
   }
+
   const roleChange = (value) => {
     setRoles(value);
     console.log(value);
