@@ -100,11 +100,12 @@ function Preview(props) {
     const [listRoomId, setListRoomId] = useState([]);
     const [groupIdSelect, setGroupIdSelect] = useState("");
     const [increaseRoomPrice, setIncreaseRoomPrice] = useState(false);
-    const [textCardGroup, setTextCardGroup] = useState("Danh sách phòng tạo mới");
+    const [textCardGroup, setTextCardGroup] = useState("Danh sách phòng xem trước");
     const [room_status, setRoomStatus] = useState([]);
     const [dataRoomUpdate, setDataRoomUpdate] = useState();
     const [filterSave, setFilterSave] = useState();
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+    const [expandedKeys, setExpandedKeys] = useState(['0-0-0', '0-0-1']);
 
     let cookie = localStorage.getItem("Cookie");
     const navigate = useNavigate();
@@ -483,6 +484,13 @@ function Preview(props) {
         setLoading(false)
     };
 
+    const onExpand = (expandedKeysValue) => {
+        console.log('onExpand', expandedKeysValue);
+        // if not set autoExpandParent to false, if children expanded, parent can not collapse.
+        // or, you can remove all expanded children keys.
+        setExpandedKeys(expandedKeysValue);
+    };
+
     const treeData = dataApartmentGroup?.map((obj, index) => {
         let floor = [];
         for (let i = 1; i <= obj.total_floor; i++) {
@@ -493,11 +501,12 @@ function Preview(props) {
             title:
                 <>
                     <span>{obj.group_name}
-                        <b style={{ fontWeight: 600 }}>{" ( " + obj.total_floor + " tầng, " + obj.list_rooms?.length + " phòng )"}
+                        <b style={{ fontWeight: 600 }}>{" ( " + obj.total_floor + " tầng, " + list_rooms?.filter((u, y) => u.is_duplicate === false || u.is_duplicate === true).length + " phòng )"}
                         </b>
                     </span>
-                    <span style={{ color: 'green' }}> + {list_rooms?.filter((u, y) => u.is_duplicate === false).length}</span>
-                    <span style={{ color: 'red' }}> - {list_rooms?.filter((u, y) => u.is_duplicate === true).length}</span>
+                    {/* <span style={{ color: 'green' }}> + {list_rooms?.filter((u, y) => u.is_duplicate === false || u.is_duplicate === true).length}</span> */}
+                    <span style={{ color: 'red' }}>{list_rooms?.filter((u, y) => u.is_duplicate === true).length === 0 ?
+                        '' : ' Có ' + list_rooms?.filter((u, y) => u.is_duplicate === true).length + ' phòng đã tồn tại'}</span>
                 </>,
             key: obj.group_id.toString(),
             icon: <HomeOutlined />,
@@ -506,15 +515,16 @@ function Preview(props) {
                     title:
                         <>
                             <span>{'Tầng ' + pre}
-                                <b style={{ fontWeight: 600 }}> {"( " + obj.list_rooms?.filter((u, y) => u.room_floor === pre).length + " phòng )"} </b>
+                                <b style={{ fontWeight: 600 }}> {"( " + list_rooms?.filter((u, y) => u.room_floor === pre && (u.is_duplicate === false || u.is_duplicate === true)).length + " phòng )"} </b>
                             </span>
-                            <span style={{ color: 'green' }}> + {list_rooms?.filter((u, y) => u.room_floor === pre && u.is_duplicate === false).length}</span>
-                            <span style={{ color: 'red' }}> - {list_rooms?.filter((u, y) => u.room_floor === pre && u.is_duplicate === true).length}</span>
+                            {/* <span style={{ color: 'green' }}> + {list_rooms?.filter((u, y) => u.room_floor === pre && u.is_duplicate === false).length}</span> */}
+                            <span style={{ color: 'red' }}>{list_rooms?.filter((u, y) => u.is_duplicate === true && u.room_floor === pre).length === 0 ?
+                                '' : ' Có ' + list_rooms?.filter((u, y) => u.is_duplicate === true && u.room_floor === pre).length + ' phòng đã tồn tại'}</span>
                         </>,
                     key: obj.group_id + '-' + pre,
-                    children: list_rooms?.filter(rooms => rooms.room_floor === pre)?.map((room, j) => {
+                    children: list_rooms?.filter(rooms => rooms.room_floor === pre && (rooms.is_duplicate === true || rooms.is_duplicate === false))?.map((room, j) => {
                         return {
-                            title: <span style={room.is_duplicate === false ? { color: 'green' } : (room.room_id === null ? { color: 'red' } : { color: 'black' })}>{'Phòng ' + room.room_name}</span>,
+                            title: <span style={room.is_duplicate === false ? { color: 'green' } : { color: 'red' }}>{'Phòng ' + room.room_name}</span>,
                             key: obj.group_id.toString() + "-" + pre.toString() + "-" + j.toString()
                         }
                     })
@@ -569,7 +579,7 @@ function Preview(props) {
                     <Col xs={24} lg={24} xl={8} span={8}>
                         <Card
                             className="card-w100-h100"
-                            title={<p className="text-card">Thông tin chung cư bạn đã chọn</p>}
+                            title={<p className="text-card">Thông tin chung cư và các phòng xem trước</p>}
                             bordered={false}
                         >
                             {/* <Row>
@@ -587,8 +597,8 @@ function Preview(props) {
                             <Tree
                                 showIcon
                                 checkable={false}
-                                // onExpand={onExpand}
-                                // expandedKeys={expandedKeys}
+                                onExpand={onExpand}
+                                expandedKeys={expandedKeys}
                                 // autoExpandParent={autoExpandParent}
                                 // onCheck={onCheck}
                                 // checkedKeys={checkedKeys}
