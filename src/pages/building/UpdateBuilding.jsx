@@ -1,4 +1,4 @@
-import { Button, Card, Col, Form, Input, InputNumber, Modal, Row, Select } from "antd";
+import { Button, Card, Col, Form, Input, InputNumber, Modal, notification, Row, Select } from "antd";
 import React, { useEffect, useState } from "react";
 import TextArea from "antd/lib/input/TextArea";
 import axios from "../../api/axios";
@@ -9,7 +9,6 @@ const UpdateBuilding = ({ visible, close, id }) => {
 
   const [group_name, setBuildingName] = useState("");
   const [building_address_city, setBuildingCity] = useState("");
-  const [room_name_convention, setRoomNameConvention] = useState("");
   const [room_area, setRoomArea] = useState("");
   const [room_limited_people, setRoomPeople] = useState("");
   const [room_price, setRoomRate] = useState("");
@@ -51,16 +50,56 @@ const UpdateBuilding = ({ visible, close, id }) => {
         setBuildingName(res.data.data?.group_name);
         setRoomPeople(res.data.data?.list_rooms[0].room_limit_people);
         setRoomArea(res.data?.data.list_rooms[0].room_area);
-        setBuildingAddress(res.data.data?.address.address_more_detail);
+        setBuildingAddress(res.data.data?.address.address_more_details);
         setRoomRate(res.data.data?.list_rooms[0].room_price);
         setCity(res.data.data?.address.address_city);
         setDistrict(res.data.data?.address.address_district);
         setWard(res.data.data?.address.address_wards);
         setNote(res.data.data?.description);
-        console.log(res.data.data?.address.address_wards);
+        // console.log(res.data.data?.address.address_more_detail);
+        // console.log(res);
       });
   }, [id]);
-
+  const data = {
+    group_name: group_name,
+    room_limited_people: room_limited_people,
+    room_price: room_price,
+    room_area: room_area,
+    address_city: address_city,
+    address_district: address_district,
+    address_ward: address_ward,
+    address_more_detail: address_more_detail,
+    description: description,
+  };
+  function Update(e) {
+    axios
+      .post(`manager/group/update/${id}`, data, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie}`,
+        },
+      })
+      .then((res) => {
+        notification.success({
+          message: "Cập nhật thông tin chung cư thành công",
+          duration: 3,
+          placement: "top",
+        });
+        close(false);
+        setTimeout(() => {
+          reload();
+        }, "1000");
+      })
+      .catch((e) =>
+        notification.error({
+          message: "Cập nhật thông tin chung cư thất bại",
+          description: "Vui lòng kiểm tra lại thông tin và thử lại.",
+          duration: 3,
+          placement: "top",
+        })
+      );
+    console.log(data);
+  }
   useEffect(() => {
     const getCity = async () => {
       const response = await axios
@@ -181,7 +220,7 @@ const UpdateBuilding = ({ visible, close, id }) => {
       >
         <Form
           form={form}
-          // onFinish={handleCreateBuilding}
+          onFinish={Update}
           // onFinishFailed={onFinishFail}
           layout="horizontal"
           size={"default"}

@@ -12,7 +12,7 @@ import "./listHistoryInvoice.scss";
 import { Link } from "react-router-dom";
 const { RangePicker } = DatePicker;
 const { Search } = Input;
-const ListHistoryInvoice = () => {
+const ListInvoiceUnpaid = () => {
   const options = [];
   const option = [
     {
@@ -62,34 +62,34 @@ const ListHistoryInvoice = () => {
     },
     {
       building_name: "Trọ xanh",
-      building_total_floor: 101,
+      building_total_floor: 106,
       building_total_rooms: 400,
       building_empty_rooms: 30,
       chu_ky: "Kỳ 30",
-      total_people: "Nguyễn Hải Phương",
-      status: "Đã thanh toán",
+      total_people: "Nguyễn Minh Hiếu",
+      status: "Chưa thanh toán",
       address_more_detail: 2000000,
       date: "30-9-2022",
     },
     {
       building_name: "Trọ xanh",
-      building_total_floor: 101,
+      building_total_floor: 105,
       building_total_rooms: 400,
       building_empty_rooms: 30,
       chu_ky: "Kỳ 30",
-      total_people: "Nguyễn Hải Phương",
-      status: "Đã thanh toán",
+      total_people: "Nguyễn Văn Toan",
+      status: "Chưa thanh toán",
       address_more_detail: 2000000,
       date: "30-8-2022",
     },
     {
       building_name: "Trọ xanh",
-      building_total_floor: 101,
+      building_total_floor: 102,
       building_total_rooms: 400,
       building_empty_rooms: 30,
       chu_ky: "Kỳ 30",
-      total_people: "Nguyễn Hải Phương",
-      status: "Đã thanh toán",
+      total_people: "Nguyễn Đức Pháp",
+      status: "Chưa thanh toán",
       address_more_detail: 2000000,
       date: "30-7-2022",
     },
@@ -338,4 +338,4 @@ const ListHistoryInvoice = () => {
   );
 };
 
-export default ListHistoryInvoice;
+export default ListInvoiceUnpaid;

@@ -12,6 +12,7 @@ import {
   Row,
   Select,
   Table,
+  Tabs,
   Tag,
 } from "antd";
 import React, { useContext, useEffect, useRef, useState } from "react";
@@ -67,16 +68,17 @@ const EditableCell = ({ title, editable, children, dataIndex, record, handleSave
       <Form.Item
         style={{
           margin: 0,
+          width: "100%",
         }}
         name={dataIndex}
         rules={[
           {
             required: true,
-            message: `${title} is required.`,
+            message: `Vui lòng không để trống!`,
           },
         ]}
       >
-        <Input ref={inputRef} onPressEnter={save} onBlur={save} />
+        <InputNumber ref={inputRef} onPressEnter={save} onBlur={save} />
       </Form.Item>
     ) : (
       <div
@@ -98,6 +100,8 @@ const AddAutoInvoice = () => {
   const [buildingFilter, setBuildingFilter] = useState("");
   const [building, setBuilding] = useState("");
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [newElec, setNewElec] = useState();
+  const [newWater, setNewWater] = useState();
   const [dataSource, setDataSource] = useState([
     {
       key: 1,
@@ -129,13 +133,13 @@ const AddAutoInvoice = () => {
       key: 3,
       room_name: 103,
       room_floor: 1,
-      room_price: "2,000,000 đ",
+      room_price: 2000000,
       old_elec: 50,
       new_elec: 200,
       old_water: 70,
       new_water: 100,
-      add_sub: "300,000 đ",
-      total_price: "4,700,00 đ",
+      add_sub: 300000,
+      total_price: 0,
       date_invoice: "25-11-2022",
     },
     {
@@ -186,8 +190,13 @@ const AddAutoInvoice = () => {
   let month = moment().month();
   let year = moment().year();
 
-  let date_create = `${day}-${month + 1}-${year}`;
-  let date_term = `${day + 1}-${month + 1}-${year}`;
+  let date_create = moment().year(year).month(month).date(day);
+  let date_term;
+  if (day === 30) {
+    date_term = `${moment().add(1, "day")}-${moment().add(1, "months")}-${year}`;
+  } else {
+    date_term = `${moment().add(1, "day")}-${moment().add(1, "months")}-${year}`;
+  }
   let date_create_format = moment(date_create, "DD-MM-YYYY");
   let date_term_format = moment(date_term, "DD-MM-YYYY");
   const initValues = {
@@ -198,10 +207,11 @@ const AddAutoInvoice = () => {
   const buildingChange = (value) => {
     setBuilding(value);
   };
-  const onSelectChange = (newSelectedRowKeys) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
+  const onSelectChange = (newSelectedRowKeys, selectedRows) => {
+    console.log("selectedRowKeys changed: ", selectedRows);
     setSelectedRowKeys(newSelectedRowKeys);
   };
+  console.log(newElec);
   const rowSelection = {
     selectedRowKeys,
     onChange: onSelectChange,
@@ -216,39 +226,61 @@ const AddAutoInvoice = () => {
       title: "Tầng",
       dataIndex: "room_floor",
     },
-    {
-      title: "Tiền phòng",
-      dataIndex: "room_price",
-    },
 
     {
       title: "Số điện cũ",
       dataIndex: "old_elec",
-      editable: true,
     },
     {
       title: "Số điện mới",
       dataIndex: "new_elec",
+      width: "10%",
       editable: true,
+      render: (text, record, index) => (
+        <InputNumber min={record.old_elec} style={{ width: "100%" }} value={record.new_elec} />
+      ),
     },
     {
       title: "Số nước cũ",
       dataIndex: "old_water",
-      editable: true,
     },
     {
       title: "Số nước mới",
       dataIndex: "new_water",
+      width: "10%",
       editable: true,
+      render: (text, record, index) => <InputNumber style={{ width: "100%" }} value={text} />,
     },
     {
       title: "Cộng thêm/Giảm trừ",
       dataIndex: "add_sub",
       editable: true,
+      render: (text, record, index) => (
+        <InputNumber
+          style={{ width: "100%" }}
+          formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+          parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
+          value={text}
+        />
+      ),
     },
     {
       title: "Tổng cộng",
       dataIndex: "total_price",
+      width: "11%",
+      render: (text, record, index) => {
+        let total =
+          (record.new_elec - record.old_elec) * 3000 +
+          (record.new_water - record.old_water) * 3000 +
+          record.add_sub +
+          3000000;
+        console.log(total);
+        return (
+          <>
+            <b>{total.toLocaleString("vn") + " đ"}</b>
+          </>
+        );
+      },
     },
     {
       title: "Ngày lập phiếu",
@@ -286,6 +318,7 @@ const AddAutoInvoice = () => {
       }),
     };
   });
+  const hasSelected = selectedRowKeys.length > 0;
   return (
     <div className="invoice">
       <Layout
@@ -326,8 +359,8 @@ const AddAutoInvoice = () => {
                 initialValues={initValues}
               >
                 <Row>
-                  <Col span={7}>
-                    <Row style={{ width: "400px" }}>
+                  <Col span={5}>
+                    <Row>
                       <Card
                         title={
                           <>
@@ -432,7 +465,7 @@ const AddAutoInvoice = () => {
                         </Form.Item>
                       </Card>
                     </Row>
-                    <Row style={{ width: "400px" }}>
+                    <Row>
                       <Card
                         title={
                           <>
@@ -492,7 +525,7 @@ const AddAutoInvoice = () => {
                       </Card>
                     </Row>
                   </Col>
-                  <Col span={17}>
+                  <Col span={18} offset={1}>
                     <Row>
                       <Card
                         title={
@@ -508,31 +541,63 @@ const AddAutoInvoice = () => {
                         }
                         className="card"
                       >
-                        <Table
-                          bordered
-                          // dataSource={dataSource}
-                          dataSource={dataSource}
-                          columns={columns}
-                          pagination={{ pageSize: 5 }}
-                          loading={loading}
-                          rowSelection={rowSelection}
-                          components={components}
-                          rowClassName={() => "editable-row"}
-                        />
+                        <Tabs defaultActiveKey="1">
+                          <Tabs.TabPane tab="Phòng chưa lập hoá đơn" key="1">
+                            <p className="auto-description">
+                              Bạn đã lựa chọn <b>{selectedRowKeys.length}</b> phòng để tạo mới nhanh hoá đơn
+                            </p>
+                            <Form>
+                              <Form.Item
+                                rules={[
+                                  {
+                                    message: "Vui lòng nhập trường này",
+                                  },
+                                  {
+                                    required: true,
+                                    message: "Vui lòng nhập trường này!",
+                                  },
+                                ]}
+                              >
+                                <Table
+                                  bordered
+                                  // dataSource={dataSource}
+                                  dataSource={dataSource}
+                                  columns={columns}
+                                  pagination={{ pageSize: 5 }}
+                                  loading={loading}
+                                  rowSelection={rowSelection}
+                                  components={components}
+                                  rowClassName={() => "editable-row"}
+                                />
+                              </Form.Item>
+                            </Form>
+                            <Button
+                              className="btn-add-invoice"
+                              htmlType="submit"
+                              key="submit"
+                              form="createInvoice"
+                              type="primary"
+                              size="middle"
+                            >
+                              Tạo mới hoá đơn
+                            </Button>
+                          </Tabs.TabPane>
+                          <Tabs.TabPane tab="Phòng đã lập hoá đơn" key="2">
+                            <Table
+                              bordered
+                              // dataSource={dataSource}
+                              dataSource={dataSource}
+                              columns={columns}
+                              pagination={{ pageSize: 5 }}
+                              loading={loading}
+                            />
+                          </Tabs.TabPane>
+                        </Tabs>
                       </Card>
                     </Row>
-                    <Row justify="end">
-                      <Button
-                        className="btn-add-invoice"
-                        htmlType="submit"
-                        key="submit"
-                        form="createInvoice"
-                        type="primary"
-                        size="large"
-                      >
-                        Tạo mới hoá đơn
-                      </Button>
-                    </Row>
+                    {/* <Row justify="end">
+                      
+                    </Row> */}
                   </Col>
                 </Row>
               </Form>
