@@ -54,8 +54,8 @@ const DetailInvoice = () => {
     },
   ];
   return (
-    <div className="invoice">
-      <div className="detail-invoice">
+    <div className="detail-invoice">
+      <div className="main-detail-invoice">
         <Row>
           <Col span={24}>
             <div className="title-invoice">

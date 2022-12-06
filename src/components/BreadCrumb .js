@@ -3,6 +3,7 @@ import { Breadcrumb } from "antd";
 import "./breadcrumb.scss";
 
 const breadcrumbNameMap = {
+  "/home": "Trang chủ",
   "/building": "Quản lý chung cư",
   "/room": "Quản lý phòng",
   "/room/member": "Quản lý thành viên trong phòng",
