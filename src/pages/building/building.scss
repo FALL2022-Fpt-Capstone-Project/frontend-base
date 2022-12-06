@@ -7,6 +7,9 @@
     font-weight: bold;
   }
   .site-layout {
+    .ant-layout-header {
+      padding: 0 10px;
+    }
     .layout-header {
       background: #fff;
       display: flex;
@@ -27,6 +30,9 @@
         float: right;
         margin: 10px;
         font-size: 15px;
+      }
+      .ant-breadcrumb {
+        padding: 0 30px;
       }
     }
 
