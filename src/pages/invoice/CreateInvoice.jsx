@@ -39,12 +39,9 @@ const CreateInvoice = ({ visible, close }) => {
   let year = moment().year();
 
   let date_create = `${day}-${month + 1}-${year}`;
-  let date_term = `${day + 1}-${month + 1}-${year}`;
   let date_create_format = moment(date_create, "DD-MM-YYYY");
-  let date_term_format = moment(date_term, "DD-MM-YYYY");
   const initValues = {
     date_create_invoice: date_create_format,
-    payment_term: date_term_format,
     old_elec: oldElec,
     old_water: oldWater,
     new_elec: newElec,
@@ -165,7 +162,7 @@ const CreateInvoice = ({ visible, close }) => {
                     },
                   ]}
                 >
-                  <DatePicker value={date_create_format} />
+                  <DatePicker value={date_create_format} placeholder="Nhập ngày tạo hoá đơn" />
                 </Form.Item>
               </Col>
               <Col span={12}>
@@ -185,7 +182,7 @@ const CreateInvoice = ({ visible, close }) => {
                     },
                   ]}
                 >
-                  <DatePicker value={date_term_format} />
+                  <DatePicker placeholder="Nhập hạn đóng tiền" />
                 </Form.Item>
               </Col>
             </Row>
@@ -347,67 +344,6 @@ const CreateInvoice = ({ visible, close }) => {
               <Row>
                 <Col span={7}>
                   <b>340,000 đ</b>
-                </Col>
-              </Row>
-            </Card>
-            <span>
-              <b>Cộng thêm / Giảm trừ:</b>
-            </span>
-            <Row>
-              <Col span={24}>
-                <p className="description">
-                  <span>Thường dành cho các trường hợp đặc biệt. Ví dụ cộng thêm ngày tết, giảm trừ covid...</span>
-                </p>
-              </Col>
-            </Row>
-            <Radio.Group defaultValue={1}>
-              <Radio value={1} className="radio-add">
-                Cộng thêm
-              </Radio>
-              <Radio value={2} className="radio-add">
-                Giảm trừ
-              </Radio>
-            </Radio.Group>
-
-            <Form.Item
-              className="form-item"
-              name="address_more_detail"
-              labelCol={{ span: 24 }}
-              label={
-                <span>
-                  <b>Số tiền: </b>
-                </span>
-              }
-            >
-              <InputNumber style={{ width: "100%" }} controls={false} placeholder="Nhập số tiền" />
-            </Form.Item>
-            <Form.Item
-              className="form-item"
-              name="address_more_detail"
-              labelCol={{ span: 24 }}
-              label={
-                <span>
-                  <b>Lý do: </b>
-                </span>
-              }
-            >
-              <Input autoComplete="off" placeholder="Nhập lý do" />
-            </Form.Item>
-            <Card className="card card-price">
-              <Row>
-                <Col span={13}>
-                  <p>Cộng thêm</p>
-                </Col>
-                <Col span={7} offset={4}>
-                  <p>Thành tiền</p>
-                </Col>
-              </Row>
-              <Row>
-                <Col span={13}>
-                  <p>Lý do:</p>
-                </Col>
-                <Col span={7} offset={4}>
-                  <b>0 đ</b>
                 </Col>
               </Row>
             </Card>

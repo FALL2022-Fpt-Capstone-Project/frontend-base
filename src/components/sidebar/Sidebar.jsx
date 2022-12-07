@@ -7,13 +7,13 @@ import {
   HomeOutlined,
   UserOutlined,
   ApartmentOutlined,
-  BulbOutlined,
   GoldOutlined,
 } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
 import { Menu } from "antd";
 import React, { useEffect, useState } from "react";
 import "./sidebar.scss";
+import axios from "../../api/axios";
 
 const Sidebar = () => {
   const [contractRenterLink, setContractRenterLink] = useState("/contract-renter");
@@ -43,6 +43,7 @@ const Sidebar = () => {
   }, [location.pathname]);
 
   let role = localStorage.getItem("Role");
+
   return (
     <div>
       {role === "ROLE_ADMIN" ? (
@@ -66,11 +67,6 @@ const Sidebar = () => {
             <HomeOutlined />
             <span>Quản lý phòng</span>
             <Link to="/room" />
-          </Menu.Item>
-          <Menu.Item key="/equiment">
-            <BulbOutlined />
-            <span>Quản lý trang thiết bị</span>
-            <Link to="/equiment" />
           </Menu.Item>
 
           <Menu.Item key={invoiceLink}>
@@ -121,11 +117,6 @@ const Sidebar = () => {
             <HomeOutlined />
             <span>Quản lý phòng</span>
             <Link to="/room" />
-          </Menu.Item>
-          <Menu.Item key="/equiment">
-            <BulbOutlined />
-            <span>Quản lý trang thiết bị</span>
-            <Link to="/equiment" />
           </Menu.Item>
 
           <Menu.Item key={invoiceLink}>

@@ -8,7 +8,6 @@ import {
   Input,
   InputNumber,
   Layout,
-  Radio,
   Row,
   Select,
   Table,
@@ -112,7 +111,6 @@ const AddAutoInvoice = () => {
       new_elec: 200,
       old_water: 150,
       new_water: 200,
-      add_sub: 0,
       total_price: "4,700,00 đ",
       date_invoice: "25-11-2022",
     },
@@ -125,7 +123,6 @@ const AddAutoInvoice = () => {
       new_elec: 250,
       old_water: 160,
       new_water: 260,
-      add_sub: 0,
       total_price: "4,700,00 đ",
       date_invoice: "25-11-2022",
     },
@@ -138,7 +135,6 @@ const AddAutoInvoice = () => {
       new_elec: 200,
       old_water: 70,
       new_water: 100,
-      add_sub: 300000,
       total_price: 0,
       date_invoice: "25-11-2022",
     },
@@ -151,7 +147,6 @@ const AddAutoInvoice = () => {
       new_elec: 200,
       old_water: 150,
       new_water: 200,
-      add_sub: 0,
       total_price: "4,700,00 đ",
       date_invoice: "25-11-2022",
     },
@@ -191,17 +186,10 @@ const AddAutoInvoice = () => {
   let year = moment().year();
 
   let date_create = moment().year(year).month(month).date(day);
-  let date_term;
-  if (day === 30) {
-    date_term = `${moment().add(1, "day")}-${moment().add(1, "months")}-${year}`;
-  } else {
-    date_term = `${moment().add(1, "day")}-${moment().add(1, "months")}-${year}`;
-  }
+
   let date_create_format = moment(date_create, "DD-MM-YYYY");
-  let date_term_format = moment(date_term, "DD-MM-YYYY");
   const initValues = {
     date_create_invoice: date_create_format,
-    payment_term: date_term_format,
   };
 
   const buildingChange = (value) => {
@@ -252,28 +240,11 @@ const AddAutoInvoice = () => {
       render: (text, record, index) => <InputNumber style={{ width: "100%" }} value={text} />,
     },
     {
-      title: "Cộng thêm/Giảm trừ",
-      dataIndex: "add_sub",
-      editable: true,
-      render: (text, record, index) => (
-        <InputNumber
-          style={{ width: "100%" }}
-          formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-          parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
-          value={text}
-        />
-      ),
-    },
-    {
       title: "Tổng cộng",
       dataIndex: "total_price",
       width: "11%",
       render: (text, record, index) => {
-        let total =
-          (record.new_elec - record.old_elec) * 3000 +
-          (record.new_water - record.old_water) * 3000 +
-          record.add_sub +
-          3000000;
+        let total = (record.new_elec - record.old_elec) * 3000 + (record.new_water - record.old_water) * 3000 + 3000000;
         console.log(total);
         return (
           <>
@@ -321,12 +292,21 @@ const AddAutoInvoice = () => {
   const hasSelected = selectedRowKeys.length > 0;
   return (
     <div className="invoice">
-      <Layout
-        style={{
-          minHeight: "100vh",
-        }}
-      >
-        <Sider width={250} collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+      <Layout>
+        <Sider
+          width={250}
+          collapsible
+          collapsed={collapsed}
+          onCollapse={(value) => setCollapsed(value)}
+          style={{
+            overflow: "auto",
+            // height: "100vh",
+            position: "sticky",
+            left: 0,
+            top: 0,
+            bottom: 0,
+          }}
+        >
           <p className="sider-title">QUẢN LÝ CHUNG CƯ MINI</p>
           <Sidebar />
         </Sider>
@@ -358,248 +338,128 @@ const AddAutoInvoice = () => {
                 id="createInvoice"
                 initialValues={initValues}
               >
-                <Row>
-                  <Col span={5}>
-                    <Row>
-                      <Card
-                        title={
-                          <>
-                            <Tag color="blue" className="text-tag">
-                              <h3>
-                                <HomeOutlined className="icon-size" />
-                                <span className="font-size-tag">
-                                  <b> Thông tin Chung cư Hoàng Nam </b>
-                                </span>
-                              </h3>
-                            </Tag>
-                          </>
+                <Card
+                  title={
+                    <>
+                      <Tag color="blue" className="text-tag">
+                        <h3>
+                          <span className="font-size-tag">
+                            <b> Tạo nhanh hoá đơn cho chung cư </b>
+                          </span>
+                        </h3>
+                      </Tag>
+                    </>
+                  }
+                  className="card"
+                >
+                  <Row>
+                    <p className="alert">* Tạo mới nhanh hoá đơn theo tiêu chí kỳ thanh toán</p>
+                  </Row>
+                  <Row>
+                    <Col lg={4} xs={24}>
+                      <Form.Item
+                        className="form-item"
+                        name="date_create_invoice"
+                        labelCol={{ span: 24 }}
+                        label={
+                          <span>
+                            <b>Ngày tạo hoá đơn:</b>
+                          </span>
                         }
-                        className="card card-left"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Vui lòng chọn ngày tạo hoá đơn!",
+                          },
+                        ]}
                       >
-                        <Row>
-                          <Col span={12}>
+                        <DatePicker value={date_create_format} placeholder="Nhập ngày tạo hoá đơn" />
+                      </Form.Item>
+                    </Col>
+                    <Col lg={4} xs={24}>
+                      <Form.Item
+                        className="form-item"
+                        name="payment_term"
+                        labelCol={{ span: 24 }}
+                        label={
+                          <span>
+                            <b>Hạn đóng tiền:</b>
+                          </span>
+                        }
+                        rules={[
+                          {
+                            required: true,
+                            message: "Vui lòng chọn hạn đóng tiền!",
+                          },
+                        ]}
+                      >
+                        <DatePicker placeholder="Nhập hạn đóng tiền" />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col xs={24} lg={24}>
+                      <Tabs defaultActiveKey="1">
+                        <Tabs.TabPane tab="Phòng chưa lập hoá đơn" key="1">
+                          <p className="auto-description">
+                            Bạn đã lựa chọn <b>{selectedRowKeys.length}/</b> phòng để tạo mới nhanh hoá đơn
+                          </p>
+                          <Form>
                             <Form.Item
-                              className="form-item"
-                              name="date_create_invoice"
-                              labelCol={{ span: 24 }}
-                              label={
-                                <span>
-                                  <b>Ngày tạo hoá đơn:</b>
-                                </span>
-                              }
                               rules={[
                                 {
+                                  message: "Vui lòng nhập trường này",
+                                },
+                                {
                                   required: true,
-                                  message: "Vui lòng chọn ngày tạo hoá đơn!",
+                                  message: "Vui lòng nhập trường này!",
                                 },
                               ]}
                             >
-                              <DatePicker value={date_create_format} />
+                              <Table
+                                bordered
+                                // dataSource={dataSource}
+                                dataSource={dataSource}
+                                scroll={{
+                                  x: 700,
+                                }}
+                                columns={columns}
+                                pagination={{ pageSize: 5 }}
+                                loading={loading}
+                                rowSelection={rowSelection}
+                                components={components}
+                                rowClassName={() => "editable-row"}
+                              />
                             </Form.Item>
-                          </Col>
-                          <Col span={12}>
-                            <Form.Item
-                              className="form-item"
-                              name="payment_term"
-                              labelCol={{ span: 24 }}
-                              label={
-                                <span>
-                                  <b>Hạn đóng tiền:</b>
-                                </span>
-                              }
-                              rules={[
-                                {
-                                  required: true,
-                                  message: "Vui lòng chọn hạn đóng tiền!",
-                                },
-                              ]}
-                            >
-                              <DatePicker value={date_term_format} />
-                            </Form.Item>
-                          </Col>
-                        </Row>
-                        <span>
-                          <b>Cộng thêm / Giảm trừ:</b>
-                        </span>
-                        <Row>
-                          <Col span={24}>
-                            <p className="description">
-                              <span>
-                                Thường dành cho các trường hợp đặc biệt. Ví dụ cộng thêm ngày tết, giảm trừ covid...
-                              </span>
-                            </p>
-                          </Col>
-                        </Row>
-                        <Radio.Group defaultValue={1}>
-                          <Radio value={1} className="radio-add">
-                            Cộng thêm
-                          </Radio>
-                          <Radio value={2} className="radio-add">
-                            Giảm trừ
-                          </Radio>
-                        </Radio.Group>
-
-                        <Form.Item
-                          className="form-item"
-                          name="address_more_detail"
-                          labelCol={{ span: 24 }}
-                          label={
-                            <span>
-                              <b>Số tiền: </b>
-                            </span>
-                          }
-                        >
-                          <InputNumber style={{ width: "100%" }} controls={false} placeholder="Nhập số tiền" />
-                        </Form.Item>
-                        <Form.Item
-                          className="form-item"
-                          name="address_more_detail"
-                          labelCol={{ span: 24 }}
-                          label={
-                            <span>
-                              <b>Lý do: </b>
-                            </span>
-                          }
-                        >
-                          <Input autoComplete="off" placeholder="Nhập lý do" />
-                        </Form.Item>
-                      </Card>
-                    </Row>
-                    <Row>
-                      <Card
-                        title={
-                          <>
-                            <Tag color="blue" className="text-tag">
-                              <h3>
-                                <span className="font-size-tag">
-                                  <b> Dịch vụ chung </b>
-                                </span>
-                              </h3>
-                            </Tag>
-                          </>
-                        }
-                        className="card card-left card-service"
-                      >
-                        <Row>
-                          <Col span={8}>
-                            <p>
-                              <b>Tên dịch vụ</b>{" "}
-                            </p>
-                          </Col>
-                          <Col span={8}>
-                            <p>
-                              <b>Giá</b>{" "}
-                            </p>
-                          </Col>
-                          <Col span={8}>
-                            <b>Cách tính</b>{" "}
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Col span={8}>
-                            <p>Dịch vụ điện</p>
-                          </Col>
-                          <Col span={5}>
-                            <p>3,500 đ</p>
-                          </Col>
-                          <Col span={11}>Đồng hồ điện/nước</Col>
-                        </Row>
-                        <Row>
-                          <Col span={8}>
-                            <p>Dịch vụ nước</p>
-                          </Col>
-                          <Col span={5}>
-                            <p>4,500 đ</p>
-                          </Col>
-                          <Col span={11}>Đồng hồ điện/nước</Col>
-                        </Row>
-                        <Row>
-                          <Col span={8}>
-                            <p>Dịch vụ xe</p>
-                          </Col>
-                          <Col span={5}>
-                            <p>50,000 đ</p>
-                          </Col>
-                          <Col span={11}>Người</Col>
-                        </Row>
-                      </Card>
-                    </Row>
-                  </Col>
-                  <Col span={18} offset={1}>
-                    <Row>
-                      <Card
-                        title={
-                          <>
-                            <Tag color="blue" className="text-tag">
-                              <h3>
-                                <span className="font-size-tag">
-                                  <b> Thông tin phòng </b>
-                                </span>
-                              </h3>
-                            </Tag>
-                          </>
-                        }
-                        className="card"
-                      >
-                        <Tabs defaultActiveKey="1">
-                          <Tabs.TabPane tab="Phòng chưa lập hoá đơn" key="1">
-                            <p className="auto-description">
-                              Bạn đã lựa chọn <b>{selectedRowKeys.length}</b> phòng để tạo mới nhanh hoá đơn
-                            </p>
-                            <Form>
-                              <Form.Item
-                                rules={[
-                                  {
-                                    message: "Vui lòng nhập trường này",
-                                  },
-                                  {
-                                    required: true,
-                                    message: "Vui lòng nhập trường này!",
-                                  },
-                                ]}
-                              >
-                                <Table
-                                  bordered
-                                  // dataSource={dataSource}
-                                  dataSource={dataSource}
-                                  columns={columns}
-                                  pagination={{ pageSize: 5 }}
-                                  loading={loading}
-                                  rowSelection={rowSelection}
-                                  components={components}
-                                  rowClassName={() => "editable-row"}
-                                />
-                              </Form.Item>
-                            </Form>
-                            <Button
-                              className="btn-add-invoice"
-                              htmlType="submit"
-                              key="submit"
-                              form="createInvoice"
-                              type="primary"
-                              size="middle"
-                            >
-                              Tạo mới hoá đơn
-                            </Button>
-                          </Tabs.TabPane>
-                          <Tabs.TabPane tab="Phòng đã lập hoá đơn" key="2">
-                            <Table
-                              bordered
-                              // dataSource={dataSource}
-                              dataSource={dataSource}
-                              columns={columns}
-                              pagination={{ pageSize: 5 }}
-                              loading={loading}
-                            />
-                          </Tabs.TabPane>
-                        </Tabs>
-                      </Card>
-                    </Row>
-                    {/* <Row justify="end">
-                      
-                    </Row> */}
-                  </Col>
-                </Row>
+                          </Form>
+                          <Button
+                            className="btn-add-invoice"
+                            htmlType="submit"
+                            key="submit"
+                            form="createInvoice"
+                            type="primary"
+                            size="middle"
+                          >
+                            Tạo mới hoá đơn
+                          </Button>
+                        </Tabs.TabPane>
+                        <Tabs.TabPane tab="Phòng đã lập hoá đơn" key="2">
+                          <Table
+                            bordered
+                            scroll={{
+                              x: 700,
+                            }}
+                            // dataSource={dataSource}
+                            dataSource={dataSource}
+                            columns={columns}
+                            pagination={{ pageSize: 5 }}
+                            loading={loading}
+                          />
+                        </Tabs.TabPane>
+                      </Tabs>
+                    </Col>
+                  </Row>
+                </Card>
               </Form>
             </div>
           </Content>

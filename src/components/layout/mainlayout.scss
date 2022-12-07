@@ -1,0 +1,42 @@
+.sider-title {
+  color: #fff;
+  font-size: 24px;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+.site-layout {
+  .ant-layout-header {
+    padding: 0 10px;
+  }
+  .layout-header {
+    background: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .header-title {
+      color: #868d96;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .avatar {
+      .user-name {
+        margin-left: 10px;
+      }
+    }
+  }
+  .layout-content {
+    display: flex;
+    flex-direction: column;
+    margin: 10px 16px;
+    .button-add {
+      float: right;
+      margin: 10px;
+      font-size: 15px;
+    }
+    .ant-breadcrumb {
+      padding: 0 30px;
+    }
+  }
+}
