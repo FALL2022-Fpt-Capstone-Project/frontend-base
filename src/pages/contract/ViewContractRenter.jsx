@@ -24,7 +24,7 @@ const memeber = {
     height: 400
 }
 
-function ViewContractRenter({ openView, closeView, dataContract }) {
+function ViewContractRenter({ openView, closeView, dataContract, dataAsset }) {
     // console.log(dataContract);
     const [loading, setLoading] = useState(false);
     const [searched, setSearched] = useState("");
@@ -75,28 +75,6 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
             filteredValue: filterAssetType.asset_type_show_name || null,
             onFilter: (value, record) => record.asset_type_show_name.indexOf(value) === 0,
         },
-        {
-            title: 'Ngày bàn giao',
-            dataIndex: 'hand_over_date_delivery',
-            key: 'asset_id',
-        },
-        // {
-        //     title: 'Trạng thái',
-        //     dataIndex: 'hand_over_asset_status',
-        //     filters: [
-        //         { text: 'Tốt', value: true },
-        //         { text: 'Hỏng', value: false },
-        //     ],
-        //     filteredValue: assetStatus.hand_over_asset_status || null,
-        //     onFilter: (value, record) => record.hand_over_asset_status === value,
-        //     render: (status) => {
-        //         return (
-        //             <>
-        //                 <Tag color={status ? "success" : "error"}>{status ? 'Tốt' : 'Hỏng'}</Tag>
-        //             </>
-        //         )
-        //     }
-        // },
     ];
 
     useEffect(() => {
@@ -414,12 +392,12 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                     })}
                                 </Row>
                             </Tabs.TabPane>
-                            <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>Tài sản đã bàn giao</span>} key="3">
+                            <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>Trang thiết bị trong phòng</span>} key="3">
                                 <Row>
                                     <Col span={24}>
                                         <Row>
-                                            <Col span={8}>
-                                                <Input.Search placeholder="Nhập tên tài sản để tìm kiếm" style={{ marginBottom: 8, width: 300 }}
+                                            <Col xs={24} xl={8} span={8}>
+                                                <Input.Search placeholder="Nhập tên tài sản để tìm kiếm" style={{ marginBottom: 8 }}
                                                     onSearch={(e) => {
                                                         setSearched(e);
                                                     }}
@@ -430,11 +408,11 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                             </Col>
                                         </Row>
                                         <Row>
-                                            <Col span={3}>
+                                            <Col xs={24} xl={3} span={3}>
                                                 <FilterOutlined style={{ fontSize: '150%' }} />
                                                 Nhóm tài sản:
                                             </Col>
-                                            <Col span={21}>
+                                            <Col xs={24} xl={21} span={21}>
                                                 <Row>
                                                     <Checkbox.Group options={listAssetType?.map((obj, index) => { return obj.asset_type_show_name })}
                                                         onChange={(checkedValues) => {
@@ -453,7 +431,15 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                                     setFilterAssetType(filters);
                                                     setAssetStatus(filters);
                                                 }}
-                                                dataSource={dataContract?.list_hand_over_asset}
+                                                dataSource={dataAsset?.map(asset => {
+                                                    return {
+                                                        asset_id: asset.room_asset_id,
+                                                        asset_name: asset.asset_name,
+                                                        hand_over_asset_quantity: asset.asset_quantity,
+                                                        asset_type_show_name: listAssetType?.find(a => a?.id === asset?.asset_type_id)?.asset_type_show_name,
+                                                        asset_type_id: listAssetType?.find(a => a?.id === asset?.asset_type_id)?.id,
+                                                    }
+                                                })}
                                                 columns={columns}
                                                 scroll={{ x: 800, y: 600 }}
                                                 loading={loading}

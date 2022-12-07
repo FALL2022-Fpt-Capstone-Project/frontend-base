@@ -20,7 +20,6 @@ function UpdateRoom({ reRender, visible, close, data, dataUpdate, setDataUpdate 
     const [value, setValue] = useState('');
     let cookie = localStorage.getItem("Cookie");
 
-
     if (dataUpdate !== undefined && visible === true) {
         console.log('in');
         listFloor = [];
@@ -105,6 +104,19 @@ function UpdateRoom({ reRender, visible, close, data, dataUpdate, setDataUpdate 
     const onChangeAutoComplete = (data) => {
         setValue(data);
     };
+
+    const checkDuplicate = (_, value) => {
+        const check = data
+            ?.find(group => group.group_id === formUpdateRoom.getFieldsValue().groupId)
+            ?.list_rooms?.filter(r => r.room_id !== formUpdateRoom.getFieldsValue().roomId)?.find((room, index) =>
+                room.room_name.trim().toUpperCase() === (value.trim().toUpperCase()));
+
+        if (check !== undefined) {
+            return Promise.reject(new Error('Tên phòng: ' + value + ' đã tồn tại'));
+        } else {
+            return Promise.resolve(new Error('Vui lòng nhập tên phòng'));
+        }
+    }
 
     return (
         <>
@@ -231,6 +243,9 @@ function UpdateRoom({ reRender, visible, close, data, dataUpdate, setDataUpdate 
                                                     required: true,
                                                     message: "Vui lòng nhập tên phòng",
                                                 },
+                                                {
+                                                    validator: checkDuplicate,
+                                                }
                                             ]}
                                         >
                                             <AutoComplete
