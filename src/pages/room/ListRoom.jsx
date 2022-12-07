@@ -63,6 +63,7 @@ const ROOM_INFOR = "manager/room/";
 const GET_ALL_CONTRACT = "manager/contract";
 const DELETE_ROOM = "manager/room/delete/";
 const DELETE_LIST_ROOM = "manager/room/delete/list";
+const ASSET_ROOM = "manager/asset/room/";
 
 let optionFloor = [{ label: 'Tất cả các tầng', value: "" }];
 for (let i = 1; i <= 10; i++) {
@@ -99,6 +100,7 @@ function ListRoom(props) {
   const [textCardGroup, setTextCardGroup] = useState("Danh sách phòng");
   const [room_status, setRoomStatus] = useState([]);
   const [dataRoomUpdate, setDataRoomUpdate] = useState();
+  const [assetRoom, setAssetRoom] = useState([]);
   const [filterSave, setFilterSave] = useState();
 
   let cookie = localStorage.getItem("Cookie");
@@ -298,6 +300,7 @@ function ListRoom(props) {
                 onClick={() => {
                   setSetRoomDetail(true);
                   setRoomDetailData(record);
+                  getAssetRoom(record.room_id);
                 }}
                 style={iconSize}
               />
@@ -594,6 +597,24 @@ function ListRoom(props) {
   const onFinishFailFilter = (e) => {
     console.log(e);
   }
+
+  const getAssetRoom = async (room_id) => {
+    await axios
+      .get(ASSET_ROOM + room_id, {
+        headers: {
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${cookie}`,
+        },
+        // withCredentials: true,
+      })
+      .then((res) => {
+        setAssetRoom(res.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   const reload = () => {
     apartmentGroup();
@@ -941,7 +962,7 @@ function ListRoom(props) {
         <AddRoom reRender={reload} visible={addRoom} close={setAddRoom} data={dataApartmentGroup} />
         <UpdateRoom reRender={reload} visible={updateRoom} close={setUpdateRoom} data={dataApartmentGroup} dataUpdate={dataRoomUpdate} setDataUpdate={setDataRoomUpdate} />
         <AddRoomAuto visible={addRoomAuto} close={setAddRoomAuto} data={dataApartmentGroup} />
-        <RoomDetail visible={roomDetail} close={setSetRoomDetail} data={roomDetailData} />
+        <RoomDetail visible={roomDetail} close={setSetRoomDetail} data={roomDetailData} dataAsset={assetRoom} />
         <IncreaseRoomPrice reRender={reload} visible={increaseRoomPrice} close={setIncreaseRoomPrice} data={dataApartmentGroup} />
       </div>
     </Spin>

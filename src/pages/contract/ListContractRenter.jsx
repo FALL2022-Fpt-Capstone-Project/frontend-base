@@ -222,6 +222,7 @@ const ListContractRenter = () => {
         console.log(error);
       });
   };
+  
   return (
     <div className="list-contract">
       <div className="list-contract-search">
