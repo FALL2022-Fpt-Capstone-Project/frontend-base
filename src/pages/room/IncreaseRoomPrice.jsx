@@ -33,6 +33,9 @@ function IncreaseRoomPrice({ reRender, visible, close, data }) {
                 // console.log(res);
                 close(false);
                 formCoupon.resetFields();
+                formCoupon.setFieldsValue({
+                    increaseDecrease: true
+                });
                 reRender();
             })
             .catch((error) => {
