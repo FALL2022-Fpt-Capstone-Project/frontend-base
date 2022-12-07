@@ -7,6 +7,9 @@
     font-weight: bold;
   }
   .site-layout {
+    .ant-layout-header {
+      padding: 0 10px;
+    }
     .layout-header {
       background: #fff;
       display: flex;
@@ -29,6 +32,9 @@
         font-size: 15px;
       }
     }
+    .ant-breadcrumb {
+      padding: 0 30px;
+    }
   }
 }
 .description {
@@ -45,12 +51,7 @@
   background-color: #eef6e4;
   margin-bottom: 10px;
 }
-.card-service {
-  margin-top: 10px;
-}
-.ant-form .radio-add {
-  font-size: 16px;
-}
+
 .total_price {
   color: red;
   font-weight: bold;
@@ -60,4 +61,26 @@
 }
 .btn-add-invoice {
   margin-top: 20px;
+}
+.auto-description {
+  font-size: 16px;
+}
+.invoice-statistic {
+  font-size: 15px;
+  font-weight: bold;
+  color: #000;
+}
+.show-more {
+  color: cornflowerblue;
+  font-style: italic;
+  cursor: pointer;
+}
+.alert {
+  font-style: italic;
+  font-weight: bold;
+}
+@media only screen and (max-width: 767.99px) {
+  .ant-layout {
+    overflow: x;
+  }
 }

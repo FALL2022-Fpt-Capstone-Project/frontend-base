@@ -61,14 +61,7 @@ const DetailBuilding = ({ visible, close, id }) => {
               <Card
                 title={
                   <>
-                    <Tag color="blue" className="text-tag">
-                      <h3>
-                        <HomeOutlined className="icon-size" />
-                        <span className="font-size-tag">
-                          <b> Thông tin {group_name} </b>
-                        </span>
-                      </h3>
-                    </Tag>
+                    <p> Thông tin {group_name} </p>
                   </>
                 }
                 className="card card-left"
@@ -106,20 +99,7 @@ const DetailBuilding = ({ visible, close, id }) => {
               </Card>
             </Row>
             <Row style={{ width: "400px", marginTop: "30px" }}>
-              <Card
-                title={
-                  <>
-                    <Tag color="blue" className="text-tag">
-                      <h3>
-                        <span className="font-size-tag">
-                          <b> Dịch vụ chung cư </b>
-                        </span>
-                      </h3>
-                    </Tag>
-                  </>
-                }
-                className="card card-left"
-              >
+              <Card title={<p> Dịch vụ chung cư </p>} className="card card-left">
                 <Row>
                   <Col span={8}>
                     <p>
@@ -157,13 +137,7 @@ const DetailBuilding = ({ visible, close, id }) => {
             <Card
               title={
                 <>
-                  <Tag color="blue" className="text-tag">
-                    <h3>
-                      <span className="font-size-tag">
-                        <b> Thông tin phòng </b>
-                      </span>
-                    </h3>
-                  </Tag>
+                  <p> Thông tin phòng </p>
                 </>
               }
               className="card"
@@ -248,7 +222,7 @@ const DetailBuilding = ({ visible, close, id }) => {
                     },
                   },
                 ]}
-                pagination={{ pageSize: 5 }}
+                pagination={{ pageSize: 5, showSizeChanger: false }}
                 loading={loading}
               />
             </Card>

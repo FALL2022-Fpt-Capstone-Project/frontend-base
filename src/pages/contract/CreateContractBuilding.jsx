@@ -5,8 +5,6 @@ import axios from "../../api/axios";
 import {
   EditTwoTone,
   DeleteOutlined,
-  PlusCircleOutlined,
-  FilterOutlined,
   ArrowLeftOutlined,
   UserOutlined,
   AuditOutlined,
@@ -387,10 +385,12 @@ const CreateContractBuilding = () => {
       rack_renter_name: e.owner_name,
       rack_renter_gender: e.owner_gender,
       rack_renter_phone: e.owner_phone_number,
+      rack_renter_email: e.owner_email,
       rack_renter_identity: e.owner_identity_card,
       rack_renter_address: e.address_more_detail,
       rack_renter_note: "",
     };
+    console.log(data);
     await axios
       .post(ADD_NEW_CONTRACT, data, {
         headers: {
@@ -560,14 +560,14 @@ const CreateContractBuilding = () => {
       }
 
       setChangeTab((pre) => {
-        if (pre === "4") {
+        if (pre === "3") {
           return "1";
         } else {
           return (parseInt(pre) + 1).toString();
         }
       });
-      if (changeTab === "3") {
-        setDisplayFinish([...displayFinish, 3]);
+      if (changeTab === "2") {
+        setDisplayFinish([...displayFinish, 2]);
         setVisibleSubmit(true);
       }
     } catch (e) {
@@ -936,12 +936,14 @@ const CreateContractBuilding = () => {
                             >
                               <Select placeholder="Kỳ thanh toán" style={{ width: "100%" }}>
                                 {contract_payment_cycle.map((obj, index) => {
-                                  return <Option value={obj.contractTermValue}>{obj.contractTermName}</Option>;
+                                  return <Option value={obj.contractTermValue}>{obj.contractTermName}</Option>
                                 })}
                               </Select>
                             </Form.Item>
                             <p>
-                              <b>Chu kỳ thanh toán:</b> chu kỳ bao nhiêu tháng thanh toán 1 lần
+                              <i>
+                                <b>Chu kỳ thanh toán:</b> chu kỳ số tháng thanh toán 1 lần
+                              </i>
                             </p>
                             <Form.Item
                               className="form-item"
@@ -1339,7 +1341,6 @@ const CreateContractBuilding = () => {
                                   onSelect={onSelect}
                                   selectedKeys={selectedKeys}
                                   treeData={numberOfFloor}
-                                  height={900}
                                 />
                               </Form.Item>
                             </Col>
@@ -1406,7 +1407,7 @@ const CreateContractBuilding = () => {
                       <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
                     </Row>
                   </Tabs.TabPane>
-                  <Tabs.TabPane
+                  {/* <Tabs.TabPane
                     tab={
                       <span className="text-size-tab">
                         4. Tài sản bàn giao{" "}
@@ -1431,7 +1432,7 @@ const CreateContractBuilding = () => {
                             </b>
                           </h3>
                         </p>
-                        {/* <Row>
+                        <Row>
                           <Button
                             icon={<PlusCircleOutlined style={{ fontSize: 15 }} />}
                             type="primary"
@@ -1455,7 +1456,7 @@ const CreateContractBuilding = () => {
                               liệu nhanh hơn
                             </i>
                           </p>
-                        </Row> */}
+                        </Row>
                         <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                           <Col xs={24} xl={8} span={8}>
                             <Input.Search
@@ -1520,7 +1521,7 @@ const CreateContractBuilding = () => {
                         </p>
                       </Row>
                     </Row>
-                  </Tabs.TabPane>
+                  </Tabs.TabPane> */}
                 </Tabs>
               </Form>
               <Button
@@ -1529,12 +1530,12 @@ const CreateContractBuilding = () => {
                 onClick={() => {
                   setChangeTab((pre) => {
                     if (pre === "1") {
-                      return "4";
+                      return "3";
                     } else {
                       return (parseInt(pre) - 1).toString();
                     }
                   });
-                  if (changeTab === "4") {
+                  if (changeTab === "3") {
                     setVisibleSubmit(false);
                   }
                 }}

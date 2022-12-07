@@ -29,8 +29,8 @@ const ListBuilding = () => {
   let cookie = localStorage.getItem("Cookie");
 
   useEffect(() => {
-    const getCity = async () => {
-      const response = await axios
+    const getCity = () => {
+      const response = axios
         .get(LIST_CITY_URL, {
           headers: {
             "Content-Type": "application/json",
@@ -64,6 +64,12 @@ const ListBuilding = () => {
         })
         .catch((error) => {
           console.log(error);
+          notification.error({
+            message: "Đã có lỗi xảy ra, vui lòng thử lại sau",
+            // description: "Vui lòng kiểm tra lại thông tin và thử lại.",
+            duration: 3,
+            placement: "top",
+          });
         });
       setLoading(false);
       setSpinLoading(false);
@@ -71,9 +77,9 @@ const ListBuilding = () => {
     getAllBuilding();
   }, [cookie]);
   const reload = () => window.location.reload();
-  const handleDeleteBuilding = async (id) => {
+  const handleDeleteBuilding = (id) => {
     console.log(id);
-    const response = await axios
+    const response = axios
       .delete(`manager/group/delete/${id}`, {
         headers: {
           "Content-Type": "application/json",
@@ -110,204 +116,169 @@ const ListBuilding = () => {
   };
   return (
     <div>
-      <Spin size="large" spinning={spinLoading}>
-        <Row gutter={16}>
-          <Col span={6}>
-            <Row>
-              <span>Tìm kiếm theo tên chung cư</span>
-            </Row>
-            <Row>
-              <Search
-                placeholder="Tìm kiếm theo tên chung cư"
-                style={{ width: 300, padding: "10px 0" }}
-                onSearch={(value) => {
-                  setTextSearch(value);
-                }}
-                onChange={(e) => {
-                  setTextSearch(e.target.value);
-                }}
-              />
-            </Row>
-          </Col>
-          <Col span={16}>
-            <Row gutter={32}>
-              <Col span={6}>
-                <Row>
-                  <span>Tìm kiếm theo Tỉnh/Thành Phố</span>
-                </Row>
-                <Row>
-                  <Select
-                    defaultValue="Chọn thành phố"
-                    style={{
-                      width: "100%",
-                      padding: "10px 0",
-                    }}
-                    onChange={cityChange}
-                    options={optionsCity}
-                  />
-                </Row>
-              </Col>
-              {/* <Col span={6}>
-              <Row>
-                <span>Tìm kiếm theo Quận/Huyện</span>
-              </Row>
-              <Row>
-                <Select
-                  style={{
-                    width: "100%",
-                    padding: "10px 0",
-                  }}
-                  disabled={disabledDistrict}
-                  onChange={districtChange}
-                  // options={optionsDistrict}
-                  defaultValue={defaultValue}
-                >
-                  <Select.Option value="default">Tất cả</Select.Option>
-                  {building_address_district?.map((obj, index) => {
-                    return (
-                      <>
-                        <Select.Option value={obj.code}>{obj.name}</Select.Option>
-                      </>
-                    );
-                  })}
-                </Select>
-              </Row>
-            </Col> */}
-              <Col span={8}>
-                <Row>
-                  <span>Tìm kiếm theo địa chỉ chi tiết</span>
-                </Row>
-                <Row>
-                  <Search
-                    placeholder="Tìm kiếm theo địa chỉ"
-                    style={{ width: 400, padding: "10px 0" }}
-                    onSearch={(value) => {
-                      setTextSearch(value);
-                    }}
-                    onChange={(e) => {
-                      setTextSearch(e.target.value);
-                    }}
-                  />
-                </Row>
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-        <Table
-          bordered
-          dataSource={dataSource}
-          columns={[
-            {
-              title: "Tên chung cư",
-              dataIndex: "group_name",
-              filteredValue: [textSearch],
-              onFilter: (value, record) => {
-                return record.group_name.includes(value);
-              },
+      <Row>
+        <Col span={6}>
+          <Row>
+            <span>Tìm kiếm theo tên chung cư</span>
+          </Row>
+          <Row>
+            <Search
+              placeholder="Tìm kiếm theo tên chung cư"
+              style={{ width: 300, padding: "10px 0" }}
+              onSearch={(value) => {
+                setTextSearch(value);
+              }}
+              onChange={(e) => {
+                setTextSearch(e.target.value);
+              }}
+            />
+          </Row>
+        </Col>
+        <Col span={6}>
+          <Row>
+            <span>Tìm kiếm theo Tỉnh/Thành Phố</span>
+          </Row>
+          <Row>
+            <Select
+              defaultValue="Chọn thành phố"
+              style={{
+                width: "300px",
+                padding: "10px 0",
+              }}
+              onChange={cityChange}
+              options={optionsCity}
+            />
+          </Row>
+        </Col>
+        <Col span={8}>
+          <Row>
+            <span>Tìm kiếm theo địa chỉ chi tiết</span>
+          </Row>
+          <Row>
+            <Search
+              placeholder="Tìm kiếm theo địa chỉ"
+              style={{ width: 400, padding: "10px 0" }}
+              onSearch={(value) => {
+                setTextSearch(value);
+              }}
+              onChange={(e) => {
+                setTextSearch(e.target.value);
+              }}
+            />
+          </Row>
+        </Col>
+      </Row>
+      <Table
+        bordered
+        dataSource={dataSource}
+        columns={[
+          {
+            title: "Tên chung cư",
+            dataIndex: "group_name",
+            filteredValue: [textSearch],
+            onFilter: (value, record) => {
+              return record.group_name.includes(value);
             },
-            {
-              title: "Số lượng tầng đã thuê",
-              dataIndex: "total_floor",
-            },
-            {
-              title: "Số lượng phòng đã thuê",
-              dataIndex: "total_room",
-              render: (_, record) => {
-                let contracted = record.list_room_lease_contracted;
-                let contract;
+          },
+          {
+            title: "Số lượng tầng đã thuê",
+            dataIndex: "total_floor",
+          },
+          {
+            title: "Số lượng phòng đã thuê",
+            dataIndex: "total_room",
+            render: (_, record) => {
+              let contracted = record.list_room_lease_contracted;
+              let contract;
 
-                // console.log(record.list_room_lease_contracted?.total_room_lease_contracted);
-                if (contracted?.total_room_lease_contracted === undefined) {
-                  contract = <p>0/{record.total_room}</p>;
-                } else {
-                  contract = (
-                    <p>
-                      {contracted?.total_room_lease_contracted}/{record.total_room}
-                    </p>
-                  );
-                }
-                return <>{contract}</>;
-              },
-            },
-            {
-              title: "Địa chỉ",
-              dataIndex: "address",
-              render: (_, record) => {
-                return (
-                  <>
-                    <p>{record.address.address_more_details}</p>
-                  </>
+              // console.log(record.list_room_lease_contracted?.total_room_lease_contracted);
+              if (contracted?.total_room_lease_contracted === undefined) {
+                contract = <p>0/{record.total_room}</p>;
+              } else {
+                contract = (
+                  <p>
+                    {contracted?.total_room_lease_contracted}/{record.total_room}
+                  </p>
                 );
-              },
+              }
+              return <>{contract}</>;
             },
-            {
-              title: "Trạng thái chung cư",
-              dataIndex: "contractIsDisable",
-              render: (_, record) => {
-                let status;
-                if (record.group_contracted === true) {
-                  status = (
-                    <Tag color="green" key={record.status}>
-                      Chung cư đã ký hợp đồng
-                    </Tag>
-                  );
-                } else if (record.group_contracted === false) {
-                  status = (
-                    <Tag color="default" key={record.status}>
-                      Chung cư chưa ký hợp đồng
-                    </Tag>
-                  );
-                }
-                return <>{status}</>;
-              },
+          },
+          {
+            title: "Địa chỉ",
+            dataIndex: "address",
+            render: (_, record) => {
+              return (
+                <>
+                  <p>{record.address.address_more_details}</p>
+                </>
+              );
             },
-            {
-              title: "Mô tả",
-              dataIndex: "description",
-            },
-            {
-              title: "Thao tác",
-              dataIndex: "action",
-              render: (_, record) => {
-                return record.group_contracted ? (
-                  <>
-                    <Tooltip title="Xem hợp đồng">
-                      <ContainerOutlined className="icon" />
-                    </Tooltip>
-                    <Tooltip title="Xem chi tiết chung cư">
-                      <EyeOutlined className="icon" onClick={() => onClickDetailBuilding(record.group_id)} />
-                    </Tooltip>
-                  </>
-                ) : (
-                  <>
-                    <Tooltip title="Chỉnh sửa chung cư">
-                      <EditOutlined className="icon" onClick={() => onClickUpdateBuilding(record.group_id)} />
-                    </Tooltip>
-                    <Tooltip title="Lập hợp đồng">
-                      <AuditOutlined className="icon" />
-                    </Tooltip>
-                    <Tooltip title="Xem chi tiết chung cư">
-                      <EyeOutlined className="icon" onClick={() => onClickDetailBuilding(record.group_id)} />
-                    </Tooltip>
-                    <Tooltip title="Xoá chung cư">
-                      <Popconfirm
-                        title="Bạn có muốn xoá chung cư này không?"
-                        okText="Đồng ý"
-                        cancelText="Không"
-                        placement="topRight"
-                        onConfirm={() => handleDeleteBuilding(record.group_id)}
-                      >
-                        <DeleteOutlined className="icon icon-delete" />
-                      </Popconfirm>
-                    </Tooltip>
-                  </>
+          },
+          {
+            title: "Trạng thái chung cư",
+            dataIndex: "contractIsDisable",
+            render: (_, record) => {
+              let status;
+              if (record.group_contracted === true) {
+                status = (
+                  <Tag color="green" key={record.status}>
+                    Chung cư đã ký hợp đồng
+                  </Tag>
                 );
-              },
+              } else if (record.group_contracted === false) {
+                status = (
+                  <Tag color="default" key={record.status}>
+                    Chung cư chưa ký hợp đồng
+                  </Tag>
+                );
+              }
+              return <>{status}</>;
             },
-          ]}
-          loading={loading}
-        />
-      </Spin>
+          },
+          {
+            title: "Mô tả",
+            dataIndex: "description",
+          },
+          {
+            title: "Thao tác",
+            dataIndex: "action",
+            render: (_, record) => {
+              return record.group_contracted ? (
+                <>
+                  <Tooltip title="Xem hợp đồng">
+                    <ContainerOutlined className="icon" />
+                  </Tooltip>
+                  <Tooltip title="Xem chi tiết chung cư">
+                    <EyeOutlined className="icon" onClick={() => onClickDetailBuilding(record.group_id)} />
+                  </Tooltip>
+                </>
+              ) : (
+                <>
+                  <Tooltip title="Chỉnh sửa chung cư">
+                    <EditOutlined className="icon" onClick={() => onClickUpdateBuilding(record.group_id)} />
+                  </Tooltip>
+                  <Tooltip title="Xem chi tiết chung cư">
+                    <EyeOutlined className="icon" onClick={() => onClickDetailBuilding(record.group_id)} />
+                  </Tooltip>
+                  <Tooltip title="Xoá chung cư">
+                    <Popconfirm
+                      title="Bạn có muốn xoá chung cư này không?"
+                      okText="Đồng ý"
+                      cancelText="Không"
+                      placement="topRight"
+                      onConfirm={() => handleDeleteBuilding(record.group_id)}
+                    >
+                      <DeleteOutlined className="icon icon-delete" />
+                    </Popconfirm>
+                  </Tooltip>
+                </>
+              );
+            },
+          },
+        ]}
+        loading={loading}
+      />
       <DetailBuilding visible={detailBuilding} close={setDetailBuilding} id={id} />
       <UpdateBuilding visible={updateBuilding} close={setUpdateBuilding} id={id} />
     </div>

@@ -6,6 +6,7 @@ import { Button, Divider, Layout, Modal } from "antd";
 import CreateBuilding from "./CreateBuilding";
 import ListBuilding from "./ListBuilding";
 import Breadcrumbs from "../../components/BreadCrumb ";
+import MainLayout from "../../components/layout/MainLayout";
 const { Content, Sider, Header } = Layout;
 const Building = () => {
   const [createBuilding, setCreateBuilding] = useState(false);
@@ -15,44 +16,22 @@ const Building = () => {
 
   return (
     <div className="building">
-      <Layout
-        style={{
-          minHeight: "100vh",
-        }}
-      >
-        <Sider width={250}>
-          <p className="sider-title">QUẢN LÝ CHUNG CƯ MINI</p>
-          <Sidebar />
-        </Sider>
-        <Layout className="site-layout">
-          <Header className="layout-header">
-            <p className="header-title">Quản lý chung cư</p>
-          </Header>
-          <Content
-            className="layout-content"
-            style={{
-              margin: "10px 10px",
-            }}
+      <MainLayout
+        title="Quản lý chung cư"
+        button={
+          <Button
+            type="primary"
+            icon={<PlusCircleOutlined />}
+            size="middle"
+            onClick={onClickCreateBuilding}
+            className="button-add"
           >
-            <Breadcrumbs />
-            <Divider />
-            <div>
-              <Button
-                type="primary"
-                icon={<PlusCircleOutlined />}
-                size="middle"
-                onClick={onClickCreateBuilding}
-                className="button-add"
-              >
-                Thêm chung cư
-              </Button>
-            </div>
-            <div className="site-layout-background">
-              <ListBuilding />
-            </div>
-          </Content>
-        </Layout>
-      </Layout>
+            Thêm chung cư
+          </Button>
+        }
+      >
+        <ListBuilding />
+      </MainLayout>
       <CreateBuilding visible={createBuilding} close={setCreateBuilding} />
     </div>
   );

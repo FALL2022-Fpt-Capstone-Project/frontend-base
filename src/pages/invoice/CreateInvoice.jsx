@@ -20,6 +20,14 @@ import axios from "../../api/axios";
 const CreateInvoice = ({ visible, close }) => {
   const [room_month, setRoomMonth] = useState(1);
   const [room_day, setRoomDay] = useState(0);
+  const [serviceCount, setServiceCount] = useState([]);
+  const [servicePrice, setServicePrice] = useState();
+  const [serviceElec, setServiceElec] = useState();
+  const [serviceWater, setServiceWater] = useState();
+  const [oldWater, setOldWater] = useState();
+  const [newWater, setNewWater] = useState();
+  const [newElec, setNewElec] = useState();
+  const [oldElec, setOldElec] = useState();
   // const [room_price, setRoomPrice] = useState();
   const dateFormat = "DD-MM-YYYY";
   const [form] = Form.useForm();
@@ -31,13 +39,13 @@ const CreateInvoice = ({ visible, close }) => {
   let year = moment().year();
 
   let date_create = `${day}-${month + 1}-${year}`;
-  let date_term = `${day + 1}-${month + 1}-${year}`;
   let date_create_format = moment(date_create, "DD-MM-YYYY");
-  let date_term_format = moment(date_term, "DD-MM-YYYY");
-  console.log(date_create_format);
   const initValues = {
     date_create_invoice: date_create_format,
-    payment_term: date_term_format,
+    old_elec: oldElec,
+    old_water: oldWater,
+    new_elec: newElec,
+    new_water: newWater,
   };
 
   const monthChange = (value) => {
@@ -54,22 +62,40 @@ const CreateInvoice = ({ visible, close }) => {
     {
       service_name: "Dịch vụ điện",
       service_price: 1700,
-      current: 100,
-      new: 200,
+      old_elec: 100,
+      new_elec: 200,
+      service_type: "Đồng hồ điện/nước",
     },
     {
       service_name: "Dịch vụ nước",
-      service_price: 1700,
-      current: 100,
-      new: 200,
+      service_price: 2400,
+      old_water: 100,
+      new_water: 300,
+      service_type: "Đồng hồ điện/nước",
     },
-    // {
-    //   service_name: "Dịch vụ xe",
-    //   service_price: 1700,
-    //   service_type: "Người"
-    // },
+    {
+      service_name: "Dịch vụ xe",
+      service_price: 1700,
+      service_type: "Người",
+    },
+    {
+      service_name: "Vệ sinh",
+      service_price: 1700,
+      service_type: "Tháng",
+    },
   ];
-
+  useEffect(() => {
+    service.map((obj, idx) => {
+      setNewElec(obj.new_elec);
+      setNewWater(obj.new_water);
+      setOldElec(obj.old_elec);
+      setOldWater(obj.old_water);
+      if (obj.service_type === "Đồng hồ điện/nước" && obj.service_name === "Dịch vụ điện") {
+        console.log(obj.service_price);
+      }
+    });
+  }, []);
+  console.log(oldElec);
   return (
     <>
       <Modal
@@ -136,7 +162,7 @@ const CreateInvoice = ({ visible, close }) => {
                     },
                   ]}
                 >
-                  <DatePicker value={date_create_format} />
+                  <DatePicker value={date_create_format} placeholder="Nhập ngày tạo hoá đơn" />
                 </Form.Item>
               </Col>
               <Col span={12}>
@@ -156,7 +182,7 @@ const CreateInvoice = ({ visible, close }) => {
                     },
                   ]}
                 >
-                  <DatePicker value={date_term_format} />
+                  <DatePicker placeholder="Nhập hạn đóng tiền" />
                 </Form.Item>
               </Col>
             </Row>
@@ -250,18 +276,20 @@ const CreateInvoice = ({ visible, close }) => {
                 </p>
               </Col>
             </Row>
-            <Form.Item className="form-item" name="phone_number" labelCol={{ span: 24 }}>
+            <Form.Item className="form-item" name="service" labelCol={{ span: 24 }}>
               {service?.map((obj, idx) => {
                 return (
-                  <Checkbox.Group>
-                    <Card className="card card-service">
-                      <Checkbox>
+                  <>
+                    {obj.service_type === "Đồng hồ điện/nước" && obj.service_name === "Dịch vụ điện" ? (
+                      <Card className="card card-service">
                         <Row>
                           <Col span={10}>
                             <b>{obj.service_name}</b>
                           </Col>
                           <Col span={10} offset={4}>
-                            <InputNumber defaultValue={obj.current} addonAfter="Số cũ" />
+                            <Form.Item name="old_elec">
+                              <InputNumber disabled defaultValue={obj.old_elec} addonAfter="Số cũ" />
+                            </Form.Item>
                           </Col>
                         </Row>
                         <Row>
@@ -269,92 +297,53 @@ const CreateInvoice = ({ visible, close }) => {
                             <span>Giá: </span>
                             <b>{obj.service_price}</b>
                           </Col>
-                          <Col span={10} offset={4} style={{ marginTop: "5px" }}>
-                            <InputNumber defaultValue={obj.new} addonAfter="Số mới" />
+                          <Col span={10} offset={4}>
+                            <Form.Item name="new_elec">
+                              <InputNumber defaultValue={obj.new_elec} addonAfter="Số mới" />
+                            </Form.Item>
                           </Col>
                         </Row>
-                      </Checkbox>
-                    </Card>
-                  </Checkbox.Group>
+                      </Card>
+                    ) : obj.service_type === "Đồng hồ điện/nước" && obj.service_name === "Dịch vụ nước" ? (
+                      <Card className="card card-service">
+                        <Row>
+                          <Col span={10}>
+                            <b>{obj.service_name}</b>
+                          </Col>
+                          <Col span={10} offset={4}>
+                            <Form.Item name="old_water">
+                              <InputNumber disabled defaultValue={obj.old_water} addonAfter="Số cũ" />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col span={10}>
+                            <span>Giá: </span>
+                            <b>{obj.service_price}</b>
+                          </Col>
+                          <Col span={10} offset={4}>
+                            <Form.Item name="new_water">
+                              <InputNumber defaultValue={obj.new_water} addonAfter="Số mới" />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                      </Card>
+                    ) : (
+                      ""
+                    )}
+                  </>
                 );
               })}
             </Form.Item>
             <Card className="card card-price">
               <Row>
                 <Col span={13}>
-                  <p>Tính tiền dịch vụ</p>
-                </Col>
-                <Col span={7} offset={4}>
                   <p>Thành tiền</p>
                 </Col>
               </Row>
               <Row>
-                <Col span={13}>
-                  <b>2 dịch vụ</b>
-                </Col>
-                <Col span={7} offset={4}>
+                <Col span={7}>
                   <b>340,000 đ</b>
-                </Col>
-              </Row>
-            </Card>
-            <span>
-              <b>Cộng thêm / Giảm trừ:</b>
-            </span>
-            <Row>
-              <Col span={24}>
-                <p className="description">
-                  <span>Thường dành cho các trường hợp đặc biệt. Ví dụ cộng thêm ngày tết, giảm trừ covid...</span>
-                </p>
-              </Col>
-            </Row>
-            <Radio.Group defaultValue={1}>
-              <Radio value={1} className="radio-add">
-                Cộng thêm
-              </Radio>
-              <Radio value={2} className="radio-add">
-                Giảm trừ
-              </Radio>
-            </Radio.Group>
-
-            <Form.Item
-              className="form-item"
-              name="address_more_detail"
-              labelCol={{ span: 24 }}
-              label={
-                <span>
-                  <b>Số tiền: </b>
-                </span>
-              }
-            >
-              <InputNumber style={{ width: "100%" }} controls={false} placeholder="Nhập số tiền" />
-            </Form.Item>
-            <Form.Item
-              className="form-item"
-              name="address_more_detail"
-              labelCol={{ span: 24 }}
-              label={
-                <span>
-                  <b>Lý do: </b>
-                </span>
-              }
-            >
-              <Input autoComplete="off" placeholder="Nhập lý do" />
-            </Form.Item>
-            <Card className="card card-price">
-              <Row>
-                <Col span={13}>
-                  <p>Cộng thêm</p>
-                </Col>
-                <Col span={7} offset={4}>
-                  <p>Thành tiền</p>
-                </Col>
-              </Row>
-              <Row>
-                <Col span={13}>
-                  <p>Lý do:</p>
-                </Col>
-                <Col span={7} offset={4}>
-                  <b>0 đ</b>
                 </Col>
               </Row>
             </Card>

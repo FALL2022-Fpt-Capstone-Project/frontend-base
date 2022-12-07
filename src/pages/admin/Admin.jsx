@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Button, Divider, Layout } from "antd";
+import { Button } from "antd";
 import { PlusCircleOutlined } from "@ant-design/icons";
-import Sidebar from "../../components/sidebar/Sidebar";
 import "./admin.scss";
 import ListStaff from "./ListStaff";
-import { Link } from "react-router-dom";
-import Breadcrumbs from "../../components/BreadCrumb ";
 import CreateStaff from "./CreateStaff";
+import MainLayout from "../../components/layout/MainLayout";
 
-const { Content, Sider, Header } = Layout;
 const Admin = () => {
-  const [collapsed, setCollapsed] = useState(false);
   const [createStaff, setCreateStaff] = useState(false);
   const onClickCreateStaff = () => {
     setCreateStaff(true);
@@ -18,39 +14,22 @@ const Admin = () => {
   return (
     <div>
       <div className="admin">
-        <Layout
-          style={{
-            minHeight: "100vh",
-          }}
+        <MainLayout
+          title="Quản lý nhân viên"
+          button={
+            <Button
+              type="primary"
+              onClick={onClickCreateStaff}
+              icon={<PlusCircleOutlined />}
+              size="middle"
+              className="button-add"
+            >
+              Thêm mới nhân viên
+            </Button>
+          }
         >
-          <Sider width={250} collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-            <p className="sider-title">QUẢN LÝ CHUNG CƯ MINI</p>
-            <Sidebar />
-          </Sider>
-          <Layout className="site-layout">
-            <Header className="layout-header">
-              <p className="header-title">Quản lý nhân viên</p>
-            </Header>
-            <Content className="layout-content">
-              <Breadcrumbs />
-              <Divider />
-              <div>
-                <Button
-                  type="primary"
-                  onClick={onClickCreateStaff}
-                  icon={<PlusCircleOutlined />}
-                  size="middle"
-                  className="button-add"
-                >
-                  Thêm mới nhân viên
-                </Button>
-              </div>
-              <div className="site-layout-background">
-                <ListStaff />
-              </div>
-            </Content>
-          </Layout>
-        </Layout>
+          <ListStaff />
+        </MainLayout>
       </div>
       <CreateStaff visible={createStaff} close={setCreateStaff} />
     </div>

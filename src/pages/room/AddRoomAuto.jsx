@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 const ADD_ROOM_PREVIEW = "manager/room/generate/preview";
 
 function AddRoomAuto({ visible, close, data }) {
-
+    // console.log(data);
     const [formAddRoomAuto] = Form.useForm();
     const [statusSelectFloor, setStatusSelectFloor] = useState(true);
     const [groupSelect, setGroupSelect] = useState([]);
@@ -16,7 +16,7 @@ function AddRoomAuto({ visible, close, data }) {
     let cookie = localStorage.getItem("Cookie");
     // const [dataApartmentGroup, setDataApartmentGroup] = useState([]);
     const onFinish = async (e) => {
-        const data = {
+        const dataSend = {
             group_id: e.groupId,
             total_room_per_floor: e.numberOfRoom,
             room_name_convention: e.roomConvention,
@@ -26,10 +26,10 @@ function AddRoomAuto({ visible, close, data }) {
             list_floor: e.roomFloor
         };
         // console.log(data);
-        console.log(JSON.stringify(data));
+        console.log(JSON.stringify(dataSend));
         await axios
             .post(
-                ADD_ROOM_PREVIEW, data,
+                ADD_ROOM_PREVIEW, dataSend,
                 {
                     headers: {
                         "Content-Type": "application/json",
@@ -47,7 +47,7 @@ function AddRoomAuto({ visible, close, data }) {
                         duration: 3,
                     });
                 } else {
-                    navigate('preview', { state: { list_rooms: res.data.data, groupId: e.groupId } });
+                    navigate('preview', { state: { list_rooms: res.data.data, groupId: e.groupId, groupAll: data } });
                 }
             })
             .catch((error) => {

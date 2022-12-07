@@ -7,6 +7,9 @@
     font-weight: bold;
   }
   .site-layout {
+    .ant-layout-header {
+      padding: 0 10px;
+    }
     .layout-header {
       background: #fff;
       display: flex;
@@ -23,7 +26,7 @@
       .btn-contract {
         display: flex;
         align-items: center;
-        justify-content: end;
+        justify-content: flex-end;
         margin-right: 20px;
 
         .button-collapse {
@@ -42,6 +45,9 @@
           font-size: 16px;
         }
       }
+      .ant-breadcrumb {
+        padding: 0 30px;
+      }
     }
     .form-item {
       width: 100%;
@@ -49,50 +55,50 @@
       margin-bottom: 2% !important;
     }
   }
-  .icon-size{
+  .icon-size {
     font-size: 130%;
-    color: #1890ff ;
+    color: #1890ff;
   }
-  .icon-delete{
+  .icon-delete {
     color: red;
     font-size: 130%;
     margin-left: 6%;
   }
-  .page-layout{
+  .page-layout {
     min-height: 100vh;
     min-width: 100vh;
   }
-  .page-content{
+  .page-content {
     margin: 10px 16px;
   }
-  .button-cover{
+  .button-cover {
     overflow: auto;
   }
-  .button-back{
+  .button-back {
     margin-right: 5px;
     float: right;
   }
-  .site-layout-background{
+  .site-layout-background {
     min-height: 360px;
   }
-  .text-size-tab{
+  .text-size-tab {
     font-size: 17px;
   }
-  .text-tag{
+  .text-tag {
     word-break: break-all;
     white-space: normal;
     height: auto;
   }
-  .font-size-tag{
+  .font-size-tag {
     font-size: 15px;
   }
-  .card-width-100{
+  .card-width-100 {
     width: 100%;
   }
-  .card-height{
+  .card-height {
     height: 100%;
   }
-  .textArea{
+  .textArea {
     resize: none;
   }
 }

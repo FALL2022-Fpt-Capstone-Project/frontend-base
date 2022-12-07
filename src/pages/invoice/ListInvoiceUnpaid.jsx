@@ -1,20 +1,18 @@
 import { Button, Col, Form, Input, Row, Table, Tabs, Tooltip, DatePicker, Select, Tag, Checkbox, Modal } from "antd";
-import React, { useEffect, useState } from "react";
-import { SearchOutlined, UndoOutlined, AccountBookOutlined, ProfileOutlined } from "@ant-design/icons";
-import "./listInvoice.scss";
-import axios from "../../api/axios";
-import ListHistoryInvoice from "./ListHistoryInvoice";
-import CreateInvoice from "./CreateInvoice";
-
+import React, { useState } from "react";
+import {
+  EditOutlined,
+  SearchOutlined,
+  DollarCircleOutlined,
+  EyeOutlined,
+  UndoOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
+import "./listHistoryInvoice.scss";
+import { Link } from "react-router-dom";
 const { RangePicker } = DatePicker;
 const { Search } = Input;
-const LIST_BUILDING_FILTER = "manager/group/all/contracted";
-const ListInvoice = () => {
-  const [isModalHistoryOpen, setIsModalHistoryOpen] = useState(false);
-  const [createInvoice, setCreateInvoice] = useState(false);
-  const onClickCreateInvoice = () => {
-    setCreateInvoice(true);
-  };
+const ListInvoiceUnpaid = () => {
   const options = [];
   const option = [
     {
@@ -26,7 +24,7 @@ const ListInvoice = () => {
       label: "Kỳ 30",
     },
   ];
-  const plainOptions = ["Đã thanh toán hết", "Chưa thanh toán hết"];
+  const plainOptions = ["Đã thanh toán", "Chưa thanh toán", "Đang nợ"];
   const formItemLayout = {
     labelCol: {
       xs: {
@@ -45,84 +43,60 @@ const ListInvoice = () => {
       },
     },
   };
-  const showModalHistory = () => {
-    setIsModalHistoryOpen(true);
-  };
+  // const showModalHistory = () => {
+  //   setIsModalHistoryOpen(true);
+  // };
   const [form] = Form.useForm();
   let cookie = localStorage.getItem("Cookie");
-  const [buildingFilter, setBuildingFilter] = useState("");
   const [dataSource, setDataSource] = useState([
     {
-      building_name: "Chung cư Hoàng Nam",
+      building_name: "Trọ xanh",
       building_total_floor: 101,
       building_total_rooms: 400,
       building_empty_rooms: 30,
       chu_ky: "Kỳ 30",
       total_people: "Nguyễn Hải Phương",
+      status: "Chưa thanh toán",
       address_more_detail: 2000000,
-      status: "Chưa thanh toán hết hoá đơn",
+      date: "30-10-2022",
     },
     {
-      building_name: "Chung cư Hoàng Nam",
-      building_total_floor: 102,
-      building_total_rooms: 500,
-      building_empty_rooms: 60,
-      chu_ky: "Kỳ 15",
-      total_people: "Nguyễn Đức Pháp",
-      status: "Chưa thanh toán hết hoá đơn",
-      address_more_detail: 3000000,
-    },
-    {
-      building_name: "Chung cư Hoàng Nam",
-      building_total_floor: 103,
-      building_total_rooms: 500,
-      building_empty_rooms: 60,
+      building_name: "Trọ xanh",
+      building_total_floor: 106,
+      building_total_rooms: 400,
+      building_empty_rooms: 30,
       chu_ky: "Kỳ 30",
-      total_people: "Phạm Đặng Thành",
-      status: "Đã thanh toán hết hoá đơn",
-      address_more_detail: 3000000,
+      total_people: "Nguyễn Minh Hiếu",
+      status: "Chưa thanh toán",
+      address_more_detail: 2000000,
+      date: "30-9-2022",
     },
     {
-      building_name: "Chung cư Hoàng Nam",
-      building_total_floor: 104,
-      building_total_rooms: 500,
-      building_empty_rooms: 60,
-      chu_ky: "Kỳ 15",
+      building_name: "Trọ xanh",
+      building_total_floor: 105,
+      building_total_rooms: 400,
+      building_empty_rooms: 30,
+      chu_ky: "Kỳ 30",
       total_people: "Nguyễn Văn Toan",
-      status: "Đã thanh toán hết hoá đơn",
-
-      address_more_detail: 3000000,
+      status: "Chưa thanh toán",
+      address_more_detail: 2000000,
+      date: "30-8-2022",
+    },
+    {
+      building_name: "Trọ xanh",
+      building_total_floor: 102,
+      building_total_rooms: 400,
+      building_empty_rooms: 30,
+      chu_ky: "Kỳ 30",
+      total_people: "Nguyễn Đức Pháp",
+      status: "Chưa thanh toán",
+      address_more_detail: 2000000,
+      date: "30-7-2022",
     },
   ]);
-
-  useEffect(() => {
-    const getBuildingFilter = async () => {
-      const response = await axios
-        .get(LIST_BUILDING_FILTER, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${cookie}`,
-          },
-        })
-        .then((res) => {
-          setBuildingFilter(res.data.data);
-          console.log(res);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    };
-    getBuildingFilter();
-  }, [cookie]);
-  for (let i = 0; i < buildingFilter.length; i++) {
-    options.push({
-      label: buildingFilter[i].group_name,
-      value: buildingFilter[i].group_id,
-    });
-  }
   return (
-    <div className="list-invoice">
-      <div className="list-invoice-search">
+    <div className="list-history-invoice">
+      <div className="list-history-invoice-search">
         <Tabs defaultActiveKey="1">
           <Tabs.TabPane tab="Tìm kiếm nhanh" key="1">
             <Search
@@ -174,7 +148,7 @@ const ListInvoice = () => {
                     <Col className="gutter-row" span={24}>
                       <Row>
                         <label htmlFor="" className="search-name">
-                          Ngày bắt đầu lập hợp đồng
+                          Ngày lập hoá đơn
                         </label>
                       </Row>
                       <Row>
@@ -253,9 +227,6 @@ const ListInvoice = () => {
       <Table
         bordered
         dataSource={dataSource}
-        scroll={{
-          x: 700,
-        }}
         columns={[
           {
             title: "Tên chung cư",
@@ -291,38 +262,71 @@ const ListInvoice = () => {
             },
           },
           {
+            title: "Ngày hoá đơn",
+            dataIndex: "date",
+          },
+          {
             title: "Trạng thái hoá đơn",
             dataIndex: "status",
             render: (_, record) => {
               let status;
-              if (record.status === "Chưa thanh toán hết hoá đơn") {
+              if (record.status === "Chưa thanh toán") {
                 status = (
-                  <Tag color="red" key={record.status}>
-                    Chưa thanh toán hết hoá đơn
+                  <Tag color="default" key={record.status}>
+                    Chưa thanh toán
                   </Tag>
                 );
-              } else if (record.status === "Đã thanh toán hết hoá đơn") {
+              } else if (record.status === "Đã thanh toán") {
                 status = (
                   <Tag color="green" key={record.status}>
-                    Đã thanh toán hết hoá đơn
+                    Đã thanh toán
+                  </Tag>
+                );
+              } else if (record.status === "Đang nợ") {
+                status = (
+                  <Tag color="red" key={record.status}>
+                    Đang nợ
                   </Tag>
                 );
               }
+
               return <>{status}</>;
             },
           },
+
           {
             title: "Thao tác",
             dataIndex: "action",
             render: (_, record) => {
               return (
                 <>
-                  <Tooltip title="Xem lịch sử hoá đơn">
-                    <AccountBookOutlined className="icon" onClick={showModalHistory} />
-                  </Tooltip>
-                  <Tooltip title="Tạo hoá đơn">
-                    <ProfileOutlined className="icon" onClick={onClickCreateInvoice} />
-                  </Tooltip>
+                  {record.status === "Đã thanh toán" ? (
+                    <>
+                      <Tooltip title="Xem hoá đơn">
+                        <Link to="/detail-invoice">
+                          <EyeOutlined className="icon" />
+                        </Link>
+                      </Tooltip>
+                      <Tooltip title="Xoá hoá đơn">
+                        <DeleteOutlined className="icon icon-delete" />
+                      </Tooltip>{" "}
+                    </>
+                  ) : (
+                    <>
+                      <Tooltip title="Chỉnh sửa hoá đơn">
+                        <EditOutlined className="icon" />
+                      </Tooltip>
+                      <Tooltip title="Xem hoá đơn">
+                        <EyeOutlined className="icon" />
+                      </Tooltip>
+                      <Tooltip title="Thu tiền">
+                        <DollarCircleOutlined className="icon" />
+                      </Tooltip>
+                      <Tooltip title="Xoá hoá đơn">
+                        <DeleteOutlined className="icon icon-delete" />
+                      </Tooltip>{" "}
+                    </>
+                  )}
                 </>
               );
             },
@@ -330,24 +334,8 @@ const ListInvoice = () => {
         ]}
         // loading={loading}
       />
-      <Modal
-        title="Lịch sử hoá đơn phòng 101"
-        // style={{ maxwidth: 900 }}
-        width={1300}
-        visible={isModalHistoryOpen}
-        onOk={() => setIsModalHistoryOpen(false)}
-        onCancel={() => setIsModalHistoryOpen(false)}
-        footer={[
-          <Button key="back" onClick={() => setIsModalHistoryOpen(false)}>
-            Quay lại
-          </Button>,
-        ]}
-      >
-        <ListHistoryInvoice />
-      </Modal>
-      <CreateInvoice visible={createInvoice} close={setCreateInvoice} />
     </div>
   );
 };
 
-export default ListInvoice;
+export default ListInvoiceUnpaid;

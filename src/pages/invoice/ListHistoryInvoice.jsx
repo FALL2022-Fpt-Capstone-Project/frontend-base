@@ -1,6 +1,13 @@
 import { Button, Col, Form, Input, Row, Table, Tabs, Tooltip, DatePicker, Select, Tag, Checkbox, Modal } from "antd";
 import React, { useState } from "react";
-import { EditOutlined, SearchOutlined, EyeOutlined, UndoOutlined, DeleteOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  SearchOutlined,
+  DollarCircleOutlined,
+  EyeOutlined,
+  UndoOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 import "./listHistoryInvoice.scss";
 import { Link } from "react-router-dom";
 const { RangePicker } = DatePicker;
@@ -180,7 +187,7 @@ const ListHistoryInvoice = () => {
                       </Row>
                     </Col>
                   </Form.Item>
-                  <Form.Item name="deactive" className="form-item-renter form-item-renter-deactive">
+                  <Form.Item name="deactive" className="form-item-renter">
                     <Row>
                       <label htmlFor="" className="search-name">
                         Tìm kiếm theo trạng thái hoá đơn
@@ -311,6 +318,9 @@ const ListHistoryInvoice = () => {
                       </Tooltip>
                       <Tooltip title="Xem hoá đơn">
                         <EyeOutlined className="icon" />
+                      </Tooltip>
+                      <Tooltip title="Thu tiền">
+                        <DollarCircleOutlined className="icon" />
                       </Tooltip>
                       <Tooltip title="Xoá hoá đơn">
                         <DeleteOutlined className="icon icon-delete" />

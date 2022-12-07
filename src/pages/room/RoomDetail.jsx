@@ -1,9 +1,11 @@
-import { Button, Card, Col, Form, Input, InputNumber, Modal, Row, Select, Tabs, Tag } from 'antd';
-import React from 'react';
+import { Button, Card, Checkbox, Col, Form, Input, InputNumber, Modal, Row, Select, Table, Tabs, Tag } from 'antd';
+import React, { useEffect, useState } from 'react';
 import moment from "moment";
 import {
-    UserOutlined
+    UserOutlined,
+    FilterOutlined
 } from "@ant-design/icons";
+import axios from '../../api/axios';
 const sizeHeader = {
     fontSize: '17px'
 }
@@ -18,8 +20,74 @@ const memeber = {
     borderRadius: '10px',
     height: 450
 }
+const LIST_ASSET_TYPE = "manager/asset/type";
 
-function RoomDetail({ visible, close, data }) {
+function RoomDetail({ visible, close, data, dataAsset }) {
+    const [loading, setLoading] = useState(false);
+    const [searched, setSearched] = useState("");
+    const [filterAssetType, setFilterAssetType] = useState([]);
+    const [listAssetType, setListAssetType] = useState([]);
+    const [assetStatus, setAssetStatus] = useState([]);
+
+    const dataFilter = {
+        id: [],
+        asset_type: []
+    };
+
+    const columns = [
+        {
+            title: 'Tên tài sản',
+            dataIndex: 'asset_name',
+            key: 'asset_id',
+            filteredValue: [searched],
+            onFilter: (value, record) => {
+                return (
+                    String(record.asset_name).toLowerCase()?.includes(value.toLowerCase())
+                );
+            },
+        },
+        {
+            title: 'Số lượng',
+            dataIndex: 'hand_over_asset_quantity',
+            key: 'asset_id',
+        },
+        {
+            title: 'Nhóm tài sản',
+            dataIndex: 'asset_type_show_name',
+            filters: [
+                { text: 'Phòng ngủ', value: 'Phòng ngủ' },
+                { text: 'Phòng khách', value: 'Phòng khách' },
+                { text: 'Phòng bếp', value: 'Phòng bếp' },
+                { text: 'Phòng tắm', value: 'Phòng tắm' },
+                { text: 'Khác', value: 'Khác' },
+            ],
+            filteredValue: filterAssetType.asset_type_show_name || null,
+            onFilter: (value, record) => record.asset_type_show_name.indexOf(value) === 0,
+        },
+    ];
+
+    useEffect(() => {
+        getAssetType();
+    }, []);
+
+    const getAssetType = async () => {
+        let cookie = localStorage.getItem("Cookie");
+        await axios
+            .get(LIST_ASSET_TYPE, {
+                headers: {
+                    "Content-Type": "application/json",
+                    // "Access-Control-Allow-Origin": "*",
+                    Authorization: `Bearer ${cookie}`,
+                },
+                // withCredentials: true,
+            })
+            .then((res) => {
+                setListAssetType(res.data.data);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
     // console.log(data);
     return (
         <>
@@ -238,7 +306,62 @@ function RoomDetail({ visible, close, data }) {
                         </Row>
                     </Tabs.TabPane>
                     <Tabs.TabPane tab={<span style={sizeHeader}>Trang thiết bị trong phòng</span>} key="3">
-
+                        <Row>
+                            <Col span={24}>
+                                <Row>
+                                    <Col xs={24} xl={8} span={8}>
+                                        <Input.Search placeholder="Nhập tên tài sản để tìm kiếm" style={{ marginBottom: 8 }}
+                                            onSearch={(e) => {
+                                                setSearched(e);
+                                            }}
+                                            onChange={(e) => {
+                                                setSearched(e.target.value);
+                                            }}
+                                        />
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col xs={24} xl={3} span={3}>
+                                        <FilterOutlined style={{ fontSize: '150%' }} />
+                                        Nhóm tài sản:
+                                    </Col>
+                                    <Col xs={24} xl={21} span={21}>
+                                        <Row>
+                                            <Checkbox.Group options={listAssetType?.map((obj, index) => { return obj.asset_type_show_name })}
+                                                onChange={(checkedValues) => {
+                                                    dataFilter.asset_type_show_name = checkedValues;
+                                                    setFilterAssetType(dataFilter);
+                                                }}
+                                            >
+                                            </Checkbox.Group>
+                                        </Row>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Table
+                                        bordered
+                                        onChange={(pagination, filters, sorter, extra) => {
+                                            setFilterAssetType(filters);
+                                            setAssetStatus(filters);
+                                        }}
+                                        dataSource={dataAsset?.map(asset => {
+                                            return {
+                                                asset_id: asset.room_asset_id,
+                                                asset_name: asset.asset_name,
+                                                hand_over_asset_quantity: asset.asset_quantity,
+                                                asset_type_show_name: listAssetType?.find(a => a?.id === asset?.asset_type_id)?.asset_type_show_name,
+                                                asset_type_id: listAssetType?.find(a => a?.id === asset?.asset_type_id)?.id,
+                                            }
+                                        })}
+                                        columns={columns}
+                                        scroll={{ x: 800, y: 600 }}
+                                        loading={loading}
+                                    >
+                                    </Table>
+                                </Row>
+                            </Col>
+                        </Row>
+                        <Row></Row>
                     </Tabs.TabPane>
                 </Tabs>
             </Modal>
