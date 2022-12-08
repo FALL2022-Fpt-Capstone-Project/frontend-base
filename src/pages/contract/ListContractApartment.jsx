@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import "./listContract.scss";
 import { Input, Table, Tag, Row, Tabs, Col, Select, DatePicker, Button, Tooltip, Switch, Form } from "antd";
-import { EyeOutlined, EditOutlined, SearchOutlined, UndoOutlined } from "@ant-design/icons";
+import { EyeOutlined, EditOutlined, SearchOutlined, UndoOutlined, DeleteOutlined } from "@ant-design/icons";
 import axios from "../../api/axios";
 import ViewContractBuilding from "./ViewContractBuilding";
 import moment from "moment";
+import { useNavigate } from "react-router-dom";
 
 const { Search } = Input;
 const LIST_CONTRACT_APARTMENT_URL = "manager/contract/group";
@@ -21,9 +22,11 @@ const ListContractApartment = () => {
   const [buildingFilter, setBuildingFilter] = useState("");
   const [building, setBuilding] = useState("");
   const [endContract, setEndContract] = useState(false);
+  const [dataContract, setDataContract] = useState([]);
   const dateTimeSelect = [];
   const [form] = Form.useForm();
   let cookie = localStorage.getItem("Cookie");
+  const navigate = useNavigate();
 
   useEffect(() => {
     getAllContractBuilding();
@@ -154,7 +157,7 @@ const ListContractApartment = () => {
                         <Input
                           placeholder="Nhập tên người cho thuê"
                           autoComplete="off"
-                          // onChange={renterNameChange}
+                        // onChange={renterNameChange}
                         />
                       </Row>
                     </Col>
@@ -171,7 +174,7 @@ const ListContractApartment = () => {
                         <Input
                           placeholder="Nhập số điện thoại"
                           autoComplete="off"
-                          // onChange={phoneNumberChange}
+                        // onChange={phoneNumberChange}
                         />
                       </Row>
                     </Col>
@@ -289,22 +292,34 @@ const ListContractApartment = () => {
               return (
                 <>
                   <Tooltip title="Chỉnh sửa">
-                    <EditOutlined style={{ fontSize: "20px", color: "#46a6ff", margin: "0 5px" }} />
+                    <EditOutlined onClick={() => {
+                      navigate('/contract-apartment/edit', { state: record });
+                    }} style={{ fontSize: "20px", color: "#46a6ff", margin: "0 5px" }} />
                   </Tooltip>
                   <Tooltip title="Xem">
                     <EyeOutlined
                       style={{ fontSize: "20px", color: "#46a6ff", margin: "0 5px" }}
                       onClick={() => {
                         setViewContract(true);
+                        setDataContract(record);
                       }}
                     />
+                  </Tooltip>
+                  <Tooltip title="Đóng hợp đồng">
+                    <DeleteOutlined style={{
+                      fontSize: "20px",
+                      margin: "0 5px",
+                      color: 'red'
+                    }} onClick={() => {
+
+                    }} />
                   </Tooltip>
                 </>
               );
             }}
           />
         </Table>
-        <ViewContractBuilding openView={viewContract} closeView={setViewContract} />
+        <ViewContractBuilding openView={viewContract} closeView={setViewContract} dataContract={dataContract} />
       </div>
     </div>
   );

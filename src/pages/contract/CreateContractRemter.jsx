@@ -35,6 +35,7 @@ import {
   notification,
   Card,
   Divider,
+  AutoComplete,
 } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import { useNavigate } from "react-router-dom";
@@ -53,6 +54,7 @@ const DELETE_ASSET = "manager/asset/room/delete";
 const cardHeight = {
   height: '100%',
 };
+
 const fontSizeIcon = {
   fontSize: "120%",
 };
@@ -127,6 +129,8 @@ const CreateContractRenter = () => {
   const [disableEditAsset, setDisableEditAsset] = useState(true);
   const [renterId, setRenterId] = useState();
   const [roomId, setRoomId] = useState();
+  const [optionAutoComplete, setOptionAutoComplete] = useState([]);
+
 
   let cookie = localStorage.getItem("Cookie");
   useEffect(() => {
@@ -297,6 +301,13 @@ const CreateContractRenter = () => {
       })
       .then((res) => {
         setDataOldRenter(res.data.data);
+        console.log(res.data.data);
+        setOptionAutoComplete(res.data.data.map(renter => {
+          return {
+            value: renter.renter_id,
+            label: renter.renter_full_name + " (" + renter.phone_number + ")",
+          }
+        }))
       })
       .catch((error) => {
         console.log(error);
@@ -662,7 +673,6 @@ const CreateContractRenter = () => {
         ADD_NEW_CONTRACT,
         {
           ...e,
-          // renter_old_id: renterId !== undefined ? renterId : null,
           list_general_service: list_general_service,
           contract_end_date: e.contract_end_date.format("YYYY-MM-DD"),
           contract_start_date: e.contract_start_date.format("YYYY-MM-DD"),
@@ -670,14 +680,11 @@ const CreateContractRenter = () => {
         {
           headers: {
             "Content-Type": "application/json",
-            // "Access-Control-Allow-Origin": "*",
             Authorization: `Bearer ${cookie}`,
           },
-          // withCredentials: true,
         }
       )
       .then((res) => {
-        // console.log(res);
         navigate("/contract-renter");
         notification.success({
           message: "Thêm mới hợp đồng thành công",
@@ -693,7 +700,6 @@ const CreateContractRenter = () => {
           duration: 3,
         });
       });
-    // message.success('Thêm mới hợp đồng thành công');
   };
   const onFinishContractFail = (e) => {
     message.error("Vui lòng kiểm tra lại thông tin hợp đồng");
@@ -799,6 +805,13 @@ const CreateContractRenter = () => {
       contract_payment_cycle: paymentCircle,
       note: "",
     });
+    formAddMem.setFieldsValue({
+      name: "",
+      identity_card: "",
+      phone_number: "",
+      license_plates: "",
+      address_more_detail: "",
+    });
     setOldRenterGender({ ...oldRenterGender, gender: [true, false] });
     createAssetForm.setFieldsValue({
       asset_id: assetId,
@@ -829,7 +842,7 @@ const CreateContractRenter = () => {
           return;
         } else {
           await form.validateFields([
-            "contract_name",
+            "group_id",
             "renter_name",
             "renter_gender",
             "renter_phone_number",
@@ -842,6 +855,7 @@ const CreateContractRenter = () => {
             "contract_price",
             "contract_deposit",
             "contract_end_date",
+            "contract_start_date"
           ]);
           setDisplayFinish([...displayFinish, 1]);
         }
@@ -1023,7 +1037,23 @@ const CreateContractRenter = () => {
                               }
                             >
                               {/* <span><b>Tên khách thuê: </b></span> */}
-                              <Input placeholder="Họ và tên khách thuê"></Input>
+                              <AutoComplete
+                                filterOption={(input, option) => (option?.label.toLowerCase().trim() ?? '').includes(input.toLowerCase().trim())}
+                                options={optionAutoComplete}
+                                onSelect={(e) => {
+                                  const data = dataOldRenter.find(renter => renter.renter_id === e);
+                                  form.setFieldsValue({
+                                    renter_name: data.renter_full_name,
+                                    renter_phone_number: data.phone_number,
+                                    renter_gender: data.gender,
+                                    renter_email: data.email,
+                                    renter_identity_card: data.identity_number,
+                                    license_plates: data.license_plates,
+                                    address_more_detail: data.address.address_more_details,
+                                  });
+                                }}
+                                placeholder="Nhập tên khách thuê"
+                              />
                             </Form.Item>
                             <Form.Item
                               className="form-item"
@@ -1594,57 +1624,59 @@ const CreateContractRenter = () => {
                     </Row>
                     <Row>
                       <Col span={8}>
-                        {dataApartmentGroupSelect?.list_general_service?.map((obj, index) => {
-                          return (
-                            <>
-                              <Form.Item
-                                className="form-item"
-                                labelCol={{ span: 24 }}
-                                name={["serviceIndexInForm", `${index}`, "hand_over_service_index"]}
-                                label={
-                                  <h4>
-                                    {obj.service_show_name}{" "}
-                                    <b>
-                                      (
-                                      {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
-                                        obj.service_price
-                                      )}
-                                      )
-                                    </b>
-                                  </h4>
-                                }
-                                rules={[
-                                  {
-                                    required: true,
-                                    message: `Vui lòng không để trống`,
-                                  },
-                                ]}
-                              >
-                                <InputNumber
-                                  controls={false}
-                                  placeholder={
-                                    String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
-                                      ? "Nhập chỉ số hiện tại"
-                                      : "Số " +
-                                      obj.service_type_name +
-                                      " / " +
-                                      obj.service_price.toLocaleString("vn-VN", {
-                                        style: "currency",
-                                        currency: "VND",
-                                      })
+                        {dataApartmentGroupSelect?.list_general_service?.filter(service =>
+                          service?.service_show_name?.toLowerCase()?.trim().includes('điện')
+                          || service?.service_show_name?.toLowerCase()?.trim().includes('nước'))?.map((obj, index) => {
+                            return (
+                              <>
+                                <Form.Item
+                                  className="form-item"
+                                  labelCol={{ span: 24 }}
+                                  name={["serviceIndexInForm", `${index}`, "hand_over_service_index"]}
+                                  label={
+                                    <h4>
+                                      {obj.service_show_name}{" "}
+                                      <b>
+                                        (
+                                        {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
+                                          obj.service_price
+                                        )}
+                                        )
+                                      </b>
+                                    </h4>
                                   }
-                                  addonAfter={
-                                    String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
-                                      ? "Chỉ số hiện tại"
-                                      : obj.service_type_name
-                                  }
-                                  style={{ width: "100%" }}
-                                  min={0}
-                                />
-                              </Form.Item>
-                            </>
-                          );
-                        })}
+                                  rules={[
+                                    {
+                                      required: true,
+                                      message: `Vui lòng không để trống`,
+                                    },
+                                  ]}
+                                >
+                                  <InputNumber
+                                    controls={false}
+                                    placeholder={
+                                      String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
+                                        ? "Nhập chỉ số hiện tại"
+                                        : "Số " +
+                                        obj.service_type_name +
+                                        " / " +
+                                        obj.service_price.toLocaleString("vn-VN", {
+                                          style: "currency",
+                                          currency: "VND",
+                                        })
+                                    }
+                                    addonAfter={
+                                      String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
+                                        ? "Chỉ số hiện tại"
+                                        : obj.service_type_name
+                                    }
+                                    style={{ width: "100%" }}
+                                    min={0}
+                                  />
+                                </Form.Item>
+                              </>
+                            );
+                          })}
                       </Col>
                     </Row>
                     <Row>

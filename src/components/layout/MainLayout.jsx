@@ -3,30 +3,11 @@ import { Avatar, Divider, Layout } from "antd";
 import Sidebar from "../sidebar/Sidebar";
 import Breadcrumbs from "../BreadCrumb ";
 import { UserOutlined } from "@ant-design/icons";
-import axios from "../../api/axios";
 import "./mainlayout.scss";
 const { Content, Sider, Header } = Layout;
 const MainLayout = ({ children, button, title }) => {
   const [collapsed, setCollapsed] = useState(false);
-  const [user, setUser] = useState();
-  let cookie = localStorage.getItem("Cookie");
-  let id = localStorage.getItem("id");
-  useEffect(() => {
-    axios
-      .get(`manager/staff/${id}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${cookie}`,
-        },
-      })
-      .then((res) => {
-        setUser(res.data.data);
-        console.log(res);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  }, [id, cookie]);
+  let name = localStorage.getItem("name");
   return (
     <Layout
       style={{
@@ -63,7 +44,7 @@ const MainLayout = ({ children, button, title }) => {
               }}
               icon={<UserOutlined />}
             />
-            <span className="user-name">Xin chào {user?.full_name}</span>
+            <span className="user-name">Xin chào {name}</span>
           </div>
         </Header>
         <Content
