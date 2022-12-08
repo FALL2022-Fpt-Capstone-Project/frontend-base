@@ -77,7 +77,7 @@ function Personal(props) {
         address_more_detail: address_more_detail,
         deactivate: deactivate,
         roles: roles,
-        password: password,
+        // password: password,
     };
 
     const genderChange = (e) => {
@@ -85,9 +85,8 @@ function Personal(props) {
     };
 
     function Update(e) {
-        console.log(e);
         axios
-            .put(`manager/staff/update/${id}`, data, {
+            .put(`manager/staff/update/${id}`, password === "" ? data : { ...data, password: password }, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${cookie}`,

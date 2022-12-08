@@ -16,6 +16,7 @@ const UpdateStaff = ({ visible, close, id }) => {
 
   const [form] = Form.useForm();
   let cookie = localStorage.getItem("Cookie");
+
   useEffect(() => {
     axios
       .get(`manager/staff/${id}`, {
@@ -46,6 +47,7 @@ const UpdateStaff = ({ visible, close, id }) => {
         setDeactivate(res.data.data?.is_deactivate);
       });
   }, [id, cookie]);
+
   const data = {
     full_name: full_name,
     user_name: user_name,
@@ -54,11 +56,11 @@ const UpdateStaff = ({ visible, close, id }) => {
     address_more_detail: address_more_detail,
     deactivate: deactivate,
     roles: roles,
-    password: password,
+    // password: password,
   };
   function Update(e) {
     axios
-      .put(`manager/staff/update/${id}`, data, {
+      .put(`manager/staff/update/${id}`, password === "" ? data : { ...data, password: password }, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${cookie}`,

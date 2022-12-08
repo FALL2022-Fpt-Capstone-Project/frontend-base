@@ -55,7 +55,7 @@ const MainLayout = ({ children, button, title }) => {
                   }}
                   icon={<UserOutlined />}
                 />
-                <span className="user-name">Xin chào {name}</span>
+                <span className="user-name">Xin chào, <a href="/personal">{name}</a></span>
                 <Dropdown overlay={menu} trigger={['click']}>
                   <DownOutlined />
                 </Dropdown>

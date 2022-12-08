@@ -5,6 +5,7 @@ import axios from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 import { EditOutlined, SearchOutlined, EyeOutlined, UndoOutlined, DeleteOutlined } from "@ant-design/icons";
 import ViewContractRenter from "./ViewContractRenter";
+
 const { Search } = Input;
 const LIST_CONTRACT_URL = "manager/contract";
 const LIST_BUILDING_FILTER = "manager/group/all/contracted";
@@ -91,8 +92,10 @@ const ListContractRenter = () => {
         });
       setLoading(false);
     };
+
     getBuildingFilter();
   }, [cookie]);
+
   for (let i = 0; i < buildingFilter.length; i++) {
     options.push({
       label: buildingFilter[i].group_name,
@@ -184,6 +187,7 @@ const ListContractRenter = () => {
       });
     setLoading(false);
   };
+
   // const getContractById = async (contractId) => {
   //   let cookie = localStorage.getItem("Cookie");
   //   await axios
@@ -203,6 +207,7 @@ const ListContractRenter = () => {
   //       console.log(error);
   //     });
   // };
+
   console.log(dataSource);
 
   const getAssetRoom = async (room_id) => {

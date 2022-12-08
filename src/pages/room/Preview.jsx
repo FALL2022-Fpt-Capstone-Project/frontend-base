@@ -328,7 +328,6 @@ function Preview(props) {
                     minHeight: 360,
                 }}
             >
-                <Divider />
                 <Row>
                     <Col span={24}>
                         <Button

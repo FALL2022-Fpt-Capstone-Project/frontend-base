@@ -22,6 +22,12 @@ const Sidebar = () => {
 
   const location = useLocation();
   useEffect(() => {
+    if (location.pathname.includes("/room/equipment")) {
+      setContractApartmentLink("/room/equipment");
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
     if (location.pathname.includes("/contract-renter/create") || location.pathname.includes("/contract-renter/edit")) {
       setContractRenterLink("/contract-renter/create");
     }
@@ -34,6 +40,11 @@ const Sidebar = () => {
   useEffect(() => {
     if (location.pathname.includes("/contract-apartment/create")) {
       setContractApartmentLink("/contract-apartment/create");
+    }
+  }, [location.pathname]);
+  useEffect(() => {
+    if (location.pathname.includes("/contract-apartment/edit")) {
+      setContractApartmentLink("/contract-apartment/edit");
     }
   }, [location.pathname]);
   useEffect(() => {
