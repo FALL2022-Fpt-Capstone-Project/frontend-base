@@ -14,6 +14,7 @@ const breadcrumbNameMap = {
   "/contract-renter/create": "Tạo mới hợp đồng cho thuê",
   "/contract-renter/edit": "Cập nhật hợp đồng cho thuê",
   "/contract-apartment/create": "Tạo mới hợp đồng đi thuê",
+  "/contract-apartment/edit": "Cập nhật hợp đồng đi thuê",
   "/manage-staff": "Quản lý nhân viên",
   "/manage-staff/create-staff": "Tạo mới nhân viên",
   "/manage-staff/update-staff": "Cập nhật nhân viên",

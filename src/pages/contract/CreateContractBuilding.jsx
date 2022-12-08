@@ -11,6 +11,7 @@ import {
   DollarOutlined,
   HomeOutlined,
   CheckCircleTwoTone,
+  DownOutlined
 } from "@ant-design/icons";
 import moment from "moment";
 import {
@@ -36,23 +37,21 @@ import {
   Tree,
 } from "antd";
 import TextArea from "antd/lib/input/TextArea";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/BreadCrumb ";
 const { Content, Sider, Header } = Layout;
 const { Option } = Select;
-const LIST_ASSET_TYPE = "manager/asset/type";
+// const LIST_ASSET_TYPE = "manager/asset/type";
 const ADD_NEW_CONTRACT = "manager/contract/group/add";
 const APARTMENT_DATA_GROUP = "/manager/group/all";
-const ASSET_BASIC = "manager/asset/";
+// const ASSET_BASIC = "manager/asset/";
 const dateFormatList = ["DD-MM-YYYY"];
-const defaultAddAsset = {
-  dateOfDelivery: moment(),
-  asset_unit: 1,
-  asset_type: "Khác",
-  asset_status: true,
-};
-
-const currentDay = moment();
+// const defaultAddAsset = {
+//   dateOfDelivery: moment(),
+//   asset_unit: 1,
+//   asset_type: "Khác",
+//   asset_status: true,
+// };
 
 const contract_duration = [];
 for (let i = 6; i < 17; i++) {
@@ -91,10 +90,11 @@ for (let i = 1; i < 17; i++) {
 
 
 const CreateContractBuilding = () => {
-  const dataFilter = {
-    id: [],
-    asset_type: [],
-  };
+  // const dataFilter = {
+  //   id: [],
+  //   asset_type: [],
+  // };
+
   const [expandedKeys, setExpandedKeys] = useState([]);
   const [checkedKeys, setCheckedKeys] = useState([]);
   const [selectedKeys, setSelectedKeys] = useState([]);
@@ -123,23 +123,23 @@ const CreateContractBuilding = () => {
     setSelectedKeys(selectedKeysValue);
   };
 
-  const [listAssetType, setListAssetType] = useState([]);
+  // const [listAssetType, setListAssetType] = useState([]);
   const navigate = useNavigate();
-  const [searched, setSearched] = useState("");
-  const [filterAssetType, setFilterAssetType] = useState([]);
-  const [assetStatus, setAssetStatus] = useState([]);
+  // const [searched, setSearched] = useState("");
+  // const [filterAssetType, setFilterAssetType] = useState([]);
+  // const [assetStatus, setAssetStatus] = useState([]);
   const [componentSize, setComponentSize] = useState("default");
   const [form] = Form.useForm();
-  const [createAssetForm] = Form.useForm();
-  const [editAssetForm] = Form.useForm();
-  const [createAssetQuickForm] = Form.useForm();
-  const [formAddAsset, setFormAddAsset] = useState(defaultAddAsset);
-  const [isEditAsset, setIsEditAsset] = useState(false);
+  // const [createAssetForm] = Form.useForm();
+  // const [editAssetForm] = Form.useForm();
+  // const [createAssetQuickForm] = Form.useForm();
+  // const [formAddAsset, setFormAddAsset] = useState(defaultAddAsset);
+  // const [isEditAsset, setIsEditAsset] = useState(false);
   const [loading, setLoading] = useState(false);
   // const [quickAddAsset, setQuickAddAsset] = useState(false);
 
-  const [dataAsset, setDataAsset] = useState([]);
-  const [assetId, setAssetId] = useState(-1);
+  // const [dataAsset, setDataAsset] = useState([]);
+  // const [assetId, setAssetId] = useState(-1);
   const [changeTab, setChangeTab] = useState("1");
   const [visibleSubmit, setVisibleSubmit] = useState(false);
   const [contractStartDate, setContractStartDate] = useState(moment());
@@ -149,8 +149,9 @@ const CreateContractBuilding = () => {
   const [contractDuration, setContractDuration] = useState();
   const [dataApartmentGroupSelect, setDataApartmentGroupSelect] = useState([]);
   const [displayFinish, setDisplayFinish] = useState([]);
-  const [disableEditAsset, setDisableEditAsset] = useState(true);
-  const [roomRented, setRoomRented] = useState([]);
+  // const [disableEditAsset, setDisableEditAsset] = useState(true);
+  const [roomRented, setRoomRented] = useState(0);
+  const [treeDataRented, setTreeDataRented] = useState([]);
 
   // const [assetBasic, setAssetBasic] = useState([]);
 
@@ -159,141 +160,141 @@ const CreateContractBuilding = () => {
   const onFormLayoutChange = ({ size }) => {
     setComponentSize(size);
   };
-  const columns = [
-    {
-      title: "Tên tài sản",
-      dataIndex: "asset_name",
-      key: "asset_id",
-      filteredValue: [searched],
-      onFilter: (value, record) => {
-        return String(record.asset_name).toLowerCase()?.includes(value.toLowerCase());
-      },
-    },
-    {
-      title: "Số lượng",
-      dataIndex: "hand_over_asset_quantity",
-      key: "asset_id",
-    },
-    {
-      title: "Nhóm tài sản",
-      dataIndex: "asset_type_show_name",
-      filters: [
-        { text: "Phòng ngủ", value: "Phòng ngủ" },
-        { text: "Phòng khách", value: "Phòng khách" },
-        { text: "Phòng bếp", value: "Phòng bếp" },
-        { text: "Phòng tắm", value: "Phòng tắm" },
-        { text: "Khác", value: "Khác" },
-      ],
-      filteredValue: filterAssetType.asset_type_show_name || null,
-      onFilter: (value, record) => record.asset_type_show_name.indexOf(value) === 0,
-    },
-    {
-      title: "Ngày bàn giao",
-      dataIndex: "hand_over_asset_date_delivery",
-      key: "asset_id",
-    },
-    {
-      title: "Thao tác",
-      key: "asset_id",
-      render: (record) => {
-        record.asset_id < 0 ? setDisableEditAsset(false) : setDisableEditAsset(true);
-        return (
-          <>
-            <EditTwoTone
-              onClick={() => {
-                setIsEditAsset(true);
-                editAssetForm.setFieldsValue({
-                  asset_id: record.asset_id,
-                  asset_name: record.asset_name,
-                  hand_over_asset_date_delivery:
-                    record.hand_over_asset_date_delivery !== null
-                      ? moment(record.hand_over_asset_date_delivery, dateFormatList)
-                      : "",
-                  hand_over_asset_quantity: record.hand_over_asset_quantity,
-                  asset_type_show_name: record.asset_type_show_name,
-                  hand_over_asset_status: record.hand_over_asset_status,
-                });
-              }}
-              className="icon-size"
-            />
-            <DeleteOutlined
-              onClick={() => {
-                onDeleteAsset(record);
-              }}
-              className="icon-delete"
-            />
-          </>
-        );
-      },
-    },
-  ];
-  const onDeleteAsset = (record) => {
-    Modal.confirm({
-      title: `Bạn có chắc chắn muốn xóa ${record.asset_name} này ?`,
-      okText: "Có",
-      cancelText: "Hủy",
-      onOk: () => {
-        setDataAsset((pre) => {
-          return pre.filter((asset) => asset.asset_id !== record.asset_id);
-        });
-        message.success(`Đã xóa ${record.asset_name}`);
-      },
-    });
-  };
+  // const columns = [
+  //   {
+  //     title: "Tên tài sản",
+  //     dataIndex: "asset_name",
+  //     key: "asset_id",
+  //     filteredValue: [searched],
+  //     onFilter: (value, record) => {
+  //       return String(record.asset_name).toLowerCase()?.includes(value.toLowerCase());
+  //     },
+  //   },
+  //   {
+  //     title: "Số lượng",
+  //     dataIndex: "hand_over_asset_quantity",
+  //     key: "asset_id",
+  //   },
+  //   {
+  //     title: "Nhóm tài sản",
+  //     dataIndex: "asset_type_show_name",
+  //     filters: [
+  //       { text: "Phòng ngủ", value: "Phòng ngủ" },
+  //       { text: "Phòng khách", value: "Phòng khách" },
+  //       { text: "Phòng bếp", value: "Phòng bếp" },
+  //       { text: "Phòng tắm", value: "Phòng tắm" },
+  //       { text: "Khác", value: "Khác" },
+  //     ],
+  //     filteredValue: filterAssetType.asset_type_show_name || null,
+  //     onFilter: (value, record) => record.asset_type_show_name.indexOf(value) === 0,
+  //   },
+  //   {
+  //     title: "Ngày bàn giao",
+  //     dataIndex: "hand_over_asset_date_delivery",
+  //     key: "asset_id",
+  //   },
+  //   {
+  //     title: "Thao tác",
+  //     key: "asset_id",
+  //     render: (record) => {
+  //       record.asset_id < 0 ? setDisableEditAsset(false) : setDisableEditAsset(true);
+  //       return (
+  //         <>
+  //           <EditTwoTone
+  //             onClick={() => {
+  //               setIsEditAsset(true);
+  //               editAssetForm.setFieldsValue({
+  //                 asset_id: record.asset_id,
+  //                 asset_name: record.asset_name,
+  //                 hand_over_asset_date_delivery:
+  //                   record.hand_over_asset_date_delivery !== null
+  //                     ? moment(record.hand_over_asset_date_delivery, dateFormatList)
+  //                     : "",
+  //                 hand_over_asset_quantity: record.hand_over_asset_quantity,
+  //                 asset_type_show_name: record.asset_type_show_name,
+  //                 hand_over_asset_status: record.hand_over_asset_status,
+  //               });
+  //             }}
+  //             className="icon-size"
+  //           />
+  //           <DeleteOutlined
+  //             onClick={() => {
+  //               onDeleteAsset(record);
+  //             }}
+  //             className="icon-delete"
+  //           />
+  //         </>
+  //       );
+  //     },
+  //   },
+  // ];
+  // const onDeleteAsset = (record) => {
+  //   Modal.confirm({
+  //     title: `Bạn có chắc chắn muốn xóa ${record.asset_name} này ?`,
+  //     okText: "Có",
+  //     cancelText: "Hủy",
+  //     onOk: () => {
+  //       setDataAsset((pre) => {
+  //         return pre.filter((asset) => asset.asset_id !== record.asset_id);
+  //       });
+  //       message.success(`Đã xóa ${record.asset_name}`);
+  //     },
+  //   });
+  // };
 
   useEffect(() => {
-    getAssetType();
+    // getAssetType();
     apartmentGroup();
-    getAssetBasic();
+    // getAssetBasic();
   }, []);
 
-  const getAssetType = async () => {
-    await axios
-      .get(LIST_ASSET_TYPE, {
-        headers: {
-          "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
-          Authorization: `Bearer ${cookie}`,
-        },
-        // withCredentials: true,
-      })
-      .then((res) => {
-        setListAssetType(res.data.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-  const getAssetBasic = async () => {
-    await axios
-      .get(ASSET_BASIC, {
-        headers: {
-          "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
-          Authorization: `Bearer ${cookie}`,
-        },
-        // withCredentials: true,
-      })
-      .then((res) => {
-        console.log(res.data.data);
-        setDataAsset(
-          res.data.data?.map((obj, index) => {
-            return {
-              asset_id: obj.basic_asset_id,
-              asset_name: obj.basic_asset_name,
-              hand_over_asset_quantity: 10,
-              asset_type_show_name: obj.asset_type_show_name,
-              hand_over_asset_date_delivery: currentDay.format("DD-MM-YYYY"),
-              asset_type_name: obj.asset_type_name,
-              asset_type_id: obj.asset_type_id,
-            };
-          })
-        );
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+  // const getAssetType = async () => {
+  //   await axios
+  //     .get(LIST_ASSET_TYPE, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         // "Access-Control-Allow-Origin": "*",
+  //         Authorization: `Bearer ${cookie}`,
+  //       },
+  //       // withCredentials: true,
+  //     })
+  //     .then((res) => {
+  //       setListAssetType(res.data.data);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // };
+  // const getAssetBasic = async () => {
+  //   await axios
+  //     .get(ASSET_BASIC, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         // "Access-Control-Allow-Origin": "*",
+  //         Authorization: `Bearer ${cookie}`,
+  //       },
+  //       // withCredentials: true,
+  //     })
+  //     .then((res) => {
+  //       console.log(res.data.data);
+  //       setDataAsset(
+  //         res.data.data?.map((obj, index) => {
+  //           return {
+  //             asset_id: obj.basic_asset_id,
+  //             asset_name: obj.basic_asset_name,
+  //             hand_over_asset_quantity: 10,
+  //             asset_type_show_name: obj.asset_type_show_name,
+  //             hand_over_asset_date_delivery: currentDay.format("DD-MM-YYYY"),
+  //             asset_type_name: obj.asset_type_name,
+  //             asset_type_id: obj.asset_type_id,
+  //           };
+  //         })
+  //       );
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // };
 
   const apartmentGroup = async () => {
     setLoading(true);
@@ -319,9 +320,9 @@ const CreateContractBuilding = () => {
   useEffect(() => {
     loadDefault();
   }, []);
-  form.setFieldsValue({
-    list_hand_over_asset: dataAsset,
-  });
+  // form.setFieldsValue({
+  //   list_hand_over_asset: dataAsset,
+  // });
   const loadDefault = () => {
     form.setFieldsValue({
       contract_type: 2,
@@ -329,13 +330,13 @@ const CreateContractBuilding = () => {
       owner_gender: true,
       note: "",
     });
-    createAssetForm.setFieldsValue({
-      asset_id: assetId,
-      hand_over_asset_date_delivery: formAddAsset.dateOfDelivery,
-      hand_over_asset_quantity: formAddAsset.asset_unit,
-      asset_type_show_name: formAddAsset.asset_type,
-      // hand_over_asset_status: formAddAsset.asset_status,
-    });
+    // createAssetForm.setFieldsValue({
+    //   asset_id: assetId,
+    //   hand_over_asset_date_delivery: formAddAsset.dateOfDelivery,
+    //   hand_over_asset_quantity: formAddAsset.asset_unit,
+    //   asset_type_show_name: formAddAsset.asset_type,
+    //   // hand_over_asset_status: formAddAsset.asset_status,
+    // });
   };
 
   const columnsService = [
@@ -363,25 +364,25 @@ const CreateContractBuilding = () => {
     },
   ];
 
-  const [addAssetInRoom, setAddAssetInRoom] = useState(false);
+  // const [addAssetInRoom, setAddAssetInRoom] = useState(false);
 
   const onFinish = async (e) => {
-    const list_asset = dataAsset?.map((obj, index) => {
-      return {
-        asset_id: obj.asset_id,
-        assets_additional_name: obj.asset_name,
-        assets_additional_type: obj.asset_type_id,
-        hand_over_asset_quantity: obj.hand_over_asset_quantity,
-        hand_over_asset_status: true,
-        hand_over_date_delivery: obj.hand_over_asset_date_delivery,
-      };
-    });
+    // const list_asset = dataAsset?.map((obj, index) => {
+    //   return {
+    //     asset_id: obj.asset_id,
+    //     assets_additional_name: obj.asset_name,
+    //     assets_additional_type: obj.asset_type_id,
+    //     hand_over_asset_quantity: obj.hand_over_asset_quantity,
+    //     hand_over_asset_status: true,
+    //     hand_over_date_delivery: obj.hand_over_asset_date_delivery,
+    //   };
+    // });
     const data = {
       ...e,
       contract_end_date: e.contract_end_date.format("YYYY-MM-DD"),
       contract_start_date: e.contract_start_date.format("YYYY-MM-DD"),
       // list_room: listRoomId,
-      list_hand_over_asset: list_asset,
+      // list_hand_over_asset: list_asset,
       rack_renter_name: e.owner_name,
       rack_renter_gender: e.owner_gender,
       rack_renter_phone: e.owner_phone_number,
@@ -421,45 +422,45 @@ const CreateContractBuilding = () => {
     message.error("Vui lòng kiểm tra lại thông tin hợp đồng");
   };
 
-  createAssetForm.setFieldsValue({
-    asset_id: assetId,
-    hand_over_asset_date_delivery: formAddAsset.dateOfDelivery,
-    hand_over_asset_quantity: formAddAsset.asset_unit,
-    asset_type_show_name: formAddAsset.asset_type,
-    hand_over_asset_status: formAddAsset.asset_status,
-  });
-  const addAssetFinish = (e) => {
-    console.log(e);
-    setAssetId(e.asset_id - 1);
-    const duplicate = dataAsset.find(
-      (asset) =>
-        asset.asset_name.toLowerCase().trim() === e.asset_name.toLowerCase().trim() &&
-        asset.hand_over_asset_date_delivery === moment(e.hand_over_asset_date_delivery).format("DD-MM-YYYY")
-    );
-    if (!duplicate) {
-      setDataAsset([
-        ...dataAsset,
-        { ...e, hand_over_asset_date_delivery: moment(e.hand_over_asset_date_delivery).format("DD-MM-YYYY") },
-      ]);
-      createAssetForm.setFieldsValue({
-        asset_id: assetId,
-        asset_name: "",
-        hand_over_asset_date_delivery: formAddAsset.dateOfDelivery,
-        hand_over_asset_quantity: formAddAsset.asset_unit,
-        asset_type_show_name: formAddAsset.asset_type,
-        // hand_over_asset_status: formAddAsset.asset_status,
-      });
+  // createAssetForm.setFieldsValue({
+  //   asset_id: assetId,
+  //   hand_over_asset_date_delivery: formAddAsset.dateOfDelivery,
+  //   hand_over_asset_quantity: formAddAsset.asset_unit,
+  //   asset_type_show_name: formAddAsset.asset_type,
+  //   hand_over_asset_status: formAddAsset.asset_status,
+  // });
+  // const addAssetFinish = (e) => {
+  //   console.log(e);
+  //   setAssetId(e.asset_id - 1);
+  //   const duplicate = dataAsset.find(
+  //     (asset) =>
+  //       asset.asset_name.toLowerCase().trim() === e.asset_name.toLowerCase().trim() &&
+  //       asset.hand_over_asset_date_delivery === moment(e.hand_over_asset_date_delivery).format("DD-MM-YYYY")
+  //   );
+  //   if (!duplicate) {
+  //     setDataAsset([
+  //       ...dataAsset,
+  //       { ...e, hand_over_asset_date_delivery: moment(e.hand_over_asset_date_delivery).format("DD-MM-YYYY") },
+  //     ]);
+  //     createAssetForm.setFieldsValue({
+  //       asset_id: assetId,
+  //       asset_name: "",
+  //       hand_over_asset_date_delivery: formAddAsset.dateOfDelivery,
+  //       hand_over_asset_quantity: formAddAsset.asset_unit,
+  //       asset_type_show_name: formAddAsset.asset_type,
+  //       // hand_over_asset_status: formAddAsset.asset_status,
+  //     });
 
-      setAddAssetInRoom(false);
-      message.success("Thêm mới tài sản thành công");
-    } else {
-      setAddAssetInRoom(true);
-      message.error("Tài sản đã tồn tại");
-    }
-  };
-  const addAssetFail = (e) => {
-    setAddAssetInRoom(true);
-  };
+  //     setAddAssetInRoom(false);
+  //     message.success("Thêm mới tài sản thành công");
+  //   } else {
+  //     setAddAssetInRoom(true);
+  //     message.error("Tài sản đã tồn tại");
+  //   }
+  // };
+  // const addAssetFail = (e) => {
+  //   setAddAssetInRoom(true);
+  // };
   // const addAssetQuickFinish = (e) => {
   //   console.log(e);
   //   setLoading(true);
@@ -504,40 +505,40 @@ const CreateContractBuilding = () => {
   //   console.log(e);
   // }
 
-  const editAssetFinish = (e) => {
-    console.log(e);
-    const duplicate = dataAsset.find(
-      (asset) =>
-        asset.asset_name.toLowerCase().trim() === e.asset_name.toLowerCase().trim() &&
-        asset.asset_type_show_name === e.asset_type_show_name &&
-        asset.hand_over_asset_date_delivery === moment(e.hand_over_asset_date_delivery).format("DD-MM-YYYY") &&
-        asset.hand_over_asset_quantity === e.hand_over_asset_quantity
-      // asset.hand_over_asset_status === e.hand_over_asset_status
-    );
-    if (!duplicate) {
-      message.success("Cập nhật tài sản thành công");
-      setDataAsset((pre) => {
-        return pre.map((asset) => {
-          if (asset.asset_id === e.asset_id) {
-            return {
-              ...e,
-              hand_over_asset_date_delivery: moment(e.hand_over_asset_date_delivery).format("DD-MM-YYYY"),
-            };
-          } else {
-            return asset;
-          }
-        });
-      });
-      setIsEditAsset(false);
-    } else {
-      setIsEditAsset(true);
-      message.error("Cập nhật tài sản thất bại");
-    }
-  };
+  // const editAssetFinish = (e) => {
+  //   console.log(e);
+  //   const duplicate = dataAsset.find(
+  //     (asset) =>
+  //       asset.asset_name.toLowerCase().trim() === e.asset_name.toLowerCase().trim() &&
+  //       asset.asset_type_show_name === e.asset_type_show_name &&
+  //       asset.hand_over_asset_date_delivery === moment(e.hand_over_asset_date_delivery).format("DD-MM-YYYY") &&
+  //       asset.hand_over_asset_quantity === e.hand_over_asset_quantity
+  //     // asset.hand_over_asset_status === e.hand_over_asset_status
+  //   );
+  //   if (!duplicate) {
+  //     message.success("Cập nhật tài sản thành công");
+  //     setDataAsset((pre) => {
+  //       return pre.map((asset) => {
+  //         if (asset.asset_id === e.asset_id) {
+  //           return {
+  //             ...e,
+  //             hand_over_asset_date_delivery: moment(e.hand_over_asset_date_delivery).format("DD-MM-YYYY"),
+  //           };
+  //         } else {
+  //           return asset;
+  //         }
+  //       });
+  //     });
+  //     setIsEditAsset(false);
+  //   } else {
+  //     setIsEditAsset(true);
+  //     message.error("Cập nhật tài sản thất bại");
+  //   }
+  // };
 
-  const editAssetFail = (e) => {
-    setIsEditAsset(true);
-  };
+  // const editAssetFail = (e) => {
+  //   setIsEditAsset(true);
+  // };
 
   const onNext = async () => {
     try {
@@ -549,13 +550,11 @@ const CreateContractBuilding = () => {
           "owner_phone_number",
           "owner_identity_card",
           "contract_start_date",
-          "contract_price",
-          "contract_deposit",
           "contract_end_date",
         ]);
         setDisplayFinish([...displayFinish, 1]);
       } else {
-        await form.validateFields(["group_id", "list_room"]);
+        await form.validateFields(["group_id", "list_room", "contract_price", "contract_deposit"]);
         setDisplayFinish([...displayFinish, 2]);
       }
 
@@ -642,7 +641,7 @@ const CreateContractBuilding = () => {
                     key="1"
                   >
                     <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                      <Col xs={24} md={12} lg={8} xl={8} span={8}>
+                      <Col xs={24} lg={12} xl={12} span={12}>
                         <Card
                           title={
                             <>
@@ -786,7 +785,7 @@ const CreateContractBuilding = () => {
                           </Row>
                         </Card>
                       </Col>
-                      <Col xs={24} md={12} lg={8} xl={8} span={8}>
+                      <Col xs={24} lg={12} xl={12} span={12}>
                         <Card
                           title={
                             <>
@@ -804,118 +803,6 @@ const CreateContractBuilding = () => {
                           className="card-width-100 card-height"
                         >
                           <Row>
-                            {/* <Form.Item
-                              className="form-item"
-                              name="group_id"
-                              labelCol={{ span: 24 }}
-                              label={
-                                <span>
-                                  <b>Chọn chung cư: </b>
-                                </span>
-                              }
-                              rules={[
-                                {
-                                  required: true,
-                                  message: "Vui lòng nhập giá phòng",
-                                },
-                              ]}
-                            >
-                              <Select
-                                showSearch
-                                filterOption={(input, option) =>
-                                  (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
-                                }
-                                onChange={(e) => {
-                                  setDataApartmentGroupSelect(
-                                    dataApartmentGroup.find((obj, index) => obj.group_id === e)
-                                  );
-                                  const list_rooms = dataApartmentGroup?.find(
-                                    (obj, index) => obj.group_id === e
-                                  )?.list_rooms;
-                                  const mapped_list_rooms = list_rooms?.map((obj, index) => obj.room_floor);
-                                  const get_floors = mapped_list_rooms
-                                    ?.filter((obj, index) => mapped_list_rooms.indexOf(obj) === index)
-                                    .sort((a, b) => a - b);
-                                  const floor_room = get_floors
-                                    ?.map((obj, index) => {
-                                      const children = list_rooms
-                                        ?.filter((o, i) => o.room_floor === obj)
-                                        ?.map((room, j) => {
-                                          return [{ title: `Phòng ${room.room_name}`, value: room.room_id }];
-                                        })
-                                        ?.map((a, b) => a[0]);
-                                      return [
-                                        {
-                                          title: `Tầng ${obj} ( Số lượng phòng: ${children.length} )`,
-                                          key: obj,
-                                          children: children,
-                                        },
-                                      ];
-                                    })
-                                    ?.map((o, i) => o[0]);
-                                  setGroupSelect(dataApartmentGroup?.find((obj, index) => obj.group_id === e));
-                                  setNumberOfFloor(floor_room);
-                                  form.setFieldsValue({
-                                    address_city: dataApartmentGroup?.find((obj, index) => obj.group_id === e)?.address?.address_city,
-                                    address_district: dataApartmentGroup?.find((obj, index) => obj.group_id === e)?.address?.address_district,
-                                    address_more_details: dataApartmentGroup?.find((obj, index) => obj.group_id === e)?.address?.address_more_details,
-                                    address_wards: dataApartmentGroup?.find((obj, index) => obj.group_id === e)?.address?.address_wards,
-                                  })
-                                }}
-                                placeholder="Chọn chung cư"
-                                options={dataApartmentGroup?.map((obj, index) => {
-                                  return { value: obj.group_id, label: obj.group_name };
-                                })}
-                              ></Select>
-                            </Form.Item>
-                            <Form.Item
-                              className="form-item"
-                              name="address_city"
-                              labelCol={{ span: 24 }}
-                              label={
-                                <span>
-                                  <b>Tỉnh/Tp: </b>
-                                </span>
-                              }
-                            >
-                              <Input disabled placeholder="Tỉnh/Tp" />
-                            </Form.Item>
-                            <Form.Item
-                              className="form-item"
-                              name="address_district"
-                              labelCol={{ span: 24 }}
-                              label={
-                                <span>
-                                  <b>Quận/Huyện: </b>
-                                </span>
-                              }
-                            >
-                              <Input disabled placeholder="Quận/Huyện" />
-                            </Form.Item>
-                            <Form.Item
-                              className="form-item"
-                              name="address_wards"
-                              labelCol={{ span: 24 }}
-                              label={
-                                <span>
-                                  <b>Phường/Xã: </b>
-                                </span>
-                              }
-                            >
-                              <Input disabled placeholder="Phường/Xã" />
-                            </Form.Item>
-                            <Form.Item
-                              className="form-item"
-                              name="address_more_details"
-                              labelCol={{ span: 24 }}
-                              label={
-                                <span>
-                                  <b>Địa chỉ chi tiết: </b>
-                                </span>
-                              }
-                            >
-                              <TextArea className="textArea" disabled placeholder="Địa chỉ chi tiết" />
-                            </Form.Item> */}
                             <Form.Item
                               className="form-item"
                               name="contract_payment_cycle"
@@ -1032,9 +919,292 @@ const CreateContractBuilding = () => {
                               />
                             </Form.Item>
                           </Row>
+                          <Row>
+                            <p>
+                              <i>
+                                Bạn chưa chọn tầng và phòng thuê, bấm <Link onClick={onNext}>tiếp</Link> để chọn
+                              </i>
+                            </p>
+                          </Row>
                         </Card>
                       </Col>
-                      <Col xs={24} md={12} lg={8} xl={8} span={8}>
+                    </Row>
+                  </Tabs.TabPane>
+                  <Tabs.TabPane
+                    tab={
+                      <span className="text-size-tab">
+                        2. Chọn tầng và phòng{" "}
+                        {displayFinish.find((obj, index) => obj === 2) ? (
+                          <CheckCircleTwoTone style={{ fontSize: "130%" }} twoToneColor="#52c41a" />
+                        ) : (
+                          ""
+                        )}
+                      </span>
+                    }
+                    key="2"
+                  >
+                    <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+                      <Col xs={24} lg={8} xl={8} span={8}>
+                        <Card
+                          title={
+                            <>
+                              <Tag color="blue" className="text-tag">
+                                <h3>
+                                  <HomeOutlined className="icon-size" />
+                                  <span className="font-size-tag">
+                                    <b> Thông tin chung cư </b>
+                                  </span>
+                                </h3>
+                              </Tag>
+                            </>
+                          }
+                          bordered={false}
+                          className="card-width-100 card-height"
+                        >
+                          <Row>
+                            <Col xs={24} md={16} xl={12} span={12}>
+                              <Form.Item
+                                className="form-item"
+                                name="group_id"
+                                labelCol={{ span: 24 }}
+                                label={
+                                  <span>
+                                    <b>Chọn chung cư: </b>
+                                  </span>
+                                }
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: "Vui lòng chọn chung cư",
+                                  },
+                                ]}
+                              >
+                                <Select
+                                  showSearch
+                                  filterOption={(input, option) =>
+                                    (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+                                  }
+                                  onChange={(e) => {
+                                    setDataApartmentGroupSelect(
+                                      dataApartmentGroup.find((obj, index) => obj.group_id === e)
+                                    );
+                                    const list_rooms = dataApartmentGroup
+                                      ?.find((obj, index) => obj.group_id === e)
+                                      ?.list_rooms?.filter((obj, index) => obj.group_contract_id === null);
+
+                                    const list_rooms_rented = dataApartmentGroup
+                                      ?.find((obj, index) => obj.group_id === e)
+                                      ?.list_rooms?.filter((obj, index) => Number.isInteger(obj.group_contract_id));
+
+                                    setRoomRented(list_rooms_rented?.length);
+
+                                    const mapped_list_rooms = list_rooms?.map((obj, index) => obj.room_floor);
+                                    const get_floors = mapped_list_rooms
+                                      ?.filter((obj, index) => mapped_list_rooms.indexOf(obj) === index)
+                                      .sort((a, b) => a - b);
+
+                                    const floor_room = get_floors?.map((obj, index) => {
+                                      const children = list_rooms?.filter((o, i) => o.room_floor === obj)?.map((room, j) => { return [{ title: `Phòng ${room.room_name}`, key: obj + "-" + room.room_id }] })?.map((a, b) => a[0]);
+                                      return [
+                                        {
+                                          title: `Tầng ${obj} | Số lượng: ${children.length}`,
+                                          key: obj.toString(),
+                                          children: children
+                                        }
+                                      ]
+                                    })?.map((o, i) => o[0]);
+
+                                    setGroupSelect(dataApartmentGroup?.find(
+                                      (obj, index) => obj.group_id === e
+                                    ));
+
+                                    setNumberOfFloor(floor_room);
+
+                                    const mapped_list_rooms_rented = list_rooms_rented?.map((obj, index) => obj.room_floor);
+
+                                    const get_floors_rented = mapped_list_rooms_rented
+                                      ?.filter((obj, index) => mapped_list_rooms_rented.indexOf(obj) === index)
+                                      .sort((a, b) => a - b);
+
+                                    const treeDataRented = get_floors_rented?.map((obj, index) => {
+                                      const children = list_rooms_rented?.filter((o, i) => o.room_floor === obj)
+                                        ?.map((room, j) => {
+                                          return [{ title: `Phòng ${room.room_name}`, key: obj + "-" + room.room_id }]
+                                        })?.map((a, b) => a[0]);
+                                      return [
+                                        {
+                                          title: `Tầng ${obj} | Số lượng: ${children.length}`,
+                                          key: obj.toString(),
+                                          children: children
+                                        }
+                                      ]
+                                    })?.map((o, i) => o[0]);
+                                    console.log(treeDataRented);
+                                    setTreeDataRented(treeDataRented);
+
+
+                                    form.setFieldsValue({
+                                      address_city: dataApartmentGroup?.find((obj, index) => obj.group_id === e)
+                                        ?.address?.address_city,
+                                      address_district: dataApartmentGroup?.find((obj, index) => obj.group_id === e)
+                                        ?.address?.address_district,
+                                      address_more_details: dataApartmentGroup?.find((obj, index) => obj.group_id === e)
+                                        ?.address?.address_more_details,
+                                      address_wards: dataApartmentGroup?.find((obj, index) => obj.group_id === e)
+                                        ?.address?.address_wards,
+                                    });
+                                    setCheckedKeys([]);
+                                    setListRoomId([]);
+                                  }}
+                                  placeholder="Chọn chung cư"
+                                  options={dataApartmentGroup?.map((obj, index) => {
+                                    return { value: obj.group_id, label: obj.group_name };
+                                  })}
+                                ></Select>
+                              </Form.Item>
+                            </Col>
+                          </Row>
+                          <Divider />
+                          <Row>
+                            <Col span={12}>
+                              <p><b>Số lượng tầng:</b> </p>
+                            </Col>
+                            <Col span={12}>
+                              <p>{groupSelect?.list_rooms?.map((obj, index) => obj.room_floor)?.filter((o, i) => groupSelect?.list_rooms?.map((obj, index) => obj.room_floor)?.indexOf(o) === i)?.length}</p>
+                            </Col>
+                          </Row>
+                          <Row>
+                            <Col span={12}>
+                              <p><b>Số lượng phòng:</b> </p>
+                            </Col>
+                            <Col span={12}>
+                              <p>{groupSelect?.list_rooms?.length}</p>
+                            </Col>
+                          </Row>
+                          <Row>
+                            <Col span={12}>
+                              <p>
+                                <b>Tỉnh/Tp: </b>{" "}
+                              </p>
+                            </Col>
+                            <Col span={12}>
+                              <p>{groupSelect?.address?.address_city}</p>
+                            </Col>
+                          </Row>
+                          <Row>
+                            <Col span={12}>
+                              <p><b>Quận/Huyện:</b> </p>
+                            </Col>
+                            <Col span={12}>
+                              <p>{groupSelect?.address?.address_district}</p>
+                            </Col>
+                          </Row>
+                          <Row>
+                            <Col span={12}>
+                              <p>
+                                <b>Phường/Xã:</b>{" "}
+                              </p>
+                            </Col>
+                            <Col span={12}>
+                              <p>{groupSelect?.address?.address_wards}</p>
+                            </Col>
+                          </Row>
+                          <Row>
+                            <Col span={12}>
+                              <p>
+                                <b>Địa chỉ chi tiết:</b>{" "}
+                              </p>
+                            </Col>
+                            <Col span={12}>
+                              <p>{groupSelect?.address?.address_more_details}</p>
+                            </Col>
+                          </Row>
+                          <Row>
+                            <Col span={12}>
+                              <p>
+                                <b>Trạng thái: </b>{" "}
+                              </p>
+                            </Col>
+                            <Col span={12}>
+                              <p>
+                                {groupSelect?.list_rooms?.length === undefined ? (
+                                  ""
+                                ) : groupSelect?.list_rooms?.length === roomRented ? (
+                                  <Tag color="red">Đã thuê hết</Tag>
+                                ) : (
+                                  <Tag color="success">Còn phòng</Tag>
+                                )}
+                              </p>
+                            </Col>
+                          </Row>
+                        </Card>
+                      </Col>
+                      <Col xs={24} lg={8} xl={8} span={8}>
+                        <Card
+                          title={
+                            <>
+                              <Tag color="blue" className="text-tag">
+                                <h3>
+                                  <HomeOutlined className="icon-size" />
+                                  <span className="font-size-tag">
+                                    <b> Chọn tầng và phòng </b>
+                                  </span>
+                                </h3>
+                              </Tag>
+                            </>
+                          }
+                          bordered={false} className="card-width-100 card-height">
+                          <Row>
+                            <Col xs={12} lg={24} xl={24} span={24}>
+                              <p>
+                                <b>Số lượng phòng đã chọn:</b> {listRoomId.length}
+                              </p>
+                              <Form.Item
+                                className="form-item"
+                                name="list_room"
+                                labelCol={{ span: 24 }}
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: "Vui lòng chọn phòng",
+                                  },
+                                ]}
+                              >
+                                <Tree
+                                  checkable
+                                  onExpand={onExpand}
+                                  expandedKeys={expandedKeys}
+                                  autoExpandParent={autoExpandParent}
+                                  onCheck={onCheck}
+                                  checkedKeys={checkedKeys}
+                                  onSelect={onSelect}
+                                  selectedKeys={selectedKeys}
+                                  treeData={numberOfFloor}
+                                />
+                              </Form.Item>
+                            </Col>
+                            <Col xs={12} lg={24} xl={24} span={24}>
+                              <Row>
+                                <p>
+                                  <b>Số lượng phòng đã thuê:</b> {roomRented}
+                                </p>
+                              </Row>
+                              <Row>
+                                <Tree
+                                  showIcon
+                                  checkable={false}
+                                  treeData={treeDataRented}
+                                  switcherIcon={<DownOutlined />}
+                                />
+                              </Row>
+                            </Col>
+                          </Row>
+                          <Row>
+
+                          </Row>
+                        </Card>
+                      </Col>
+                      <Col xs={24} lg={8} xl={8} span={8}>
                         <Card
                           title={
                             <>
@@ -1048,7 +1218,7 @@ const CreateContractBuilding = () => {
                               </Tag>
                             </>
                           }
-                          className="card-width-100"
+                          className="card-width-100 card-height"
                         >
                           <Row>
                             <Form.Item
@@ -1103,252 +1273,6 @@ const CreateContractBuilding = () => {
                                 min={0}
                               />
                             </Form.Item>
-                          </Row>
-                          <Row>
-                            <p>
-                              <i>
-                                Bạn chưa chọn tầng và phòng thuê, bấm <b>tiếp</b> để chọn
-                              </i>
-                            </p>
-                          </Row>
-                        </Card>
-                      </Col>
-                    </Row>
-                  </Tabs.TabPane>
-                  <Tabs.TabPane
-                    tab={
-                      <span className="text-size-tab">
-                        2. Chọn tầng và phòng{" "}
-                        {displayFinish.find((obj, index) => obj === 2) ? (
-                          <CheckCircleTwoTone style={{ fontSize: "130%" }} twoToneColor="#52c41a" />
-                        ) : (
-                          ""
-                        )}
-                      </span>
-                    }
-                    key="2"
-                  >
-                    <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                      <Col xs={24} xl={12} span={12}>
-                        <Card
-                          title={
-                            <>
-                              <Tag color="blue" className="text-tag">
-                                <h3>
-                                  <HomeOutlined className="icon-size" />
-                                  <span className="font-size-tag">
-                                    <b> Thông tin chung cư </b>
-                                  </span>
-                                </h3>
-                              </Tag>
-                            </>
-                          }
-                          bordered={false}
-                          className="card-width-100 card-height"
-                        >
-                          <Row>
-                            <Col xs={24} xl={12} span={12}>
-                              <Form.Item
-                                className="form-item"
-                                name="group_id"
-                                labelCol={{ span: 24 }}
-                                label={
-                                  <span>
-                                    <b>Chọn chung cư: </b>
-                                  </span>
-                                }
-                                rules={[
-                                  {
-                                    required: true,
-                                    message: "Vui lòng chọn chung cư",
-                                  },
-                                ]}
-                              >
-                                <Select
-                                  showSearch
-                                  filterOption={(input, option) =>
-                                    (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
-                                  }
-                                  onChange={(e) => {
-                                    setDataApartmentGroupSelect(
-                                      dataApartmentGroup.find((obj, index) => obj.group_id === e)
-                                    );
-                                    const list_rooms = dataApartmentGroup
-                                      ?.find((obj, index) => obj.group_id === e)
-                                      ?.list_rooms?.filter((obj, index) => obj.group_contract_id === null);
-
-                                    setRoomRented(
-                                      dataApartmentGroup
-                                        ?.find((obj, index) => obj.group_id === e)
-                                        ?.list_rooms?.filter((obj, index) => Number.isInteger(obj.group_contract_id))
-                                        .length
-                                    );
-
-                                    const mapped_list_rooms = list_rooms?.map((obj, index) => obj.room_floor);
-                                    const get_floors = mapped_list_rooms
-                                      ?.filter((obj, index) => mapped_list_rooms.indexOf(obj) === index)
-                                      .sort((a, b) => a - b);
-
-                                    const floor_room = get_floors?.map((obj, index) => {
-                                      const children = list_rooms?.filter((o, i) => o.room_floor === obj)?.map((room, j) => { return [{ title: `Phòng ${room.room_name}`, key: obj + "-" + room.room_id }] })?.map((a, b) => a[0]);
-                                      return [
-                                        {
-                                          title: `Tầng ${obj} ( Số lượng phòng: ${children.length} )`,
-                                          key: obj.toString(),
-                                          children: children
-                                        }
-                                      ]
-                                    })?.map((o, i) => o[0]);
-
-                                    setGroupSelect(dataApartmentGroup?.find(
-                                      (obj, index) => obj.group_id === e
-                                    ));
-                                    setNumberOfFloor(floor_room);
-                                    form.setFieldsValue({
-                                      address_city: dataApartmentGroup?.find((obj, index) => obj.group_id === e)
-                                        ?.address?.address_city,
-                                      address_district: dataApartmentGroup?.find((obj, index) => obj.group_id === e)
-                                        ?.address?.address_district,
-                                      address_more_details: dataApartmentGroup?.find((obj, index) => obj.group_id === e)
-                                        ?.address?.address_more_details,
-                                      address_wards: dataApartmentGroup?.find((obj, index) => obj.group_id === e)
-                                        ?.address?.address_wards,
-                                    });
-                                    setCheckedKeys([]);
-                                    setListRoomId([]);
-                                  }}
-                                  placeholder="Chọn chung cư"
-                                  options={dataApartmentGroup?.map((obj, index) => {
-                                    return { value: obj.group_id, label: obj.group_name };
-                                  })}
-                                ></Select>
-                              </Form.Item>
-                            </Col>
-                          </Row>
-                          <Divider />
-                          <Row>
-                            <Col span={8}>
-                              <p><b>Số lượng tầng:</b> </p>
-                            </Col>
-                            <Col span={16}>
-                              <p>{groupSelect?.list_rooms?.map((obj, index) => obj.room_floor)?.filter((o, i) => groupSelect?.list_rooms?.map((obj, index) => obj.room_floor)?.indexOf(o) === i)?.length}</p>
-                            </Col>
-                          </Row>
-                          <Row>
-                            <Col span={8}>
-                              <p><b>Số lượng phòng:</b> </p>
-                            </Col>
-                            <Col span={16}>
-                              <p>{groupSelect?.list_rooms?.length}</p>
-                            </Col>
-                          </Row>
-                          <Row>
-                            <Col span={8}>
-                              <p>
-                                <b>Tỉnh/Tp: </b>{" "}
-                              </p>
-                            </Col>
-                            <Col span={16}>
-                              <p>{groupSelect?.address?.address_city}</p>
-                            </Col>
-                          </Row>
-                          <Row>
-                            <Col span={8}>
-                              <p><b>Quận/Huyện:</b> </p>
-                            </Col>
-                            <Col span={16}>
-                              <p>{groupSelect?.address?.address_district}</p>
-                            </Col>
-                          </Row>
-                          <Row>
-                            <Col span={8}>
-                              <p>
-                                <b>Phường/Xã:</b>{" "}
-                              </p>
-                            </Col>
-                            <Col span={16}>
-                              <p>{groupSelect?.address?.address_wards}</p>
-                            </Col>
-                          </Row>
-                          <Row>
-                            <Col span={8}>
-                              <p>
-                                <b>Địa chỉ chi tiết:</b>{" "}
-                              </p>
-                            </Col>
-                            <Col span={16}>
-                              <p>{groupSelect?.address?.address_more_details}</p>
-                            </Col>
-                          </Row>
-                          <Row>
-                            <Col span={8}>
-                              <p>
-                                <b>Trạng thái: </b>{" "}
-                              </p>
-                            </Col>
-                            <Col span={16}>
-                              <p>
-                                {groupSelect?.list_rooms?.length === undefined ? (
-                                  ""
-                                ) : groupSelect?.list_rooms?.length === roomRented ? (
-                                  <Tag color="red">Đã thuê hết</Tag>
-                                ) : (
-                                  <Tag color="success">Còn phòng</Tag>
-                                )}
-                              </p>
-                            </Col>
-                          </Row>
-                        </Card>
-                      </Col>
-                      <Col xs={24} xl={12} span={12}>
-                        <Card
-                          title={
-                            <>
-                              <Tag color="blue" className="text-tag">
-                                <h3>
-                                  <HomeOutlined className="icon-size" />
-                                  <span className="font-size-tag">
-                                    <b> Chọn tầng và phòng </b>
-                                  </span>
-                                </h3>
-                              </Tag>
-                            </>
-                          }
-                          bordered={false} className="card-width-100 card-height">
-                          <Row>
-                            <Col span={14}>
-                              <p>
-                                <b>Số lượng phòng đã chọn:</b> {listRoomId.length}
-                              </p>
-                              <Form.Item
-                                className="form-item"
-                                name="list_room"
-                                labelCol={{ span: 24 }}
-                                rules={[
-                                  {
-                                    required: true,
-                                    message: "Vui lòng chọn phòng",
-                                  },
-                                ]}
-                              >
-                                <Tree
-                                  checkable
-                                  onExpand={onExpand}
-                                  expandedKeys={expandedKeys}
-                                  autoExpandParent={autoExpandParent}
-                                  onCheck={onCheck}
-                                  checkedKeys={checkedKeys}
-                                  onSelect={onSelect}
-                                  selectedKeys={selectedKeys}
-                                  treeData={numberOfFloor}
-                                />
-                              </Form.Item>
-                            </Col>
-                            <Col span={10}>
-                              <p>
-                                <b>Số lượng phòng đã thuê:</b> {roomRented}
-                              </p>
-                            </Col>
                           </Row>
                         </Card>
                       </Col>
@@ -1563,7 +1487,7 @@ const CreateContractBuilding = () => {
               >
                 Tiếp
               </Button>
-              <Modal
+              {/* <Modal
                 title="Thêm tài sản mới"
                 visible={addAssetInRoom}
                 onCancel={() => {
@@ -1688,7 +1612,7 @@ const CreateContractBuilding = () => {
                       })}
                     </Select>
                   </Form.Item>
-                  {/* <Form.Item
+                  <Form.Item
                     className="form-item"
                     name="hand_over_asset_status"
                     labelCol={{ span: 24 }}
@@ -1712,9 +1636,9 @@ const CreateContractBuilding = () => {
                         <Tag color="error">Hỏng</Tag>
                       </Radio>
                     </Radio.Group>
-                  </Form.Item> */}
+                  </Form.Item>
                 </Form>
-              </Modal>
+              </Modal> */}
 
               {/* <Modal
                 title="Thêm mới tài sản nhanh"
@@ -1827,7 +1751,7 @@ const CreateContractBuilding = () => {
                 </Form>
               </Modal> */}
 
-              <Modal
+              {/* <Modal
                 title="Chỉnh sửa tài sản trong phòng"
                 visible={isEditAsset}
                 onCancel={() => {
@@ -1952,7 +1876,7 @@ const CreateContractBuilding = () => {
                       })}
                     </Select>
                   </Form.Item>
-                  {/* <Form.Item
+                  <Form.Item
                     className="form-item"
                     name="hand_over_asset_status"
                     labelCol={{ span: 24 }}
@@ -1976,9 +1900,9 @@ const CreateContractBuilding = () => {
                         <Tag color="error">Hỏng</Tag>
                       </Radio>
                     </Radio.Group>
-                  </Form.Item> */}
+                  </Form.Item>
                 </Form>
-              </Modal>
+              </Modal> */}
             </div>
           </Content>
         </Layout>

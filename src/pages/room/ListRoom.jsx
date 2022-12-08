@@ -645,7 +645,7 @@ function ListRoom(props) {
               style={{ marginBottom: "1%", marginLeft: "1%", float: "right" }}
               icon={<PlusCircleOutlined style={textSize} />}
             >
-              Thêm Phòng
+              Thêm phòng
             </Button>
             <Button
               onClick={onClickAddRoomAuto}
