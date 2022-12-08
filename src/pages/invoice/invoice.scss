@@ -79,6 +79,15 @@
   font-style: italic;
   font-weight: bold;
 }
+.alert-red {
+  font-weight: bold;
+  font-size: 18px;
+  color: red;
+}
+.add-auto-filter {
+  width: 250px;
+  margin-bottom: 20px;
+}
 @media only screen and (max-width: 767.99px) {
   .ant-layout {
     overflow: x;

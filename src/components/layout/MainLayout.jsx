@@ -1,18 +1,39 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Divider, Layout } from "antd";
+import { Avatar, Col, Divider, Dropdown, Layout, Menu, Row } from "antd";
 import Sidebar from "../sidebar/Sidebar";
 import Breadcrumbs from "../BreadCrumb ";
-import { UserOutlined } from "@ant-design/icons";
+import { UserOutlined, DownOutlined } from "@ant-design/icons";
 import "./mainlayout.scss";
+import { useNavigate } from "react-router-dom";
 const { Content, Sider, Header } = Layout;
 const MainLayout = ({ children, button, title }) => {
+  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   let name = localStorage.getItem("name");
-
+  const menu = (
+    <Menu style={{ width: "150px" }}>
+      <Menu.Item
+        onClick={() => {
+          navigate("/personal");
+        }}
+      >
+        Thông tin cá nhân
+      </Menu.Item>
+      <Menu.Item
+        onClick={() => {
+          navigate("/login");
+          localStorage.clear();
+        }}
+      >
+        Đăng xuất
+      </Menu.Item>
+    </Menu>
+  );
   return (
     <Layout
       style={{
         minHeight: "100vh",
+        minWidth: "100vh",
       }}
     >
       <Sider
@@ -29,23 +50,35 @@ const MainLayout = ({ children, button, title }) => {
           bottom: 0,
         }}
       >
-        <p className="sider-title">QUẢN LÝ CHUNG CƯ MINI</p>
+        <div className="logo">
+          <img src={require("../../assets/image/logo.png")} id="logo" alt="Logo" />
+        </div>
+        {/* <p className="sider-title">QUẢN LÝ CHUNG CƯ MINI</p> */}
         <Sidebar />
       </Sider>
       <Layout className="site-layout">
         <Header className="layout-header">
           <p className="header-title">{title}</p>
           <div className="avatar">
-            <Avatar
-              size={{
-                xs: 24,
-                sm: 32,
-                md: 40,
-                lg: 40,
-              }}
-              icon={<UserOutlined />}
-            />
-            <span className="user-name">Xin chào {name}</span>
+            <Row>
+              <Col span={24}>
+                <Avatar
+                  size={{
+                    xs: 24,
+                    sm: 32,
+                    md: 40,
+                    lg: 40,
+                  }}
+                  icon={<UserOutlined />}
+                />
+                <span className="user-name">
+                  Xin chào, <a href="/personal">{name}</a>
+                </span>
+                <Dropdown overlay={menu} trigger={["click"]}>
+                  <DownOutlined />
+                </Dropdown>
+              </Col>
+            </Row>
           </div>
         </Header>
         <Content

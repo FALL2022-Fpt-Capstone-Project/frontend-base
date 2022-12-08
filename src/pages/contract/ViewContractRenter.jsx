@@ -366,50 +366,50 @@ function ViewContractRenter({ openView, closeView, dataContract, dataAsset }) {
                                                         bordered
                                                     >
                                                         <Row>
-                                                            <Col span={10}>
+                                                            <Col span={12}>
                                                                 <h4>Họ và tên: </h4>
                                                             </Col>
-                                                            <Col span={14}>
+                                                            <Col span={12}>
                                                                 <p>{obj?.renter_full_name}</p>
                                                             </Col>
                                                         </Row>
                                                         <Row>
-                                                            <Col span={10}>
+                                                            <Col span={12}>
                                                                 <h4>Giới tính: </h4>
                                                             </Col>
-                                                            <Col span={14}>
+                                                            <Col span={12}>
                                                                 <p>{obj?.gender ? 'Nam' : 'Nữ'}</p>
                                                             </Col>
                                                         </Row>
                                                         <Row>
-                                                            <Col span={10}>
+                                                            <Col span={12}>
                                                                 <h4>Số điện thoại: </h4>
                                                             </Col>
-                                                            <Col span={14}>
+                                                            <Col span={12}>
                                                                 <p>{obj?.phone_number}</p>
                                                             </Col>
                                                         </Row>
                                                         <Row>
-                                                            <Col span={10}>
+                                                            <Col span={12}>
                                                                 <h4>CMND/CCCD: </h4>
                                                             </Col>
-                                                            <Col span={14}>
+                                                            <Col span={12}>
                                                                 <p>{obj?.identity_number}</p>
                                                             </Col>
                                                         </Row>
                                                         <Row>
-                                                            <Col span={10}>
+                                                            <Col span={12}>
                                                                 <h4>Địa chỉ: </h4>
                                                             </Col>
-                                                            <Col span={14}>
+                                                            <Col span={12}>
                                                                 <p>{obj?.address?.address_more_details}</p>
                                                             </Col>
                                                         </Row>
                                                         <Row>
-                                                            <Col span={10}>
+                                                            <Col span={12}>
                                                                 <h4>Biển số xe: </h4>
                                                             </Col>
-                                                            <Col span={14}>
+                                                            <Col span={12}>
                                                                 <p>{obj?.license_plates}</p>
                                                             </Col>
                                                         </Row>

@@ -227,6 +227,9 @@ const ListHistoryInvoice = () => {
       <Table
         bordered
         dataSource={dataSource}
+        scroll={{
+          x: 700,
+        }}
         columns={[
           {
             title: "Tên chung cư",

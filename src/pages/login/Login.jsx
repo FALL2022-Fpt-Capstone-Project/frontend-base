@@ -20,7 +20,6 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
 
   const getUserName = async (id, cookie) => {
-    setLoading(true);
     await axios
       .get("manager/staff/" + id, {
         headers: {
@@ -29,13 +28,13 @@ const Login = () => {
         },
       })
       .then((res) => {
+        console.log('in');
         window.localStorage.setItem("name", res.data.data?.full_name);
         navigate("/home");
       })
       .catch((error) => {
         console.log(error);
       });
-    setLoading(false);
   };
 
   const handleSubmit = async (e) => {
@@ -68,12 +67,14 @@ const Login = () => {
             message: "Đăng nhập thất bại",
             description: "Tên đăng nhập hoặc mật khẩu không chính xác.",
             duration: 3,
+            placement: "top",
           });
         } else if (err.response?.status === 401) {
           notification.error({
             message: "Đăng nhập thất bại",
             description: "Bạn không có quyền truy cập.",
             duration: 3,
+            placement: "top",
           });
         }
         console.log(err);

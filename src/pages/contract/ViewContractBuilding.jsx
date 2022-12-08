@@ -160,7 +160,7 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                         <h4>Email:</h4>
                       </Col>
                       <Col span={12}>
-                        <p>Chưa có</p>
+                        <p>{dataContract?.rack_renter_email}</p>
                       </Col>
                     </Row>
                     <Row>
@@ -220,7 +220,7 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                         <h4>Địa chỉ:</h4>
                       </Col>
                       <Col span={12}>
-                        <p>Chưa có</p>
+                        <p>{dataContract?.address?.address_wards + ", " + dataContract?.address?.address_district + ", " + dataContract?.address?.address_city} </p>
                       </Col>
                     </Row>
                     <Row>
