@@ -8,6 +8,7 @@ const { Content, Sider, Header } = Layout;
 const MainLayout = ({ children, button, title }) => {
   const [collapsed, setCollapsed] = useState(false);
   let name = localStorage.getItem("name");
+
   return (
     <Layout
       style={{
