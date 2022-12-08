@@ -46,6 +46,7 @@ const UpdateStaff = ({ visible, close, id }) => {
         setDeactivate(res.data.data?.is_deactivate);
       });
   }, [id, cookie]);
+
   const data = {
     full_name: full_name,
     user_name: user_name,
@@ -187,30 +188,6 @@ const UpdateStaff = ({ visible, close, id }) => {
               hasFeedback
             >
               <Input.Password onChange={(e) => setPassword(e.target.value)} placeholder="Nhập mật khẩu" />
-            </Form.Item>
-            <Form.Item
-              className="form-item"
-              name="comfirmPassword"
-              labelCol={{ span: 24 }}
-              label={
-                <span>
-                  <b>Nhập lại mật khẩu:</b>
-                </span>
-              }
-              dependencies={["password"]}
-              hasFeedback
-              rules={[
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (!value || getFieldValue("password") === value) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(new Error("Mật khẩu không khớp!"));
-                  },
-                }),
-              ]}
-            >
-              <Input.Password placeholder="Nhập lại mật khẩu" />
             </Form.Item>
             <Form.Item
               className="form-item"

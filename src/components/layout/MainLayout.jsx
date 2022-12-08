@@ -47,7 +47,10 @@ const MainLayout = ({ children, button, title }) => {
           bottom: 0,
         }}
       >
-        <p className="sider-title">QUẢN LÝ CHUNG CƯ MINI</p>
+        <div className="logo">
+          <img src={require("../../assets/image/logo.png")} id="logo" alt="Logo" />
+        </div>
+        {/* <p className="sider-title">QUẢN LÝ CHUNG CƯ MINI</p> */}
         <Sidebar />
       </Sider>
       <Layout className="site-layout">
@@ -63,7 +66,7 @@ const MainLayout = ({ children, button, title }) => {
               }}
               icon={<UserOutlined />}
             />
-            <span className="user-name">Xin chào {user?.full_name}</span>
+            <span className="user-name">{user?.full_name}</span>
           </div>
         </Header>
         <Content
