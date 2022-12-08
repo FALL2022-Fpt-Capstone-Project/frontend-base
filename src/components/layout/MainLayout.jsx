@@ -11,6 +11,7 @@ const MainLayout = ({ children, button, title }) => {
   const [user, setUser] = useState();
   let cookie = localStorage.getItem("Cookie");
   let id = localStorage.getItem("id");
+  let name = localStorage.getItem("name");
   useEffect(() => {
     axios
       .get(`manager/staff/${id}`, {
@@ -63,7 +64,7 @@ const MainLayout = ({ children, button, title }) => {
               }}
               icon={<UserOutlined />}
             />
-            <span className="user-name">Xin chào {user?.full_name}</span>
+            <span className="user-name">Xin chào {name}</span>
           </div>
         </Header>
         <Content

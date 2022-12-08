@@ -693,7 +693,7 @@ const EditContractRenter = () => {
     listServiceOfBuilding.push({
       service_id: dataContractById.list_hand_over_general_service.map((obj, index) => obj.service_id),
     });
-    console.log(listServiceOfBuilding);
+    console.log(dataContractById);
     const list_general_service = listServiceOfBuilding
       .map((obj, index) => {
         return {
@@ -1624,57 +1624,59 @@ const EditContractRenter = () => {
                       </Row>
                       <Row>
                         <Col xs={24} sm={12} md={16} xl={6} span={6}>
-                          {dataApartmentGroupSelect?.list_general_service?.map((obj, index) => {
-                            return (
-                              <>
-                                <Form.Item
-                                  className="form-item"
-                                  labelCol={{ span: 24 }}
-                                  name={["serviceIndexInForm", `${index}`, "hand_over_service_index"]}
-                                  label={
-                                    <h4>
-                                      {obj.service_show_name}{" "}
-                                      <b>
-                                        (
-                                        {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
-                                          obj.service_price
-                                        )}
-                                        )
-                                      </b>
-                                    </h4>
-                                  }
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: `Vui lòng không để trống`,
-                                    },
-                                  ]}
-                                >
-                                  <InputNumber
-                                    controls={false}
-                                    placeholder={
-                                      String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
-                                        ? "Nhập chỉ số"
-                                        : "Số " +
-                                        obj.service_type_name +
-                                        " / " +
-                                        obj.service_price.toLocaleString("vn-VN", {
-                                          style: "currency",
-                                          currency: "VND",
-                                        })
+                          {dataApartmentGroupSelect?.list_general_service?.filter(service =>
+                            service?.service_show_name?.toLowerCase()?.trim().includes('điện')
+                            || service?.service_show_name?.toLowerCase()?.trim().includes('nước'))?.map((obj, index) => {
+                              return (
+                                <>
+                                  <Form.Item
+                                    className="form-item"
+                                    labelCol={{ span: 24 }}
+                                    name={["serviceIndexInForm", `${index}`, "hand_over_service_index"]}
+                                    label={
+                                      <h4>
+                                        {obj.service_show_name}{" "}
+                                        <b>
+                                          (
+                                          {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
+                                            obj.service_price
+                                          )}
+                                          )
+                                        </b>
+                                      </h4>
                                     }
-                                    addonAfter={
-                                      String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
-                                        ? "Chỉ số hiện tại"
-                                        : obj.service_type_name
-                                    }
-                                    style={{ width: "100%" }}
-                                    min={0}
-                                  />
-                                </Form.Item>
-                              </>
-                            );
-                          })}
+                                    rules={[
+                                      {
+                                        required: true,
+                                        message: `Vui lòng không để trống`,
+                                      },
+                                    ]}
+                                  >
+                                    <InputNumber
+                                      controls={false}
+                                      placeholder={
+                                        String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
+                                          ? "Nhập chỉ số"
+                                          : "Số " +
+                                          obj.service_type_name +
+                                          " / " +
+                                          obj.service_price.toLocaleString("vn-VN", {
+                                            style: "currency",
+                                            currency: "VND",
+                                          })
+                                      }
+                                      addonAfter={
+                                        String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
+                                          ? "Chỉ số hiện tại"
+                                          : obj.service_type_name
+                                      }
+                                      style={{ width: "100%" }}
+                                      min={0}
+                                    />
+                                  </Form.Item>
+                                </>
+                              );
+                            })}
                         </Col>
                       </Row>
                       <Row>

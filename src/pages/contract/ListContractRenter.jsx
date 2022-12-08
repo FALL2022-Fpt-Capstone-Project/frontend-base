@@ -3,7 +3,7 @@ import { Input, Table, DatePicker, Select, Button, Row, Col, Tag, Tabs, Switch, 
 import "./listContract.scss";
 import axios from "../../api/axios";
 import { useNavigate } from "react-router-dom";
-import { EditOutlined, SearchOutlined, EyeOutlined, UndoOutlined } from "@ant-design/icons";
+import { EditOutlined, SearchOutlined, EyeOutlined, UndoOutlined, DeleteOutlined } from "@ant-design/icons";
 import ViewContractRenter from "./ViewContractRenter";
 const { Search } = Input;
 const LIST_CONTRACT_URL = "manager/contract";
@@ -222,7 +222,7 @@ const ListContractRenter = () => {
         console.log(error);
       });
   };
-  
+
   return (
     <div className="list-contract">
       <div className="list-contract-search">
@@ -444,7 +444,7 @@ const ListContractRenter = () => {
                     <EditOutlined
                       className="icon"
                       onClick={() => {
-                        navigate('/contract-renter/edit', { state: record })
+                        navigate('/contract-renter/edit', { state: record });
                         // navigate(`/contract-renter/edit/${record.contract_id}/group/${record.group_id}`);
                       }}
                     />
@@ -458,6 +458,15 @@ const ListContractRenter = () => {
                         getAssetRoom(record.room_id);
                       }}
                     />
+                  </Tooltip>
+                  <Tooltip title="Đóng hợp đồng">
+                    <DeleteOutlined style={{
+                      fontSize: "20px",
+                      margin: "0 5px",
+                      color: 'red'
+                    }} onClick={() => {
+
+                    }} />
                   </Tooltip>
                 </>
               );

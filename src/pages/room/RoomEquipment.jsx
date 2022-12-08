@@ -12,6 +12,7 @@ import Sidebar from "../../components/sidebar/Sidebar";
 import Breadcrumbs from "../../components/BreadCrumb ";
 import axios from "../../api/axios";
 import { useLocation } from "react-router-dom";
+import AddMultiEquipment from "./AddMultiEquipment";
 const { Content, Sider, Header } = Layout;
 const fontSizeIcon = {
     fontSize: "120%",
@@ -45,6 +46,7 @@ function RoomEquipment(data) {
     const [componentSize, setComponentSize] = useState("default");
     const [assetRoom, setAssetRoom] = useState([]);
     const [listAssetId, setListAssetId] = useState([]);
+    const [addMultiAsset, setAddMultiAsset] = useState(false);
     let cookie = localStorage.getItem("Cookie");
 
     useEffect(() => {
@@ -333,7 +335,11 @@ function RoomEquipment(data) {
             setListAssetId(selectedRows.map(asset => asset.asset_id));
         }
     };
-    console.log(listAssetId);
+    const reloadData = () => {
+        getAssetType();
+        loadDefault();
+        getAssetRoom();
+    }
     return (
         // <Spin spinning={loading} size="large">
         <div className="update-staff">
@@ -399,7 +405,7 @@ function RoomEquipment(data) {
                                         </Col>
                                     </Row>
                                     <Row>
-                                        <Col span={22}>
+                                        <Col xs={12} xl={16} span={16}>
                                             <Row>
                                                 <FilterOutlined style={{ fontSize: "150%" }} />
                                                 <b>Nhóm tài sản: </b>
@@ -416,13 +422,25 @@ function RoomEquipment(data) {
                                                 ></Checkbox.Group>
                                             </Row>
                                         </Col>
-                                        <Col span={2}>
-                                            <PlusCircleOutlined
+                                        <Col xs={12} xl={8} span={8}>
+                                            <Button
+                                                style={{ marginBottom: "2%", float: "right" }}
                                                 onClick={() => {
                                                     setAddAssetInRoom(true);
                                                 }}
-                                                style={{ fontSize: 36, color: "#1890ff", float: "right", marginBottom: "10%" }}
-                                            />
+                                                type="primary" icon={<PlusCircleOutlined style={textSize} />}>
+                                                Thêm mới tài sản
+                                            </Button>
+                                            <Button
+                                                onClick={() => {
+                                                    setAddMultiAsset(true);
+                                                }}
+                                                type="primary"
+                                                style={{ marginBottom: "2%", marginRight: "2%", float: "right" }}
+                                                icon={<PlusCircleOutlined style={textSize} />}
+                                            >
+                                                Thêm nhiều tài sản
+                                            </Button>
                                         </Col>
                                     </Row>
                                     <Row>
@@ -677,6 +695,7 @@ function RoomEquipment(data) {
                                     </Form.Item>
                                 </Form>
                             </Modal>
+                            <AddMultiEquipment reload={reloadData} openView={addMultiAsset} closeView={setAddMultiAsset} assetTypeList={listAssetType} roomId={state[0].room_id} />
                         </div>
                     </Content>
                 </Layout>
