@@ -30,6 +30,7 @@ const Login = () => {
       })
       .then((res) => {
         window.localStorage.setItem("name", res.data.data?.full_name);
+        navigate("/home");
       })
       .catch((error) => {
         console.log(error);
@@ -58,8 +59,7 @@ const Login = () => {
         setAuth({ user_name, password, roles, accessToken, id });
         setUser("");
         setPwd("");
-        getUserName(id, accessToken)
-        navigate("/home");
+        getUserName(id, accessToken);
         console.log(res);
       })
       .catch((err) => {
