@@ -22,6 +22,8 @@ import RoomPreview from "./pages/room/RoomPreview";
 import RoomEquipment from "./pages/room/RoomEquipment";
 import AddAutoInvoice from "./pages/invoice/AddAutoInvoice";
 import DetailInvoice from "./pages/invoice/DetailInvoice";
+import EditContractBuilding from "./pages/contract/EditContractBuilding";
+import Personal from "./pages/personal/Personal";
 
 const ROLES = {
   User: "ROLE_STAFF",
@@ -65,10 +67,13 @@ const App = () => {
           <Route path="contract-renter/create" element={<CreateContractRenter />} />
         </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
-          <Route path="contract-renter/edit/:contract_id/group/:group_id" element={<EditContractRenter />} />
+          <Route path="contract-renter/edit" element={<EditContractRenter />} />
         </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
           <Route path="contract-apartment/create" element={<CreateContractBuilding />} />
+        </Route>
+        <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
+          <Route path="contract-apartment/edit" element={<EditContractBuilding />} />
         </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
           <Route path="manage-staff" element={<Admin />} />
@@ -93,6 +98,9 @@ const App = () => {
         </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
           <Route path="detail-invoice" element={<DetailInvoice />} />
+        </Route>
+        <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
+          <Route path="personal" element={<Personal />} />
         </Route>
       </Routes>
     </div>

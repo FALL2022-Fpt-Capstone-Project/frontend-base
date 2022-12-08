@@ -39,7 +39,7 @@ function AddRoom({ reRender, visible, close, data }) {
                 }
             )
             .then((res) => {
-                console.log(res.data.data);
+                // console.log(res.data.data);
                 const key = `open${Date.now()}`;
                 const btn = (
                     <>
@@ -69,13 +69,13 @@ function AddRoom({ reRender, visible, close, data }) {
                     placement: "top",
                     duration: 6,
                 });
-                console.log(res);
+                // console.log(res);
                 close(false);
                 formAddRoom.resetFields();
                 reRender();
             })
             .catch((error) => {
-                console.log(error);
+                // console.log(error);
                 notification.error({
                     message: "Thêm mới phòng thất bại",
                     description: error.response.data.data,
@@ -99,7 +99,7 @@ function AddRoom({ reRender, visible, close, data }) {
 
     const checkDuplicate = (_, value) => {
         const check = groupSelect?.list_rooms?.find((room, index) =>
-            room.room_name.toUpperCase() === (value.toUpperCase()));
+            room.room_name.trim().toUpperCase() === (value.trim().toUpperCase()));
         if (check !== undefined) {
             return Promise.reject(new Error('Tên phòng: ' + value + ' đã có trong chung cư bạn chọn'));
         } else {
@@ -164,13 +164,13 @@ function AddRoom({ reRender, visible, close, data }) {
                                     rules={[
                                         {
                                             required: true,
-                                            message: "Vui lòng chọn tòa nhà",
+                                            message: "Vui lòng chọn chung cư",
                                         },
                                     ]}
                                 >
                                     <Select
                                         showSearch
-                                        placeholder="Chọn tòa nhà"
+                                        placeholder="Chọn chung cư"
                                         optionFilterProp="children"
                                         filterOption={(input, option) => (option?.label.toLowerCase().trim() ?? '').includes(input.toLowerCase().trim())}
                                         filterSort={(optionA, optionB) =>
@@ -285,7 +285,7 @@ function AddRoom({ reRender, visible, close, data }) {
                                         formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                                         parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
                                         style={{ width: "100%" }}
-                                        min={0}
+                                        min={1}
                                     />
                                 </Form.Item>
                                 <Form.Item

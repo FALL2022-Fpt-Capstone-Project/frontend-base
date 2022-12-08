@@ -63,12 +63,13 @@ const ROOM_INFOR = "manager/room/";
 const GET_ALL_CONTRACT = "manager/contract";
 const DELETE_ROOM = "manager/room/delete/";
 const DELETE_LIST_ROOM = "manager/room/delete/list";
+const ASSET_ROOM = "manager/asset/room/";
 
 let optionFloor = [{ label: 'Tất cả các tầng', value: "" }];
 for (let i = 1; i <= 10; i++) {
   optionFloor.push({
     value: i,
-    label: i + " Tầng",
+    label: "Tầng " + i,
   });
 };
 
@@ -99,6 +100,7 @@ function ListRoom(props) {
   const [textCardGroup, setTextCardGroup] = useState("Danh sách phòng");
   const [room_status, setRoomStatus] = useState([]);
   const [dataRoomUpdate, setDataRoomUpdate] = useState();
+  const [assetRoom, setAssetRoom] = useState([]);
   const [filterSave, setFilterSave] = useState();
 
   let cookie = localStorage.getItem("Cookie");
@@ -108,95 +110,19 @@ function ListRoom(props) {
     setComponentSize(size);
   };
 
-  //Tree
-  // const [expandedKeys, setExpandedKeys] = useState([]);
-  // const [checkedKeys, setCheckedKeys] = useState([]);
-  // const [selectedKeys, setSelectedKeys] = useState([]);
-  // const [autoExpandParent, setAutoExpandParent] = useState(true);
-
-  // const onExpand = (expandedKeysValue) => {
-  //   console.log('onExpand', expandedKeysValue);
-  //   // if not set autoExpandParent to false, if children expanded, parent can not collapse.
-  //   // or, you can remove all expanded children keys.
-  //   setExpandedKeys(expandedKeysValue);
-  //   setAutoExpandParent(false);
-  // };
-
-  // const onCheck = (checkedKeysValue) => {
-  //   console.log('onCheck', checkedKeysValue);
-  //   setCheckedKeys(checkedKeysValue);
-  //   const group_floor = checkedKeysValue?.map((obj, index) => obj.split("-"))?.map((o, i) => {
-  //     return { group: parseInt(o[0]), floor: parseInt(o[1]) }
-  //   })?.filter((room, j) => room !== undefined);
-
-  //   const arrTotalRoom = group_floor?.map((obj, index) => {
-  //     return roomInfor?.filter((o, i) => o.group_id === obj.group
-  //       && o.room_floor === obj.floor)?.length
-  //   });
-  //   const totalRoomRented = group_floor?.map((obj, index) => {
-  //     return roomInfor?.filter((o, i) => o.group_id === obj.group && o.room_floor === obj.floor
-  //       && Number.isInteger(o.contract_id))?.length
-  //   });
-  //   const totalEmptyRoom = group_floor?.map((obj, index) => {
-  //     return roomInfor?.filter((o, i) => o.group_id === obj.group && o.room_floor === obj.floor
-  //       && o.contract_id === null)?.length
-  //   });
-  //   const totalPrice = group_floor?.map((obj, index) => {
-  //     return roomInfor?.filter((o, i) => o.group_id === obj.group && o.room_floor === obj.floor)
-  //       ?.map((room, j) => room.room_price).reduce(
-  //         (previousValue, currentValue) => previousValue + currentValue, 0)
-  //   });
-
-  //   setNumberOfRoom(arrTotalRoom?.reduce(
-  //     (previousValue, currentValue) => previousValue + currentValue, 0));
-  //   setNumberOfRoomEmpty(totalEmptyRoom?.reduce(
-  //     (previousValue, currentValue) => previousValue + currentValue, 0));
-  //   setTotalRoomPrice(totalPrice?.reduce(
-  //     (previousValue, currentValue) => previousValue + currentValue, 0));
-  //   setNumberOfRoomRented(totalRoomRented?.reduce(
-  //     (previousValue, currentValue) => previousValue + currentValue, 0));
-
-  //   const dataApartment = group_floor?.map((obj, index) => {
-  //     return dataApartmentGroup?.filter((o, i) => o.group_id === obj.group)[0]
-  //   });
-
-  //   const listRoom = group_floor?.map((obj, index) => {
-  //     return roomInfor?.filter((o, i) => o.group_id === obj.group &&
-  //       o.room_floor === obj.floor)
-  //   });
-  //   const listContract = group_floor?.map((obj, index) => {
-  //     return contractRoom?.filter((o, i) => o.group_id === obj.group &&
-  //       o.room_floor === obj.floor)
-  //   });
-  //   setGroupRoom(pre => {
-  //     return { contracts: listContract.flat(1), group: dataApartment.flat(1), list_rooms: listRoom.flat(1) }
-  //   });
-  // };
-
-  // const onSelect = (selectedKeysValue, info) => {
-  //   console.log('onSelect', info);
-  //   setSelectedKeys(selectedKeysValue);
-  // };
-  //Tree
-
   const onClickAddRoom = (e) => {
     setAddRoom(true);
   };
   const onClickAddRoomAuto = (e) => {
     setAddRoomAuto(true);
   };
-  const onClickEditRoom = (e) => {
-    setEditRoom(true);
-  };
-  const handleOpenChange = (e) => {
-    // setOperation(e);
-    console.log(e);
-  };
+
   const columns = [
     {
       title: "Tên chung cư",
       dataIndex: "groupName",
       key: "room_id",
+      width: 200,
     },
     {
       title: "Tên phòng",
@@ -253,162 +179,168 @@ function ListRoom(props) {
       },
     },
     {
-      // title: "Thao tác",
-      width: 50,
+      title: "Thao tác",
+      width: 150,
       key: "room_id",
       render: (record) => {
-        return <>
-          <Row justify="center">
-            <Popover
-              // open={operation}
-              // onOpenChange={handleOpenChange}
-              placement="left"
-              trigger="click"
-              title={"Thao tác"}
-              content={
-                <div>
-                  <Row>
-                    <Col span={24}>
-                      <Button
-                        style={width100}
-                        onClick={() => {
-                          setSetRoomDetail(true);
-                          setRoomDetailData(record);
-                          // setOperation(false);
-                        }}
-                        icon={
-                          <EyeTwoTone
-                            style={iconSize}
-                          />
-                        }>
-                        Xem chi tiết
-                      </Button>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col span={24}>
-                      <Button
-                        style={width100}
-                        onClick={() => {
-                          setUpdateRoom(true);
-                          setDataRoomUpdate(record);
-                        }}
-                        icon={
-                          <EditTwoTone
-                            style={iconSize}
-                          />
-                        }>
-                        Chỉnh sửa phòng
-                      </Button>
-                    </Col>
-                  </Row>
-                  {
-                    !record.roomStatus
-                      ?
-                      <>
-                        <Row>
-                          <Col span={24}>
-                            <Button
-                              style={width100}
-                              onClick={() => {
-                                onDeleteRoom(record);
-                              }}
-                              icon={
-                                <DeleteOutlined style={{
-                                  fontSize: "130%",
-                                  marginRight: "8%",
-                                  color: 'red'
-                                }} />
-                              }>
-                              Xóa phòng
-                            </Button>
-                          </Col>
-                        </Row>
-                      </>
-                      :
-                      <Row>
-                        <Col span={24}>
-                          <Button
-                            style={width100}
-                            onClick={() => {
-                              navigate(`/room/member/${record.room_id}`);
-                            }}
-                            icon={
-                              <UserOutlined
-                                style={iconSize}
-                              />
-                            }>
-                            Thêm thành viên
-                          </Button>
-                        </Col>
-                      </Row>
-                  }
-                  <Row>
-                    <Col span={24}>
-                      <Button
-                        onClick={() => {
-                          navigate('equipment', { state: [record] })
-                        }}
-                        style={width100}
-                        icon={
-                          <BulbOutlined style={iconSize} />
-                        }>
-                        Trang thiết bị
-                      </Button>
-                    </Col>
-                  </Row>
-                </div>
-              }>
-              <Tooltip title="Thao tác">
-                <MoreOutlined onClick={() => {
-                  // setOperation(true);
-                }} style={{ borderRadius: "50%", border: '1px solid black', fontSize: '200%' }} />
-              </Tooltip>
-            </Popover>
-          </Row>
-        </>
-        // return (
-        //   <>
-        //     <Tooltip title="Xem chi tiết">
-        //       <EyeTwoTone
-        //         onClick={() => {
-        //           setSetRoomDetail(true);
-        //           setRoomDetailData(record);
-        //         }}
-        //         style={iconSize}
-        //       />
-        //     </Tooltip>
-        //     <Tooltip title="Chỉnh sửa phòng">
-        //       <EditTwoTone onClick={() => { }} style={iconSize} />
-        //     </Tooltip>
-        //     {!record.roomStatus
-        //       ?
-        //       <>
-        //         <Tooltip title="Xóa phòng">
-        //           <DeleteOutlined style={{
-        //             fontSize: "130%",
-        //             marginRight: "8%",
-        //             color: 'red'
-        //           }} onClick={() => {
-        //             onDeleteRoom(record);
-        //           }} />
-        //         </Tooltip>
-        //       </>
-        //       :
-        //       <>
-        //         <Tooltip title="Thêm thành viên vào phòng">
-        //           <UserOutlined onClick={() => {
-        //             navigate(`/room/member/${record.room_id}`);
-        //           }} style={iconSize} />
-        //         </Tooltip>
-        //       </>
-        //     }
+        // return <>
+        //   <Row justify="center">
+        //     <Popover
+        //       // open={operation}
+        //       // onOpenChange={handleOpenChange}
+        //       placement="left"
+        //       trigger="click"
+        //       title={"Thao tác"}
+        //       content={
+        //         <div>
+        //           <Row>
+        //             <Col span={24}>
+        //               <Button
+        //                 style={width100}
+        //                 onClick={() => {
+        //                   setSetRoomDetail(true);
+        //                   setRoomDetailData(record);
+        //                   // setOperation(false);
+        //                 }}
+        //                 icon={
+        //                   <EyeTwoTone
+        //                     style={iconSize}
+        //                   />
+        //                 }>
+        //                 Xem chi tiết
+        //               </Button>
+        //             </Col>
+        //           </Row>
+        //           <Row>
+        //             <Col span={24}>
+        //               <Button
+        //                 style={width100}
+        //                 onClick={() => {
+        //                   setUpdateRoom(true);
+        //                   setDataRoomUpdate(record);
+        //                 }}
+        //                 icon={
+        //                   <EditTwoTone
+        //                     style={iconSize}
+        //                   />
+        //                 }>
+        //                 Chỉnh sửa phòng
+        //               </Button>
+        //             </Col>
+        //           </Row>
+        //           {
+        //             !record.roomStatus
+        //               ?
+        //               <>
+        //                 <Row>
+        //                   <Col span={24}>
+        //                     <Button
+        //                       style={width100}
+        //                       onClick={() => {
+        //                         onDeleteRoom(record);
+        //                       }}
+        //                       icon={
+        //                         <DeleteOutlined style={{
+        //                           fontSize: "130%",
+        //                           marginRight: "8%",
+        //                           color: 'red'
+        //                         }} />
+        //                       }>
+        //                       Xóa phòng
+        //                     </Button>
+        //                   </Col>
+        //                 </Row>
+        //               </>
+        //               :
+        //               <Row>
+        //                 <Col span={24}>
+        //                   <Button
+        //                     style={width100}
+        //                     onClick={() => {
+        //                       navigate(`/room/member/${record.room_id}`);
+        //                     }}
+        //                     icon={
+        //                       <UserOutlined
+        //                         style={iconSize}
+        //                       />
+        //                     }>
+        //                     Thêm thành viên
+        //                   </Button>
+        //                 </Col>
+        //               </Row>
+        //           }
+        //           <Row>
+        //             <Col span={24}>
+        //               <Button
+        //                 onClick={() => {
+        //                   navigate('equipment', { state: [record] })
+        //                 }}
+        //                 style={width100}
+        //                 icon={
+        //                   <BulbOutlined style={iconSize} />
+        //                 }>
+        //                 Trang thiết bị
+        //               </Button>
+        //             </Col>
+        //           </Row>
+        //         </div>
+        //       }>
+        //       <Tooltip title="Thao tác">
+        //         <MoreOutlined onClick={() => {
+        //           // setOperation(true);
+        //         }} style={{ borderRadius: "50%", border: '1px solid black', fontSize: '200%' }} />
+        //       </Tooltip>
+        //     </Popover>
+        //   </Row>
+        // </>
+        return (
+          <>
+            <Tooltip title="Xem chi tiết">
+              <EyeTwoTone
+                onClick={() => {
+                  setSetRoomDetail(true);
+                  setRoomDetailData(record);
+                  getAssetRoom(record.room_id);
+                }}
+                style={iconSize}
+              />
+            </Tooltip>
+            <Tooltip title="Chỉnh sửa phòng">
+              <EditTwoTone onClick={() => {
+                setUpdateRoom(true);
+                setDataRoomUpdate(record);
+              }} style={iconSize} />
+            </Tooltip>
+            {!record.roomStatus
+              ?
+              <>
+                <Tooltip title="Xóa phòng">
+                  <DeleteOutlined style={{
+                    fontSize: "130%",
+                    marginRight: "8%",
+                    color: 'red'
+                  }} onClick={() => {
+                    onDeleteRoom(record);
+                  }} />
+                </Tooltip>
+              </>
+              :
+              <>
+                <Tooltip title="Thêm thành viên vào phòng">
+                  <UserOutlined onClick={() => {
+                    navigate(`/room/member/${record.room_id}`);
+                  }} style={iconSize} />
+                </Tooltip>
+              </>
+            }
 
-        //     <Tooltip title="Thêm trang thiết bị trong phòng">
-        //       <BulbOutlined style={iconSize} />
-        //     </Tooltip>
-        //   </>
-        // );
+            <Tooltip title="Thêm trang thiết bị trong phòng">
+              <BulbOutlined onClick={() => {
+                navigate('equipment', { state: [record] })
+              }} style={iconSize} />
+            </Tooltip>
+          </>
+        );
       },
     },
   ];
@@ -427,9 +359,7 @@ function ListRoom(props) {
           placement: "top",
           duration: 3,
         });
-        apartmentGroup();
-        getRoomInfor(groupIdSelect);
-        getAllContract();
+        reload();
       })
       .catch((error) => {
         notification.error({
@@ -456,9 +386,10 @@ function ListRoom(props) {
           placement: "top",
           duration: 3,
         });
-        apartmentGroup();
-        getRoomInfor(groupIdSelect);
-        getAllContract();
+        // apartmentGroup();
+        // getRoomInfor(groupIdSelect);
+        // getAllContract();
+        reload();
         setListRoomId([]);
       })
       .catch((error) => {
@@ -484,7 +415,7 @@ function ListRoom(props) {
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
       setRowSelected(selectedRows);
-      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+      // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
       setListRoomId(selectedRows.map(room => room.room_id));
     },
     getCheckboxProps: (record) => ({
@@ -596,16 +527,59 @@ function ListRoom(props) {
       floor.push(i);
     }
     return {
-      title: <span>{obj.group_name} <b style={{ fontWeight: 600 }}>{" ( " + obj.total_floor + " tầng, " + obj.list_rooms?.length + " phòng )"}</b></span>,
+      title:
+        <span>{obj.group_name}
+          <b style={{ fontWeight: 600 }}>
+            {
+              " | "
+              + obj.total_floor
+              + " tầng, "
+              + (obj.list_rooms?.length === 0 ? "chưa có phòng " : "phòng trống ")
+            }
+          </b>
+          {
+            obj.list_rooms?.length === 0 ?
+              '' :
+              <Tag
+                color={obj.list_rooms.filter(filter => filter.contract_id === null).length === 0 ? "success" : "error"}
+              >
+                {
+                  + obj.list_rooms.filter(filter => filter.contract_id === null).length
+                  + " / " + obj.list_rooms?.length
+                }
+              </Tag>
+          }
+        </span>,
       key: obj.group_id.toString(),
       icon: <HomeOutlined />,
       children: floor?.map((pre, k) => {
         return {
-          title: <span>{'Tầng ' + pre} <b style={{ fontWeight: 600 }}> {"( " + obj.list_rooms?.filter((u, y) => u.room_floor === pre).length + " phòng )"} </b></span>,
+          title:
+            <span> {'Tầng ' + pre}
+              <b style={{ fontWeight: 600 }}>
+                {
+                  " | "
+                  + (obj.list_rooms?.filter((u, y) => u.room_floor === pre).length === 0 ? 'Chưa có phòng' : "Phòng trống ")
+                }
+              </b>
+              {
+                obj.list_rooms?.filter((u, y) => u.room_floor === pre).length === 0 ?
+                  '' :
+                  <Tag
+                    color={obj.list_rooms?.filter((u, y) => u.room_floor === pre && u.contract_id === null).length === 0 ? "success" : "error"}
+                  >
+                    {
+                      obj.list_rooms?.filter((u, y) => u.room_floor === pre && u.contract_id === null).length
+                      + " / "
+                      + obj.list_rooms?.filter((u, y) => u.room_floor === pre).length
+                    }
+                  </Tag>
+              }
+            </span>,
           key: obj.group_id + '-' + pre,
           children: obj.list_rooms?.filter(rooms => rooms.room_floor === pre)?.map((room, j) => {
             return {
-              title: 'Phòng ' + room.room_name,
+              title: <span style={room.contract_id === null ? { color: 'red' } : { color: 'green' }}>{'Phòng ' + room.room_name}</span>,
               key: obj.group_id.toString() + "-" + pre.toString() + "-" + room.room_id
             }
           })
@@ -624,16 +598,34 @@ function ListRoom(props) {
     console.log(e);
   }
 
+  const getAssetRoom = async (room_id) => {
+    await axios
+      .get(ASSET_ROOM + room_id, {
+        headers: {
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${cookie}`,
+        },
+        // withCredentials: true,
+      })
+      .then((res) => {
+        setAssetRoom(res.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   const reload = () => {
     apartmentGroup();
     if (filterSave === undefined) {
-      getRoomInfor()
+      getRoomInfor();
     } else {
       getRoomInfor(filterSave.roomGroup, filterSave.roomPrice, filterSave.roomFloor, filterSave.roomStatus);
     };
     getAllContract();
   }
-  console.log(groupRoom);
+
   return (
     <Spin spinning={loading} size="large">
       <div
@@ -643,7 +635,6 @@ function ListRoom(props) {
           minHeight: 360,
         }}
       >
-        <Divider />
         <Row>
           <Col span={24}>
             <Button
@@ -653,7 +644,7 @@ function ListRoom(props) {
               style={{ marginBottom: "1%", marginLeft: "1%", float: "right" }}
               icon={<PlusCircleOutlined style={textSize} />}
             >
-              Thêm Phòng
+              Thêm phòng
             </Button>
             <Button
               onClick={onClickAddRoomAuto}
@@ -673,6 +664,10 @@ function ListRoom(props) {
               title={<p className="text-card">Danh sách các chung cư</p>}
               bordered={false}
             >
+              <Row>
+                <Tag color="success">Đã thuê hết</Tag>
+                <Tag color="error">Đang trống</Tag>
+              </Row>
               <Row>
                 <Col span={24}>
                   <p>Tổng số chung cư: <span style={{ fontWeight: 600 }}>{dataApartmentGroup?.length} chung cư</span></p>
@@ -918,6 +913,7 @@ function ListRoom(props) {
                     roomPrice: obj.room_price,
                     roomDeposit: groupRoom?.contracts?.find((o, i) => o.room_id === obj.room_id)?.contract_deposit,
                     roomSquare: obj.room_area,
+                    room_assets_list: obj.room_assets_list,
                     billCycle: groupRoom?.contracts?.find((o, i) => o.room_id === obj.room_id)?.contract_bill_cycle,
                     paymentCycle: groupRoom?.contracts?.find((o, i) => o.room_id === obj.room_id)?.contract_payment_cycle,
                     durationContract: groupRoom?.contracts?.find((o, i) => o.room_id === obj.room_id)?.contract_term,
@@ -931,7 +927,7 @@ function ListRoom(props) {
                 })}
                 // pagination={{ defaultPageSize: 10, showSizeChanger: true, pageSizeOptions: ['10', '20', '30'] }}
                 columns={columns}
-                scroll={{ x: 800, y: 800 }}></Table>
+                scroll={{ x: 1000, y: 800 }}></Table>
               <Row>
                 <p>Tổng số phòng đã chọn: {listRoomId?.length}</p>
               </Row>
@@ -955,7 +951,7 @@ function ListRoom(props) {
                     setIncreaseRoomPrice(true);
                   }} style={{ marginLeft: "1%" }}
                     icon={<DollarCircleOutlined style={textSize} />} type="primary">
-                    Tăng/Giảm giá phòng
+                    Cập nhật giá phòng
                   </Button>
                 </Col>
               </Row>
@@ -965,8 +961,8 @@ function ListRoom(props) {
         <AddRoom reRender={reload} visible={addRoom} close={setAddRoom} data={dataApartmentGroup} />
         <UpdateRoom reRender={reload} visible={updateRoom} close={setUpdateRoom} data={dataApartmentGroup} dataUpdate={dataRoomUpdate} setDataUpdate={setDataRoomUpdate} />
         <AddRoomAuto visible={addRoomAuto} close={setAddRoomAuto} data={dataApartmentGroup} />
-        <RoomDetail visible={roomDetail} close={setSetRoomDetail} data={roomDetailData} />
-        <IncreaseRoomPrice visible={increaseRoomPrice} close={setIncreaseRoomPrice} />
+        <RoomDetail visible={roomDetail} close={setSetRoomDetail} data={roomDetailData} dataAsset={assetRoom} />
+        <IncreaseRoomPrice reRender={reload} visible={increaseRoomPrice} close={setIncreaseRoomPrice} data={dataApartmentGroup} />
       </div>
     </Spin>
   );

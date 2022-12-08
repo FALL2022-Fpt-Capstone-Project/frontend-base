@@ -197,13 +197,13 @@ const ListInvoice = () => {
               dataIndex: "is_all_paid",
               render: (_, record) => {
                 let status;
-                if (record.is_all_paid === "Chưa thanh toán hết hoá đơn") {
+                if (record.is_all_paid === false) {
                   status = (
                     <Tag color="red" key={record.is_all_paid}>
                       Chưa thanh toán hết hoá đơn
                     </Tag>
                   );
-                } else if (record.is_all_paid === "Đã thanh toán hết hoá đơn") {
+                } else if (record.is_all_paid === true) {
                   status = (
                     <Tag color="green" key={record.is_all_paid}>
                       Đã thanh toán hết hoá đơn

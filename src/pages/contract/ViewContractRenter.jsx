@@ -6,14 +6,16 @@ import moment from "moment";
 import { useNavigate } from "react-router-dom";
 
 const LIST_ASSET_TYPE = "manager/asset/type";
+const APARTMENT_DATA_GROUP = "/manager/group/all";
+
 const cardTop = {
-    height: 450,
+    height: '100%',
     border: '1px solid #C0C0C0',
     borderRadius: '10px'
 };
 
 const cardBellow = {
-    height: 300,
+    height: '100%',
     marginTop: '2%',
     border: '1px solid #C0C0C0',
     borderRadius: '10px'
@@ -21,16 +23,18 @@ const cardBellow = {
 const memeber = {
     border: '1px solid #C0C0C0',
     borderRadius: '10px',
-    height: 400
+    height: '100%'
 }
 
-function ViewContractRenter({ openView, closeView, dataContract }) {
+function ViewContractRenter({ openView, closeView, dataContract, dataAsset }) {
     // console.log(dataContract);
     const [loading, setLoading] = useState(false);
     const [searched, setSearched] = useState("");
     const [filterAssetType, setFilterAssetType] = useState([]);
     const [assetStatus, setAssetStatus] = useState([]);
     const [listAssetType, setListAssetType] = useState([]);
+    const [dataApartmentGroup, setDataApartmentGroup] = useState([]);
+
     const navigate = useNavigate();
 
     const dataFilter = {
@@ -75,28 +79,6 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
             filteredValue: filterAssetType.asset_type_show_name || null,
             onFilter: (value, record) => record.asset_type_show_name.indexOf(value) === 0,
         },
-        {
-            title: 'Ngày bàn giao',
-            dataIndex: 'hand_over_date_delivery',
-            key: 'asset_id',
-        },
-        // {
-        //     title: 'Trạng thái',
-        //     dataIndex: 'hand_over_asset_status',
-        //     filters: [
-        //         { text: 'Tốt', value: true },
-        //         { text: 'Hỏng', value: false },
-        //     ],
-        //     filteredValue: assetStatus.hand_over_asset_status || null,
-        //     onFilter: (value, record) => record.hand_over_asset_status === value,
-        //     render: (status) => {
-        //         return (
-        //             <>
-        //                 <Tag color={status ? "success" : "error"}>{status ? 'Tốt' : 'Hỏng'}</Tag>
-        //             </>
-        //         )
-        //     }
-        // },
     ];
 
     useEffect(() => {
@@ -121,6 +103,28 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                 console.log(error);
             });
     };
+    useEffect(() => {
+        apartmentGroup();
+    }, []);
+
+    const apartmentGroup = async () => {
+        setLoading(true);
+        let cookie = localStorage.getItem("Cookie");
+        await axios
+            .get(APARTMENT_DATA_GROUP, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${cookie}`,
+                },
+            })
+            .then((res) => {
+                setDataApartmentGroup(res.data.data.list_group_contracted.filter(group => group.group_id === dataContract.group_id)[0]);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+        setLoading(false);
+    };
     const renterRepresent = dataContract?.list_renter?.find((obj, index) => obj.represent === true);
 
     return (
@@ -144,7 +148,8 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                             <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>Thông tin chung</span>} key="1">
                                 <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                                     <Col xs={24} xl={12} span={12}>
-                                        <Card style={cardTop}
+                                        <Card
+                                            style={cardTop}
                                             title={
                                                 <>
                                                     <Tag style={{ fontSize: '15px', color: 'black' }} color="blue">
@@ -152,58 +157,58 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                                     </Tag>
                                                 </>} bordered={true}>
                                             <Row>
-                                                <Col span={10}>
+                                                <Col span={12}>
                                                     <h4>Họ và tên:</h4>
                                                 </Col>
-                                                <Col span={14}>
+                                                <Col span={12}>
                                                     <p>{renterRepresent?.renter_full_name}</p>
                                                 </Col>
                                             </Row>
                                             <Row>
-                                                <Col span={10}>
+                                                <Col span={12}>
                                                     <h4>Giới tính:</h4>
                                                 </Col>
-                                                <Col span={14}>
+                                                <Col span={12}>
                                                     <p>{renterRepresent?.gender ? 'Nam' : 'Nữ'}</p>
                                                 </Col>
                                             </Row>
                                             <Row>
-                                                <Col span={10}>
+                                                <Col span={12}>
                                                     <h4>Số điện thoại:</h4>
                                                 </Col>
-                                                <Col span={14}>
+                                                <Col span={12}>
                                                     <p>{renterRepresent?.phone_number}</p>
                                                 </Col>
                                             </Row>
                                             <Row>
-                                                <Col span={10}>
+                                                <Col span={12}>
                                                     <h4>CMND/CCCD:</h4>
                                                 </Col>
-                                                <Col span={14}>
+                                                <Col span={12}>
                                                     <p>{renterRepresent?.identity_number}</p>
                                                 </Col>
                                             </Row>
                                             <Row>
-                                                <Col span={10}>
+                                                <Col span={12}>
                                                     <h4>Email:</h4>
                                                 </Col>
-                                                <Col span={14}>
+                                                <Col span={12}>
                                                     <p>{renterRepresent?.email}</p>
                                                 </Col>
                                             </Row>
                                             <Row>
-                                                <Col span={10}>
+                                                <Col span={12}>
                                                     <h4>Địa chỉ:</h4>
                                                 </Col>
-                                                <Col span={14}>
+                                                <Col span={12}>
                                                     <p>{renterRepresent?.address?.address_more_details}</p>
                                                 </Col>
                                             </Row>
                                             <Row>
-                                                <Col span={10}>
+                                                <Col span={12}>
                                                     <h4>Biển số xe:</h4>
                                                 </Col>
-                                                <Col span={14}>
+                                                <Col span={12}>
                                                     <p>{renterRepresent?.license_plates}</p>
                                                 </Col>
                                             </Row>
@@ -218,26 +223,26 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                                     </Tag>
                                                 </>} bordered={true}>
                                             <Row>
-                                                <Col span={10}>
+                                                <Col span={12}>
                                                     <h4>Tên chung cư mini / căn hộ:</h4>
                                                 </Col>
-                                                <Col span={14}>
+                                                <Col span={12}>
                                                     <p>{dataContract?.group_name}</p>
                                                 </Col>
                                             </Row>
                                             <Row>
-                                                <Col span={10}>
+                                                <Col span={12}>
                                                     <h4>Phòng cho thuê:</h4>
                                                 </Col>
-                                                <Col span={14}>
+                                                <Col span={12}>
                                                     <p>Tầng {dataContract?.room?.room_floor} phòng {dataContract?.room?.room_name}</p>
                                                 </Col>
                                             </Row>
                                             <Row>
-                                                <Col span={10}>
+                                                <Col span={12}>
                                                     <h4>Thời hạn hợp đồng:</h4>
                                                 </Col>
-                                                <Col span={14}>
+                                                <Col span={12}>
                                                     <p>{dataContract?.contract_term < 12
                                                         ? dataContract?.contract_term + ' tháng'
                                                         : dataContract?.contract_term % 12 !== 0 ?
@@ -246,50 +251,50 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                                 </Col>
                                             </Row>
                                             <Row>
-                                                <Col span={10}>
+                                                <Col span={12}>
                                                     <h4>Ngày hợp đồng có hiệu lực:</h4>
                                                 </Col>
-                                                <Col span={14}>
+                                                <Col span={12}>
                                                     <p>{moment(dataContract?.contract_start_date).format('DD-MM-YYYY')}</p>
                                                 </Col>
                                             </Row>
                                             <Row>
-                                                <Col span={10}>
+                                                <Col span={12}>
                                                     <h4>Ngày kết thúc: </h4>
                                                 </Col>
-                                                <Col span={14}>
+                                                <Col span={12}>
                                                     <p>{moment(dataContract?.contract_end_date).format('DD-MM-YYYY')}</p>
                                                 </Col>
                                             </Row>
                                             <Row>
-                                                <Col span={10}>
+                                                <Col span={12}>
                                                     <h4>Trạng thái hợp đồng: </h4>
                                                 </Col>
-                                                <Col span={14}>
+                                                <Col span={12}>
                                                     {!dataContract?.contract_is_disable ? <Tag color="green">Hợp đồng còn hiệu lực</Tag> : <Tag color="red">Hợp đồng hết hiệu lực</Tag>}
                                                 </Col>
                                             </Row>
                                             <Row>
-                                                <Col span={10}>
+                                                <Col span={12}>
                                                     <h4>Chu kỳ thanh toán:</h4>
                                                 </Col>
-                                                <Col span={14}>
+                                                <Col span={12}>
                                                     <p>{dataContract?.contract_bill_cycle} tháng 1 lần</p>
                                                 </Col>
                                             </Row>
                                             <Row>
-                                                <Col span={10}>
+                                                <Col span={12}>
                                                     <h4>Thời gian thu tiền:</h4>
                                                 </Col>
-                                                <Col span={14}>
+                                                <Col span={12}>
                                                     <p>Ngày {dataContract?.contract_payment_cycle} hàng tháng</p>
                                                 </Col>
                                             </Row>
                                             <Row>
-                                                <Col span={10}>
+                                                <Col span={12}>
                                                     <h4>Ghi chú:</h4>
                                                 </Col>
-                                                <Col span={14}>
+                                                <Col span={12}>
                                                     <p>{dataContract?.note}</p>
                                                 </Col>
                                             </Row>
@@ -303,35 +308,36 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                                 <Tag style={{ fontSize: '15px', color: 'black' }} color="blue"><DollarOutlined style={{ fontSize: '120%' }} /> Giá trị hợp đồng</Tag>
                                             } bordered={true}>
                                             <Row>
-                                                <Col span={10}>
+                                                <Col span={12}>
                                                     <h4>Tiền phòng (VNĐ): </h4>
                                                 </Col>
-                                                <Col span={14}>
+                                                <Col span={12}>
                                                     <p><b>{new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(dataContract.contract_price)}</b></p>
                                                 </Col>
                                             </Row>
                                             <Row>
-                                                <Col span={10}>
+                                                <Col span={12}>
                                                     <h4>Tiền cọc (VNĐ): </h4>
                                                 </Col>
-                                                <Col span={14}>
+                                                <Col span={12}>
                                                     <p><b>{new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(dataContract.contract_deposit)}</b></p>
                                                 </Col>
                                             </Row>
                                         </Card>
                                     </Col>
                                     <Col xs={24} xl={12} span={12}>
-                                        <Card style={cardBellow}
+                                        <Card
+                                            style={cardBellow}
                                             title={
                                                 <Tag style={{ fontSize: '15px', color: 'black' }} color="blue"><GoldOutlined /> Dịch vụ sử dụng</Tag>
                                             } bordered={true}>
-                                            {dataContract?.list_hand_over_general_service?.map((obj, index) => {
+                                            {dataApartmentGroup?.list_general_service?.map((obj, index) => {
                                                 return (
                                                     <Row>
-                                                        <Col span={10}>
+                                                        <Col span={12}>
                                                             <h4>{obj.service_show_name}: </h4>
                                                         </Col>
-                                                        <Col span={14}>
+                                                        <Col span={12}>
                                                             <p><b>{new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(obj.service_price)}</b> ({obj.service_type_name})</p>
                                                         </Col>
                                                     </Row>
@@ -360,50 +366,50 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                                         bordered
                                                     >
                                                         <Row>
-                                                            <Col span={10}>
+                                                            <Col span={12}>
                                                                 <h4>Họ và tên: </h4>
                                                             </Col>
-                                                            <Col span={14}>
+                                                            <Col span={12}>
                                                                 <p>{obj?.renter_full_name}</p>
                                                             </Col>
                                                         </Row>
                                                         <Row>
-                                                            <Col span={10}>
+                                                            <Col span={12}>
                                                                 <h4>Giới tính: </h4>
                                                             </Col>
-                                                            <Col span={14}>
+                                                            <Col span={12}>
                                                                 <p>{obj?.gender ? 'Nam' : 'Nữ'}</p>
                                                             </Col>
                                                         </Row>
                                                         <Row>
-                                                            <Col span={10}>
+                                                            <Col span={12}>
                                                                 <h4>Số điện thoại: </h4>
                                                             </Col>
-                                                            <Col span={14}>
+                                                            <Col span={12}>
                                                                 <p>{obj?.phone_number}</p>
                                                             </Col>
                                                         </Row>
                                                         <Row>
-                                                            <Col span={10}>
+                                                            <Col span={12}>
                                                                 <h4>CMND/CCCD: </h4>
                                                             </Col>
-                                                            <Col span={14}>
+                                                            <Col span={12}>
                                                                 <p>{obj?.identity_number}</p>
                                                             </Col>
                                                         </Row>
                                                         <Row>
-                                                            <Col span={10}>
+                                                            <Col span={12}>
                                                                 <h4>Địa chỉ: </h4>
                                                             </Col>
-                                                            <Col span={14}>
+                                                            <Col span={12}>
                                                                 <p>{obj?.address?.address_more_details}</p>
                                                             </Col>
                                                         </Row>
                                                         <Row>
-                                                            <Col span={10}>
+                                                            <Col span={12}>
                                                                 <h4>Biển số xe: </h4>
                                                             </Col>
-                                                            <Col span={14}>
+                                                            <Col span={12}>
                                                                 <p>{obj?.license_plates}</p>
                                                             </Col>
                                                         </Row>
@@ -414,12 +420,12 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                     })}
                                 </Row>
                             </Tabs.TabPane>
-                            <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>Tài sản đã bàn giao</span>} key="3">
+                            <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>Trang thiết bị trong phòng</span>} key="3">
                                 <Row>
                                     <Col span={24}>
                                         <Row>
-                                            <Col span={8}>
-                                                <Input.Search placeholder="Nhập tên tài sản để tìm kiếm" style={{ marginBottom: 8, width: 300 }}
+                                            <Col xs={24} xl={8} span={8}>
+                                                <Input.Search placeholder="Nhập tên tài sản để tìm kiếm" style={{ marginBottom: 8 }}
                                                     onSearch={(e) => {
                                                         setSearched(e);
                                                     }}
@@ -430,11 +436,11 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                             </Col>
                                         </Row>
                                         <Row>
-                                            <Col span={3}>
+                                            <Col xs={24} xl={3} span={3}>
                                                 <FilterOutlined style={{ fontSize: '150%' }} />
                                                 Nhóm tài sản:
                                             </Col>
-                                            <Col span={21}>
+                                            <Col xs={24} xl={21} span={21}>
                                                 <Row>
                                                     <Checkbox.Group options={listAssetType?.map((obj, index) => { return obj.asset_type_show_name })}
                                                         onChange={(checkedValues) => {
@@ -453,7 +459,15 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                                                     setFilterAssetType(filters);
                                                     setAssetStatus(filters);
                                                 }}
-                                                dataSource={dataContract?.list_hand_over_asset}
+                                                dataSource={dataAsset?.map(asset => {
+                                                    return {
+                                                        asset_id: asset.room_asset_id,
+                                                        asset_name: asset.asset_name,
+                                                        hand_over_asset_quantity: asset.asset_quantity,
+                                                        asset_type_show_name: listAssetType?.find(a => a?.id === asset?.asset_type_id)?.asset_type_show_name,
+                                                        asset_type_id: listAssetType?.find(a => a?.id === asset?.asset_type_id)?.id,
+                                                    }
+                                                })}
                                                 columns={columns}
                                                 scroll={{ x: 800, y: 600 }}
                                                 loading={loading}
@@ -466,7 +480,7 @@ function ViewContractRenter({ openView, closeView, dataContract }) {
                             </Tabs.TabPane>
                         </Tabs>
                         <Button onClick={() => {
-                            navigate(`/contract-renter/edit/${dataContract?.contract_id}/group/${dataContract?.group_id}`);
+                            navigate('/contract-renter/edit', { state: dataContract });
                         }} style={{ marginTop: '3%' }} type='primary' icon={<ArrowRightOutlined />}> Chỉnh sửa thông tin hợp đồng</Button>
                     </div>
                 </Modal>

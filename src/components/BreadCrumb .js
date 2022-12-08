@@ -14,11 +14,13 @@ const breadcrumbNameMap = {
   "/contract-renter/create": "Tạo mới hợp đồng cho thuê",
   "/contract-renter/edit": "Cập nhật hợp đồng cho thuê",
   "/contract-apartment/create": "Tạo mới hợp đồng đi thuê",
+  "/contract-apartment/edit": "Cập nhật hợp đồng đi thuê",
   "/manage-staff": "Quản lý nhân viên",
   "/manage-staff/create-staff": "Tạo mới nhân viên",
   "/manage-staff/update-staff": "Cập nhật nhân viên",
-  "/service": "Dịch vụ",
+  "/service": "Dịch vụ chung",
   "/invoice": "Quản lý hoá đơn",
+  "/personal": "Thông tin cá nhân",
   "/invoice/create-invoice-auto": "Tạo mới nhanh hoá đơn",
 };
 
@@ -31,7 +33,8 @@ const Breadcrumbs = () => {
     // console.log("url: " + url);
     return (
       <Breadcrumb.Item key={url} className="breadcrumb">
-        <Link to={url}>{breadcrumbNameMap[url]}</Link>
+        {/* <Link to={url}>{breadcrumbNameMap[url]}</Link> */}
+        <span style={{ color: 'black' }}>{breadcrumbNameMap[url]}</span>
       </Breadcrumb.Item>
     );
   });

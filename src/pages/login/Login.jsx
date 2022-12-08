@@ -19,6 +19,24 @@ const Login = () => {
   const [password, setPwd] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const getUserName = async (id, cookie) => {
+    await axios
+      .get("manager/staff/" + id, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie}`,
+        },
+      })
+      .then((res) => {
+        console.log('in');
+        window.localStorage.setItem("name", res.data.data?.full_name);
+        navigate("/home");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   const handleSubmit = async (e) => {
     setLoading(true);
     const response = await axios
@@ -40,7 +58,7 @@ const Login = () => {
         setAuth({ user_name, password, roles, accessToken, id });
         setUser("");
         setPwd("");
-        navigate("/home");
+        getUserName(id, accessToken);
         console.log(res);
       })
       .catch((err) => {
@@ -63,6 +81,8 @@ const Login = () => {
       });
     setLoading(false);
   };
+
+
   // setAuth({ user_name, password, roles, accessToken, id });
   return (
     <div className="login-page">

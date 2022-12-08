@@ -3,11 +3,13 @@ import { Input, Table, DatePicker, Select, Button, Row, Col, Tag, Tabs, Switch, 
 import "./listContract.scss";
 import axios from "../../api/axios";
 import { useNavigate } from "react-router-dom";
-import { EditOutlined, SearchOutlined, EyeOutlined, UndoOutlined } from "@ant-design/icons";
+import { EditOutlined, SearchOutlined, EyeOutlined, UndoOutlined, DeleteOutlined } from "@ant-design/icons";
 import ViewContractRenter from "./ViewContractRenter";
+
 const { Search } = Input;
 const LIST_CONTRACT_URL = "manager/contract";
 const LIST_BUILDING_FILTER = "manager/group/all/contracted";
+const ASSET_ROOM = "manager/asset/room/";
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 const ListContractRenter = () => {
@@ -24,6 +26,7 @@ const ListContractRenter = () => {
   const [duration, setDuration] = useState();
   const [viewContract, setViewContract] = useState(false);
   const [contractInfor, setContractInfor] = useState([]);
+  const [assetRoom, setAssetRoom] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const options = [];
@@ -89,8 +92,10 @@ const ListContractRenter = () => {
         });
       setLoading(false);
     };
+
     getBuildingFilter();
   }, [cookie]);
+
   for (let i = 0; i < buildingFilter.length; i++) {
     options.push({
       label: buildingFilter[i].group_name,
@@ -182,6 +187,7 @@ const ListContractRenter = () => {
       });
     setLoading(false);
   };
+
   // const getContractById = async (contractId) => {
   //   let cookie = localStorage.getItem("Cookie");
   //   await axios
@@ -201,7 +207,27 @@ const ListContractRenter = () => {
   //       console.log(error);
   //     });
   // };
+
   console.log(dataSource);
+
+  const getAssetRoom = async (room_id) => {
+    await axios
+      .get(ASSET_ROOM + room_id, {
+        headers: {
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${cookie}`,
+        },
+        // withCredentials: true,
+      })
+      .then((res) => {
+        setAssetRoom(res.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <div className="list-contract">
       <div className="list-contract-search">
@@ -423,7 +449,8 @@ const ListContractRenter = () => {
                     <EditOutlined
                       className="icon"
                       onClick={() => {
-                        navigate(`/contract-renter/edit/${record.contract_id}/group/${record.group_id}`);
+                        navigate('/contract-renter/edit', { state: record });
+                        // navigate(`/contract-renter/edit/${record.contract_id}/group/${record.group_id}`);
                       }}
                     />
                   </Tooltip>
@@ -433,8 +460,18 @@ const ListContractRenter = () => {
                       onClick={() => {
                         setViewContract(true);
                         setContractInfor(record);
+                        getAssetRoom(record.room_id);
                       }}
                     />
+                  </Tooltip>
+                  <Tooltip title="Đóng hợp đồng">
+                    <DeleteOutlined style={{
+                      fontSize: "20px",
+                      margin: "0 5px",
+                      color: 'red'
+                    }} onClick={() => {
+
+                    }} />
                   </Tooltip>
                 </>
               );
@@ -443,7 +480,7 @@ const ListContractRenter = () => {
         ]}
         loading={loading}
       />
-      <ViewContractRenter openView={viewContract} closeView={setViewContract} dataContract={contractInfor} />
+      <ViewContractRenter openView={viewContract} closeView={setViewContract} dataContract={contractInfor} dataAsset={assetRoom} />
     </div>
   );
 };
