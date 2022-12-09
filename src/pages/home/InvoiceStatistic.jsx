@@ -10,7 +10,7 @@ const options = {
     },
     title: {
       display: true,
-      text: "Thống kê hoá đơn",
+      text: "Thống kê hoá đơn năm 2022",
       font: {
         size: 24,
       },

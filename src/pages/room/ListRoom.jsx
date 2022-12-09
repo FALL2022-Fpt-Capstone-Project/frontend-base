@@ -447,11 +447,12 @@ function ListRoom(props) {
         },
       })
       .then((res) => {
-        const mergeGroup = res.data.data.list_group_contracted?.concat(res.data.data.list_group_non_contracted);
-        // setCheckedKeys(mergeGroup?.map((obj, index) => obj.group_id.toString()));
-        setDataApartmentGroup(mergeGroup);
+        const mergeGroup = res.data.data.list_group_non_contracted.concat(res.data.data.list_group_contracted);
+        const mapped = mergeGroup?.map((obj, index) => obj.group_id);
+        const filterGroupId = mergeGroup?.filter((obj, index) => mapped.indexOf(obj.group_id) === index);
+        setDataApartmentGroup(filterGroupId);
         setGroupRoom(pre => {
-          return { ...pre, group: mergeGroup }
+          return { ...pre, group: filterGroupId }
         });
       })
       .catch((error) => {
@@ -635,7 +636,6 @@ function ListRoom(props) {
           minHeight: 360,
         }}
       >
-        <Divider />
         <Row>
           <Col span={24}>
             <Button
@@ -724,8 +724,7 @@ function ListRoom(props) {
                         <span style={textSize}>Tổng số tiền phòng (VND) </span>
                       </>
                     }
-                    value={new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).
-                      format(totalRoomPrice)}
+                    value={new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(totalRoomPrice)}
                   />
                 </Col>
               </Row>

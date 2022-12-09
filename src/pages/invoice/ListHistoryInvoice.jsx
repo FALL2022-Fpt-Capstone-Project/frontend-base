@@ -1,5 +1,5 @@
-import { Button, Col, Form, Input, Row, Table, Tabs, Tooltip, DatePicker, Select, Tag, Checkbox, Modal } from "antd";
-import React, { useState } from "react";
+import { Button, Col, Form, Input, Row, Table, Tooltip, Tag, Modal } from "antd";
+import React, { useEffect, useState } from "react";
 import {
   EditOutlined,
   SearchOutlined,
@@ -10,330 +10,233 @@ import {
 } from "@ant-design/icons";
 import "./listHistoryInvoice.scss";
 import { Link } from "react-router-dom";
-const { RangePicker } = DatePicker;
-const { Search } = Input;
-const ListHistoryInvoice = () => {
-  const options = [];
-  const option = [
-    {
-      value: "15",
-      label: "Kỳ 15",
-    },
-    {
-      value: "30",
-      label: "Kỳ 30",
-    },
-  ];
-  const plainOptions = ["Đã thanh toán", "Chưa thanh toán", "Đang nợ"];
-  const formItemLayout = {
-    labelCol: {
-      xs: {
-        span: 24,
-      },
-      sm: {
-        span: 8,
-      },
-    },
-    wrapperCol: {
-      xs: {
-        span: 24,
-      },
-      sm: {
-        span: 16,
-      },
-    },
-  };
-  // const showModalHistory = () => {
-  //   setIsModalHistoryOpen(true);
-  // };
+import axios from "../../api/axios";
+const ListHistoryInvoice = ({ visible, close, roomId, setFlag }) => {
+  const [loading, setLoading] = useState(false);
+  const [roomName, setRoomName] = useState();
+
   const [form] = Form.useForm();
   let cookie = localStorage.getItem("Cookie");
-  const [dataSource, setDataSource] = useState([
-    {
-      building_name: "Trọ xanh",
-      building_total_floor: 101,
-      building_total_rooms: 400,
-      building_empty_rooms: 30,
-      chu_ky: "Kỳ 30",
-      total_people: "Nguyễn Hải Phương",
-      status: "Chưa thanh toán",
-      address_more_detail: 2000000,
-      date: "30-10-2022",
-    },
-    {
-      building_name: "Trọ xanh",
-      building_total_floor: 101,
-      building_total_rooms: 400,
-      building_empty_rooms: 30,
-      chu_ky: "Kỳ 30",
-      total_people: "Nguyễn Hải Phương",
-      status: "Đã thanh toán",
-      address_more_detail: 2000000,
-      date: "30-9-2022",
-    },
-    {
-      building_name: "Trọ xanh",
-      building_total_floor: 101,
-      building_total_rooms: 400,
-      building_empty_rooms: 30,
-      chu_ky: "Kỳ 30",
-      total_people: "Nguyễn Hải Phương",
-      status: "Đã thanh toán",
-      address_more_detail: 2000000,
-      date: "30-8-2022",
-    },
-    {
-      building_name: "Trọ xanh",
-      building_total_floor: 101,
-      building_total_rooms: 400,
-      building_empty_rooms: 30,
-      chu_ky: "Kỳ 30",
-      total_people: "Nguyễn Hải Phương",
-      status: "Đã thanh toán",
-      address_more_detail: 2000000,
-      date: "30-7-2022",
-    },
-  ]);
+  const [dataSource, setDataSource] = useState([]);
+
+  const getListInvoice = async () => {
+    setLoading(true);
+    const response = await axios
+      .get(`manager/bill/room/history/${roomId}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie}`,
+        },
+      })
+      .then((res) => {
+        setDataSource(res.data.data);
+        setRoomName(res.data.data[0]?.room_name);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    setLoading(false);
+  };
+  useEffect(() => {
+    console.log(roomId);
+    getListInvoice();
+  }, [roomId]);
+
+  const handlerPayInvoice = async (id) => {
+    setLoading(true);
+    let cookie = localStorage.getItem("Cookie");
+
+    const response = await axios
+      .put(`manager/bill/room/pay/${id}`, null, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie}`,
+        },
+      })
+      .then((res) => {
+        getListInvoice();
+        console.log(res);
+        setFlag(true);
+
+        setTimeout(() => {
+          setFlag(false);
+        }, "500");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    setFlag(false);
+
+    setLoading(false);
+  };
+
+  const handlerDeleteInvoice = async (id) => {
+    setLoading(true);
+    const response = await axios
+      .delete(`manager/bill/room/delete`, {
+        params: {
+          billId: id,
+        },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie}`,
+        },
+      })
+      .then((res) => {
+        setFlag(true);
+        getListInvoice();
+        setFlag(true);
+
+        setTimeout(() => {
+          setFlag(false);
+        }, "500");
+      })
+      .catch((error) => {
+        console.log(error.response.data.data);
+      });
+    setFlag(false);
+
+    setLoading(false);
+  };
+
+  const getFullDate = (date) => {
+    const dateAndTime = date.split(" ");
+
+    return dateAndTime[0].split("-").reverse().join("-");
+  };
+  console.log(roomName);
   return (
     <div className="list-history-invoice">
-      <div className="list-history-invoice-search">
-        <Tabs defaultActiveKey="1">
-          <Tabs.TabPane tab="Tìm kiếm nhanh" key="1">
-            <Search
-              placeholder="Tìm kiếm theo số phòng, tên người đại diện,..."
-              className="quich-search"
-              // onSearch={(value) => {
-              //   setTextSearch(value);
-              // }}
-              // onChange={(e) => {
-              //   setTextSearch(e.target.value);
-              // }}
-            />
-          </Tabs.TabPane>
-          <Tabs.TabPane tab="Tìm kiếm nâng cao" key="2">
-            <Form
-              {...formItemLayout}
-              form={form}
-              name="filterStaff"
-              id="filterStaff"
-              // onFinish={getFilterContractRenter}
+      <div className="list-history-invoice-search"></div>
+      <Modal
+        title={<h2>Lịch sử hoá đơn phòng {roomName}</h2>}
+        open={visible}
+        width={1200}
+        destroyOnClose={true}
+        afterClose={() => form.resetFields()}
+        onOk={() => {
+          close(false);
+        }}
+        onCancel={() => {
+          close(false);
+        }}
+        footer={[
+          <>
+            <Button
+              key="back"
+              onClick={() => {
+                close(false);
+              }}
             >
-              <Row gutter={[16]} className="advanced-search" style={{ marginBottom: "20px", marginLeft: "20px" }}>
-                <Row>
-                  <Form.Item name="renterName" className="form-item-renter">
-                    <Col className="gutter-row" xs={{ span: 24 }} lg={{ span: 24 }}>
-                      <Row>
-                        <label htmlFor="" className="search-name">
-                          Tìm kiếm theo tên người đại diện
-                        </label>
-                      </Row>
-                      <Row>
-                        <Input placeholder="Nhập người đại diện" autoComplete="off" />
-                      </Row>
-                    </Col>
-                  </Form.Item>
-                  <Form.Item name="phoneNumber" className="form-item-renter">
-                    <Col className="gutter-row" span={24}>
-                      <Row>
-                        <label htmlFor="" className="search-name">
-                          Tìm kiếm theo tên phòng
-                        </label>
-                      </Row>
-                      <Row>
-                        <Input placeholder="Nhập tên phòng" autoComplete="off" />
-                      </Row>
-                    </Col>
-                  </Form.Item>
-                  <Form.Item name="date" className="form-item-renter">
-                    <Col className="gutter-row" span={24}>
-                      <Row>
-                        <label htmlFor="" className="search-name">
-                          Ngày lập hoá đơn
-                        </label>
-                      </Row>
-                      <Row>
-                        <RangePicker
-                          format={"DD-MM-YYYY"}
-                          placeholder={["Từ", "Đến"]}
-                          // onChange={dateChange}
-                          style={{ width: "500px" }}
-                        />
-                      </Row>
-                    </Col>
-                  </Form.Item>
-                </Row>
-                <Row>
-                  <Form.Item name="groupId" className="form-item-renter">
-                    <Col className="gutter-row" span={24}>
-                      <Row>
-                        <label htmlFor="" className="search-name">
-                          Tìm kiếm theo tên chung cư
-                        </label>
-                      </Row>
-                      <Row>
-                        <Select options={options} placeholder="Chọn chung cư"></Select>
-                      </Row>
-                    </Col>
-                  </Form.Item>
-                  <Form.Item name="groupId" className="form-item-renter">
-                    <Col className="gutter-row" span={24}>
-                      <Row>
-                        <label htmlFor="" className="search-name">
-                          Tìm kiếm theo chu kỳ thanh toán
-                        </label>
-                      </Row>
-                      <Row>
-                        <Select options={option} placeholder="Chọn chu kỳ thanh toán"></Select>
-                      </Row>
-                    </Col>
-                  </Form.Item>
-                  <Form.Item name="deactive" className="form-item-renter">
-                    <Row>
-                      <label htmlFor="" className="search-name">
-                        Tìm kiếm theo trạng thái hoá đơn
-                      </label>
-                    </Row>
-                    <Row>
-                      <Checkbox.Group options={plainOptions} />
-                    </Row>
-                  </Form.Item>
-                </Row>
-              </Row>
-              <Row style={{ marginBottom: "20px" }}>
-                <Col span={24}>
-                  <Row justify="center">
-                    <Button
-                      type="primary"
-                      icon={<SearchOutlined />}
-                      style={{ marginRight: "20px" }}
-                      // onClick={getFilterContractRenter}
-                      htmlType="submit"
-                    >
-                      Tìm kiếm
-                    </Button>
-                    <Button
-                      icon={<UndoOutlined />}
-                      // onClick={resetForm}
-                    >
-                      Đặt lại
-                    </Button>
-                  </Row>
-                </Col>
-              </Row>
-            </Form>
-          </Tabs.TabPane>
-        </Tabs>
-      </div>
-      <Table
-        bordered
-        dataSource={dataSource}
-        columns={[
-          {
-            title: "Tên chung cư",
-            dataIndex: "building_name",
-          },
-          {
-            title: "Tên phòng",
-            dataIndex: "building_total_floor",
-          },
-          {
-            title: "Người đại diện",
-            dataIndex: "total_people",
-          },
-          {
-            title: "Chu kỳ thanh toán",
-            dataIndex: "chu_ky",
-          },
-          {
-            title: "Số điện",
-            dataIndex: "building_total_rooms",
-          },
-
-          {
-            title: "Số nước",
-            dataIndex: "building_empty_rooms",
-          },
-
-          {
-            title: "Tiền phòng",
-            dataIndex: "address_more_detail",
-            render: (value) => {
-              return value.toLocaleString("vn") + " đ";
-            },
-          },
-          {
-            title: "Ngày hoá đơn",
-            dataIndex: "date",
-          },
-          {
-            title: "Trạng thái hoá đơn",
-            dataIndex: "status",
-            render: (_, record) => {
-              let status;
-              if (record.status === "Chưa thanh toán") {
-                status = (
-                  <Tag color="default" key={record.status}>
-                    Chưa thanh toán
-                  </Tag>
-                );
-              } else if (record.status === "Đã thanh toán") {
-                status = (
-                  <Tag color="green" key={record.status}>
-                    Đã thanh toán
-                  </Tag>
-                );
-              } else if (record.status === "Đang nợ") {
-                status = (
-                  <Tag color="red" key={record.status}>
-                    Đang nợ
-                  </Tag>
-                );
-              }
-
-              return <>{status}</>;
-            },
-          },
-
-          {
-            title: "Thao tác",
-            dataIndex: "action",
-            render: (_, record) => {
-              return (
-                <>
-                  {record.status === "Đã thanh toán" ? (
-                    <>
-                      <Tooltip title="Xem hoá đơn">
-                        <Link to="/detail-invoice">
-                          <EyeOutlined className="icon" />
-                        </Link>
-                      </Tooltip>
-                      <Tooltip title="Xoá hoá đơn">
-                        <DeleteOutlined className="icon icon-delete" />
-                      </Tooltip>{" "}
-                    </>
-                  ) : (
-                    <>
-                      <Tooltip title="Chỉnh sửa hoá đơn">
-                        <EditOutlined className="icon" />
-                      </Tooltip>
-                      <Tooltip title="Xem hoá đơn">
-                        <EyeOutlined className="icon" />
-                      </Tooltip>
-                      <Tooltip title="Thu tiền">
-                        <DollarCircleOutlined className="icon" />
-                      </Tooltip>
-                      <Tooltip title="Xoá hoá đơn">
-                        <DeleteOutlined className="icon icon-delete" />
-                      </Tooltip>{" "}
-                    </>
-                  )}
-                </>
-              );
-            },
-          },
+              Đóng
+            </Button>
+          </>,
         ]}
-        // loading={loading}
-      />
+      >
+        <Table
+          bordered
+          dataSource={dataSource}
+          scroll={{
+            x: 700,
+          }}
+          columns={[
+            {
+              title: "Tên phòng",
+              dataIndex: "room_name",
+            },
+
+            {
+              title: "Ngày tạo hoá đơn",
+              dataIndex: "bill_created_time",
+              render: (date) => getFullDate(date),
+            },
+
+            {
+              title: "Hạn đóng tiền",
+              dataIndex: "payment_term",
+              render: (date) => getFullDate(date),
+            },
+
+            {
+              title: "Tổng tiền",
+              dataIndex: "total_money",
+              render: (value) => {
+                return value.toLocaleString("vn") + " đ";
+              },
+            },
+            {
+              title: "Ghi chú",
+              dataIndex: "description",
+            },
+            {
+              title: "Trạng thái hoá đơn",
+              dataIndex: "status",
+              render: (_, record) => {
+                let status;
+                if (record.is_paid === false) {
+                  status = (
+                    <Tag color="default" key={record.is_paid}>
+                      Chưa thanh toán
+                    </Tag>
+                  );
+                } else if (record.is_paid === true) {
+                  status = (
+                    <Tag color="green" key={record.is_paid}>
+                      Đã thanh toán
+                    </Tag>
+                  );
+                }
+
+                return <>{status}</>;
+              },
+            },
+
+            {
+              title: "Thao tác",
+              dataIndex: "action",
+              render: (_, record) => {
+                return (
+                  <>
+                    {record.is_paid === true ? (
+                      <>
+                        <Tooltip title="Xem hoá đơn">
+                          <Link target="_blank" to="/detail-invoice">
+                            <EyeOutlined className="icon" />
+                          </Link>
+                        </Tooltip>
+                        <Tooltip title="Xoá hoá đơn">
+                          <DeleteOutlined
+                            className="icon icon-delete"
+                            onClick={() => handlerDeleteInvoice(record.id)}
+                          />
+                        </Tooltip>{" "}
+                      </>
+                    ) : (
+                      <>
+                        <Tooltip title="Xem hoá đơn">
+                          <Link target="_blank" to="/detail-invoice">
+                            <EyeOutlined className="icon" />
+                          </Link>
+                        </Tooltip>
+                        <Tooltip title="Thu tiền">
+                          <DollarCircleOutlined className="icon" onClick={() => handlerPayInvoice(record.id)} />
+                        </Tooltip>
+                        <Tooltip title="Xoá hoá đơn">
+                          <DeleteOutlined
+                            className="icon icon-delete"
+                            onClick={() => handlerDeleteInvoice(record.id)}
+                          />
+                        </Tooltip>{" "}
+                      </>
+                    )}
+                  </>
+                );
+              },
+            },
+          ]}
+          loading={loading}
+        />
+      </Modal>
     </div>
   );
 };

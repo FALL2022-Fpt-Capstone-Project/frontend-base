@@ -19,8 +19,21 @@ const Sidebar = () => {
   const [contractRenterLink, setContractRenterLink] = useState("/contract-renter");
   const [contractApartmentLink, setContractApartmentLink] = useState("/contract-apartment");
   const [invoiceLink, setInvoiceLink] = useState("/invoice");
+  const [roomLink, setRoomLink] = useState("/room");
 
   const location = useLocation();
+  useEffect(() => {
+    if (location.pathname.includes("/room/equipment")) {
+      setContractApartmentLink("/room/equipment");
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (location.pathname.includes("/room/preview")) {
+      setRoomLink("/room/preview");
+    }
+  }, [location.pathname]);
+
   useEffect(() => {
     if (location.pathname.includes("/contract-renter/create") || location.pathname.includes("/contract-renter/edit")) {
       setContractRenterLink("/contract-renter/create");
@@ -34,6 +47,11 @@ const Sidebar = () => {
   useEffect(() => {
     if (location.pathname.includes("/contract-apartment/create")) {
       setContractApartmentLink("/contract-apartment/create");
+    }
+  }, [location.pathname]);
+  useEffect(() => {
+    if (location.pathname.includes("/contract-apartment/edit")) {
+      setContractApartmentLink("/contract-apartment/edit");
     }
   }, [location.pathname]);
   useEffect(() => {
@@ -63,7 +81,7 @@ const Sidebar = () => {
             <span>Quản lý chung cư</span>
             <Link to="/building" />
           </Menu.Item>
-          <Menu.Item key="/room">
+          <Menu.Item key={roomLink}>
             <HomeOutlined />
             <span>Quản lý phòng</span>
             <Link to="/room" />
@@ -113,7 +131,7 @@ const Sidebar = () => {
             <span>Trang chủ</span>
             <Link to="/home" />
           </Menu.Item>
-          <Menu.Item key="/room">
+          <Menu.Item key={roomLink}>
             <HomeOutlined />
             <span>Quản lý phòng</span>
             <Link to="/room" />

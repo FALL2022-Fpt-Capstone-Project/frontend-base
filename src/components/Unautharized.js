@@ -4,8 +4,15 @@ import "./Unauthorized.scss";
 
 const Unauthorized = () => {
   const navigate = useNavigate();
+  let cookie = localStorage.getItem("Cookie");
 
-  const goBack = () => navigate(-1);
+  const goBack = () => {
+    if (cookie !== null) {
+      navigate(-1);
+    } else {
+      navigate("/login");
+    }
+  };
 
   return (
     <div className="unauthorized">

@@ -6,12 +6,14 @@ import axios from "../../api/axios";
 import ViewContractBuilding from "./ViewContractBuilding";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
+import DeleteContractBuilding from "./DeleteContractBuilding";
 
 const { Search } = Input;
 const LIST_CONTRACT_APARTMENT_URL = "manager/contract/group";
 const { Column, ColumnGroup } = Table;
 const LIST_BUILDING_FILTER = "manager/group/all/contracted";
-const dateFormat = "DD/MM/YYYY";
+const GET_SERVICE_GROUP_BY_ID = "manager/service/general?groupId=";
+
 
 const ListContractApartment = () => {
   const { RangePicker } = DatePicker;
@@ -19,11 +21,14 @@ const ListContractApartment = () => {
   const [textSearch, setTextSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [viewContract, setViewContract] = useState(false);
+  const [deleteContract, setDeleteContract] = useState(false);
   const [buildingFilter, setBuildingFilter] = useState("");
   const [building, setBuilding] = useState("");
   const [endContract, setEndContract] = useState(false);
+  const [dataApartmentServiceGeneral, setDataApartmentServiceGeneral] = useState([]);
+
   const [dataContract, setDataContract] = useState([]);
-  const dateTimeSelect = [];
+
   const [form] = Form.useForm();
   let cookie = localStorage.getItem("Cookie");
   const navigate = useNavigate();
@@ -115,6 +120,28 @@ const ListContractApartment = () => {
     //     });
     //   setLoading(false);
   };
+
+  const apartmentGroupById = async (groupId) => {
+    await axios
+      .get(GET_SERVICE_GROUP_BY_ID + groupId, {
+        headers: {
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${cookie}`,
+        },
+        // withCredentials: true,
+      })
+      .then((res) => {
+        console.log(res.data.data);
+        setDataApartmentServiceGeneral(res.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const reload = () => {
+    getAllContractBuilding();
+  }
   return (
     <div className="list-contract">
       <div className="list-contract-search">
@@ -241,7 +268,7 @@ const ListContractApartment = () => {
             </Form>
           </Tabs.TabPane>
         </Tabs>
-        <Table dataSource={dataSource} scroll={{ x: 1600, y: 600 }} bordered>
+        <Table loading={loading} dataSource={dataSource} scroll={{ x: 1600, y: 600 }} bordered>
           <Column title="Tên người cho thuê" dataIndex="rack_renter_full_name" key="key" />
           <Column title="Số điện thoại" dataIndex="phone_number" key="key" />
 
@@ -302,6 +329,7 @@ const ListContractApartment = () => {
                       onClick={() => {
                         setViewContract(true);
                         setDataContract(record);
+                        apartmentGroupById(record.group_id);
                       }}
                     />
                   </Tooltip>
@@ -311,7 +339,9 @@ const ListContractApartment = () => {
                       margin: "0 5px",
                       color: 'red'
                     }} onClick={() => {
-
+                      setDeleteContract(true);
+                      setDataContract(record);
+                      apartmentGroupById(record.group_id);
                     }} />
                   </Tooltip>
                 </>
@@ -319,7 +349,17 @@ const ListContractApartment = () => {
             }}
           />
         </Table>
-        <ViewContractBuilding openView={viewContract} closeView={setViewContract} dataContract={dataContract} />
+        <ViewContractBuilding
+          openView={viewContract}
+          closeView={setViewContract}
+          dataContract={dataContract}
+          dataAsset={dataApartmentServiceGeneral} />
+        <DeleteContractBuilding
+          reload={reload}
+          openView={deleteContract}
+          closeView={setDeleteContract}
+          dataContract={dataContract}
+          dataAsset={dataApartmentServiceGeneral} />
       </div>
     </div>
   );

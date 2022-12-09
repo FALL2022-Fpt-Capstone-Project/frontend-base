@@ -23,6 +23,7 @@ import RoomEquipment from "./pages/room/RoomEquipment";
 import AddAutoInvoice from "./pages/invoice/AddAutoInvoice";
 import DetailInvoice from "./pages/invoice/DetailInvoice";
 import EditContractBuilding from "./pages/contract/EditContractBuilding";
+import Personal from "./pages/admin/Personal";
 
 const ROLES = {
   User: "ROLE_STAFF",
@@ -97,6 +98,9 @@ const App = () => {
         </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
           <Route path="detail-invoice" element={<DetailInvoice />} />
+        </Route>
+        <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
+          <Route path="personal" element={<Personal />} />
         </Route>
       </Routes>
     </div>
