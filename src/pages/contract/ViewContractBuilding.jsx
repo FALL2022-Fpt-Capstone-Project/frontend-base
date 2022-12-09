@@ -33,7 +33,7 @@ const textSize = {
   fontSize: 15,
 };
 let optionFloor = [];
-function ViewContractBuilding({ openView, closeView, dataContract }) {
+function ViewContractBuilding({ openView, closeView, dataContract, dataAsset }) {
   console.log(dataContract);
   const navigate = useNavigate();
   const [roomFloor, setRoomFloor] = useState("");
@@ -176,7 +176,7 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                         <h4>Địa chỉ chi tiết: </h4>
                       </Col>
                       <Col span={12}>
-                        <p>Chưa có</p>
+                        <p>{dataContract?.rack_renter_more_details}</p>
                       </Col>
                     </Row>
                   </Card>
@@ -321,7 +321,7 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                     }
                     bordered={true}
                   >
-                    {dataContract?.list_general_service?.map((obj, index) => {
+                    {dataAsset?.map((obj, index) => {
                       return (
                         <Row>
                           <Col span={12}>
@@ -340,7 +340,7 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                 onClick={() => {
                   // navigate(`/contract-renter/edit/${dataContract.contract_id}`)
                 }}
-                style={{ marginTop: "1%" }}
+                style={{ marginTop: "3%" }}
                 type="primary"
                 icon={<ArrowRightOutlined />}
               >

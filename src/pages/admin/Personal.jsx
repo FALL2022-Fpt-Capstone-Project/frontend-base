@@ -1,4 +1,4 @@
-import { EditOutlined, EllipsisOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { UserOutlined } from '@ant-design/icons';
 import { Avatar, Button, Card, Col, Form, Input, notification, Radio, Row, Select, Spin, Switch } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -94,10 +94,11 @@ function Personal(props) {
             })
             .then((res) => {
                 notification.success({
-                    message: "Cập nhật thông tin nhân viên thành công",
+                    message: "Cập nhật thông tin cá nhân thành công",
                     duration: 3,
                     placement: "top",
                 });
+                window.localStorage.setItem("name", data.full_name);
                 form.resetFields();
                 getUserName();
             })
@@ -151,22 +152,22 @@ function Personal(props) {
                                     labelCol={{ span: 24 }}
                                     label={
                                         <span>
-                                            <b>Tên nhân viên:</b>
+                                            <b>Họ và tên:</b>
                                         </span>
                                     }
                                     rules={[
                                         {
-                                            message: "Vui lòng nhập tên nhân viên!",
+                                            message: "Vui lòng nhập họ và tên!",
                                         },
                                         {
                                             required: true,
-                                            message: "Vui lòng nhập tên nhân viên!",
+                                            message: "Vui lòng nhập họ và tên!",
                                         },
                                     ]}
                                 >
                                     <Input
                                         onChange={(e) => setName(e.target.value)} value={full_name}
-                                        placeholder="Nhập tên nhân viên" />
+                                        placeholder="Nhập họ và tên" />
                                 </Form.Item>
                                 <Form.Item
                                     className="form-item"
@@ -188,6 +189,7 @@ function Personal(props) {
                                     ]}
                                 >
                                     <Input
+                                        disabled
                                         onChange={(e) => setUserName(e.target.value)} value={user_name}
                                         placeholder="Nhập tên đăng nhập" />
                                 </Form.Item>
@@ -285,9 +287,11 @@ function Personal(props) {
                                     <Input onChange={(e) => setAddress_more_detail(e.target.value)} placeholder='Địa chỉ' />
                                 </Form.Item>
                             </Form>
-                            <Row justify='center'>
-                                <Button onClick={() => { navigate('/login'); localStorage.clear() }}>Đăng xuất</Button>
-                                <Button htmlType="submit" key="submit" form="UpdateStaff" type="primary" style={{ marginLeft: '1%' }} >Cập nhật thông tin cá nhân</Button>
+                            <Row type="flex"
+                                style={{ alignItems: "center" }}
+                                justify="center"
+                                gutter={10}>
+                                <Button htmlType="submit" key="submit" form="UpdateStaff" type="primary" style={{ marginRight: '1%' }} >Cập nhật thông tin cá nhân</Button>
                             </Row>
                         </Card>
                     </Row>

@@ -28,6 +28,12 @@ const Sidebar = () => {
   }, [location.pathname]);
 
   useEffect(() => {
+    if (location.pathname.includes("/room/preview")) {
+      setContractApartmentLink("/room/preview");
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
     if (location.pathname.includes("/contract-renter/create") || location.pathname.includes("/contract-renter/edit")) {
       setContractRenterLink("/contract-renter/create");
     }

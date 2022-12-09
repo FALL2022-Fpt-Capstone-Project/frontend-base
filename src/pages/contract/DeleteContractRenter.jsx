@@ -1,12 +1,13 @@
-import { Button, Card, Checkbox, Col, Input, Modal, Row, Table, Tabs, Tag } from 'antd';
+import { Button, Card, Checkbox, Col, Input, Modal, notification, Row, Table, Tabs, Tag } from 'antd';
 import React, { useState, useEffect } from 'react';
-import { ArrowRightOutlined, UserOutlined, FilterOutlined, AuditOutlined, DollarOutlined, GoldOutlined } from "@ant-design/icons";
+import { DeleteOutlined, UserOutlined, FilterOutlined, AuditOutlined, DollarOutlined, GoldOutlined } from "@ant-design/icons";
 import axios from "../../api/axios";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 
 const LIST_ASSET_TYPE = "manager/asset/type";
-const APARTMENT_DATA_GROUP = "/manager/group/all";
+const DELETE_ROOM_CONTRACT = "manager/contract/room/end";
+// const APARTMENT_DATA_GROUP = "/manager/group/all";
 
 const cardTop = {
     height: '100%',
@@ -26,14 +27,16 @@ const memeber = {
     height: '100%'
 }
 
-function ViewContractRenter({ openView, closeView, dataContract, dataAsset, dataService }) {
-    // console.log(dataContract);
+function DeleteContractRenter({ reload, openView, closeView, dataContract, dataAsset, dataService }) {
+    console.log(dataContract);
     const [loading, setLoading] = useState(false);
     const [searched, setSearched] = useState("");
     const [filterAssetType, setFilterAssetType] = useState([]);
     const [assetStatus, setAssetStatus] = useState([]);
     const [listAssetType, setListAssetType] = useState([]);
     // const [dataApartmentGroup, setDataApartmentGroup] = useState([]);
+    let cookie = localStorage.getItem("Cookie");
+
 
     const navigate = useNavigate();
 
@@ -103,28 +106,32 @@ function ViewContractRenter({ openView, closeView, dataContract, dataAsset, data
                 console.log(error);
             });
     };
-    // useEffect(() => {
-    //     apartmentGroup();
-    // }, []);
-
-    // const apartmentGroup = async () => {
-    //     setLoading(true);
-    //     let cookie = localStorage.getItem("Cookie");
-    //     await axios
-    //         .get(APARTMENT_DATA_GROUP, {
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //                 Authorization: `Bearer ${cookie}`,
-    //             },
-    //         })
-    //         .then((res) => {
-    //             setDataApartmentGroup(res.data.data.list_group_contracted.filter(group => group.group_id === dataContract.group_id)[0]);
-    //         })
-    //         .catch((error) => {
-    //             console.log(error);
-    //         });
-    //     setLoading(false);
-    // };
+    const onDeleteRoomContract = async (contract_id, total_money) => {
+        // let cookie = localStorage.getItem("Cookie");
+        await axios
+            .post(DELETE_ROOM_CONTRACT, { contract_id: contract_id }, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${cookie}`,
+                },
+            })
+            .then((res) => {
+                notification.success({
+                    message: ` Kết thúc hợp đồng thành công`,
+                    placement: "top",
+                    duration: 3,
+                });
+                closeView(false);
+                reload();
+            })
+            .catch((error) => {
+                notification.error({
+                    message: "Kết thúc hợp đồng thất bại",
+                    placement: "top",
+                    duration: 3,
+                });
+            });
+    };
     const renterRepresent = dataContract?.list_renter?.find((obj, index) => obj.represent === true);
 
     return (
@@ -144,8 +151,13 @@ function ViewContractRenter({ openView, closeView, dataContract, dataAsset, data
                         </Button>,
                     ]}>
                     <div>
-                        <Tabs defaultActiveKey="1">
-                            <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>Thông tin chung</span>} key="1">
+                        <Tabs defaultActiveKey="2">
+                            {/* <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>Hóa đơn chưa thanh toán</span>} key="1">
+                                <Table
+
+                                />
+                            </Tabs.TabPane> */}
+                            <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>Thông tin chung</span>} key="2">
                                 <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                                     <Col xs={24} xl={12} span={12}>
                                         <Card
@@ -347,7 +359,7 @@ function ViewContractRenter({ openView, closeView, dataContract, dataAsset, data
                                     </Col>
                                 </Row>
                             </Tabs.TabPane>
-                            <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>Thành viên trong phòng</span>} key="2">
+                            <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>Thành viên trong phòng</span>} key="3">
                                 <Row>
                                     <div style={{ overflow: 'auto' }}>
                                         <h3>Số lượng thành viên trong phòng: ({dataContract?.list_renter?.length - 1}/{dataContract?.room?.room_limit_people - 1})</h3>
@@ -420,7 +432,7 @@ function ViewContractRenter({ openView, closeView, dataContract, dataAsset, data
                                     })}
                                 </Row>
                             </Tabs.TabPane>
-                            <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>Trang thiết bị trong phòng</span>} key="3">
+                            <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>Trang thiết bị trong phòng</span>} key="4">
                                 <Row>
                                     <Col span={24}>
                                         <Row>
@@ -480,8 +492,8 @@ function ViewContractRenter({ openView, closeView, dataContract, dataAsset, data
                             </Tabs.TabPane>
                         </Tabs>
                         <Button onClick={() => {
-                            navigate('/contract-renter/edit', { state: dataContract });
-                        }} style={{ marginTop: '3%' }} type='primary' icon={<ArrowRightOutlined />}> Chỉnh sửa thông tin hợp đồng</Button>
+                            onDeleteRoomContract(dataContract.contract_id)
+                        }} style={{ marginTop: '3%' }} type='danger' icon={<DeleteOutlined />}>Kết thúc hợp đồng</Button>
                     </div>
                 </Modal>
             </div>
@@ -489,4 +501,4 @@ function ViewContractRenter({ openView, closeView, dataContract, dataAsset, data
     );
 }
 
-export default ViewContractRenter;
+export default DeleteContractRenter;

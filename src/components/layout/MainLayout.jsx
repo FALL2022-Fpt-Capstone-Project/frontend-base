@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Col, Divider, Dropdown, Layout, Menu, Row } from "antd";
+import { Avatar, Col, Divider, Dropdown, Image, Layout, Menu, Row, Space } from "antd";
 import Sidebar from "../sidebar/Sidebar";
 import Breadcrumbs from "../BreadCrumb ";
-import { UserOutlined, DownOutlined } from "@ant-design/icons";
+import { UserOutlined } from "@ant-design/icons";
 import "./mainlayout.scss";
 import { useNavigate } from "react-router-dom";
 const { Content, Sider, Header } = Layout;
+
 const MainLayout = ({ children, button, title }) => {
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
@@ -37,7 +38,9 @@ const MainLayout = ({ children, button, title }) => {
           bottom: 0,
         }}
       >
-        <p className="sider-title">QUẢN LÝ CHUNG CƯ MINI</p>
+        <div className="logo">
+          <img src={require("../../assets/image/rms-logo.png")} id="logo" alt="logo" />
+        </div>
         <Sidebar />
       </Sider>
       <Layout className="site-layout">
@@ -46,6 +49,17 @@ const MainLayout = ({ children, button, title }) => {
           <div className="avatar">
             <Row>
               <Col span={24}>
+                <Dropdown overlay={menu} trigger={['click']}>
+                  <Space>
+                    <span className="user-name">
+                      Xin chào,
+                      <a onClick={(e) => e.preventDefault()} href="/personal">
+                        {" " + name}
+                      </a>
+                    </span>
+                  </Space>
+                </Dropdown>
+                {" "}
                 <Avatar
                   size={{
                     xs: 24,
@@ -55,10 +69,6 @@ const MainLayout = ({ children, button, title }) => {
                   }}
                   icon={<UserOutlined />}
                 />
-                <span className="user-name">Xin chào, <a href="/personal">{name}</a></span>
-                <Dropdown overlay={menu} trigger={['click']}>
-                  <DownOutlined />
-                </Dropdown>
               </Col>
             </Row>
           </div>

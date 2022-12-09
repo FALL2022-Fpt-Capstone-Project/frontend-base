@@ -40,3 +40,13 @@
     }
   }
 }
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  #logo {
+    max-width: 150px;
+    height: 120px;
+    margin: 10px 0;
+  }
+}

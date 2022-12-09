@@ -757,10 +757,9 @@ const EditContractRenter = () => {
         });
       })
       .catch((error) => {
-        console.log(error);
         notification.error({
           message: "Cập nhật hợp đồng thất bại",
-          description: "Vui lòng kiểm tra lại thông tin hợp đồng",
+          description: error.response.data.meta.message,
           placement: "top",
           duration: 3,
         });
