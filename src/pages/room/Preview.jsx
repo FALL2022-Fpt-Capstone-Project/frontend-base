@@ -199,7 +199,6 @@ function Preview(props) {
             .then((res) => {
                 const mergeGroup = res.data.data.list_group_contracted?.concat(res.data.data.list_group_non_contracted)
                     ?.filter(group => group.group_id === state.groupId);
-
                 // setCheckedKeys(mergeGroup?.map((obj, index) => obj.group_id.toString ()));
                 setDataApartmentGroup(mergeGroup);
                 setGroupRoom(pre => {

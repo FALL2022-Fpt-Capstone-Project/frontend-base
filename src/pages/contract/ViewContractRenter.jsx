@@ -6,7 +6,6 @@ import moment from "moment";
 import { useNavigate } from "react-router-dom";
 
 const LIST_ASSET_TYPE = "manager/asset/type";
-const APARTMENT_DATA_GROUP = "/manager/group/all";
 
 const cardTop = {
     height: '100%',
@@ -169,7 +168,7 @@ function ViewContractRenter({ openView, closeView, dataContract, dataAsset, data
                                                     <h4>Giới tính:</h4>
                                                 </Col>
                                                 <Col span={12}>
-                                                    <p>{renterRepresent?.gender ? 'Nam' : 'Nữ'}</p>
+                                                    <p>{renterRepresent === undefined ? '' : (renterRepresent?.gender ? 'Nam' : 'Nữ')}</p>
                                                 </Col>
                                             </Row>
                                             <Row>
@@ -350,11 +349,11 @@ function ViewContractRenter({ openView, closeView, dataContract, dataAsset, data
                             <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>Thành viên trong phòng</span>} key="2">
                                 <Row>
                                     <div style={{ overflow: 'auto' }}>
-                                        <h3>Số lượng thành viên trong phòng: ({dataContract?.list_renter?.length - 1}/{dataContract?.room?.room_limit_people - 1})</h3>
+                                        <h3>Số lượng thành viên trong phòng: ({dataContract?.list_renter?.length}/{dataContract?.room?.room_limit_people})</h3>
                                     </div>
                                 </Row>
                                 <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                                    {dataContract?.list_renter?.filter((o, i) => o.represent === false)?.map((obj, index) => {
+                                    {dataContract?.list_renter?.map((obj, index) => {
                                         return (
                                             <>
                                                 <Col xs={24} xl={8} span={8}>
@@ -365,6 +364,9 @@ function ViewContractRenter({ openView, closeView, dataContract, dataAsset, data
                                                         }
                                                         bordered
                                                     >
+                                                        <Row justify='center'>
+                                                            <h3>{obj.represent ? 'Người đại diện' : ''}</h3>
+                                                        </Row>
                                                         <Row>
                                                             <Col span={12}>
                                                                 <h4>Họ và tên: </h4>

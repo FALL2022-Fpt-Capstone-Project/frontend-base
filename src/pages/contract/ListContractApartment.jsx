@@ -6,6 +6,7 @@ import axios from "../../api/axios";
 import ViewContractBuilding from "./ViewContractBuilding";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
+import DeleteContractBuilding from "./DeleteContractBuilding";
 
 const { Search } = Input;
 const LIST_CONTRACT_APARTMENT_URL = "manager/contract/group";
@@ -20,6 +21,7 @@ const ListContractApartment = () => {
   const [textSearch, setTextSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [viewContract, setViewContract] = useState(false);
+  const [deleteContract, setDeleteContract] = useState(false);
   const [buildingFilter, setBuildingFilter] = useState("");
   const [building, setBuilding] = useState("");
   const [endContract, setEndContract] = useState(false);
@@ -137,7 +139,9 @@ const ListContractApartment = () => {
         console.log(error);
       });
   };
-
+  const reload = () => {
+    getAllContractBuilding();
+  }
   return (
     <div className="list-contract">
       <div className="list-contract-search">
@@ -335,7 +339,9 @@ const ListContractApartment = () => {
                       margin: "0 5px",
                       color: 'red'
                     }} onClick={() => {
-
+                      setDeleteContract(true);
+                      setDataContract(record);
+                      apartmentGroupById(record.group_id);
                     }} />
                   </Tooltip>
                 </>
@@ -346,6 +352,12 @@ const ListContractApartment = () => {
         <ViewContractBuilding
           openView={viewContract}
           closeView={setViewContract}
+          dataContract={dataContract}
+          dataAsset={dataApartmentServiceGeneral} />
+        <DeleteContractBuilding
+          reload={reload}
+          openView={deleteContract}
+          closeView={setDeleteContract}
           dataContract={dataContract}
           dataAsset={dataApartmentServiceGeneral} />
       </div>

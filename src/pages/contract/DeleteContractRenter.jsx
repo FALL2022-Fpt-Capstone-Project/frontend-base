@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 
 const LIST_ASSET_TYPE = "manager/asset/type";
 const DELETE_ROOM_CONTRACT = "manager/contract/room/end";
-// const APARTMENT_DATA_GROUP = "/manager/group/all";
 
 const cardTop = {
     height: '100%',
@@ -133,7 +132,6 @@ function DeleteContractRenter({ reload, openView, closeView, dataContract, dataA
             });
     };
     const renterRepresent = dataContract?.list_renter?.find((obj, index) => obj.represent === true);
-
     return (
         <>
             <div>
@@ -181,7 +179,7 @@ function DeleteContractRenter({ reload, openView, closeView, dataContract, dataA
                                                     <h4>Giới tính:</h4>
                                                 </Col>
                                                 <Col span={12}>
-                                                    <p>{renterRepresent?.gender ? 'Nam' : 'Nữ'}</p>
+                                                    <p>{renterRepresent === undefined ? '' : (renterRepresent?.gender ? 'Nam' : 'Nữ')}</p>
                                                 </Col>
                                             </Row>
                                             <Row>
@@ -362,7 +360,7 @@ function DeleteContractRenter({ reload, openView, closeView, dataContract, dataA
                             <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>Thành viên trong phòng</span>} key="3">
                                 <Row>
                                     <div style={{ overflow: 'auto' }}>
-                                        <h3>Số lượng thành viên trong phòng: ({dataContract?.list_renter?.length - 1}/{dataContract?.room?.room_limit_people - 1})</h3>
+                                        <h3>Số lượng thành viên trong phòng: ({dataContract?.list_renter?.length}/{dataContract?.room?.room_limit_people})</h3>
                                     </div>
                                 </Row>
                                 <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
@@ -377,6 +375,9 @@ function DeleteContractRenter({ reload, openView, closeView, dataContract, dataA
                                                         }
                                                         bordered
                                                     >
+                                                        <Row justify='center'>
+                                                            <h3>{obj.represent ? 'Người đại diện' : ''}</h3>
+                                                        </Row>
                                                         <Row>
                                                             <Col span={12}>
                                                                 <h4>Họ và tên: </h4>
@@ -492,7 +493,14 @@ function DeleteContractRenter({ reload, openView, closeView, dataContract, dataA
                             </Tabs.TabPane>
                         </Tabs>
                         <Button onClick={() => {
-                            onDeleteRoomContract(dataContract.contract_id)
+                            Modal.confirm({
+                                title: `Bạn có chắc chắn muốn kết thúc hợp đồng phòng ${dataContract?.room_name} ?`,
+                                okText: "Có",
+                                cancelText: "Hủy",
+                                onOk: () => {
+                                    onDeleteRoomContract(dataContract.contract_id)
+                                },
+                            });
                         }} style={{ marginTop: '3%' }} type='danger' icon={<DeleteOutlined />}>Kết thúc hợp đồng</Button>
                     </div>
                 </Modal>
