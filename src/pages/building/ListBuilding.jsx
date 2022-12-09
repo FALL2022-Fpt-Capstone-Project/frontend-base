@@ -77,7 +77,7 @@ const ListBuilding = () => {
       setLoading(false);
     };
     getAllBuilding();
-  }, [cookie, building_address_city_id]);
+  }, [cookie, buildingName]);
   const reload = () => window.location.reload();
   const handleDeleteBuilding = (id) => {
     console.log(id);
@@ -267,9 +267,6 @@ const ListBuilding = () => {
             render: (_, record) => {
               return record.group_contracted ? (
                 <>
-                  <Tooltip title="Xem hợp đồng">
-                    <ContainerOutlined className="icon" />
-                  </Tooltip>
                   <Tooltip title="Xem chi tiết chung cư">
                     <EyeOutlined className="icon" onClick={() => onClickDetailBuilding(record.group_id)} />
                   </Tooltip>

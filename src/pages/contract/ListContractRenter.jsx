@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Input, Table, DatePicker, Select, Button, Row, Col, Tag, Tabs, Switch, Form, Tooltip } from "antd";
+import { Input, Table, DatePicker, Select, Button, Row, Col, Tag, Tabs, Switch, Form, Tooltip, Modal } from "antd";
 import "./listContract.scss";
 import axios from "../../api/axios";
 import { useNavigate } from "react-router-dom";
 import { EditOutlined, SearchOutlined, EyeOutlined, UndoOutlined, DeleteOutlined } from "@ant-design/icons";
 import ViewContractRenter from "./ViewContractRenter";
+import DeleteContractRenter from "./DeleteContractRenter";
 
 const { Search } = Input;
 const LIST_CONTRACT_URL = "manager/contract";
 const LIST_BUILDING_FILTER = "manager/group/all/contracted";
 const ASSET_ROOM = "manager/asset/room/";
-const { Option } = Select;
+const GET_SERVICE_GROUP_BY_ID = "manager/service/general?groupId=";
+
 const { RangePicker } = DatePicker;
 const ListContractRenter = () => {
   const [dataSource, setDataSource] = useState([]);
@@ -25,8 +27,11 @@ const ListContractRenter = () => {
   const [endContract, setEndContract] = useState(false);
   const [duration, setDuration] = useState();
   const [viewContract, setViewContract] = useState(false);
+  const [deleteContract, setDeleteContract] = useState(false);
   const [contractInfor, setContractInfor] = useState([]);
   const [assetRoom, setAssetRoom] = useState([]);
+  const [dataApartmentServiceGeneral, setDataApartmentServiceGeneral] = useState([]);
+
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const options = [];
@@ -227,6 +232,28 @@ const ListContractRenter = () => {
         console.log(error);
       });
   };
+
+  const apartmentGroupById = async (groupId) => {
+    await axios
+      .get(GET_SERVICE_GROUP_BY_ID + groupId, {
+        headers: {
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${cookie}`,
+        },
+        // withCredentials: true,
+      })
+      .then((res) => {
+        console.log(res.data.data);
+        setDataApartmentServiceGeneral(res.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const reload = () => {
+    getAllContract();
+  }
 
   return (
     <div className="list-contract">
@@ -458,19 +485,23 @@ const ListContractRenter = () => {
                     <EyeOutlined
                       className="icon"
                       onClick={() => {
+                        apartmentGroupById(record.group_id);
                         setViewContract(true);
                         setContractInfor(record);
                         getAssetRoom(record.room_id);
                       }}
                     />
                   </Tooltip>
-                  <Tooltip title="Đóng hợp đồng">
+                  <Tooltip title="Kết thúc hợp đồng">
                     <DeleteOutlined style={{
                       fontSize: "20px",
                       margin: "0 5px",
                       color: 'red'
                     }} onClick={() => {
-
+                      apartmentGroupById(record.group_id);
+                      setDeleteContract(true);
+                      setContractInfor(record);
+                      getAssetRoom(record.room_id);
                     }} />
                   </Tooltip>
                 </>
@@ -480,7 +511,15 @@ const ListContractRenter = () => {
         ]}
         loading={loading}
       />
-      <ViewContractRenter openView={viewContract} closeView={setViewContract} dataContract={contractInfor} dataAsset={assetRoom} />
+      <ViewContractRenter
+        openView={viewContract}
+        closeView={setViewContract}
+        dataContract={contractInfor} dataAsset={assetRoom} dataService={dataApartmentServiceGeneral} />
+      <DeleteContractRenter
+        reload={reload}
+        openView={deleteContract}
+        closeView={setDeleteContract}
+        dataContract={contractInfor} dataAsset={assetRoom} dataService={dataApartmentServiceGeneral} />
     </div>
   );
 };

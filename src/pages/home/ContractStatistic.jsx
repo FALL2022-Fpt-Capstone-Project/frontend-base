@@ -10,7 +10,7 @@ const options = {
     },
     title: {
       display: true,
-      text: "Thống kê hợp đồng cho thuê",
+      text: "Thống kê hợp đồng cho thuê năm 2022",
       font: {
         size: 24,
       },

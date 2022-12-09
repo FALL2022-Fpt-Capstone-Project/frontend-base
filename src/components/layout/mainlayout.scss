@@ -46,8 +46,18 @@
       margin: 10px;
       font-size: 15px;
     }
-    .ant-breadcrumb {
-      padding: 0 30px;
-    }
+    // .ant-breadcrumb {
+    //   padding: 0 30px;
+    // }
+  }
+}
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  #logo {
+    max-width: 150px;
+    height: 120px;
+    margin: 10px 0;
   }
 }

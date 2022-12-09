@@ -10,17 +10,17 @@ const Invoice = () => {
     <div className="invoice">
       <MainLayout
         title="Quản lý hoá đơn"
-        button={
-          <Button
-            type="primary"
-            icon={<PlusCircleOutlined />}
-            size="middle"
-            href="/invoice/create-invoice-auto"
-            className="button-add"
-          >
-            Tạo mới nhanh hoá đơn
-          </Button>
-        }
+        // button={
+        //   <Button
+        //     type="primary"
+        //     icon={<PlusCircleOutlined />}
+        //     size="middle"
+        //     href="/invoice/create-invoice-auto"
+        //     className="button-add"
+        //   >
+        //     Tạo mới nhanh hoá đơn
+        //   </Button>
+        // }
       >
         <ListInvoice />
       </MainLayout>

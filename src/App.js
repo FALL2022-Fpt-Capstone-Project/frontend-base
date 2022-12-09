@@ -23,7 +23,7 @@ import RoomEquipment from "./pages/room/RoomEquipment";
 import AddAutoInvoice from "./pages/invoice/AddAutoInvoice";
 import DetailInvoice from "./pages/invoice/DetailInvoice";
 import EditContractBuilding from "./pages/contract/EditContractBuilding";
-import Personal from "./pages/personal/Personal";
+import Personal from "./pages/admin/Personal";
 
 const ROLES = {
   User: "ROLE_STAFF",

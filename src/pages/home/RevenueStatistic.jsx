@@ -1,6 +1,7 @@
 import React from "react";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import { Card } from "antd";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 const options = {
@@ -11,7 +12,7 @@ const options = {
     },
     title: {
       display: true,
-      text: "Thống kê doanh thu (VNĐ)",
+      text: "Thống kê doanh thu năm 2022 (VNĐ)",
       font: {
         size: 24,
       },
@@ -44,8 +45,12 @@ const data = {
     },
   ],
 };
+
+
 const RevenueStatistic = () => {
-  return <Bar options={options} data={data} />;
+  return (
+    <Bar options={options} data={data} />
+  )
 };
 
 export default RevenueStatistic;
