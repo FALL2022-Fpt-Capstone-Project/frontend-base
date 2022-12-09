@@ -304,6 +304,7 @@ const CreateContractBuilding = () => {
         },
       })
       .then((res) => {
+        console.log(res.data.data);
         const mergeGroup = res.data.data.list_group_non_contracted.concat(res.data.data.list_group_contracted);
         const mapped = mergeGroup?.map((obj, index) => obj.group_id);
         const filterGroupId = mergeGroup?.filter((obj, index) => mapped.indexOf(obj.group_id) === index);
@@ -389,7 +390,7 @@ const CreateContractBuilding = () => {
       rack_renter_address: e.address_more_detail,
       rack_renter_note: "",
     };
-    console.log(data);
+    console.log(JSON.stringify(data));
     await axios
       .post(ADD_NEW_CONTRACT, data, {
         headers: {

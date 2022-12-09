@@ -33,7 +33,7 @@ const textSize = {
   fontSize: 15,
 };
 let optionFloor = [];
-function ViewContractBuilding({ openView, closeView, dataContract }) {
+function ViewContractBuilding({ openView, closeView, dataContract, dataAsset }) {
   console.log(dataContract);
   const navigate = useNavigate();
   const [roomFloor, setRoomFloor] = useState("");
@@ -173,10 +173,18 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                     </Row>
                     <Row>
                       <Col span={12}>
-                        <h4>Địa chỉ chi tiết: </h4>
+                        <h4>Địa chỉ: </h4>
                       </Col>
                       <Col span={12}>
-                        <p>Chưa có</p>
+                        <p>{dataContract?.rack_renter_more_details}</p>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col span={12}>
+                        <h4>Ghi chú: </h4>
+                      </Col>
+                      <Col span={12}>
+                        <p>{dataContract?.note}</p>
                       </Col>
                     </Row>
                   </Card>
@@ -220,7 +228,7 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                         <h4>Địa chỉ:</h4>
                       </Col>
                       <Col span={12}>
-                        <p>{dataContract?.address?.address_wards + ", " + dataContract?.address?.address_district + ", " + dataContract?.address?.address_city} </p>
+                        <p>{dataContract?.address?.address_more_details} </p>
                       </Col>
                     </Row>
                     <Row>
@@ -321,7 +329,7 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
                     }
                     bordered={true}
                   >
-                    {dataContract?.list_general_service?.map((obj, index) => {
+                    {dataAsset?.map((obj, index) => {
                       return (
                         <Row>
                           <Col span={12}>
@@ -338,9 +346,9 @@ function ViewContractBuilding({ openView, closeView, dataContract }) {
               </Row>
               <Button
                 onClick={() => {
-                  // navigate(`/contract-renter/edit/${dataContract.contract_id}`)
+                  navigate('/contract-apartment/edit', { state: dataContract });
                 }}
-                style={{ marginTop: "1%" }}
+                style={{ marginTop: "3%" }}
                 type="primary"
                 icon={<ArrowRightOutlined />}
               >

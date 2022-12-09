@@ -12,7 +12,7 @@ const options = {
     },
     title: {
       display: true,
-      text: "Thống kê phòng",
+      text: "Thống kê phòng năm 2022",
       font: {
         size: 24,
       },
@@ -20,7 +20,7 @@ const options = {
   },
 };
 const data = {
-  labels: ["Phòng đã thuê", "Phòng còn trống"],
+  labels: ["Phòng còn chưa có hợp đồng", "Phòng đã có hợp đồng"],
   datasets: [
     {
       data: [130, 49],
@@ -31,7 +31,7 @@ const data = {
   ],
 };
 const RoomStatistic = () => {
-  return <Pie data={data} options={options} />;
+  return <Pie style={{ height: "250px" }} data={data} options={options} />;
 };
 
 export default RoomStatistic;

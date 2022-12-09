@@ -617,6 +617,8 @@ const EditContractBuilding = () => {
             owner_name: state.rack_renter_full_name,
             owner_gender: state.gender,
             owner_phone_number: state.phone_number,
+            owner_email: state.rack_renter_email,
+            address_more_detail: state.rack_renter_more_details,
             owner_identity_card: state.identity_number,
             contract_payment_cycle: state.contract_payment_cycle,
             contract_duration: state.contract_term,

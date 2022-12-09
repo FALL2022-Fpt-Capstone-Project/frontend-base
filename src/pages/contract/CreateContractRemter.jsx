@@ -1376,7 +1376,7 @@ const CreateContractRenter = () => {
                       rules={[
                         {
                           required: true,
-                          message: "Vui lòng chọn ngày lập hợp đồng",
+                          message: "Ngày hợp đồng có hiệu lực",
                         },
                       ]}
                     >
@@ -1390,7 +1390,7 @@ const CreateContractRenter = () => {
                         }}
                         allowClear={false}
                         style={{ width: "100%" }}
-                        placeholder="Ngày vào ở"
+                        placeholder="Ngày hợp đồng có hiệu lực"
                         defaultValue={moment()}
                         format="DD-MM-YYYY"
                       />
@@ -1409,6 +1409,17 @@ const CreateContractRenter = () => {
                           required: true,
                           message: "Vui lòng chọn ngày kết thúc",
                         },
+                        {
+                          validator: (_, value) => {
+                            var startDateFrom = moment(form.getFieldValue("contract_start_date"));
+                            var endDateForm = moment(value);
+                            if (endDateForm < startDateFrom) {
+                              return Promise.reject(new Error('Vui lòng nhập ngày kết thúc lớn hơn ngày hợp đồng có hiệu lực'));
+                            } else {
+                              return Promise.resolve(new Error('Vui lòng chọn ngày kết thúc'));
+                            }
+                          },
+                        }
                       ]}
                     >
                       <DatePicker
