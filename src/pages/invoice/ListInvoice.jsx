@@ -1,35 +1,26 @@
-import {
-  Button,
-  Col,
-  Form,
-  Input,
-  Row,
-  Table,
-  Tabs,
-  Tooltip,
-  DatePicker,
-  Select,
-  Tag,
-  Checkbox,
-  Modal,
-  ConfigProvider,
-} from "antd";
+import { Button, Col, Form, Input, Row, Table, Tooltip, Select, Tag, ConfigProvider } from "antd";
 import React, { useEffect, useState } from "react";
 import { InboxOutlined, AccountBookOutlined, ProfileOutlined } from "@ant-design/icons";
 import "./listInvoice.scss";
 import axios from "../../api/axios";
 import ListHistoryInvoice from "./ListHistoryInvoice";
 import CreateInvoice from "./CreateInvoice";
-
-const { RangePicker } = DatePicker;
+const { Search } = Input;
 const LIST_BUILDING_FILTER = "manager/contract/group";
 const ListInvoice = () => {
-  const [isModalHistoryOpen, setIsModalHistoryOpen] = useState(false);
+  const [historyInvoice, setHistoryInvoice] = useState(false);
   const [loading, setLoading] = useState(false);
   const [createInvoice, setCreateInvoice] = useState(false);
   const [building, setBuilding] = useState(null);
-  const onClickCreateInvoice = () => {
+  const [textSearch, setTextSearch] = useState("");
+  const [id, setId] = useState();
+  const onClickCreateInvoice = (id) => {
     setCreateInvoice(true);
+    setId(id);
+  };
+  const onClickHistoryInvoice = (id) => {
+    setHistoryInvoice(true);
+    setId(id);
   };
   const options = [];
   const option = [
@@ -42,53 +33,41 @@ const ListInvoice = () => {
       label: "Kỳ 30",
     },
   ];
-  const plainOptions = ["Đã thanh toán hết", "Chưa thanh toán hết"];
-  const formItemLayout = {
-    labelCol: {
-      xs: {
-        span: 24,
-      },
-      sm: {
-        span: 8,
-      },
-    },
-    wrapperCol: {
-      xs: {
-        span: 24,
-      },
-      sm: {
-        span: 16,
-      },
-    },
-  };
-  const showModalHistory = () => {
-    setIsModalHistoryOpen(true);
-  };
-  const [form] = Form.useForm();
+
   let cookie = localStorage.getItem("Cookie");
   const [buildingFilter, setBuildingFilter] = useState("");
   const [dataSource, setDataSource] = useState([]);
+  const [flag, setFlag] = useState(false);
+  const [statistic, setStatistic] = useState(false);
+  const getListInvoice = async () => {
+    setLoading(true);
+    const response = await axios
+      .get(`manager/bill/room/list/${building}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie}`,
+        },
+      })
+      .then((res) => {
+        setDataSource(res.data.data);
+        console.log(res);
+        setStatistic(true);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    setLoading(false);
+  };
   useEffect(() => {
-    const getListInvoice = async () => {
-      setLoading(true);
-      const response = await axios
-        .get(`manager/bill/room/list/${building}`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${cookie}`,
-          },
-        })
-        .then((res) => {
-          setDataSource(res.data.data);
-          console.log(res);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-      setLoading(false);
-    };
+    console.log(building);
     getListInvoice();
-  }, [cookie, building]);
+  }, [building]);
+
+  useEffect(() => {
+    if (flag) {
+      getListInvoice();
+    }
+  }, [flag]);
   useEffect(() => {
     const getBuildingFilter = async () => {
       const response = await axios
@@ -121,7 +100,7 @@ const ListInvoice = () => {
   const customizeRenderEmpty = () => (
     <div style={{ textAlign: "center" }}>
       <InboxOutlined style={{ fontSize: 70 }} />
-      <p style={{ fontSize: 20 }}>Không có dữ liệu để hiển thị</p>
+      <p style={{ fontSize: 20 }}>Không có dữ liệu</p>
     </div>
   );
   return (
@@ -143,10 +122,19 @@ const ListInvoice = () => {
           </Col>
           <Col>
             <Row>
-              <h4>Tìm kiếm theo trạng thái hoá đơn</h4>
+              <h4>Tìm kiếm theo tên phòng</h4>
             </Row>
             <Row>
-              <Checkbox.Group options={plainOptions} />
+              <Search
+                placeholder="Tìm kiếm theo tên phòng"
+                style={{ width: 300 }}
+                onSearch={(value) => {
+                  setTextSearch(value);
+                }}
+                onChange={(e) => {
+                  setTextSearch(e.target.value);
+                }}
+              />
             </Row>
           </Col>
         </Row>
@@ -166,11 +154,19 @@ const ListInvoice = () => {
             {
               title: "Tên phòng",
               dataIndex: "room_name",
+              filteredValue: [textSearch],
+              onFilter: (value, record) => {
+                return String(record.room_name).toLowerCase()?.includes(value.toLowerCase());
+              },
             },
-            {
-              title: "Người đại diện",
-              dataIndex: "represent_renter_name",
-            },
+            // {
+            //   title: "Người đại diện",
+            //   dataIndex: "represent_renter_name",
+            //   filteredValue: [textSearch],
+            //   onFilter: (value, record) => {
+            //     return String(record.represent_renter_name).toLowerCase()?.includes(value.toLowerCase());
+            //   },
+            // },
             {
               title: "Chu kỳ thanh toán",
               dataIndex: "payment_circle",
@@ -220,10 +216,10 @@ const ListInvoice = () => {
                 return (
                   <>
                     <Tooltip title="Xem lịch sử hoá đơn">
-                      <AccountBookOutlined className="icon" onClick={showModalHistory} />
+                      <AccountBookOutlined className="icon" onClick={() => onClickHistoryInvoice(record.room_id)} />
                     </Tooltip>
                     <Tooltip title="Tạo hoá đơn">
-                      <ProfileOutlined className="icon" onClick={onClickCreateInvoice} />
+                      <ProfileOutlined className="icon" onClick={() => onClickCreateInvoice(record.room_id)} />
                     </Tooltip>
                   </>
                 );
@@ -233,22 +229,37 @@ const ListInvoice = () => {
           loading={loading}
         />
       </ConfigProvider>
-      <Modal
-        title="Lịch sử hoá đơn phòng 101"
-        // style={{ maxwidth: 900 }}
-        width={1300}
-        visible={isModalHistoryOpen}
-        onOk={() => setIsModalHistoryOpen(false)}
-        onCancel={() => setIsModalHistoryOpen(false)}
-        footer={[
-          <Button key="back" onClick={() => setIsModalHistoryOpen(false)}>
-            Quay lại
-          </Button>,
-        ]}
-      >
-        <ListHistoryInvoice />
-      </Modal>
-      <CreateInvoice visible={createInvoice} close={setCreateInvoice} />
+      {statistic ? (
+        <div className="invoice-statistic">
+          <Row>
+            <h2 className="payment-term-alret">* Hiện tại chưa đến kỳ thanh toán</h2>
+          </Row>
+          <Row>
+            <p>
+              Tổng số hoá đơn đến kỳ thu đã lập: <span>5/10 hoá đơn</span>
+            </p>
+          </Row>
+          <Row>
+            <p>
+              Tổng số hoá đơn đã lập trong tháng này: <span>5/10 hoá đơn</span>
+            </p>
+          </Row>
+          <Row>
+            <p>
+              Tổng số hoá đơn chưa thanh toán trong tháng này: <span>5/10 hoá đơn</span>
+            </p>
+          </Row>
+          <Row>
+            <p>
+              Tổng số số tiền đã thu trong tháng này: <span>4,000,000 đ/ 20,000,000đ</span>
+            </p>
+          </Row>
+        </div>
+      ) : (
+        ""
+      )}
+      <CreateInvoice visible={createInvoice} close={setCreateInvoice} id={id} setFlag={setFlag} />
+      <ListHistoryInvoice visible={historyInvoice} close={setHistoryInvoice} roomId={id} setFlag={setFlag} />
     </div>
   );
 };

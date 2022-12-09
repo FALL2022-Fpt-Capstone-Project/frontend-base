@@ -51,7 +51,9 @@
   background-color: #eef6e4;
   margin-bottom: 10px;
 }
-
+.card-service {
+  margin-bottom: 10px;
+}
 .total_price {
   color: red;
   font-weight: bold;
@@ -67,8 +69,12 @@
 }
 .invoice-statistic {
   font-size: 15px;
-  font-weight: bold;
+  // font-weight: bold;
   color: #000;
+  margin-top: 20px;
+}
+.payment-term-alret {
+  color: red;
 }
 .show-more {
   color: cornflowerblue;

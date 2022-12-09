@@ -74,7 +74,7 @@ const UpdateStaff = ({ visible, close, id }) => {
         });
         close(false);
         setTimeout(() => {
-          reload();
+          // reload();
         }, "3000");
       })
       .catch((e) =>
