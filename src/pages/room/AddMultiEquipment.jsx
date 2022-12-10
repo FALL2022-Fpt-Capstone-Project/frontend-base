@@ -164,7 +164,7 @@ function AddMultiEquipment({ reload, openView, closeView, assetTypeList, roomId 
                 room_id: roomId,
             }
         });
-
+        console.log(JSON.stringify(data));
         await axios
             .post(ADD_ASSET, data, {
                 headers: {
