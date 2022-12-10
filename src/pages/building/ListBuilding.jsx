@@ -18,6 +18,7 @@ const ListBuilding = () => {
   const [id, setId] = useState();
   const [detailBuilding, setDetailBuilding] = useState(false);
   const [updateBuilding, setUpdateBuilding] = useState(false);
+  const [dataDetailBuilding, setDataDetailBuilding] = useState([]);
   const onClickUpdateBuilding = (id) => {
     setUpdateBuilding(true);
     setId(id);
@@ -114,6 +115,20 @@ const ListBuilding = () => {
   const cityChange = (value) => {
     setBuildingCityId(value);
   };
+
+  // const buildingDetail = async (id) => {
+  //   await axios
+  //     .get(`manager/group/${id}`, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${cookie}`,
+  //       },
+  //     })
+  //     .then((res) => {
+  //       setDataDetailBuilding(res.data.data)
+  //     });
+  // };
+
   return (
     <div>
       <Row>
@@ -250,7 +265,12 @@ const ListBuilding = () => {
                     <ContainerOutlined className="icon" />
                   </Tooltip>
                   <Tooltip title="Xem chi tiết chung cư">
-                    <EyeOutlined className="icon" onClick={() => onClickDetailBuilding(record.group_id)} />
+                    <EyeOutlined className="icon" onClick={() => {
+                      setDataDetailBuilding(record);
+                      // buildingDetail(record.group_id);
+                      setDetailBuilding(true);
+                      // onClickDetailBuilding(record.group_id)
+                    }} />
                   </Tooltip>
                 </>
               ) : (
@@ -259,7 +279,12 @@ const ListBuilding = () => {
                     <EditOutlined className="icon" onClick={() => onClickUpdateBuilding(record.group_id)} />
                   </Tooltip>
                   <Tooltip title="Xem chi tiết chung cư">
-                    <EyeOutlined className="icon" onClick={() => onClickDetailBuilding(record.group_id)} />
+                    <EyeOutlined className="icon" onClick={() => {
+                      setDataDetailBuilding(record);
+                      // buildingDetail(record.group_id);
+                      setDetailBuilding(true);
+                      // onClickDetailBuilding(record.group_id);
+                    }} />
                   </Tooltip>
                   <Tooltip title="Xoá chung cư">
                     <Popconfirm
@@ -279,7 +304,7 @@ const ListBuilding = () => {
         ]}
         loading={loading}
       />
-      <DetailBuilding visible={detailBuilding} close={setDetailBuilding} id={id} />
+      <DetailBuilding visible={detailBuilding} close={setDetailBuilding} data={dataDetailBuilding} />
       <UpdateBuilding visible={updateBuilding} close={setUpdateBuilding} id={id} />
     </div>
   );
