@@ -11,10 +11,11 @@ const LIST_CITY_URL = "config/city";
 const ListBuilding = () => {
   const [dataSource, setDataSource] = useState();
   const [textSearch, setTextSearch] = useState("");
+  const [addressSearch, setAddressSearch] = useState("");
   const [loading, setLoading] = useState(false);
-  const [spinLoading, setSpinLoading] = useState(false);
   const [building_address_city, setBuildingCity] = useState("");
   const [building_address_city_id, setBuildingCityId] = useState("");
+  const [buildingName, setBuildingName] = useState("");
   const [id, setId] = useState();
   const [detailBuilding, setDetailBuilding] = useState(false);
   const [updateBuilding, setUpdateBuilding] = useState(false);
@@ -49,10 +50,12 @@ const ListBuilding = () => {
   }, []);
   useEffect(() => {
     const getAllBuilding = async () => {
-      setSpinLoading(true);
       setLoading(true);
       const response = await axios
         .get(LIST_BUILDING_URL, {
+          params: {
+            city: buildingName,
+          },
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${cookie}`,
@@ -72,10 +75,9 @@ const ListBuilding = () => {
           });
         });
       setLoading(false);
-      setSpinLoading(false);
     };
     getAllBuilding();
-  }, [cookie]);
+  }, [cookie, buildingName]);
   const reload = () => window.location.reload();
   const handleDeleteBuilding = (id) => {
     console.log(id);
@@ -111,8 +113,9 @@ const ListBuilding = () => {
     });
   }
 
-  const cityChange = (value) => {
+  const cityChange = (value, option) => {
     setBuildingCityId(value);
+    setBuildingName(option.label);
   };
   return (
     <div>
@@ -159,10 +162,10 @@ const ListBuilding = () => {
               placeholder="Tìm kiếm theo địa chỉ"
               style={{ width: 400, padding: "10px 0" }}
               onSearch={(value) => {
-                setTextSearch(value);
+                setAddressSearch(value);
               }}
               onChange={(e) => {
-                setTextSearch(e.target.value);
+                setAddressSearch(e.target.value);
               }}
             />
           </Row>
@@ -177,12 +180,26 @@ const ListBuilding = () => {
             dataIndex: "group_name",
             filteredValue: [textSearch],
             onFilter: (value, record) => {
-              return record.group_name.includes(value);
+              return String(record.group_name).toLowerCase()?.includes(value.toLowerCase());
+            },
+            render: (_, record) => {
+              return (
+                <>
+                  <p>{record.group_name}</p>
+                </>
+              );
             },
           },
           {
-            title: "Số lượng tầng đã thuê",
+            title: "Số lượng tầng",
             dataIndex: "total_floor",
+            render: (_, record) => {
+              return (
+                <>
+                  <p>{record.total_floor}</p>
+                </>
+              );
+            },
           },
           {
             title: "Số lượng phòng đã thuê",
@@ -207,6 +224,10 @@ const ListBuilding = () => {
           {
             title: "Địa chỉ",
             dataIndex: "address",
+            filteredValue: [addressSearch],
+            onFilter: (value, record) => {
+              return String(record.address.address_more_details).toLowerCase()?.includes(value.toLowerCase());
+            },
             render: (_, record) => {
               return (
                 <>
@@ -246,9 +267,6 @@ const ListBuilding = () => {
             render: (_, record) => {
               return record.group_contracted ? (
                 <>
-                  <Tooltip title="Xem hợp đồng">
-                    <ContainerOutlined className="icon" />
-                  </Tooltip>
                   <Tooltip title="Xem chi tiết chung cư">
                     <EyeOutlined className="icon" onClick={() => onClickDetailBuilding(record.group_id)} />
                   </Tooltip>

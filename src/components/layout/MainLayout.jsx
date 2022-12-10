@@ -12,16 +12,29 @@ const MainLayout = ({ children, button, title }) => {
   const [collapsed, setCollapsed] = useState(false);
   let name = localStorage.getItem("name");
   const menu = (
-    <Menu style={{ width: '150px' }}>
-      <Menu.Item onClick={() => { navigate('/personal') }}>Thông tin cá nhân</Menu.Item>
-      <Menu.Item onClick={() => { navigate('/login'); localStorage.clear() }}>Đăng xuất</Menu.Item>
+    <Menu style={{ width: "150px" }}>
+      <Menu.Item
+        onClick={() => {
+          navigate("/personal");
+        }}
+      >
+        Thông tin cá nhân
+      </Menu.Item>
+      <Menu.Item
+        onClick={() => {
+          navigate("/login");
+          localStorage.clear();
+        }}
+      >
+        Đăng xuất
+      </Menu.Item>
     </Menu>
   );
   return (
     <Layout
       style={{
         minHeight: "100vh",
-        minWidth: "100vh"
+        minWidth: "100vh",
       }}
     >
       <Sider
@@ -49,7 +62,7 @@ const MainLayout = ({ children, button, title }) => {
           <div className="avatar">
             <Row>
               <Col span={24}>
-                <Dropdown overlay={menu} trigger={['click']}>
+                <Dropdown overlay={menu} trigger={["click"]}>
                   <Space>
                     <span className="user-name">
                       Xin chào,
@@ -58,8 +71,7 @@ const MainLayout = ({ children, button, title }) => {
                       </a>
                     </span>
                   </Space>
-                </Dropdown>
-                {" "}
+                </Dropdown>{" "}
                 <Avatar
                   size={{
                     xs: 24,

@@ -19,6 +19,7 @@ const Sidebar = () => {
   const [contractRenterLink, setContractRenterLink] = useState("/contract-renter");
   const [contractApartmentLink, setContractApartmentLink] = useState("/contract-apartment");
   const [invoiceLink, setInvoiceLink] = useState("/invoice");
+  const [roomLink, setRoomLink] = useState("/room");
 
   const location = useLocation();
   useEffect(() => {
@@ -29,7 +30,7 @@ const Sidebar = () => {
 
   useEffect(() => {
     if (location.pathname.includes("/room/preview")) {
-      setContractApartmentLink("/room/preview");
+      setRoomLink("/room/preview");
     }
   }, [location.pathname]);
 
@@ -80,7 +81,7 @@ const Sidebar = () => {
             <span>Quản lý chung cư</span>
             <Link to="/building" />
           </Menu.Item>
-          <Menu.Item key="/room">
+          <Menu.Item key={roomLink}>
             <HomeOutlined />
             <span>Quản lý phòng</span>
             <Link to="/room" />
@@ -130,7 +131,7 @@ const Sidebar = () => {
             <span>Trang chủ</span>
             <Link to="/home" />
           </Menu.Item>
-          <Menu.Item key="/room">
+          <Menu.Item key={roomLink}>
             <HomeOutlined />
             <span>Quản lý phòng</span>
             <Link to="/room" />

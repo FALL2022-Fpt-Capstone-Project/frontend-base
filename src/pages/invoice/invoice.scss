@@ -51,7 +51,9 @@
   background-color: #eef6e4;
   margin-bottom: 10px;
 }
-
+.card-service {
+  margin-bottom: 10px;
+}
 .total_price {
   color: red;
   font-weight: bold;
@@ -67,8 +69,12 @@
 }
 .invoice-statistic {
   font-size: 15px;
-  font-weight: bold;
+  // font-weight: bold;
   color: #000;
+  margin-top: 20px;
+}
+.payment-term-alret {
+  color: red;
 }
 .show-more {
   color: cornflowerblue;
@@ -78,6 +84,15 @@
 .alert {
   font-style: italic;
   font-weight: bold;
+}
+.alert-red {
+  font-weight: bold;
+  font-size: 18px;
+  color: red;
+}
+.add-auto-filter {
+  width: 250px;
+  margin-bottom: 20px;
 }
 @media only screen and (max-width: 767.99px) {
   .ant-layout {

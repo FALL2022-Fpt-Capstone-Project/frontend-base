@@ -25,7 +25,7 @@ const DetailInvoice = () => {
     {
       key: "1",
       name: "Tiền phòng",
-      borrow: "30 ngày x 3,000,000 đ",
+      borrow: "3,000,000 đ",
       repayment: "3,000,000 đ",
     },
     {
@@ -42,15 +42,9 @@ const DetailInvoice = () => {
     },
     {
       key: "4",
-      name: "Tiền rác",
-      borrow: "20,000 đ",
-      repayment: "20,000 đ",
-    },
-    {
-      key: "4",
-      name: "Tiền cộng thêm",
-      borrow: "Lý do: covid",
-      repayment: "300,000 đ",
+      name: "Tiền internet",
+      borrow: "100,000 đ",
+      repayment: "100,000 đ",
     },
   ];
   return (
@@ -100,7 +94,7 @@ const DetailInvoice = () => {
                         <b>Tổng tiền</b>
                       </Table.Summary.Cell>
                       <Table.Summary.Cell index={1}>
-                        <Text>4,000,000 đ</Text>
+                        <Text>3,800,000 đ</Text>
                       </Table.Summary.Cell>
                     </Table.Summary.Row>
                   </>
@@ -115,7 +109,7 @@ const DetailInvoice = () => {
           </Row>
           <Row>
             <p>
-              Vui lòng thanh toán đúng hạn trước ngày <b>26-11-2022</b>
+              Vui lòng thanh toán đúng hạn trước ngày <b>26-12-2022</b>
             </p>
           </Row>
         </div>
