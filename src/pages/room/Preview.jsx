@@ -10,21 +10,20 @@ import {
     Col,
     Tabs,
     Statistic,
-    Divider,
-    Tooltip,
     Tree,
     Card,
     Spin,
-    notification,
+
 } from "antd";
 import {
     DownOutlined,
     ArrowLeftOutlined,
     HomeOutlined,
-    MinusCircleFilled
+    MinusCircleFilled,
 } from "@ant-design/icons";
-import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { useLocation } from "react-router-dom";
+import PreviewAddAsset from "./PreviewAddAsset";
 
 const textSize = {
     fontSize: 15,
@@ -35,7 +34,6 @@ const iconSize = {
 };
 
 const APARTMENT_DATA_GROUP = "/manager/group/all";
-const ADD_ROOM = "manager/room/add";
 
 let optionFloor = [{ label: 'Tất cả các tầng', value: "" }];
 for (let i = 1; i <= 10; i++) {
@@ -46,14 +44,15 @@ for (let i = 1; i <= 10; i++) {
 };
 
 
-function Preview(props) {
 
+
+function Preview(props) {
     const { state } = useLocation();
+
     const listRoomGenerate = state.list_rooms.list_generate_room?.map((obj, index) => {
         return { ...obj, index: index }
     });
     // console.log(state);
-    const navigate = useNavigate();
     const [componentSize, setComponentSize] = useState("default");
     const [formFilter] = Form.useForm();
     const [rowSelected, setRowSelected] = useState([]);
@@ -70,6 +69,7 @@ function Preview(props) {
     const [expandedKeys, setExpandedKeys] = useState([]);
     const [listRoomPreview, setListRoomPreview] = useState([]);
     const [roomFloor, setRoomFloor] = useState([]);
+    const [addAsset, setAddAsset] = useState(false);
 
     let cookie = localStorage.getItem("Cookie");
 
@@ -152,6 +152,8 @@ function Preview(props) {
         }),
     };
 
+
+
     useEffect(() => {
         setListRoomPreview(listRoomGenerate);
         apartmentGroup();
@@ -163,6 +165,7 @@ function Preview(props) {
 
         setSelectedRowKeys(listRoomGenerate
             ?.filter(room => room.is_duplicate === false)?.map((o, i) => o.index));
+
         setRowSelected(listRoomGenerate
             ?.filter(room => room.is_duplicate === false));
 
@@ -276,211 +279,179 @@ function Preview(props) {
             })
         }
     });
-    const onFinishPreview = async () => {
-        const data = rowSelected?.map(room => {
-            return {
-                room_name: room.room_name,
-                room_floor: room.room_floor,
-                room_limit_people: room.room_limit_people,
-                contract_id: null,
-                group_contract_id: null,
-                group_id: room.group_id,
-                room_price: room.room_price,
-                room_area: room.room_area,
-                is_old: false
-            }
-        });
-        // console.log(data);
-        await axios
-            .post(
-                ADD_ROOM, data,
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${cookie}`,
-                    },
-                }
-            )
-            .then((res) => {
-                notification.success({
-                    message: "Thêm mới thành công phòng ",
-                    placement: "top",
-                    duration: 3,
-                });
-                navigate('/room')
-            })
-            .catch((error) => {
-                notification.error({
-                    message: "Thêm mới phòng thất bại",
-                    description: error.response.data.data,
-                    placement: "top",
-                    duration: 3,
-                });
-            });
-    };
+
+
     return (
-        <Spin spinning={loading} size="large">
-            <div
-                className="site-layout-background"
-                style={{
-                    padding: 0,
-                    minHeight: 360,
-                }}
-            >
-                <Row>
-                    <Col span={24}>
-                        <Button
-                            href="/room"
-                            type="primary"
-                            size="default"
-                            style={{ marginBottom: "1%", marginLeft: "1%", float: "right" }}
-                            icon={<ArrowLeftOutlined style={textSize} />}
-                        >
-                            Danh sách phòng
-                        </Button>
-                    </Col>
-                </Row>
-                <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                    <Col xs={24} lg={24} xl={8} span={8}>
-                        <Card
-                            className="card-w100-h100"
-                            title={<p className="text-card">Thông tin chung cư và phòng xem trước</p>}
-                            bordered={false}
-                        >
-                            <Row>
-                                <Col span={24}>
-                                    <p>Địa chỉ chung cư: {dataApartmentGroup[0]?.address?.address_wards + ", "
-                                        + dataApartmentGroup[0]?.address?.address_district + ", "
-                                        + dataApartmentGroup[0]?.address?.address_city}</p>
-                                </Col>
-                            </Row>
-                            <Tree
-                                showIcon
-                                checkable={false}
-                                onExpand={onExpand}
-                                expandedKeys={expandedKeys}
-                                // autoExpandParent={autoExpandParent}
-                                // onCheck={onCheck}
-                                // checkedKeys={checkedKeys}
-                                // onSelect={onSelect}
-                                // selectedKeys={selectedKeys}
-                                treeData={treeData}
-                                switcherIcon={<DownOutlined />}
-                            />
-                        </Card>
-                    </Col>
-                    <Col xs={24} lg={24} xl={16} span={16}>
-                        <Card
-                            className="card-w100-h100"
-                            title={"Danh sách phòng xem trước"}
-                            bordered={false}
-                        >
-                            <Row style={{ marginBottom: "2%" }} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                                <Col span={12}>
-                                    <Statistic
-                                        title={
-                                            <>
-                                                <span style={textSize}>Tổng số phòng </span>
-                                            </>
-                                        }
-                                        value={numberOfRoom}
-                                    />
-                                </Col>
-                                <Col span={12}>
-                                    <Statistic
-                                        title={
-                                            <>
-                                                <span style={textSize}>Tổng số tiền phòng (VND) </span>
-                                            </>
-                                        }
-                                        value={new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).
-                                            format(totalRoomPrice)}
-                                    />
-                                </Col>
-                            </Row>
-                            <Tabs defaultActiveKey="1" style={{ marginBottom: "1%" }}>
-                                <Tabs.TabPane tab="Tìm kiếm phòng" key="1">
-                                    <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                                        <Col xs={12} xl={12} span={12}>
-                                            <Input.Search
-                                                onSearch={(e) => {
-                                                    setSearchRoom(e);
-                                                }}
-                                                onChange={(e) => { setSearchRoom(e.target.value) }}
-                                                placeholder="Nhập tên phòng để tìm kiếm" />
-                                        </Col>
-                                        <Col xs={12} xl={8} span={8}>
-                                            <Select
-                                                defaultValue={""}
-                                                options={optionFloor}
-                                                placeholder="Chọn tầng"
-                                                onChange={(e) => {
-                                                    setFilterSave({ roomFloor: e });
-                                                    getRoomInfor('', '', e, []);
-                                                    setListRoomPreview(e === "" ? listRoomGenerate : listRoomGenerate?.filter(room => room.room_floor === e));
-                                                    // setSelectedRowKeys(listRoomGenerate
-                                                    //     ?.filter(room => e === ""
-                                                    //         ? room.is_duplicate === false
-                                                    //         : room.is_duplicate === false && room.room_floor === e)
-                                                    //     ?.map((o, i) => o.index));
-                                                }}
-                                                style={{ width: "100%" }}>
-                                            </Select>
-                                        </Col>
-                                    </Row>
-                                </Tabs.TabPane>
-                            </Tabs>
-                            <Row>
-                                <Col span={24}>
-                                    <span>
-                                        <MinusCircleFilled style={{
-                                            fontSize: "130%",
-                                            margin: "1% 0",
-                                            color: 'red'
-                                        }} /> <i style={{ color: 'red' }}>Những phòng đã tồn tại trong tòa nhà</i>
-                                    </span>
-                                </Col>
-                            </Row>
-                            <Table
-                                rowClassName={(record) => record.is_duplicate === false ? 'data-row' : 'data-row active-row'}
-                                rowSelection={{
-                                    type: 'checkbox',
-                                    ...rowSelection,
-                                }}
-                                rowKey={(record) => record.index}
-                                bordered
-                                onChange={(pagination, filters, sorter, extra) => {
-                                    setRoomStatus({ ...room_status, roomStatus: filters.roomStatus });
-                                }}
-                                loading={loading}
-                                dataSource={listRoomPreview?.sort((a, b) => b.is_duplicate - a.is_duplicate)
-                                    ?.map((obj, index) => {
-                                        return {
-                                            is_duplicate: obj.is_duplicate,
-                                            index: obj.index,
-                                            room_id: obj.room_id,
-                                            group_id: obj.group_id,
-                                            group_name: groupRoom?.group?.find((o, i) => o.group_id === obj.group_id)?.group_name,
-                                            room_name: obj.room_name,
-                                            room_floor: obj.room_floor,
-                                            room_price: obj.room_price,
-                                            room_area: obj.room_area,
-                                            room_limit_people: obj.room_limit_people,
-                                        }
-                                    })}
-                                columns={columns}
-                                scroll={{ x: 1000, y: 800 }}></Table>
-                            <Row>
-                                <p>Tổng số phòng đã chọn: {selectedRowKeys?.length}</p>
-                            </Row>
-                            <Row>
-                                <Button disabled={rowSelected.length === 0 ? true : false} onClick={onFinishPreview} type="primary" style={{ marginTop: '1%' }}>Tạo mới phòng đã chọn</Button>
-                            </Row>
-                        </Card>
-                    </Col>
-                </Row>
-            </div>
-        </Spin>
+        <>
+            <Spin spinning={loading} size="large">
+                <div
+                    className="site-layout-background"
+                    style={{
+                        padding: 0,
+                        minHeight: 360,
+                    }}
+                >
+                    <Row>
+                        <Col span={24}>
+                            <Button
+                                href="/room"
+                                type="primary"
+                                size="default"
+                                style={{ marginBottom: "1%", marginLeft: "1%", float: "right" }}
+                                icon={<ArrowLeftOutlined style={textSize} />}
+                            >
+                                Danh sách phòng
+                            </Button>
+                        </Col>
+                    </Row>
+                    <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+                        <Col xs={24} lg={24} xl={8} span={8}>
+                            <Card
+                                className="card-w100-h100"
+                                title={<p className="text-card">Thông tin chung cư và phòng xem trước</p>}
+                                bordered={false}
+                            >
+                                <Row>
+                                    <Col span={24}>
+                                        <p>Địa chỉ chung cư: {dataApartmentGroup[0]?.address?.address_wards + ", "
+                                            + dataApartmentGroup[0]?.address?.address_district + ", "
+                                            + dataApartmentGroup[0]?.address?.address_city}</p>
+                                    </Col>
+                                </Row>
+                                <Tree
+                                    showIcon
+                                    checkable={false}
+                                    onExpand={onExpand}
+                                    expandedKeys={expandedKeys}
+                                    // autoExpandParent={autoExpandParent}
+                                    // onCheck={onCheck}
+                                    // checkedKeys={checkedKeys}
+                                    // onSelect={onSelect}
+                                    // selectedKeys={selectedKeys}
+                                    treeData={treeData}
+                                    switcherIcon={<DownOutlined />}
+                                />
+                            </Card>
+                        </Col>
+                        <Col xs={24} lg={24} xl={16} span={16}>
+                            <Card
+                                className="card-w100-h100"
+                                title={"Danh sách phòng xem trước"}
+                                bordered={false}
+                            >
+                                <Row style={{ marginBottom: "2%" }} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+                                    <Col span={12}>
+                                        <Statistic
+                                            title={
+                                                <>
+                                                    <span style={textSize}>Tổng số phòng </span>
+                                                </>
+                                            }
+                                            value={numberOfRoom}
+                                        />
+                                    </Col>
+                                    <Col span={12}>
+                                        <Statistic
+                                            title={
+                                                <>
+                                                    <span style={textSize}>Tổng số tiền phòng (VND) </span>
+                                                </>
+                                            }
+                                            value={new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).
+                                                format(totalRoomPrice)}
+                                        />
+                                    </Col>
+                                </Row>
+                                <Tabs defaultActiveKey="1" style={{ marginBottom: "1%" }}>
+                                    <Tabs.TabPane tab="Tìm kiếm phòng" key="1">
+                                        <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+                                            <Col xs={12} xl={12} span={12}>
+                                                <Input.Search
+                                                    onSearch={(e) => {
+                                                        setSearchRoom(e);
+                                                    }}
+                                                    onChange={(e) => { setSearchRoom(e.target.value) }}
+                                                    placeholder="Nhập tên phòng để tìm kiếm" />
+                                            </Col>
+                                            <Col xs={12} xl={8} span={8}>
+                                                <Select
+                                                    defaultValue={""}
+                                                    options={optionFloor}
+                                                    placeholder="Chọn tầng"
+                                                    onChange={(e) => {
+                                                        setFilterSave({ roomFloor: e });
+                                                        getRoomInfor('', '', e, []);
+                                                        setListRoomPreview(e === "" ? listRoomGenerate : listRoomGenerate?.filter(room => room.room_floor === e));
+                                                        // setSelectedRowKeys(listRoomGenerate
+                                                        //     ?.filter(room => e === ""
+                                                        //         ? room.is_duplicate === false
+                                                        //         : room.is_duplicate === false && room.room_floor === e)
+                                                        //     ?.map((o, i) => o.index));
+                                                    }}
+                                                    style={{ width: "100%" }}>
+                                                </Select>
+                                            </Col>
+                                        </Row>
+                                    </Tabs.TabPane>
+                                </Tabs>
+                                <Row>
+                                    <Col span={24}>
+                                        <span>
+                                            <MinusCircleFilled style={{
+                                                fontSize: "130%",
+                                                margin: "1% 0",
+                                                color: 'red'
+                                            }} /> <i style={{ color: 'red' }}>Những phòng đã tồn tại trong tòa nhà</i>
+                                        </span>
+                                    </Col>
+                                </Row>
+                                <Table
+                                    rowClassName={(record) => record.is_duplicate === false ? 'data-row' : 'data-row active-row'}
+                                    rowSelection={{
+                                        type: 'checkbox',
+                                        ...rowSelection,
+                                    }}
+                                    rowKey={(record) => record.index}
+                                    bordered
+                                    onChange={(pagination, filters, sorter, extra) => {
+                                        setRoomStatus({ ...room_status, roomStatus: filters.roomStatus });
+                                    }}
+                                    loading={loading}
+                                    dataSource={listRoomPreview?.sort((a, b) => b.is_duplicate - a.is_duplicate)
+                                        ?.map((obj, index) => {
+                                            return {
+                                                is_duplicate: obj.is_duplicate,
+                                                index: obj.index,
+                                                room_id: obj.room_id,
+                                                group_id: obj.group_id,
+                                                group_name: groupRoom?.group?.find((o, i) => o.group_id === obj.group_id)?.group_name,
+                                                room_name: obj.room_name,
+                                                room_floor: obj.room_floor,
+                                                room_price: obj.room_price,
+                                                room_area: obj.room_area,
+                                                room_limit_people: obj.room_limit_people,
+                                            }
+                                        })}
+                                    columns={columns}
+                                    scroll={{ x: 1000, y: 800 }}></Table>
+                                <Row>
+                                    <p>Tổng số phòng đã chọn: {selectedRowKeys?.length}</p>
+                                </Row>
+                                <Row>
+                                    <Button
+                                        disabled={rowSelected.length === 0 ? true : false}
+                                        onClick={() => {
+                                            setAddAsset(true);
+                                        }} type="primary"
+                                        style={{ marginTop: '1%' }}>Tạo mới phòng đã chọn</Button>
+                                </Row>
+                            </Card>
+                        </Col>
+                    </Row>
+                </div>
+            </Spin>
+            <PreviewAddAsset visible={addAsset} close={setAddAsset} dataRoom={rowSelected} />
+        </>
     );
 }
 

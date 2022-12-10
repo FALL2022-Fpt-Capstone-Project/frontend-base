@@ -12,14 +12,12 @@ import {
   Checkbox,
   Tabs,
   Statistic,
-  Divider,
   Tooltip,
   Tree,
   Card,
   Spin,
   Modal,
   notification,
-  Popover,
 } from "antd";
 import {
   EyeTwoTone,
@@ -33,7 +31,6 @@ import {
   EditTwoTone,
   HomeOutlined,
   BulbOutlined,
-  MoreOutlined
 } from "@ant-design/icons";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -64,6 +61,7 @@ const GET_ALL_CONTRACT = "manager/contract";
 const DELETE_ROOM = "manager/room/delete/";
 const DELETE_LIST_ROOM = "manager/room/delete/list";
 const ASSET_ROOM = "manager/asset/room/";
+const ASSET_TYPE = "manager/asset/type";
 
 let optionFloor = [{ label: 'Tất cả các tầng', value: "" }];
 for (let i = 1; i <= 10; i++) {
@@ -102,6 +100,8 @@ function ListRoom(props) {
   const [dataRoomUpdate, setDataRoomUpdate] = useState();
   const [assetRoom, setAssetRoom] = useState([]);
   const [filterSave, setFilterSave] = useState();
+  const [listAssetType, setListAssetType] = useState([]);
+
 
   let cookie = localStorage.getItem("Cookie");
   const navigate = useNavigate();
@@ -424,9 +424,11 @@ function ListRoom(props) {
   };
 
   useEffect(() => {
-    apartmentGroup();
-    getRoomInfor();
-    getAllContract();
+    getAssetType();
+    reload();
+    // apartmentGroup();
+    // getRoomInfor();
+    // getAllContract();
     setRoomStatus({ ...room_status, roomStatus: [true, false] });
     formFilter.setFieldsValue({
       roomGroup: "",
@@ -611,6 +613,25 @@ function ListRoom(props) {
       })
       .then((res) => {
         setAssetRoom(res.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const getAssetType = async () => {
+    let cookie = localStorage.getItem("Cookie");
+    await axios
+      .get(ASSET_TYPE, {
+        headers: {
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${cookie}`,
+        },
+        // withCredentials: true,
+      })
+      .then((res) => {
+        setListAssetType(res.data.data);
       })
       .catch((error) => {
         console.log(error);
@@ -958,10 +979,10 @@ function ListRoom(props) {
             </Card>
           </Col>
         </Row>
-        <AddRoom reRender={reload} visible={addRoom} close={setAddRoom} data={dataApartmentGroup} />
+        <AddRoom reRender={reload} visible={addRoom} close={setAddRoom} data={dataApartmentGroup} assetType={listAssetType} />
         <UpdateRoom reRender={reload} visible={updateRoom} close={setUpdateRoom} data={dataApartmentGroup} dataUpdate={dataRoomUpdate} setDataUpdate={setDataRoomUpdate} />
         <AddRoomAuto visible={addRoomAuto} close={setAddRoomAuto} data={dataApartmentGroup} />
-        <RoomDetail visible={roomDetail} close={setSetRoomDetail} data={roomDetailData} dataAsset={assetRoom} />
+        <RoomDetail visible={roomDetail} close={setSetRoomDetail} data={roomDetailData} dataAsset={assetRoom} assetType={listAssetType} />
         <IncreaseRoomPrice reRender={reload} visible={increaseRoomPrice} close={setIncreaseRoomPrice} data={dataApartmentGroup} />
       </div>
     </Spin>

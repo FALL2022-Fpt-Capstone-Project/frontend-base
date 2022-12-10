@@ -284,7 +284,7 @@ function AddRoomAuto({ visible, close, data }) {
                                         addonAfter="Người"
                                         style={{ width: "100%" }}
                                         controls={false}
-                                        placeholder='Nhập số lượng người tối đa của phòng' />
+                                        placeholder='Nhập số lượng người tối đa mỗi phòng' />
                                 </Form.Item>
                                 <Form.Item
                                     className="form-item"

@@ -94,7 +94,7 @@ function ViewContractBuilding({ openView, closeView, dataContract, dataAsset }) 
       dataIndex: "roomStatus",
       key: 'roomStatus',
       render: (roomStatus) => {
-        return roomStatus ? <Tag color="success">Đã cho thuê</Tag> : <Tag color="error">Đang trống</Tag>
+        return roomStatus ? <Tag color="success">Đã có hợp đồng</Tag> : <Tag color="error">Chưa có hợp đồng</Tag>
       },
     },
   ];
@@ -357,17 +357,29 @@ function ViewContractBuilding({ openView, closeView, dataContract, dataAsset }) 
             </Tabs.TabPane>
             <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>Danh sách phòng đã thuê</span>} key="2">
               <Row style={{ marginBottom: "2%" }} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                <Col span={12}>
+                <Col xs={24} md={12} lg={8} xl={8} span={8}>
                   <Statistic
                     title={
                       <>
-                        <span style={textSize}>Tổng số phòng </span>
+                        <span style={textSize}>Phòng chưa có hợp đồng </span>
                       </>
                     }
-                    value={dataContract?.list_lease_contracted_room?.length}
+                    value={dataContract?.list_lease_contracted_room?.filter(room => room.contract_id === null).length + "/"
+                      + dataContract?.list_lease_contracted_room?.length}
                   />
                 </Col>
-                <Col span={12}>
+                <Col xs={24} md={12} lg={8} xl={8} span={8}>
+                  <Statistic
+                    title={
+                      <>
+                        <span style={textSize}>Phòng đã có hợp đồng </span>
+                      </>
+                    }
+                    value={dataContract?.list_lease_contracted_room?.filter(room => Number.isInteger(room.contract_id)).length + "/"
+                      + dataContract?.list_lease_contracted_room?.length}
+                  />
+                </Col>
+                <Col xs={24} md={12} lg={8} xl={8} span={8}>
                   <Statistic
                     title={
                       <>
