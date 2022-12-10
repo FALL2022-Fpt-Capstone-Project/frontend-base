@@ -466,7 +466,7 @@ function RoomEquipment(data) {
                 type="danger" icon={<DeleteOutlined style={{ fontSize: "130%", color: "white" }}
                 />}>Xóa các tài sản đã chọn</Button>
             <Modal
-                title="Thêm tài sản mới"
+                title={<h2>Thêm tài sản mới</h2>}
                 visible={addAssetInRoom}
                 onCancel={() => {
                     setAddAssetInRoom(false);
