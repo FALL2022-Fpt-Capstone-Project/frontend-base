@@ -487,13 +487,13 @@ const CreateBuilding = ({ visible, close, data }) => {
                     },
                     ({ getFieldValue }) => ({
                       validator(_, value) {
-                        const includesValue = building.some((element) => {
+                        const includesValue = building?.some((element) => {
                           return element?.toLowerCase() === value.toLowerCase();
                         });
-                        if (includesValue) {
-                          return Promise.reject(new Error("Tên chung cư đã tồn tại trong hệ thống!"));
-                        } else {
+                        if (!includesValue || !value) {
                           return Promise.resolve();
+                        } else {
+                          return Promise.reject(new Error("Tên chung cư đã tồn tại trong hệ thống!"));
                         }
                       },
                     }),
@@ -1027,7 +1027,7 @@ const CreateBuilding = ({ visible, close, data }) => {
                             width: "40%",
                           },
                           {
-                            title: "Loại tài sản",
+                            title: "Nhóm tài sản",
                             dataIndex: "asset_type_show_name",
                             key: "asset_type_id",
                           },
@@ -1036,6 +1036,7 @@ const CreateBuilding = ({ visible, close, data }) => {
                           ...rowSelection,
                         }}
                         dataSource={listAssetName}
+                        pagination={false}
                       />
                     </Col>
                   </Row>
@@ -1067,7 +1068,7 @@ const CreateBuilding = ({ visible, close, data }) => {
                               rules={[
                                 {
                                   required: true,
-                                  message: "Vui lòng chọn loại tài sản!",
+                                  message: "Vui lòng chọn nhóm tài sản!",
                                 },
                               ]}
                             >
@@ -1075,7 +1076,7 @@ const CreateBuilding = ({ visible, close, data }) => {
                                 style={{
                                   width: "100%",
                                 }}
-                                defaultValue="Chọn loại tài sản"
+                                defaultValue="Chọn nhóm tài sản"
                                 // onChange={internetChange}
                               >
                                 {listAssetTypeName?.map((obj, index) => {
