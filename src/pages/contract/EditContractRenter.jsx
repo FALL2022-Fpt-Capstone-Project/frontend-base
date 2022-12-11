@@ -1500,12 +1500,12 @@ const EditContractRenter = () => {
                             <b>Giá phòng (VND): </b>
                           </span>
                         }
-                      // rules={[
-                      //   {
-                      //     required: true,
-                      //     message: "Vui lòng nhập giá phòng",
-                      //   },
-                      // ]}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Vui lòng nhập giá phòng",
+                          },
+                        ]}
                       >
                         <InputNumber
                           controls={false}

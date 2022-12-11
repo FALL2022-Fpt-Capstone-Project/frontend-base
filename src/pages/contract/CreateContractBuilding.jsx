@@ -35,6 +35,7 @@ import {
   Divider,
   Card,
   Tree,
+  AutoComplete,
 } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import { Link, useNavigate } from "react-router-dom";
@@ -45,6 +46,7 @@ const { Option } = Select;
 // const LIST_ASSET_TYPE = "manager/asset/type";
 const ADD_NEW_CONTRACT = "manager/contract/group/add";
 const APARTMENT_DATA_GROUP = "/manager/group/all";
+const LIST_CONTRACT_APARTMENT_URL = "manager/contract/group";
 // const ASSET_BASIC = "manager/asset/";
 const dateFormatList = ["DD-MM-YYYY"];
 // const defaultAddAsset = {
@@ -98,6 +100,9 @@ const CreateContractBuilding = () => {
   const [selectedKeys, setSelectedKeys] = useState([]);
   const [autoExpandParent, setAutoExpandParent] = useState(true);
   const [listRoomId, setListRoomId] = useState([]);
+  const [optionAutoComplete, setOptionAutoComplete] = useState([]);
+  const [dataOwner, setDataOwner] = useState([]);
+
   const onExpand = (expandedKeysValue) => {
     console.log("onExpand", expandedKeysValue);
     // if not set autoExpandParent to false, if children expanded, parent can not collapse.
@@ -108,12 +113,18 @@ const CreateContractBuilding = () => {
   const onCheck = (checkedKeysValue) => {
     const data_id = checkedKeysValue?.map((obj, index) => obj.split("-"))?.map((o, i) => {
       return { floor: parseInt(o[0]), room: parseInt(o[1]) }
-    })?.filter((room, j) => room !== undefined);
+    })?.filter((room, j) => room !== undefined)?.map((obj, index) => obj.room).filter((o, i) => Number.isInteger(o));
     console.log('onCheck', checkedKeysValue);
     setCheckedKeys(checkedKeysValue);
-    setListRoomId(data_id?.map((obj, index) => obj.room).filter((o, i) => Number.isInteger(o)));
+    setListRoomId(data_id);
+    const totalRoomPrice = dataApartmentGroupSelect?.list_rooms
+      ?.filter((room, i) => data_id.find(obj => room.room_id === obj))
+      ?.map(o => o.room_price)?.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
+
     form.setFieldsValue({
-      list_room: data_id?.map((obj, index) => obj.room).filter((o, i) => Number.isInteger(o)),
+      list_room: data_id,
+      contract_price: totalRoomPrice,
+      // contract_deposit: totalRoomPrice
     });
   };
   const onSelect = (selectedKeysValue, info) => {
@@ -243,6 +254,7 @@ const CreateContractBuilding = () => {
   useEffect(() => {
     // getAssetType();
     apartmentGroup();
+    getAllContractBuilding();
     // getAssetBasic();
   }, []);
 
@@ -293,6 +305,46 @@ const CreateContractBuilding = () => {
   //       console.log(error);
   //     });
   // };
+
+  const getAllContractBuilding = async () => {
+    setLoading(true);
+    await axios
+      .get(LIST_CONTRACT_APARTMENT_URL, {
+        params: {},
+        headers: {
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${cookie}`,
+        },
+        // withCredentials: true,
+      })
+      .then((res) => {
+        const ownerIdentity = res.data.data.map(owner => owner.identity_number);
+        const filterOwner = res.data.data.filter((obj, index) => ownerIdentity.indexOf(obj.identity_number) === index);
+
+        setDataOwner(filterOwner.map(owner => {
+          return {
+            rack_renter_full_name: owner.rack_renter_full_name,
+            gender: owner.gender,
+            rack_renter: owner.rack_renter,
+            phone_number: owner.phone_number,
+            rack_renter_email: owner.rack_renter_email,
+            identity_number: owner.identity_number,
+            rack_renter_more_details: owner.rack_renter_more_details
+          }
+        }));
+        setOptionAutoComplete(filterOwner?.map(owner => {
+          return {
+            value: owner.identity_number,
+            label: owner.rack_renter_full_name + " (" + owner.phone_number + ")",
+          }
+        }));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    setLoading(false);
+  };
 
   const apartmentGroup = async () => {
     setLoading(true);
@@ -543,6 +595,7 @@ const CreateContractBuilding = () => {
     try {
       if (changeTab === "1") {
         await form.validateFields([
+          // "contract_name",
           "contract_payment_cycle",
           "owner_name",
           "owner_gender",
@@ -653,7 +706,23 @@ const CreateContractBuilding = () => {
                       },
                     ]}
                   >
-                    <Input placeholder="Tên người cho thuê"></Input>
+                    <AutoComplete
+                      filterOption={(input, option) => (option?.label.toLowerCase().trim() ?? '').includes(input.toLowerCase().trim())}
+                      options={optionAutoComplete}
+                      placeholder="Nhập tên người cho thuê"
+                      onSelect={(e) => {
+                        const data = dataOwner.find(owner => owner.identity_number === e);
+                        console.log(data)
+                        form.setFieldsValue({
+                          owner_name: data.rack_renter_full_name,
+                          owner_gender: data.gender,
+                          owner_phone_number: data.phone_number,
+                          owner_email: data.rack_renter_email,
+                          owner_identity_card: data.identity_number,
+                          address_more_detail: data.rack_renter_more_details
+                        });
+                      }}
+                    />
                   </Form.Item>
                   <Form.Item
                     className="form-item"
@@ -687,7 +756,7 @@ const CreateContractBuilding = () => {
                       },
                       {
                         pattern: /^((\+84|84|0)+(3|5|7|8|9|1[2|6|8|9]))+([0-9]{8})\b/,
-                        message: "Số điện thoại phải bắt đầu (+84,0,84)",
+                        message: "Số điện thoại phải bắt đầu (+84,0,84) và có 10 số",
                       },
                     ]}
                   >
@@ -777,6 +846,25 @@ const CreateContractBuilding = () => {
                   bordered={false}
                   className="card-width-100 card-height"
                 >
+                  {/* <Form.Item
+                    className="form-item"
+                    name="contract_name"
+                    labelCol={{ span: 24 }}
+                    label={
+                      <span>
+                        <b>Tên hợp đồng: </b>
+                      </span>
+                    }
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng nhập tên hợp đồng",
+                        whitespace: true,
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Tên hợp đồng"></Input>
+                  </Form.Item> */}
                   <Form.Item
                     className="form-item"
                     name="contract_payment_cycle"

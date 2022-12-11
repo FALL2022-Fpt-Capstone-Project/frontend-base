@@ -1,4 +1,4 @@
-import { Button, Card, Checkbox, Col, Input, Modal, notification, Row, Table, Tabs, Tag } from 'antd';
+import { Button, Card, Checkbox, Col, Divider, Input, Modal, notification, Row, Table, Tabs, Tag } from 'antd';
 import React, { useState, useEffect } from 'react';
 import { DeleteOutlined, UserOutlined, FilterOutlined, AuditOutlined, DollarOutlined, GoldOutlined } from "@ant-design/icons";
 import axios from "../../api/axios";
@@ -150,11 +150,11 @@ function DeleteContractRenter({ reload, openView, closeView, dataContract, dataA
                     ]}>
                     <div>
                         <Tabs defaultActiveKey="2">
-                            {/* <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>Hóa đơn chưa thanh toán</span>} key="1">
+                            <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>Danh sách hóa đơn</span>} key="1">
                                 <Table
 
                                 />
-                            </Tabs.TabPane> */}
+                            </Tabs.TabPane>
                             <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>Thông tin chung</span>} key="2">
                                 <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                                     <Col xs={24} xl={12} span={12}>

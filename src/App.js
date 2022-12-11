@@ -52,7 +52,7 @@ const App = () => {
           <Route path="room/equipment" element={<RoomEquipment />} />
         </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
-          <Route path="room/member/:room_id" element={<AddMemInRoom />} />
+          <Route path="room/member" element={<AddMemInRoom />} />
         </Route>
         <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} />}>
           <Route path="room/preview" element={<RoomPreview />} />

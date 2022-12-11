@@ -302,7 +302,6 @@ const CreateContractRenter = () => {
       })
       .then((res) => {
         setDataOldRenter(res.data.data);
-        console.log(res.data.data);
         setOptionAutoComplete(res.data.data.map(renter => {
           return {
             value: renter.renter_id,
@@ -629,10 +628,11 @@ const CreateContractRenter = () => {
 
   const [roomStatus, setRoomStatus] = useState(true);
   const [floorStatus, setFloorStatus] = useState(true);
-  console.log(dataApartmentGroupSelect);
-  const getListFloor = dataApartmentGroupSelect?.list_room
-    ?.filter((obj, index) => obj.contract_id === null)
+
+  const getListFloor = dataApartmentGroupSelect?.list_rooms
+    ?.filter((obj, index) => obj.contract_id === null && Number.isInteger(obj.group_contract_id))
     ?.map((o, i) => o.room_floor);
+
   const floors = getListFloor?.filter((obj, index) => getListFloor.indexOf(obj) === index);
 
   const [room, setRoom] = useState([]);
@@ -825,7 +825,7 @@ const CreateContractRenter = () => {
     // group_id: dataApartmentGroupSelect?.group_id,
     list_renter: dataMember,
     // list_general_service: listGeneralService,
-    list_hand_over_assets: dataAsset,
+    // list_hand_over_assets: dataAsset,
   });
 
   const onNext = async () => {
@@ -1188,7 +1188,7 @@ const CreateContractRenter = () => {
                     >
                       <Select
                         onChange={(e) => {
-                          console.log(dataApartmentGroup);
+                          console.log(dataApartmentGroup, e);
                           form.setFieldsValue({
                             room_floor: "",
                             room_id: "",
@@ -1197,32 +1197,7 @@ const CreateContractRenter = () => {
                             serviceIndexInForm: null,
                           });
                           setRoomStatus(true);
-                          setDataApartmentGroupSelect(
-                            dataApartmentGroup?.find((obj, index) => obj.group_id === e)
-                              ?.list_room_lease_contracted?.find(groupId => groupId.group_id === e)
-                          );
-                          setDataAsset(
-                            dataApartmentGroup
-                              ?.find((obj, index) => obj.group_id === e)?.list_room_lease_contracted
-                              ?.find(groupId => groupId.group_id === e)
-                              ?.list_hand_over_assets?.filter((asset => asset.hand_over_asset_quantity > 0))?.map(
-                                (obj, index) =>
-                                  [
-                                    {
-                                      asset_id: obj.asset_id,
-                                      asset_name: obj.asset_name,
-                                      asset_type: obj.asset_type,
-                                      hand_over_asset_date_delivery: moment(
-                                        obj.hand_over_date_delivery,
-                                        dateFormatList
-                                      )._i,
-                                      asset_type_show_name: obj.asset_type_show_name,
-                                      hand_over_asset_quantity: 1,
-                                      // hand_over_asset_status: obj.hand_over_asset_status,
-                                    },
-                                  ][0]
-                              )
-                          );
+                          setDataApartmentGroupSelect(dataApartmentGroup?.find((obj, index) => obj.group_id === e));
                           setFloorStatus(false);
                         }}
                         placeholder="Chọn chung cư"
@@ -1255,8 +1230,8 @@ const CreateContractRenter = () => {
                         onChange={(e) => {
                           setRoomStatus(false);
                           setRoom(
-                            dataApartmentGroupSelect?.list_room?.filter(
-                              (data) => data.room_floor === e && data.contract_id === null
+                            dataApartmentGroupSelect?.list_rooms?.filter(
+                              (data) => data.room_floor === e && data.contract_id === null && Number.isInteger(data.group_contract_id)
                             )
                           );
                           setFloorRoom((pre) => {
@@ -1301,16 +1276,18 @@ const CreateContractRenter = () => {
                         placeholder="Chọn phòng"
                         disabled={roomStatus}
                         onChange={(e) => {
+                          const data = dataApartmentGroupSelect?.list_rooms?.filter((obj, index) => obj.contract_id === null && Number.isInteger(obj.group_contract_id));
+
                           if (e !== "") {
                             setRoomId(e);
                             getAssetRoom(e);
-                            setRoomSelect(dataApartmentGroupSelect?.list_room?.find((obj) => obj.id === e));
+                            setRoomSelect(data?.find((obj) => obj.room_id === e));
                             form.setFieldsValue({
-                              contract_price: dataApartmentGroupSelect?.list_room?.find(
-                                (obj) => obj.id === e
+                              contract_price: data?.find(
+                                (obj) => obj.room_id === e
                               ).room_price,
-                              contract_deposit: dataApartmentGroupSelect?.list_room?.find(
-                                (obj) => obj.id === e
+                              contract_deposit: data?.find(
+                                (obj) => obj.room_id === e
                               ).room_price,
                             });
                           }
@@ -1320,7 +1297,7 @@ const CreateContractRenter = () => {
                         <Select.Option value="">Chọn phòng</Select.Option>
                         {room?.map((obj, index) => {
                           return (
-                            <Select.Option key={index} value={obj.id}>
+                            <Select.Option key={index} value={obj.room_id}>
                               {obj.room_name}
                             </Select.Option>
                           );
@@ -1747,20 +1724,14 @@ const CreateContractRenter = () => {
           >
             <Row>
               <Col span={24}>
-                <Form.Item className="form-item" name="list_hand_over_assets" labelCol={{ span: 24 }}>
-                  <p>
-                    <h3>
-                      <b>
-                        Thông tin trang thiết bị{" "}
-                        {/* {dataApartmentGroupSelect?.group_name !== undefined
-                                  ? dataApartmentGroupSelect?.group_name + " "
-                                  : ""} */}
-                        {/* {floorRoom?.room_floor !== undefined ? "tầng " + floorRoom?.room_floor : ""}{" "} */}
-                        {roomSelect?.room_name === undefined ? "" : "phòng " + roomSelect?.room_name}
-                      </b>
-                    </h3>
-                  </p>
-                </Form.Item>
+                <p>
+                  <h3>
+                    <b>
+                      Thông tin trang thiết bị{" "}
+                      {roomSelect?.room_name === undefined ? "" : "phòng " + roomSelect?.room_name}
+                    </b>
+                  </h3>
+                </p>
                 <Row>
                   <Col>
                     <Input.Search

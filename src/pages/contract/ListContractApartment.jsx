@@ -269,6 +269,7 @@ const ListContractApartment = () => {
           </Tabs.TabPane>
         </Tabs>
         <Table loading={loading} dataSource={dataSource} scroll={{ x: 1600, y: 600 }} bordered>
+          {/* <Column width='10%' title="Tên hợp đồng" dataIndex="contract_name" key="key" /> */}
           <Column title="Tên người cho thuê" dataIndex="rack_renter_full_name" key="key" />
           <Column title="Số điện thoại" dataIndex="phone_number" key="key" />
 
@@ -283,7 +284,10 @@ const ListContractApartment = () => {
             }}
           />
           <Column title="Số lượng tầng" dataIndex="total_floor" key="key" />
-          <Column title="Số lượng phòng" dataIndex="total_room" key="key" />
+          <Column title="Số lượng phòng đã thuê" width='12%' dataIndex="total_room" key="key"
+            render={(_, record) => {
+              return <span>{record?.list_lease_contracted_room?.length} / {record?.total_room}</span>
+            }} />
           <Column
             title="Ngày lập hợp đồng"
             dataIndex="contract_start_date"
@@ -292,6 +296,7 @@ const ListContractApartment = () => {
           />
           <Column title="Ngày kết thúc" dataIndex="contract_end_date" render={(date) => getFullDate(date)} key="key" />
           <Column
+            width='12%'
             title="Trạng thái hợp đồng"
             dataIndex="contractIsDisable"
             render={(_, record) => {
