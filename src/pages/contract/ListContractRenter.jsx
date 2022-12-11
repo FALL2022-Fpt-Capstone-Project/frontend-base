@@ -12,6 +12,7 @@ const LIST_CONTRACT_URL = "manager/contract";
 const LIST_BUILDING_FILTER = "manager/group/all/contracted";
 const ASSET_ROOM = "manager/asset/room/";
 const GET_SERVICE_GROUP_BY_ID = "manager/service/general?groupId=";
+const LIST_ASSET_TYPE = "manager/asset/type";
 
 const { RangePicker } = DatePicker;
 const ListContractRenter = () => {
@@ -31,6 +32,7 @@ const ListContractRenter = () => {
   const [contractInfor, setContractInfor] = useState([]);
   const [assetRoom, setAssetRoom] = useState([]);
   const [dataApartmentServiceGeneral, setDataApartmentServiceGeneral] = useState([]);
+  const [listAssetType, setListAssetType] = useState([]);
 
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -57,6 +59,7 @@ const ListContractRenter = () => {
   let cookie = localStorage.getItem("Cookie");
   useEffect(() => {
     getAllContract();
+    getAssetType();
   }, []);
 
   const getAllContract = async () => {
@@ -76,6 +79,25 @@ const ListContractRenter = () => {
         console.log(error);
       });
     setLoading(false);
+  };
+
+  const getAssetType = async () => {
+    let cookie = localStorage.getItem("Cookie");
+    await axios
+      .get(LIST_ASSET_TYPE, {
+        headers: {
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${cookie}`,
+        },
+        // withCredentials: true,
+      })
+      .then((res) => {
+        setListAssetType(res.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   useEffect(() => {
@@ -260,16 +282,21 @@ const ListContractRenter = () => {
       <div className="list-contract-search">
         <Tabs defaultActiveKey="1">
           <Tabs.TabPane tab="Tìm kiếm nhanh" key="1">
-            <Search
-              placeholder="Tìm kiếm theo số phòng, số điện thoại, tên khách thuê,..."
-              className="quich-search"
-              onSearch={(value) => {
-                setTextSearch(value);
-              }}
-              onChange={(e) => {
-                setTextSearch(e.target.value);
-              }}
-            />
+            <Row>
+              <Col xs={24} lg={16} xl={10} span={10}>
+                <Search
+                  style={{ width: '100%' }}
+                  placeholder="Tìm kiếm theo số phòng, số điện thoại, tên khách thuê,..."
+                  className="quich-search"
+                  onSearch={(value) => {
+                    setTextSearch(value);
+                  }}
+                  onChange={(e) => {
+                    setTextSearch(e.target.value);
+                  }}
+                />
+              </Col>
+            </Row>
           </Tabs.TabPane>
           <Tabs.TabPane tab="Tìm kiếm nâng cao" key="2">
             <Form
@@ -514,12 +541,14 @@ const ListContractRenter = () => {
       <ViewContractRenter
         openView={viewContract}
         closeView={setViewContract}
-        dataContract={contractInfor} dataAsset={assetRoom} dataService={dataApartmentServiceGeneral} />
+        dataContract={contractInfor} dataAsset={assetRoom} dataService={dataApartmentServiceGeneral}
+        assetType={listAssetType} />
       <DeleteContractRenter
         reload={reload}
         openView={deleteContract}
         closeView={setDeleteContract}
-        dataContract={contractInfor} dataAsset={assetRoom} dataService={dataApartmentServiceGeneral} />
+        dataContract={contractInfor} dataAsset={assetRoom} dataService={dataApartmentServiceGeneral}
+        assetType={listAssetType} />
     </div>
   );
 };

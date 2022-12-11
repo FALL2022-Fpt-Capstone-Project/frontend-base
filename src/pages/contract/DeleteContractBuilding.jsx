@@ -35,7 +35,7 @@ const textSize = {
 };
 let optionFloor = [];
 function DeleteContractBuilding({ reload, openView, closeView, dataContract, dataAsset }) {
-    console.log(dataContract);
+    // console.log(dataContract);
     const navigate = useNavigate();
     const [roomFloor, setRoomFloor] = useState("");
     let cookie = localStorage.getItem("Cookie");

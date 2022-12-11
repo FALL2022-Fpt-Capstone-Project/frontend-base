@@ -35,7 +35,7 @@ const Sidebar = () => {
   }, [location.pathname]);
   useEffect(() => {
     if (location.pathname.includes("/room/member")) {
-      setRoomLink("/room/member/");
+      setRoomLink("/room/member");
     }
   }, [location.pathname]);
 

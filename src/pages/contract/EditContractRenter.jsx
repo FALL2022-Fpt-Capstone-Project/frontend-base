@@ -52,8 +52,10 @@ const DELETE_RENTER = "manager/renter/remove/";
 const UPDATE_RENTER = "manager/renter/update/";
 const UPDATE_CONTRACT_RENTER = "manager/contract/room/update/";
 
-const cardHeight = {
-  height: 850,
+const card = {
+  height: '100%',
+  border: '1px solid #C0C0C0',
+  borderRadius: '10px'
 };
 const fontSizeIcon = {
   fontSize: "120%",
@@ -992,7 +994,7 @@ const EditContractRenter = () => {
                 <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                   <Col xs={24} xl={8} span={8}>
                     <Card
-                      style={cardHeight}
+                      style={card}
                       title={
                         <Tag color="blue">
                           <h3>
@@ -1138,7 +1140,7 @@ const EditContractRenter = () => {
                   </Col>
                   <Col xs={24} xl={8} span={8}>
                     <Card
-                      style={cardHeight}
+                      style={card}
                       title={
                         <Tag color="blue">
                           <h3>
@@ -1476,6 +1478,7 @@ const EditContractRenter = () => {
                   </Col>
                   <Col xs={24} xl={8} span={8}>
                     <Card
+                      style={card}
                       title={
                         <Tag
                           color="blue"
@@ -1859,7 +1862,7 @@ const EditContractRenter = () => {
           Tiếp
         </Button>
         <Modal
-          title="Thêm tài sản mới"
+          title={<h2>Thêm tài sản mới</h2>}
           visible={addAssetInRoom}
           onCancel={() => {
             setAddAssetInRoom(false);
@@ -1884,39 +1887,40 @@ const EditContractRenter = () => {
             </Button>,
           ]}
         >
-          <Form
-            form={createAssetForm}
-            onFinish={addAssetFinish}
-            onFinishFailed={addAssetFail}
-            labelCol={{ span: 5 }}
-            wrapperCol={{ span: 30 }}
-            layout="horizontal"
-            initialValues={{ size: componentSize }}
-            onValuesChange={onFormLayoutChange}
-            size={"default"}
-            id="create-asset"
-          >
-            <Form.Item className="form-item" name="asset_id" style={{ display: "none" }}></Form.Item>
-            <Form.Item
-              className="form-item"
-              name="asset_name"
-              labelCol={{ span: 24 }}
-              label={
-                <span>
-                  <b>Tên tài sản: </b>
-                </span>
-              }
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng nhập tên tài sản",
-                  whitespace: true,
-                },
-              ]}
+          <Card style={card}>
+            <Form
+              form={createAssetForm}
+              onFinish={addAssetFinish}
+              onFinishFailed={addAssetFail}
+              labelCol={{ span: 5 }}
+              wrapperCol={{ span: 30 }}
+              layout="horizontal"
+              initialValues={{ size: componentSize }}
+              onValuesChange={onFormLayoutChange}
+              size={"default"}
+              id="create-asset"
             >
-              <Input placeholder="Tên tài sản"></Input>
-            </Form.Item>
-            {/* <Form.Item
+              <Form.Item className="form-item" name="asset_id" style={{ display: "none" }}></Form.Item>
+              <Form.Item
+                className="form-item"
+                name="asset_name"
+                labelCol={{ span: 24 }}
+                label={
+                  <span>
+                    <b>Tên tài sản: </b>
+                  </span>
+                }
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập tên tài sản",
+                    whitespace: true,
+                  },
+                ]}
+              >
+                <Input placeholder="Tên tài sản"></Input>
+              </Form.Item>
+              {/* <Form.Item
                       className="form-item"
                       name="hand_over_date_delivery"
                       labelCol={{ span: 24 }}
@@ -1939,51 +1943,51 @@ const EditContractRenter = () => {
                         format="DD-MM-YYYY"
                       />
                     </Form.Item> */}
-            <Form.Item
-              className="form-item"
-              name="hand_over_asset_quantity"
-              labelCol={{ span: 24 }}
-              label={
-                <span>
-                  <b>Số lượng: </b>
-                </span>
-              }
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng nhập số lượng",
-                },
-                {
-                  pattern: new RegExp(/^[0-9]*$/),
-                  message: "Vui lòng nhập số nguyên",
+              <Form.Item
+                className="form-item"
+                name="hand_over_asset_quantity"
+                labelCol={{ span: 24 }}
+                label={
+                  <span>
+                    <b>Số lượng: </b>
+                  </span>
                 }
-              ]}
-            >
-              <InputNumber defaultValue={1} style={{ width: "100%" }} min={1} />
-            </Form.Item>
-            <Form.Item
-              className="form-item"
-              name="asset_type_show_name"
-              labelCol={{ span: 24 }}
-              label={
-                <span>
-                  <b>Nhóm tài sản: </b>
-                </span>
-              }
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng chọn nhóm tài sản",
-                },
-              ]}
-            >
-              <Select placeholder="Chọn nhóm tài sản">
-                {listAssetType?.map((obj, index) => {
-                  return <Select.Option value={obj.id}>{obj.asset_type_show_name}</Select.Option>;
-                })}
-              </Select>
-            </Form.Item>
-            {/* <Form.Item
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập số lượng",
+                  },
+                  {
+                    pattern: new RegExp(/^[0-9]*$/),
+                    message: "Vui lòng nhập số nguyên",
+                  }
+                ]}
+              >
+                <InputNumber defaultValue={1} style={{ width: "100%" }} min={1} />
+              </Form.Item>
+              <Form.Item
+                className="form-item"
+                name="asset_type_show_name"
+                labelCol={{ span: 24 }}
+                label={
+                  <span>
+                    <b>Nhóm tài sản: </b>
+                  </span>
+                }
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng chọn nhóm tài sản",
+                  },
+                ]}
+              >
+                <Select placeholder="Chọn nhóm tài sản">
+                  {listAssetType?.map((obj, index) => {
+                    return <Select.Option value={obj.id}>{obj.asset_type_show_name}</Select.Option>;
+                  })}
+                </Select>
+              </Form.Item>
+              {/* <Form.Item
                     className="form-item"
                     name="hand_over_asset_status"
                     labelCol={{ span: 24 }}
@@ -2008,11 +2012,12 @@ const EditContractRenter = () => {
                       </Radio>
                     </Radio.Group>
                   </Form.Item> */}
-          </Form>
+            </Form>
+          </Card>
         </Modal>
 
         <Modal
-          title="Chỉnh sửa tài sản trong phòng"
+          title={<h2>Chỉnh sửa tài sản trong phòng</h2>}
           visible={isEditAsset}
           onCancel={() => {
             setIsEditAsset(false);
@@ -2035,39 +2040,40 @@ const EditContractRenter = () => {
             </Button>,
           ]}
         >
-          <Form
-            form={editAssetForm}
-            onFinish={editAssetFinish}
-            onFinishFailed={editAssetFail}
-            labelCol={{ span: 5 }}
-            wrapperCol={{ span: 30 }}
-            layout="horizontal"
-            initialValues={{ size: componentSize }}
-            onValuesChange={onFormLayoutChange}
-            size={"default"}
-            id="edit-asset"
-          >
-            <Form.Item
-              className="form-item"
-              name="asset_name"
-              labelCol={{ span: 24 }}
-              label={
-                <span>
-                  <b>Tên tài sản: </b>
-                </span>
-              }
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng nhập tên tài sản",
-                  whitespace: true,
-                },
-              ]}
+          <Card style={card}>
+            <Form
+              form={editAssetForm}
+              onFinish={editAssetFinish}
+              onFinishFailed={editAssetFail}
+              labelCol={{ span: 5 }}
+              wrapperCol={{ span: 30 }}
+              layout="horizontal"
+              initialValues={{ size: componentSize }}
+              onValuesChange={onFormLayoutChange}
+              size={"default"}
+              id="edit-asset"
             >
-              <Input placeholder="Tên tài sản"></Input>
-            </Form.Item>
-            <Form.Item className="form-item" name="asset_id" style={{ display: "none" }}></Form.Item>
-            {/* <Form.Item
+              <Form.Item
+                className="form-item"
+                name="asset_name"
+                labelCol={{ span: 24 }}
+                label={
+                  <span>
+                    <b>Tên tài sản: </b>
+                  </span>
+                }
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập tên tài sản",
+                    whitespace: true,
+                  },
+                ]}
+              >
+                <Input placeholder="Tên tài sản"></Input>
+              </Form.Item>
+              <Form.Item className="form-item" name="asset_id" style={{ display: "none" }}></Form.Item>
+              {/* <Form.Item
                       className="form-item"
                       name="hand_over_date_delivery"
                       labelCol={{ span: 24 }}
@@ -2090,53 +2096,53 @@ const EditContractRenter = () => {
                         format="DD-MM-YYYY"
                       />
                     </Form.Item> */}
-            <Form.Item
-              className="form-item"
-              name="hand_over_asset_quantity"
-              labelCol={{ span: 24 }}
-              label={
-                <span>
-                  <b>Số lượng: </b>
-                </span>
-              }
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng nhập số lượng",
-                },
-                {
-                  pattern: new RegExp(/^[0-9]*$/),
-                  message: "Vui lòng nhập số nguyên",
+              <Form.Item
+                className="form-item"
+                name="hand_over_asset_quantity"
+                labelCol={{ span: 24 }}
+                label={
+                  <span>
+                    <b>Số lượng: </b>
+                  </span>
                 }
-              ]}
-            >
-              <InputNumber defaultValue={1} style={{ width: "100%" }} min={1} />
-            </Form.Item>
-            <Form.Item
-              className="form-item"
-              name="asset_type_show_name"
-              labelCol={{ span: 24 }}
-              label={
-                <span>
-                  <b>Nhóm tài sản: </b>
-                </span>
-              }
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng chọn nhóm tài sản",
-                },
-              ]}
-            >
-              <Select placeholder={"Nhóm tài sản"}>
-                {listAssetType?.map((obj, index) => {
-                  return (
-                    <Select.Option value={obj.id}>{obj.asset_type_show_name}</Select.Option>
-                  );
-                })}
-              </Select>
-            </Form.Item>
-            {/* <Form.Item
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập số lượng",
+                  },
+                  {
+                    pattern: new RegExp(/^[0-9]*$/),
+                    message: "Vui lòng nhập số nguyên",
+                  }
+                ]}
+              >
+                <InputNumber defaultValue={1} style={{ width: "100%" }} min={1} />
+              </Form.Item>
+              <Form.Item
+                className="form-item"
+                name="asset_type_show_name"
+                labelCol={{ span: 24 }}
+                label={
+                  <span>
+                    <b>Nhóm tài sản: </b>
+                  </span>
+                }
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng chọn nhóm tài sản",
+                  },
+                ]}
+              >
+                <Select placeholder={"Nhóm tài sản"}>
+                  {listAssetType?.map((obj, index) => {
+                    return (
+                      <Select.Option value={obj.id}>{obj.asset_type_show_name}</Select.Option>
+                    );
+                  })}
+                </Select>
+              </Form.Item>
+              {/* <Form.Item
                     className="form-item"
                     name="hand_over_asset_status"
                     labelCol={{ span: 24 }}
@@ -2161,13 +2167,18 @@ const EditContractRenter = () => {
                       </Radio>
                     </Radio.Group>
                   </Form.Item> */}
-          </Form>
+            </Form>
+          </Card>
         </Modal>
         <Modal
           title={
-            roomSelect?.room_name === undefined
-              ? "Thêm thành viên "
-              : "Thêm thành viên vào Phòng " + roomSelect?.room_name
+            <h2>
+              {
+                roomSelect?.room_name === undefined
+                  ? "Thêm thành viên "
+                  : "Thêm thành viên vào phòng " + roomSelect?.room_name
+              }
+            </h2>
           }
           open={isAddMem}
           onOk={() => {
@@ -2185,127 +2196,129 @@ const EditContractRenter = () => {
             </Button>,
           ]}
         >
-          <Form
-            form={formAddMem}
-            onFinish={onFinishAddMem}
-            onFinishFailed={onFinishFailAddMem}
-            labelCol={{ span: 5 }}
-            wrapperCol={{ span: 30 }}
-            layout="horizontal"
-            initialValues={{ size: componentSize }}
-            onValuesChange={onFormLayoutChange}
-            size={"default"}
-            id="add-member"
-          >
-            <Form.Item className="form-item" name="member_id" style={{ display: "none" }}></Form.Item>
-            <Form.Item
-              className="form-item"
-              name="name"
-              labelCol={{ span: 24 }}
-              label={
-                <span>
-                  <b>Họ và tên: </b>
-                </span>
-              }
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng nhập họ tên thành viên",
-                  whitespace: true,
-                },
-              ]}
+          <Card style={card}>
+            <Form
+              form={formAddMem}
+              onFinish={onFinishAddMem}
+              onFinishFailed={onFinishFailAddMem}
+              labelCol={{ span: 5 }}
+              wrapperCol={{ span: 30 }}
+              layout="horizontal"
+              initialValues={{ size: componentSize }}
+              onValuesChange={onFormLayoutChange}
+              size={"default"}
+              id="add-member"
             >
-              <Input placeholder="Họ và tên"></Input>
-            </Form.Item>
-            <Form.Item
-              className="form-item"
-              name="member_gender"
-              labelCol={{ span: 24 }}
-              label={
-                <span>
-                  <b>Giới tính: </b>
-                </span>
-              }
-            >
-              <Radio.Group>
-                <Radio value={true}>Nam</Radio>
-                <Radio value={false}>Nữ</Radio>
-              </Radio.Group>
-            </Form.Item>
-            <Form.Item
-              className="form-item"
-              name="phone_number"
-              labelCol={{ span: 24 }}
-              label={
-                <span>
-                  <b>Số điện thoại: </b>
-                </span>
-              }
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng nhập số điện thoại",
-                  whitespace: true,
-                },
-                {
-                  pattern: /^((\+84|84|0)+(3|5|7|8|9|1[2|6|8|9]))+([0-9]{8})\b/,
-                  message: "Số điện thoại phải bắt đầu (+84,0,84)",
-                },
-              ]}
-            >
-              <Input placeholder="Số điện thoại" style={{ width: "100%" }} />
-            </Form.Item>
-            <Form.Item
-              className="form-item"
-              name="identity_card"
-              labelCol={{ span: 24 }}
-              label={
-                <span>
-                  <b>CMND/CCCD: </b>
-                </span>
-              }
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng nhập CMND/CCCD",
-                  whitespace: true,
-                },
-                {
-                  pattern: /^([0-9]{12})\b/,
-                  message: "Vui lòng nhập đúng CMND/CCCD (12 số)",
-                },
-              ]}
-            >
-              <Input placeholder="CMND/CCCD" style={{ width: "100%" }} />
-            </Form.Item>
-            <Form.Item
-              className="form-item"
-              name="license_plates"
-              labelCol={{ span: 24 }}
-              label={
-                <span>
-                  <b>Biển số xe: </b>
-                </span>
-              }
-            >
-              <Input placeholder="Biển số xe"></Input>
-            </Form.Item>
-            <Form.Item
-              className="form-item"
-              name="address"
-              labelCol={{ span: 24 }}
-              label={
-                <span>
-                  <b>Địa chỉ: </b>
-                </span>
-              }
-            >
-              <Input placeholder="Địa chỉ"></Input>
-            </Form.Item>
-          </Form>
+              <Form.Item className="form-item" name="member_id" style={{ display: "none" }}></Form.Item>
+              <Form.Item
+                className="form-item"
+                name="name"
+                labelCol={{ span: 24 }}
+                label={
+                  <span>
+                    <b>Họ và tên: </b>
+                  </span>
+                }
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập họ tên thành viên",
+                    whitespace: true,
+                  },
+                ]}
+              >
+                <Input placeholder="Họ và tên"></Input>
+              </Form.Item>
+              <Form.Item
+                className="form-item"
+                name="member_gender"
+                labelCol={{ span: 24 }}
+                label={
+                  <span>
+                    <b>Giới tính: </b>
+                  </span>
+                }
+              >
+                <Radio.Group>
+                  <Radio value={true}>Nam</Radio>
+                  <Radio value={false}>Nữ</Radio>
+                </Radio.Group>
+              </Form.Item>
+              <Form.Item
+                className="form-item"
+                name="phone_number"
+                labelCol={{ span: 24 }}
+                label={
+                  <span>
+                    <b>Số điện thoại: </b>
+                  </span>
+                }
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập số điện thoại",
+                    whitespace: true,
+                  },
+                  {
+                    pattern: /^((\+84|84|0)+(3|5|7|8|9|1[2|6|8|9]))+([0-9]{8})\b/,
+                    message: "Số điện thoại phải bắt đầu (+84,0,84)",
+                  },
+                ]}
+              >
+                <Input placeholder="Số điện thoại" style={{ width: "100%" }} />
+              </Form.Item>
+              <Form.Item
+                className="form-item"
+                name="identity_card"
+                labelCol={{ span: 24 }}
+                label={
+                  <span>
+                    <b>CMND/CCCD: </b>
+                  </span>
+                }
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập CMND/CCCD",
+                    whitespace: true,
+                  },
+                  {
+                    pattern: /^([0-9]{12})\b/,
+                    message: "Vui lòng nhập đúng CMND/CCCD (12 số)",
+                  },
+                ]}
+              >
+                <Input placeholder="CMND/CCCD" style={{ width: "100%" }} />
+              </Form.Item>
+              <Form.Item
+                className="form-item"
+                name="license_plates"
+                labelCol={{ span: 24 }}
+                label={
+                  <span>
+                    <b>Biển số xe: </b>
+                  </span>
+                }
+              >
+                <Input placeholder="Biển số xe"></Input>
+              </Form.Item>
+              <Form.Item
+                className="form-item"
+                name="address"
+                labelCol={{ span: 24 }}
+                label={
+                  <span>
+                    <b>Địa chỉ: </b>
+                  </span>
+                }
+              >
+                <Input placeholder="Địa chỉ"></Input>
+              </Form.Item>
+            </Form>
+          </Card>
         </Modal>
         <Modal
-          title="Chỉnh sửa thành viên "
+          title={<h2>Chỉnh sửa thành viên </h2>}
           open={isEditMem}
           onOk={() => {
             setIsEditMem(false);
@@ -2327,124 +2340,126 @@ const EditContractRenter = () => {
             </Button>,
           ]}
         >
-          <Form
-            form={formEditMem}
-            onFinish={onFinishEditMem}
-            onFinishFailed={onFinishFailEditMem}
-            labelCol={{ span: 5 }}
-            wrapperCol={{ span: 30 }}
-            layout="horizontal"
-            initialValues={{ size: componentSize }}
-            onValuesChange={onFormLayoutChange}
-            size={"default"}
-            id="edit-member"
-          >
-            <Form.Item className="form-item" name="member_id" style={{ display: "none" }}></Form.Item>
-            <Form.Item
-              className="form-item"
-              name="name"
-              labelCol={{ span: 24 }}
-              label={
-                <span>
-                  <b>Họ và tên: </b>
-                </span>
-              }
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng nhập họ tên thành viên",
-                  whitespace: true,
-                },
-              ]}
+          <Card style={card}>
+            <Form
+              form={formEditMem}
+              onFinish={onFinishEditMem}
+              onFinishFailed={onFinishFailEditMem}
+              labelCol={{ span: 5 }}
+              wrapperCol={{ span: 30 }}
+              layout="horizontal"
+              initialValues={{ size: componentSize }}
+              onValuesChange={onFormLayoutChange}
+              size={"default"}
+              id="edit-member"
             >
-              <Input placeholder="Họ và tên"></Input>
-            </Form.Item>
-            <Form.Item
-              className="form-item"
-              name="member_gender"
-              labelCol={{ span: 24 }}
-              label={
-                <span>
-                  <b>Giới tính: </b>
-                </span>
-              }
-            >
-              <Radio.Group>
-                <Radio value={true}>Nam</Radio>
-                <Radio value={false}>Nữ</Radio>
-              </Radio.Group>
-            </Form.Item>
-            <Form.Item
-              className="form-item"
-              name="phone_number"
-              labelCol={{ span: 24 }}
-              label={
-                <span>
-                  <b>Số điện thoại: </b>
-                </span>
-              }
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng nhập số điện thoại",
-                  whitespace: true,
-                },
-                {
-                  pattern: /^((\+84|84|0)+(3|5|7|8|9|1[2|6|8|9]))+([0-9]{8})\b/,
-                  message: "Số điện thoại phải bắt đầu (+84,0,84)",
-                },
-              ]}
-            >
-              <Input placeholder="Số điện thoại" style={{ width: "100%" }} />
-            </Form.Item>
-            <Form.Item
-              className="form-item"
-              name="identity_card"
-              labelCol={{ span: 24 }}
-              label={
-                <span>
-                  <b>CMND/CCCD: </b>
-                </span>
-              }
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng nhập CMND/CCCD",
-                  whitespace: true,
-                },
-                {
-                  pattern: /^([0-9]{12})\b/,
-                  message: "Vui lòng nhập đúng CMND/CCCD (12 số)",
-                },
-              ]}
-            >
-              <Input disabled placeholder="CMND/CCCD" style={{ width: "100%" }} />
-            </Form.Item>
-            <Form.Item
-              className="form-item"
-              name="license_plates"
-              labelCol={{ span: 24 }}
-              label={
-                <span>
-                  <b>Biển số xe: </b>
-                </span>
-              }
-            >
-              <Input placeholder="Biển số xe"></Input>
-            </Form.Item>
-            <Form.Item
-              className="form-item"
-              name="address"
-              labelCol={{ span: 24 }}
-              label={
-                <span>
-                  <b>Địa chỉ: </b>
-                </span>
-              }
-            >
-              <Input placeholder="Địa chỉ"></Input>
-            </Form.Item>
-          </Form>
+              <Form.Item className="form-item" name="member_id" style={{ display: "none" }}></Form.Item>
+              <Form.Item
+                className="form-item"
+                name="name"
+                labelCol={{ span: 24 }}
+                label={
+                  <span>
+                    <b>Họ và tên: </b>
+                  </span>
+                }
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập họ tên thành viên",
+                    whitespace: true,
+                  },
+                ]}
+              >
+                <Input placeholder="Họ và tên"></Input>
+              </Form.Item>
+              <Form.Item
+                className="form-item"
+                name="member_gender"
+                labelCol={{ span: 24 }}
+                label={
+                  <span>
+                    <b>Giới tính: </b>
+                  </span>
+                }
+              >
+                <Radio.Group>
+                  <Radio value={true}>Nam</Radio>
+                  <Radio value={false}>Nữ</Radio>
+                </Radio.Group>
+              </Form.Item>
+              <Form.Item
+                className="form-item"
+                name="phone_number"
+                labelCol={{ span: 24 }}
+                label={
+                  <span>
+                    <b>Số điện thoại: </b>
+                  </span>
+                }
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập số điện thoại",
+                    whitespace: true,
+                  },
+                  {
+                    pattern: /^((\+84|84|0)+(3|5|7|8|9|1[2|6|8|9]))+([0-9]{8})\b/,
+                    message: "Số điện thoại phải bắt đầu (+84,0,84)",
+                  },
+                ]}
+              >
+                <Input placeholder="Số điện thoại" style={{ width: "100%" }} />
+              </Form.Item>
+              <Form.Item
+                className="form-item"
+                name="identity_card"
+                labelCol={{ span: 24 }}
+                label={
+                  <span>
+                    <b>CMND/CCCD: </b>
+                  </span>
+                }
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập CMND/CCCD",
+                    whitespace: true,
+                  },
+                  {
+                    pattern: /^([0-9]{12})\b/,
+                    message: "Vui lòng nhập đúng CMND/CCCD (12 số)",
+                  },
+                ]}
+              >
+                <Input disabled placeholder="CMND/CCCD" style={{ width: "100%" }} />
+              </Form.Item>
+              <Form.Item
+                className="form-item"
+                name="license_plates"
+                labelCol={{ span: 24 }}
+                label={
+                  <span>
+                    <b>Biển số xe: </b>
+                  </span>
+                }
+              >
+                <Input placeholder="Biển số xe"></Input>
+              </Form.Item>
+              <Form.Item
+                className="form-item"
+                name="address"
+                labelCol={{ span: 24 }}
+                label={
+                  <span>
+                    <b>Địa chỉ: </b>
+                  </span>
+                }
+              >
+                <Input placeholder="Địa chỉ"></Input>
+              </Form.Item>
+            </Form>
+          </Card>
         </Modal>
       </MainLayout>
     </Spin>

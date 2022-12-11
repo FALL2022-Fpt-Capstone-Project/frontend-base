@@ -5,8 +5,6 @@ import axios from "../../api/axios";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 
-const LIST_ASSET_TYPE = "manager/asset/type";
-
 const cardTop = {
     height: '100%',
     border: '1px solid #C0C0C0',
@@ -25,13 +23,12 @@ const memeber = {
     height: '100%'
 }
 
-function ViewContractRenter({ openView, closeView, dataContract, dataAsset, dataService }) {
+function ViewContractRenter({ openView, closeView, dataContract, dataAsset, dataService, assetType }) {
     // console.log(dataContract);
     const [loading, setLoading] = useState(false);
     const [searched, setSearched] = useState("");
     const [filterAssetType, setFilterAssetType] = useState([]);
     const [assetStatus, setAssetStatus] = useState([]);
-    const [listAssetType, setListAssetType] = useState([]);
     // const [dataApartmentGroup, setDataApartmentGroup] = useState([]);
 
     const navigate = useNavigate();
@@ -79,29 +76,6 @@ function ViewContractRenter({ openView, closeView, dataContract, dataAsset, data
             onFilter: (value, record) => record.asset_type_show_name.indexOf(value) === 0,
         },
     ];
-
-    useEffect(() => {
-        getAssetType();
-    }, []);
-
-    const getAssetType = async () => {
-        let cookie = localStorage.getItem("Cookie");
-        await axios
-            .get(LIST_ASSET_TYPE, {
-                headers: {
-                    "Content-Type": "application/json",
-                    // "Access-Control-Allow-Origin": "*",
-                    Authorization: `Bearer ${cookie}`,
-                },
-                // withCredentials: true,
-            })
-            .then((res) => {
-                setListAssetType(res.data.data);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    };
     // useEffect(() => {
     //     apartmentGroup();
     // }, []);
@@ -444,7 +418,7 @@ function ViewContractRenter({ openView, closeView, dataContract, dataAsset, data
                                             </Col>
                                             <Col xs={24} xl={21} span={21}>
                                                 <Row>
-                                                    <Checkbox.Group options={listAssetType?.map((obj, index) => { return obj.asset_type_show_name })}
+                                                    <Checkbox.Group options={assetType?.map((obj, index) => { return obj.asset_type_show_name })}
                                                         onChange={(checkedValues) => {
                                                             dataFilter.asset_type_show_name = checkedValues;
                                                             setFilterAssetType(dataFilter);
@@ -466,8 +440,8 @@ function ViewContractRenter({ openView, closeView, dataContract, dataAsset, data
                                                         asset_id: asset.room_asset_id,
                                                         asset_name: asset.asset_name,
                                                         hand_over_asset_quantity: asset.asset_quantity,
-                                                        asset_type_show_name: listAssetType?.find(a => a?.id === asset?.asset_type_id)?.asset_type_show_name,
-                                                        asset_type_id: listAssetType?.find(a => a?.id === asset?.asset_type_id)?.id,
+                                                        asset_type_show_name: assetType?.find(a => a?.id === asset?.asset_type_id)?.asset_type_show_name,
+                                                        asset_type_id: assetType?.find(a => a?.id === asset?.asset_type_id)?.id,
                                                     }
                                                 })}
                                                 columns={columns}
