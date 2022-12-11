@@ -14,7 +14,7 @@ const { Column, ColumnGroup } = Table;
 const LIST_BUILDING_FILTER = "manager/group/all/contracted";
 const GET_SERVICE_GROUP_BY_ID = "manager/service/general?groupId=";
 const GET_FILTER_CONTRACT_GROUP = "manager/contract/group";
-
+const GET_INVOICE_BY_GROUP = "manager/bill/room/list/";
 
 const ListContractApartment = () => {
   const { RangePicker } = DatePicker;
@@ -33,6 +33,7 @@ const ListContractApartment = () => {
   const [buildingFilter, setBuildingFilter] = useState("");
   const [endContract, setEndContract] = useState(false);
   const [dataApartmentServiceGeneral, setDataApartmentServiceGeneral] = useState([]);
+  const [invoiceByGroup, setInvoiceByGroup] = useState([]);
 
   const [dataContract, setDataContract] = useState([]);
 
@@ -149,6 +150,26 @@ const ListContractApartment = () => {
         console.log(error);
       });
   };
+
+  const getInvoiceByGroup = async (groupId) => {
+    await axios
+      .get(GET_INVOICE_BY_GROUP + groupId, {
+        headers: {
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${cookie}`,
+        },
+        // withCredentials: true,
+      })
+      .then((res) => {
+        console.log(res.data.data);
+        setInvoiceByGroup(res.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   const reload = () => {
     getAllContractBuilding();
   }
