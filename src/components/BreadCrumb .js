@@ -22,6 +22,7 @@ const breadcrumbNameMap = {
   "/invoice": "Quản lý hoá đơn",
   "/personal": "Thông tin cá nhân",
   "/invoice/create-invoice-auto": "Tạo mới nhanh hoá đơn",
+  "/invoice/create-invoice-auto/preview": "Xem trước hoá đơn tạo mới nhanh",
 };
 
 const Breadcrumbs = () => {
@@ -34,7 +35,7 @@ const Breadcrumbs = () => {
     return (
       <Breadcrumb.Item key={url} className="breadcrumb">
         {/* <Link to={url}>{breadcrumbNameMap[url]}</Link> */}
-        <span style={{ color: 'black' }}>{breadcrumbNameMap[url]}</span>
+        <span style={{ color: "black" }}>{breadcrumbNameMap[url]}</span>
       </Breadcrumb.Item>
     );
   });

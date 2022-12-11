@@ -1,4 +1,4 @@
-import { Form, Input, Radio, Select, notification, Switch, Button, Modal, Card } from "antd";
+import { Form, Input, Radio, Select, notification, Switch, Button, Modal, Card, Checkbox } from "antd";
 import "./updateStaff.scss";
 import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
@@ -13,41 +13,62 @@ const UpdateStaff = ({ visible, close, id }) => {
   const [gender, setGender] = useState("");
   const [deactivate, setDeactivate] = useState();
   const [roles, setRoles] = useState("");
-
+  const [permission, setPermission] = useState([1, 2, 3, 4, 5, 6, 7]);
+  const staffOptions = [
+    {
+      label: "Quản lý phòng",
+      value: 1,
+    },
+    {
+      label: "Quản lý dịch vụ",
+      value: 2,
+    },
+    {
+      label: "Quản lý hoá đơn",
+      value: 3,
+    },
+    {
+      label: "Quản lý hợp đồng cho thuê",
+      value: 4,
+    },
+  ];
   const [form] = Form.useForm();
   let cookie = localStorage.getItem("Cookie");
 
   useEffect(() => {
-    axios
-      .get(`manager/staff/${id}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${cookie}`,
-        },
-      })
-      .then((res) => {
-        let role = res.data.data?.role_name;
-        let roleSlice = role.slice(5);
-        let roleFinal = roleSlice.toLowerCase();
-        form.setFieldsValue({
-          full_name: res.data.data?.full_name,
-          user_name: res.data.data?.user_name,
-          phone_number: res.data.data?.phone_number,
-          address_more_detail: res.data.data?.address_more_detail,
-          gender: res.data.data?.gender,
-          roles: roleFinal,
-          status: res.data.data?.is_deactivate,
+    if (visible) {
+      axios
+        .get(`manager/staff/${id}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cookie}`,
+          },
+        })
+        .then((res) => {
+          let role = res.data.data?.role_name;
+          let roleSlice = role.slice(5);
+          let roleFinal = roleSlice.toLowerCase();
+          form.setFieldsValue({
+            full_name: res.data.data?.full_name,
+            user_name: res.data.data?.user_name,
+            phone_number: res.data.data?.phone_number,
+            address_more_detail: res.data.data?.address_more_detail,
+            gender: res.data.data?.gender,
+            roles: roleFinal,
+            status: res.data.data?.is_deactivate,
+            permission: res.data.data?.permission,
+          });
+          setName(res.data.data?.full_name);
+          setUserName(res.data.data?.user_name);
+          setPhoneNumber(res.data.data?.phone_number);
+          setAddress_more_detail(res.data.data?.address_more_detail);
+          setGender(res.data.data?.gender);
+          setRoles(roleFinal);
+          setDeactivate(res.data.data?.is_deactivate);
+          setPermission(res.data.data?.permission);
         });
-        setName(res.data.data?.full_name);
-        setUserName(res.data.data?.user_name);
-        setPhoneNumber(res.data.data?.phone_number);
-        setAddress_more_detail(res.data.data?.address_more_detail);
-        setGender(res.data.data?.gender);
-        setRoles(roleFinal);
-        setDeactivate(res.data.data?.is_deactivate);
-      });
-  }, [id, cookie]);
-
+    }
+  }, [id, cookie, visible]);
   const data = {
     full_name: full_name,
     user_name: user_name,
@@ -56,7 +77,7 @@ const UpdateStaff = ({ visible, close, id }) => {
     address_more_detail: address_more_detail,
     deactivate: deactivate,
     roles: roles,
-    // password: password,
+    permission: permission,
   };
   function Update(e) {
     axios
@@ -75,8 +96,8 @@ const UpdateStaff = ({ visible, close, id }) => {
         });
         close(false);
         setTimeout(() => {
-          // reload();
-        }, "3000");
+          reload();
+        }, "1000");
       })
       .catch((e) =>
         notification.error({
@@ -98,6 +119,9 @@ const UpdateStaff = ({ visible, close, id }) => {
   };
   const deactivateChange = (value) => {
     setDeactivate(value);
+  };
+  const permissionChange = (checkedValues) => {
+    setPermission(checkedValues);
   };
   const reload = () => window.location.reload();
   return (
@@ -268,6 +292,19 @@ const UpdateStaff = ({ visible, close, id }) => {
                 <Option value="staff">Nhân viên</Option>
               </Select>
             </Form.Item>
+            {roles === "staff" && (
+              <Form.Item
+                name="permission"
+                labelCol={{ span: 24 }}
+                label={
+                  <span>
+                    <b>Quyền nhân viên: </b>
+                  </span>
+                }
+              >
+                <Checkbox.Group options={staffOptions} onChange={permissionChange} defaultValue={permission} />
+              </Form.Item>
+            )}
             <Form.Item
               name="status"
               labelCol={{ span: 24 }}

@@ -28,7 +28,7 @@ const Login = () => {
         },
       })
       .then((res) => {
-        console.log('in');
+        console.log("in");
         window.localStorage.setItem("name", res.data.data?.full_name);
         navigate("/home");
       })
@@ -52,10 +52,12 @@ const Login = () => {
         const accessToken = res?.data?.data.token;
         const roles = res?.data?.data.roles;
         const id = res?.data?.data.account_id;
+        const permission = res?.data?.data.permission;
         window.localStorage.setItem("Cookie", `${accessToken}`);
         window.localStorage.setItem("Role", `${roles}`);
         window.localStorage.setItem("id", `${id}`);
-        setAuth({ user_name, password, roles, accessToken, id });
+        window.localStorage.setItem("permission", `${permission}`);
+        setAuth({ user_name, password, roles, accessToken, id, permission });
         setUser("");
         setPwd("");
         getUserName(id, accessToken);
@@ -81,7 +83,6 @@ const Login = () => {
       });
     setLoading(false);
   };
-
 
   // setAuth({ user_name, password, roles, accessToken, id });
   return (

@@ -10,17 +10,17 @@ import InvoiceStatistic from "./InvoiceStatistic";
 import MainLayout from "../../components/layout/MainLayout";
 import moment from "moment";
 const cardTop = {
-  border: '1px solid #C0C0C0',
-  borderRadius: '10px',
-  height: '100%',
-  width: '100%',
+  border: "1px solid #C0C0C0",
+  borderRadius: "10px",
+  height: "100%",
+  width: "100%",
 };
 const cardBottom = {
-  border: '1px solid #C0C0C0',
-  borderRadius: '10px',
+  border: "1px solid #C0C0C0",
+  borderRadius: "10px",
   // height: '100%',
-  width: '100%',
-  marginTop: '3%'
+  width: "100%",
+  marginTop: "3%",
 };
 
 const Home = () => {
@@ -32,9 +32,7 @@ const Home = () => {
             Chọn năm để thống kê:
             <Select
               defaultValue={2022}
-              onChange={(e) => {
-
-              }}
+              onChange={(e) => {}}
               style={{ width: "100%", marginBottom: "5%" }}
               options={[
                 {
@@ -45,17 +43,13 @@ const Home = () => {
                   value: 2022,
                   label: 2022,
                 },
-
               ]}
             />
           </Col>
         </Row>
         <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
           <Col xs={24} xl={12} span={12}>
-            <Card
-              bordered
-              style={cardTop}
-            >
+            <Card bordered style={cardTop}>
               <Row justify="center">
                 <RevenueStatistic />
               </Row>
@@ -92,25 +86,20 @@ const Home = () => {
             </Card>
           </Col>
           <Col xs={24} xl={12} span={12}>
-            <Card
-              bordered
-              style={cardTop}
-            >
+            <Card bordered style={cardTop}>
               <Row justify="center">
                 <Col xs={24} xl={12} span={12}>
                   <RoomStatistic />
                 </Col>
                 <Col className="flex-align-center" xs={24} xl={12} span={12}>
-                  <p className="statistic-text">
-                    Tổng số phòng: 200
-                  </p>
+                  <p className="statistic-text">Tổng số phòng: 200</p>
                 </Col>
               </Row>
               <Divider />
               <Row>
                 <Col xs={24} xl={12} span={12}>
                   <Row>
-                    <p className="statistic-text">Thông kê phòng tháng 12</p>
+                    <p className="statistic-text">Thống kê phòng tháng 12</p>
                   </Row>
                   <Row>
                     <p className="statistic-text-detail">
@@ -136,7 +125,7 @@ const Home = () => {
                 </Col>
                 <Col xs={24} xl={12} span={12}>
                   <Row>
-                    <p className="statistic-text">Thông kê phòng tháng 11</p>
+                    <p className="statistic-text">Thống kê phòng tháng 11</p>
                   </Row>
                   <Row>
                     <p className="statistic-text-detail">
@@ -160,18 +149,12 @@ const Home = () => {
         </Row>
         <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
           <Col xs={24} xl={12} span={12}>
-            <Card
-              bordered
-              style={cardBottom}
-            >
+            <Card bordered style={cardBottom}>
               <ContractStatistic />
             </Card>
           </Col>
           <Col xs={24} xl={12} span={12}>
-            <Card
-              bordered
-              style={cardBottom}
-            >
+            <Card bordered style={cardBottom}>
               <Row>
                 <InvoiceStatistic />
               </Row>
