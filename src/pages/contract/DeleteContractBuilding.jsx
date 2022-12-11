@@ -1,4 +1,4 @@
-import { Button, Card, Checkbox, Col, Input, Modal, notification, Row, Select, Statistic, Table, Tabs, Tag } from "antd";
+import { Button, Card, Checkbox, Col, Divider, Input, Modal, notification, Row, Select, Statistic, Table, Tabs, Tag } from "antd";
 import React, { useState, useEffect } from "react";
 import {
     ArrowRightOutlined,
@@ -35,7 +35,7 @@ const textSize = {
 };
 let optionFloor = [];
 function DeleteContractBuilding({ reload, openView, closeView, dataContract, dataAsset }) {
-    console.log(dataContract);
+    // console.log(dataContract);
     const navigate = useNavigate();
     const [roomFloor, setRoomFloor] = useState("");
     let cookie = localStorage.getItem("Cookie");
@@ -59,7 +59,43 @@ function DeleteContractBuilding({ reload, openView, closeView, dataContract, dat
             });
         };
     }
-
+    const columnInvoice = [
+        {
+            title: "Tên phòng",
+            // dataIndex: "roomName",
+            // key: "room_id",
+        },
+        {
+            title: 'Tiền phòng',
+            // dataIndex: "roomName",
+            // key: "room_id",
+        },
+        {
+            title: 'Tiền dịch vụ',
+            // dataIndex: "roomName",
+            // key: "room_id",
+        },
+        {
+            title: 'Tổng cộng',
+            // dataIndex: "roomName",
+            // key: "room_id",
+        },
+        {
+            title: 'Cần thu',
+            // dataIndex: "roomName",
+            // key: "room_id",
+        },
+        {
+            title: 'Ngày lập hóa đơn',
+            // dataIndex: "roomName",
+            // key: "room_id",
+        },
+        {
+            title: 'Trạng thái',
+            // dataIndex: "roomName",
+            // key: "room_id",
+        },
+    ]
     const columns = [
         {
             title: "Tên phòng",
@@ -97,7 +133,7 @@ function DeleteContractBuilding({ reload, openView, closeView, dataContract, dat
             dataIndex: "roomStatus",
             key: 'roomStatus',
             render: (roomStatus) => {
-                return roomStatus ? <Tag color="success">Đã cho thuê</Tag> : <Tag color="error">Đang trống</Tag>
+                return roomStatus ? <Tag color="success">Đã có hợp đồng</Tag> : <Tag color="error">Chưa có hợp đồng</Tag>
             },
         },
     ];
@@ -149,7 +185,38 @@ function DeleteContractBuilding({ reload, openView, closeView, dataContract, dat
                     ]}
                 >
                     <Tabs defaultActiveKey="1">
-                        <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>Thông tin chung</span>} key="1">
+                        <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>Danh sách hóa đơn</span>} key="1">
+                            <Row style={{ marginBottom: "2%" }} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+                                <Col xs={24} md={12} lg={12} xl={12} span={12}>
+                                    <Statistic
+                                        title={
+                                            <>
+                                                <span style={textSize}>Hóa đơn chưa thanh toán</span>
+                                            </>
+                                        }
+                                        value={0 + "/" + 0}
+                                    />
+                                </Col>
+                                <Col xs={24} md={12} lg={12} xl={12} span={12}>
+                                    <Statistic
+                                        title={
+                                            <>
+                                                <span style={textSize}>Tổng số tiền lãi (VND)</span>
+                                            </>
+                                        }
+                                        value={0}
+                                    />
+                                </Col>
+                            </Row>
+                            <Divider />
+                            <Table
+                                columns={columnInvoice}
+                                dataSource={[]}
+                                scroll={{ x: 1000, y: 800 }}
+                                bordered
+                            />
+                        </Tabs.TabPane>
+                        <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>Thông tin chung</span>} key="2">
                             <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                                 <Col xs={24} xl={12} span={12}>
                                     <Card
@@ -367,19 +434,31 @@ function DeleteContractBuilding({ reload, openView, closeView, dataContract, dat
                                 </Col>
                             </Row>
                         </Tabs.TabPane>
-                        <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>Danh sách phòng đã thuê</span>} key="2">
+                        <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>Danh sách phòng đã thuê</span>} key="3">
                             <Row style={{ marginBottom: "2%" }} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                                <Col span={12}>
+                                <Col xs={24} md={12} lg={8} xl={8} span={8}>
                                     <Statistic
                                         title={
                                             <>
-                                                <span style={textSize}>Tổng số phòng </span>
+                                                <span style={textSize}>Phòng chưa có hợp đồng </span>
                                             </>
                                         }
-                                        value={dataContract?.list_lease_contracted_room?.length}
+                                        value={dataContract?.list_lease_contracted_room?.filter(room => room.contract_id === null).length + "/"
+                                            + dataContract?.list_lease_contracted_room?.length}
                                     />
                                 </Col>
-                                <Col span={12}>
+                                <Col xs={24} md={12} lg={8} xl={8} span={8}>
+                                    <Statistic
+                                        title={
+                                            <>
+                                                <span style={textSize}>Phòng đã có hợp đồng </span>
+                                            </>
+                                        }
+                                        value={dataContract?.list_lease_contracted_room?.filter(room => Number.isInteger(room.contract_id)).length + "/"
+                                            + dataContract?.list_lease_contracted_room?.length}
+                                    />
+                                </Col>
+                                <Col xs={24} md={12} lg={8} xl={8} span={8}>
                                     <Statistic
                                         title={
                                             <>
@@ -392,6 +471,7 @@ function DeleteContractBuilding({ reload, openView, closeView, dataContract, dat
                                     />
                                 </Col>
                             </Row>
+                            <Divider />
                             <Row>
                                 <span>Tìm kiếm theo tầng </span>
                             </Row>

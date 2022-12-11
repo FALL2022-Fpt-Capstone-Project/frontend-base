@@ -6,7 +6,7 @@ const breadcrumbNameMap = {
   "/home": "Trang chủ",
   "/building": "Quản lý chung cư",
   "/room": "Quản lý phòng",
-  "/room/member": "Quản lý thành viên trong phòng",
+  "/room/member": "Danh sách thành viên trong phòng",
   "/room/equipment": "Trang thiết bị trong phòng",
   "/room/preview": "Xem trước tạo mới phòng nhanh",
   "/contract-apartment": "Quản lý hợp đồng đi thuê",
