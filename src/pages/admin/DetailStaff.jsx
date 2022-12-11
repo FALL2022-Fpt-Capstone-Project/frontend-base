@@ -12,20 +12,22 @@ const DetailStaff = ({ visible, close, id }) => {
   };
   let cookie = localStorage.getItem("Cookie");
   useEffect(() => {
-    axios
-      .get(`manager/staff/${id}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${cookie}`,
-        },
-      })
-      .then((res) => {
-        setUser(res.data.data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  }, [id, cookie]);
+    if (visible) {
+      axios
+        .get(`manager/staff/${id}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cookie}`,
+          },
+        })
+        .then((res) => {
+          setUser(res.data.data);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
+  }, [id, cookie, visible]);
 
   return (
     <>

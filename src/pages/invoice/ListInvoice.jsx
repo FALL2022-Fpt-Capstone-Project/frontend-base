@@ -1,4 +1,4 @@
-import { Button, Col, Form, Input, Row, Table, Tooltip, Select, Tag, ConfigProvider } from "antd";
+import { Col, Input, Row, Table, Tooltip, Select, Tag, ConfigProvider } from "antd";
 import React, { useEffect, useState } from "react";
 import { InboxOutlined, AccountBookOutlined, ProfileOutlined } from "@ant-design/icons";
 import "./listInvoice.scss";
@@ -6,7 +6,7 @@ import axios from "../../api/axios";
 import ListHistoryInvoice from "./ListHistoryInvoice";
 import CreateInvoice from "./CreateInvoice";
 const { Search } = Input;
-const LIST_BUILDING_FILTER = "manager/contract/group";
+const LIST_BUILDING_FILTER = "manager/group/all";
 const ListInvoice = () => {
   const [historyInvoice, setHistoryInvoice] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -62,7 +62,6 @@ const ListInvoice = () => {
     console.log(building);
     getListInvoice();
   }, [building]);
-
   useEffect(() => {
     if (flag) {
       getListInvoice();
@@ -78,8 +77,7 @@ const ListInvoice = () => {
           },
         })
         .then((res) => {
-          setBuildingFilter(res.data.data);
-          console.log(res);
+          setBuildingFilter(res.data.data.list_group_contracted);
         })
         .catch((error) => {
           console.log(error);
@@ -90,7 +88,7 @@ const ListInvoice = () => {
   for (let i = 0; i < buildingFilter.length; i++) {
     options.push({
       label: buildingFilter[i].group_name,
-      value: buildingFilter[i].contract_id,
+      value: buildingFilter[i].group_id,
     });
   }
   const buildingChange = (value, option) => {
@@ -100,7 +98,7 @@ const ListInvoice = () => {
   const customizeRenderEmpty = () => (
     <div style={{ textAlign: "center" }}>
       <InboxOutlined style={{ fontSize: 70 }} />
-      <p style={{ fontSize: 20 }}>Không có dữ liệu</p>
+      <p style={{ fontSize: 20 }}>Chọn chung cư để hiện thị dữ liệu</p>
     </div>
   );
   return (
@@ -229,35 +227,35 @@ const ListInvoice = () => {
           loading={loading}
         />
       </ConfigProvider>
-      {statistic ? (
+      {/* {dataSource?.length !== 0 ? (
         <div className="invoice-statistic">
           <Row>
             <h2 className="payment-term-alret">* Hiện tại chưa đến kỳ thanh toán</h2>
           </Row>
           <Row>
             <p>
-              Tổng số hoá đơn đến kỳ thu đã lập: <span>5/10 hoá đơn</span>
+              Tổng số hoá đơn đến kỳ thu đã lập: <span>0 hoá đơn</span>
             </p>
           </Row>
           <Row>
             <p>
-              Tổng số hoá đơn đã lập trong tháng này: <span>5/10 hoá đơn</span>
+              Tổng số hoá đơn đã lập trong tháng này: <span>0 hoá đơn</span>
             </p>
           </Row>
           <Row>
             <p>
-              Tổng số hoá đơn chưa thanh toán trong tháng này: <span>5/10 hoá đơn</span>
+              Tổng số hoá đơn chưa thanh toán trong tháng này: <span>0 hoá đơn</span>
             </p>
           </Row>
           <Row>
             <p>
-              Tổng số số tiền đã thu trong tháng này: <span>4,000,000 đ/ 20,000,000đ</span>
+              Tổng số số tiền đã thu trong tháng này: <span>0 đ</span>
             </p>
           </Row>
         </div>
       ) : (
         ""
-      )}
+      )} */}
       <CreateInvoice visible={createInvoice} close={setCreateInvoice} id={id} setFlag={setFlag} />
       <ListHistoryInvoice visible={historyInvoice} close={setHistoryInvoice} roomId={id} setFlag={setFlag} />
     </div>

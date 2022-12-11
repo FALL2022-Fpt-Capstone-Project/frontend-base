@@ -104,7 +104,6 @@ const ListHistoryInvoice = ({ visible, close, roomId, setFlag }) => {
 
     return dateAndTime[0].split("-").reverse().join("-");
   };
-  console.log(roomName);
   return (
     <div className="list-history-invoice">
       <div className="list-history-invoice-search"></div>

@@ -33,6 +33,11 @@ const Sidebar = () => {
       setRoomLink("/room/preview");
     }
   }, [location.pathname]);
+  useEffect(() => {
+    if (location.pathname.includes("/room/member")) {
+      setRoomLink("/room/member");
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     if (location.pathname.includes("/contract-renter/create") || location.pathname.includes("/contract-renter/edit")) {
@@ -57,6 +62,11 @@ const Sidebar = () => {
   useEffect(() => {
     if (location.pathname.includes("/invoice/create-invoice-auto")) {
       setInvoiceLink("/invoice/create-invoice-auto");
+    }
+  }, [location.pathname]);
+  useEffect(() => {
+    if (location.pathname.includes("/invoice/create-invoice-auto/preview")) {
+      setInvoiceLink("/invoice/create-invoice-auto/preview");
     }
   }, [location.pathname]);
 

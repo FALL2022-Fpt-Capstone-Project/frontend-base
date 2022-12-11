@@ -169,13 +169,13 @@ function ListRoom(props) {
       dataIndex: "roomStatus",
       key: 'roomStatus',
       filters: [
-        { text: "Đang ở", value: true },
+        { text: "Đã cho thuê", value: true },
         { text: "Đang trống", value: false },
       ],
       filteredValue: room_status.roomStatus || null,
       onFilter: (value, record) => record.roomStatus === value,
       render: (roomStatus) => {
-        return roomStatus ? <Tag color="success">Đang ở</Tag> : <Tag color="error">Đang trống</Tag>
+        return roomStatus ? <Tag color="success">Đã cho thuê</Tag> : <Tag color="error">Đang trống</Tag>
       },
     },
     {
@@ -328,7 +328,7 @@ function ListRoom(props) {
               <>
                 <Tooltip title="Thêm thành viên vào phòng">
                   <UserOutlined onClick={() => {
-                    navigate(`/room/member/${record.room_id}`);
+                    navigate('member', { state: record.room_id });
                   }} style={iconSize} />
                 </Tooltip>
               </>
@@ -687,7 +687,7 @@ function ListRoom(props) {
               bordered={false}
             >
               <Row>
-                <Tag color="success">Đã thuê hết</Tag>
+                <Tag color="success">Đã cho thuê hết</Tag>
                 <Tag color="error">Đang trống</Tag>
               </Row>
               <Row>
@@ -870,7 +870,7 @@ function ListRoom(props) {
                               <Checkbox.Group
                                 defaultValue={[true, false]}
                                 style={{ marginBottom: "15%" }} options={[
-                                  { label: "Đang ở", value: true },
+                                  { label: "Đã cho thuê", value: true },
                                   { label: "Đang trống", value: false },
                                 ]}></Checkbox.Group>
                             </Form.Item>

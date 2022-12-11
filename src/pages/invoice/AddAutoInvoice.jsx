@@ -7,6 +7,7 @@ import {
   Form,
   Input,
   InputNumber,
+  notification,
   Row,
   Select,
   Table,
@@ -14,13 +15,15 @@ import {
   Tag,
 } from "antd";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { InboxOutlined } from "@ant-design/icons";
+import { InboxOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import axios from "../../api/axios";
 import moment from "moment";
 import "./invoice.scss";
 import MainLayout from "../../components/layout/MainLayout";
-const LIST_BUILDING_FILTER = "manager/contract/group";
+import { Link, useNavigate } from "react-router-dom";
+const LIST_BUILDING_FILTER = "manager/group/all";
 const LIST_INVOICE_ADD_AUTO = "manager/bill/room/bill-status";
+const LIST_INVOICE_PREVIEW = "manager/bill/room/create/preview";
 const EditableContext = React.createContext(null);
 const EditableRow = ({ index, ...props }) => {
   const [form] = Form.useForm();
@@ -101,6 +104,9 @@ const AddAutoInvoice = () => {
   const [dataSourceBilled, setDataSourceBilled] = useState([]);
   const [dataSource, setDataSource] = useState([]);
   const [dataSourceNotBilled, setDataSourceNotBilled] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [dateCreate, setDateCreate] = useState();
+  const [paymentTerm, setPaymentTerm] = useState();
   // const [waterPriceByIndex, setWaterPriceByIndex] = useState();
   // const [waterPriceByMonth, setwaterPriceByMonth] = useState();
   // const [waterPriceByPeople, setWaterPriceByPeople] = useState();
@@ -110,6 +116,7 @@ const AddAutoInvoice = () => {
   // const [vehiPriceByMonth, setVehiPriceByMonth] = useState();
   // const [vehiPriceByPeople, setVehiPriceByPeople] = useState();
   const [form] = Form.useForm();
+  const navigate = useNavigate();
   let cookie = localStorage.getItem("Cookie");
   useEffect(() => {
     const getBuildingFilter = async () => {
@@ -122,7 +129,7 @@ const AddAutoInvoice = () => {
           },
         })
         .then((res) => {
-          setBuildingFilter(res.data.data);
+          setBuildingFilter(res.data.data.list_group_contracted);
           console.log(res);
         })
         .catch((error) => {
@@ -141,7 +148,6 @@ const AddAutoInvoice = () => {
           params: {
             groupId: building,
             paymentCycle: paymentCycle,
-            groupContractId: 11,
           },
           headers: {
             "Content-Type": "application/json",
@@ -172,11 +178,34 @@ const AddAutoInvoice = () => {
     getListInvoice();
   }, [dataSource]);
 
+  const handlerPreview = async (value) => {
+    const response = await axios
+      .post(LIST_INVOICE_PREVIEW, selectedRows, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie}`,
+        },
+      })
+      .then((res) => {
+        navigate("preview", { state: { selectedRows, dateCreate, paymentTerm } });
+        console.log(res);
+      })
+      .catch((e) => {
+        notification.error({
+          message: "Thêm mới hoá đơn thất bại",
+          description: "Vui lòng kiểm tra lại thông tin và thử lại.",
+          duration: 3,
+          placement: "top",
+        });
+      });
+  };
+
   const options = [];
   for (let i = 0; i < buildingFilter.length; i++) {
     options.push({
       label: buildingFilter[i].group_name,
-      value: buildingFilter[i].contract_id,
+      value: buildingFilter[i].group_id,
+      key: i + 1,
     });
   }
   const optionPayment = [
@@ -203,6 +232,15 @@ const AddAutoInvoice = () => {
   const initValues = {
     date_create_invoice: date_create_format,
   };
+  const dateCreateChange = (date, dateString) => {
+    setDateCreate(dateString);
+  };
+  const paymentTermChange = (date, dateString) => {
+    setPaymentTerm(dateString);
+  };
+  const disabledDate = (current) => {
+    return current && current < date_create_format;
+  };
 
   const buildingChange = (value, option) => {
     setBuilding(value);
@@ -216,15 +254,13 @@ const AddAutoInvoice = () => {
   const onSelectChange = (newSelectedRowKeys, selectedRows) => {
     console.log("selectedRowKeys changed: ", selectedRows);
     setSelectedRowKeys(newSelectedRowKeys);
+    setSelectedRows(selectedRows);
   };
   const rowSelection = {
     selectedRowKeys,
     onChange: onSelectChange,
   };
 
-  let service_bill = [];
-  let serviceWater = {};
-  let serviceElec = {};
   const defaultColumnsNotBilled = [
     {
       title: "Tên phòng",
@@ -269,8 +305,31 @@ const AddAutoInvoice = () => {
       ),
     },
     {
+      title: "Trạng thái",
+      dataIndex: "is_in_bill_cycle",
+      width: "10%",
+      render: (_, record) => {
+        let status;
+        if (record.is_in_bill_cycle === true) {
+          status = (
+            <Tag color="red" key={record.is_in_bill_cycle}>
+              Đến hạn đóng tiền phòng
+            </Tag>
+          );
+        } else if (record.is_in_bill_cycle === false) {
+          status = (
+            <Tag color="default" key={record.is_in_bill_cycle}>
+              Chưa đến hạn đóng tiền phòng
+            </Tag>
+          );
+        }
+
+        return <>{status}</>;
+      },
+    },
+    {
       title: "Tổng cộng",
-      dataIndex: "total_price",
+      dataIndex: "total_money",
       width: "11%",
       render: (text, record, index) => {
         let waterPrice = 0;
@@ -278,12 +337,6 @@ const AddAutoInvoice = () => {
         let cleanPrice = 0;
         let vehiclesPrice = 0;
         let internetPrice = 0;
-        let serviceId = 0;
-        let serviceType = 0;
-        let servicePrice = 0;
-        let serviceIndex = 0;
-        let serviceTotalMoney = 0;
-        let name;
         let total = 0;
 
         if (
@@ -296,21 +349,6 @@ const AddAutoInvoice = () => {
               (water) => water?.service_name === "water" && water.service_type_name === "Đồng hồ điện/nước"
             )?.service_price *
             (record.room_current_water_index - record.room_old_water_index);
-          serviceIndex = record.room_current_water_index - record.room_old_water_index;
-          servicePrice = record.list_general_service.find(
-            (water) => water?.service_name === "water" && water.service_type_name === "Đồng hồ điện/nước"
-          )?.service_price;
-          serviceTotalMoney = waterPrice;
-          serviceId = record.list_general_service.find(
-            (water) => water?.service_name === "water" && water.service_type_name === "Đồng hồ điện/nước"
-          )?.service_id;
-
-          serviceType = record.list_general_service.find(
-            (water) => water?.service_name === "water" && water.service_type_name === "Đồng hồ điện/nước"
-          )?.service_type_id;
-
-          serviceWater.service_id = serviceId;
-          serviceWater.service_type = serviceType;
         } else if (
           record.list_general_service.some(
             (water) => water?.service_name === "water" && water.service_type_name === "Người"
@@ -320,22 +358,6 @@ const AddAutoInvoice = () => {
             record.list_general_service.find(
               (water) => water?.service_name === "water" && water.service_type_name === "Người"
             )?.service_price * record.total_renter;
-
-          serviceIndex = record.total_renter;
-          servicePrice = record.list_general_service.find(
-            (water) => water?.service_name === "water" && water.service_type_name === "Người"
-          )?.service_price;
-          serviceTotalMoney = waterPrice;
-          name = "Nước người";
-
-          serviceId = record.list_general_service.find(
-            (water) => water?.service_name === "water" && water.service_type_name === "Người"
-          )?.service_id;
-          serviceType = record.list_general_service.find(
-            (water) => water?.service_name === "water" && water.service_type_name === "Người"
-          )?.service_type_id;
-          serviceWater.service_id = serviceId;
-          serviceWater.service_type = serviceType;
         } else if (
           record.list_general_service.some(
             (water) => water?.service_name === "water" && water.service_type_name === "Tháng"
@@ -344,23 +366,6 @@ const AddAutoInvoice = () => {
           waterPrice = record.list_general_service.find(
             (water) => water?.service_name === "water" && water.service_type_name === "Tháng"
           )?.service_price;
-          name = "Nước tháng";
-
-          serviceIndex = 1;
-          servicePrice = waterPrice;
-          serviceTotalMoney = waterPrice;
-
-          serviceId = record.list_general_service.find(
-            (water) => water?.service_name === "water" && water.service_type_name === "Tháng"
-          )?.service_id;
-          serviceType = record.list_general_service.find(
-            (water) => water?.service_name === "water" && water.service_type_name === "Tháng"
-          )?.service_type_id;
-          serviceWater.service_id = serviceId;
-          serviceWater.service_type = serviceType;
-          serviceWater.service_price = servicePrice;
-          serviceWater.service_index = serviceIndex;
-          serviceWater.service_total_money = serviceTotalMoney;
         }
         if (
           record.list_general_service.find(
@@ -372,22 +377,6 @@ const AddAutoInvoice = () => {
               (elec) => elec?.service_name === "electric" && elec.service_type_name === "Đồng hồ điện/nước"
             )?.service_price *
             (record.room_current_electric_index - record.room_old_electric_index);
-          serviceId = record.list_general_service.find(
-            (elec) => elec?.service_name === "electric" && elec.service_type_name === "Đồng hồ điện/nước"
-          )?.service_id;
-          serviceIndex = record.room_current_electric_index - record.room_old_electric_index;
-          servicePrice = record.list_general_service.find(
-            (elec) => elec?.service_name === "electric" && elec.service_type_name === "Đồng hồ điện/nước"
-          )?.service_price;
-          serviceTotalMoney = elecPrice;
-          serviceType = record.list_general_service.find(
-            (elec) => elec?.service_name === "electric" && elec.service_type_name === "Đồng hồ điện/nước"
-          )?.service_type_id;
-          serviceElec.service_id = serviceId;
-          serviceElec.service_type = serviceType;
-          serviceElec.service_price = servicePrice;
-          serviceElec.service_index = serviceIndex;
-          serviceElec.service_total_money = serviceTotalMoney;
         }
 
         if (
@@ -398,16 +387,6 @@ const AddAutoInvoice = () => {
           internetPrice = record.list_general_service.find(
             (internet) => internet?.service_name === "internet" && internet.service_type_name === "Tháng"
           )?.service_price;
-          serviceId = record.list_general_service.find(
-            (internet) => internet?.service_name === "internet" && internet.service_type_name === "Tháng"
-          )?.service_id;
-          serviceType = record.list_general_service.find(
-            (internet) => internet?.service_name === "internet" && internet.service_type_name === "Tháng"
-          )?.service_type_id;
-          serviceIndex = 1;
-          servicePrice = internetPrice;
-          serviceTotalMoney = internetPrice;
-          name = "inter tháng";
         } else if (
           record.list_general_service.some(
             (internet) => internet?.service_name === "internet" && internet.service_type_name === "Người"
@@ -417,19 +396,6 @@ const AddAutoInvoice = () => {
             record.list_general_service.find(
               (internet) => internet?.service_name === "internet" && internet.service_type_name === "Người"
             )?.service_price * record.total_renter;
-          serviceId = record.list_general_service.find(
-            (internet) => internet?.service_name === "internet" && internet.service_type_name === "Người"
-          )?.service_id;
-          serviceType = record.list_general_service.find(
-            (internet) => internet?.service_name === "internet" && internet.service_type_name === "Người"
-          )?.service_type_id;
-
-          serviceIndex = record.total_renter;
-          servicePrice = record.list_general_service.find(
-            (internet) => internet?.service_name === "internet" && internet.service_type_name === "Người"
-          )?.service_price;
-          serviceTotalMoney = internetPrice;
-          name = "inter người";
         }
 
         if (
@@ -440,16 +406,6 @@ const AddAutoInvoice = () => {
           vehiclesPrice = record.list_general_service.find(
             (vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Tháng"
           )?.service_price;
-          serviceId = record.list_general_service.find(
-            (vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Tháng"
-          )?.service_id;
-          serviceType = record.list_general_service.find(
-            (vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Tháng"
-          )?.service_type_id;
-          serviceIndex = 1;
-          servicePrice = vehiclesPrice;
-          serviceTotalMoney = vehiclesPrice;
-          name = "vehi tháng";
         } else if (
           record.list_general_service.some(
             (vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Người"
@@ -459,18 +415,6 @@ const AddAutoInvoice = () => {
             record.list_general_service.find(
               (vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Người"
             )?.service_price * record.total_renter;
-          serviceId = record.list_general_service.find(
-            (vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Người"
-          )?.service_id;
-          serviceType = record.list_general_service.find(
-            (vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Người"
-          )?.service_type_id;
-          serviceIndex = record.total_renter;
-          servicePrice = record.list_general_service.find(
-            (vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Người"
-          )?.service_price;
-          serviceTotalMoney = vehiclesPrice;
-          name = "vehi người";
         }
         if (
           record.list_general_service.some(
@@ -480,16 +424,6 @@ const AddAutoInvoice = () => {
           cleanPrice = record.list_general_service.find(
             (cleaning) => cleaning?.service_name === "cleaning" && cleaning.service_type_name === "Tháng"
           )?.service_price;
-          serviceId = record.list_general_service.find(
-            (cleaning) => cleaning?.service_name === "cleaning" && cleaning.service_type_name === "Tháng"
-          )?.service_id;
-          serviceType = record.list_general_service.find(
-            (cleaning) => cleaning?.service_name === "cleaning" && cleaning.service_type_name === "Tháng"
-          )?.service_type_id;
-          serviceIndex = 1;
-          servicePrice = cleanPrice;
-          serviceTotalMoney = cleanPrice;
-          name = "clean Tháng";
         } else if (
           record.list_general_service.some(
             (vehicles) => vehicles?.service_name === "cleaning" && vehicles.service_type_name === "Người"
@@ -499,22 +433,9 @@ const AddAutoInvoice = () => {
             record.list_general_service.find(
               (cleaning) => cleaning?.service_name === "cleaning" && cleaning.service_type_name === "Người"
             )?.service_price * record.total_renter;
-          serviceId = record.list_general_service.find(
-            (cleaning) => cleaning?.service_name === "cleaning" && cleaning.service_type_name === "Người"
-          )?.service_id;
-          serviceType = record.list_general_service.find(
-            (cleaning) => cleaning?.service_name === "cleaning" && cleaning.service_type_name === "Người"
-          )?.service_type_id;
-          serviceIndex = record.total_renter;
-          servicePrice = record.list_general_service.find(
-            (cleaning) => cleaning?.service_name === "cleaning" && cleaning.service_type_name === "Người"
-          )?.service_price;
-          serviceTotalMoney = cleanPrice;
-          name = "clean người";
         }
 
         total = waterPrice + elecPrice + cleanPrice + vehiclesPrice + internetPrice + record.room_price;
-
         return (
           <>
             <b>{total.toLocaleString("vn") + " đ"}</b>
@@ -523,8 +444,6 @@ const AddAutoInvoice = () => {
       },
     },
   ];
-  service_bill.push(serviceElec, serviceWater);
-  console.log(service_bill);
   const defaultColumnsBilled = [
     {
       title: "Tên phòng",
@@ -544,9 +463,117 @@ const AddAutoInvoice = () => {
       dataIndex: "room_current_electric_index",
       width: "10%",
       editable: true,
-      render: (text, record, index) => (
-        <InputNumber min={record.old_elec} style={{ width: "100%" }} value={record.new_elec} />
-      ),
+      render: (text, record, index) => {
+        let waterPrice = 0;
+        let elecPrice = 0;
+        let cleanPrice = 0;
+        let vehiclesPrice = 0;
+        let internetPrice = 0;
+        let total = 0;
+
+        if (
+          record.list_general_service.some(
+            (water) => water?.service_name === "water" && water.service_type_name === "Đồng hồ điện/nước"
+          )
+        ) {
+          waterPrice =
+            record.list_general_service.find(
+              (water) => water?.service_name === "water" && water.service_type_name === "Đồng hồ điện/nước"
+            )?.service_price *
+            (record.room_current_water_index - record.room_old_water_index);
+        } else if (
+          record.list_general_service.some(
+            (water) => water?.service_name === "water" && water.service_type_name === "Người"
+          )
+        ) {
+          waterPrice =
+            record.list_general_service.find(
+              (water) => water?.service_name === "water" && water.service_type_name === "Người"
+            )?.service_price * record.total_renter;
+        } else if (
+          record.list_general_service.some(
+            (water) => water?.service_name === "water" && water.service_type_name === "Tháng"
+          )
+        ) {
+          waterPrice = record.list_general_service.find(
+            (water) => water?.service_name === "water" && water.service_type_name === "Tháng"
+          )?.service_price;
+        }
+        if (
+          record.list_general_service.find(
+            (elec) => elec?.service_name === "electric" && elec.service_type_name === "Đồng hồ điện/nước"
+          )
+        ) {
+          elecPrice =
+            record.list_general_service.find(
+              (elec) => elec?.service_name === "electric" && elec.service_type_name === "Đồng hồ điện/nước"
+            )?.service_price *
+            (record.room_current_electric_index - record.room_old_electric_index);
+        }
+
+        if (
+          record.list_general_service.some(
+            (internet) => internet?.service_name === "internet" && internet.service_type_name === "Tháng"
+          )
+        ) {
+          internetPrice = record.list_general_service.find(
+            (internet) => internet?.service_name === "internet" && internet.service_type_name === "Tháng"
+          )?.service_price;
+        } else if (
+          record.list_general_service.some(
+            (internet) => internet?.service_name === "internet" && internet.service_type_name === "Người"
+          )
+        ) {
+          internetPrice =
+            record.list_general_service.find(
+              (internet) => internet?.service_name === "internet" && internet.service_type_name === "Người"
+            )?.service_price * record.total_renter;
+        }
+
+        if (
+          record.list_general_service.some(
+            (vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Tháng"
+          )
+        ) {
+          vehiclesPrice = record.list_general_service.find(
+            (vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Tháng"
+          )?.service_price;
+        } else if (
+          record.list_general_service.some(
+            (vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Người"
+          )
+        ) {
+          vehiclesPrice =
+            record.list_general_service.find(
+              (vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Người"
+            )?.service_price * record.total_renter;
+        }
+        if (
+          record.list_general_service.some(
+            (cleaning) => cleaning?.service_name === "cleaning" && cleaning.service_type_name === "Tháng"
+          )
+        ) {
+          cleanPrice = record.list_general_service.find(
+            (cleaning) => cleaning?.service_name === "cleaning" && cleaning.service_type_name === "Tháng"
+          )?.service_price;
+        } else if (
+          record.list_general_service.some(
+            (vehicles) => vehicles?.service_name === "cleaning" && vehicles.service_type_name === "Người"
+          )
+        ) {
+          cleanPrice =
+            record.list_general_service.find(
+              (cleaning) => cleaning?.service_name === "cleaning" && cleaning.service_type_name === "Người"
+            )?.service_price * record.total_renter;
+        }
+
+        total = waterPrice + elecPrice + cleanPrice + vehiclesPrice + internetPrice + record.room_price;
+        return (
+          <>
+            <b>{total.toLocaleString("vn") + " đ"}</b>
+          </>
+        );
+      },
     },
     {
       title: "Số nước cũ",
@@ -624,7 +651,16 @@ const AddAutoInvoice = () => {
   );
   return (
     <div className="invoice">
-      <MainLayout title="Tạo mới nhanh hoá đơn">
+      <MainLayout
+        title="Tạo mới nhanh hoá đơn"
+        button={
+          <Link to="/invoice">
+            <Button type="primary" icon={<ArrowLeftOutlined />} size="middle" className="button-add">
+              Quản lý hoá đơn
+            </Button>
+          </Link>
+        }
+      >
         <Row>
           <Col xs={24} lg={4}>
             <Row>
@@ -656,7 +692,7 @@ const AddAutoInvoice = () => {
         </Row>
         <Form
           form={form}
-          // onFinish={handleCreateEmployee}
+          onFinish={handlerPreview}
           // onFinishFailed={onFinishFail}
           layout="horizontal"
           size={"default"}
@@ -701,7 +737,12 @@ const AddAutoInvoice = () => {
                     },
                   ]}
                 >
-                  <DatePicker value={date_create_format} placeholder="Nhập ngày tạo hoá đơn" />
+                  <DatePicker
+                    onChange={dateCreateChange}
+                    value={date_create_format}
+                    placeholder="Nhập ngày tạo hoá đơn"
+                    disabledDate={disabledDate}
+                  />
                 </Form.Item>
               </Col>
               <Col lg={4} xs={24}>
@@ -721,7 +762,11 @@ const AddAutoInvoice = () => {
                     },
                   ]}
                 >
-                  <DatePicker placeholder="Nhập hạn đóng tiền" />
+                  <DatePicker
+                    onChange={paymentTermChange}
+                    placeholder="Nhập hạn đóng tiền"
+                    disabledDate={disabledDate}
+                  />
                 </Form.Item>
               </Col>
             </Row>
@@ -766,16 +811,31 @@ const AddAutoInvoice = () => {
                         </ConfigProvider>
                       </Form.Item>
                     </Form>
-                    <Button
-                      className="btn-add-invoice"
-                      htmlType="submit"
-                      key="submit"
-                      form="createInvoice"
-                      type="primary"
-                      size="middle"
-                    >
-                      Tạo mới hoá đơn
-                    </Button>
+                    {selectedRows.length !== 0 ? (
+                      <Button
+                        className="btn-add-invoice"
+                        htmlType="submit"
+                        key="submit"
+                        form="createInvoice"
+                        onClick={handlerPreview}
+                        type="primary"
+                        size="middle"
+                      >
+                        Xem trước hoá đơn được tạo
+                      </Button>
+                    ) : (
+                      <Button
+                        className="btn-add-invoice"
+                        htmlType="submit"
+                        key="submit"
+                        form="createInvoice"
+                        type="primary"
+                        size="middle"
+                        disabled
+                      >
+                        Xem trước hoá đơn được tạo
+                      </Button>
+                    )}
                   </Tabs.TabPane>
                   <Tabs.TabPane tab={`Phòng đã lập hoá đơn (${dataSourceBilled?.length})`} key="2">
                     <ConfigProvider renderEmpty={customizeRenderEmptyBilled}>
