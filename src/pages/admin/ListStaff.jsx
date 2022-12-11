@@ -40,6 +40,8 @@ const ListStaff = () => {
   const LIST_ROLES_URL = "manager/staff/roles";
   const [updateStaff, setUpdateStaff] = useState(false);
   const [detailStaff, setDetailStaff] = useState(false);
+  const [flag, setFlag] = useState(false);
+
   const onClickUpdateStaff = (id) => {
     setUpdateStaff(true);
     setId(id);
@@ -70,27 +72,32 @@ const ListStaff = () => {
   const options = [];
   let cookie = localStorage.getItem("Cookie");
   let role = localStorage.getItem("Role");
+  const getAllEmployees = async () => {
+    setLoading(true);
+    const response = await axios
+      .get(LIST_EMPLOYEE_URL, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie}`,
+        },
+      })
+      .then((res) => {
+        setDataSource(res.data.data);
+        console.log(res);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    setLoading(false);
+  };
   useEffect(() => {
-    const getAllEmployees = async () => {
-      setLoading(true);
-      const response = await axios
-        .get(LIST_EMPLOYEE_URL, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${cookie}`,
-          },
-        })
-        .then((res) => {
-          setDataSource(res.data.data);
-          console.log(res);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-      setLoading(false);
-    };
     getAllEmployees();
-  }, [cookie]);
+  }, []);
+  useEffect(() => {
+    if (flag) {
+      getAllEmployees();
+    }
+  }, [flag]);
   useEffect(() => {
     const getRoleFilter = async () => {
       setLoading(true);

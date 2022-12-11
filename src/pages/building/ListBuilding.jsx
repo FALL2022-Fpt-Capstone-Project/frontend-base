@@ -202,23 +202,14 @@ const ListBuilding = () => {
             },
           },
           {
-            title: "Số lượng phòng đã thuê",
+            title: "Số lượng phòng",
             dataIndex: "total_room",
             render: (_, record) => {
-              let contracted = record.list_room_lease_contracted;
-              let contract;
-
-              // console.log(record.list_room_lease_contracted?.total_room_lease_contracted);
-              if (contracted?.total_room_lease_contracted === undefined) {
-                contract = <p>0/{record.total_room}</p>;
-              } else {
-                contract = (
-                  <p>
-                    {contracted?.total_room_lease_contracted}/{record.total_room}
-                  </p>
-                );
-              }
-              return <>{contract}</>;
+              return (
+                <>
+                  <p>{record.total_room}</p>
+                </>
+              );
             },
           },
           {

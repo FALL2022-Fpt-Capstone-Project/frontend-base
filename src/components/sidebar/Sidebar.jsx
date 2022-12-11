@@ -59,6 +59,11 @@ const Sidebar = () => {
       setInvoiceLink("/invoice/create-invoice-auto");
     }
   }, [location.pathname]);
+  useEffect(() => {
+    if (location.pathname.includes("/invoice/create-invoice-auto/preview")) {
+      setInvoiceLink("/invoice/create-invoice-auto/preview");
+    }
+  }, [location.pathname]);
 
   let role = localStorage.getItem("Role");
 

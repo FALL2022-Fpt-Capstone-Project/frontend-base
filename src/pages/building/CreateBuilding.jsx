@@ -37,7 +37,7 @@ const CreateBuilding = ({ visible, close, data }) => {
   const [building_address_city, setBuildingCity] = useState("");
   const [room_name_convention, setRoomNameConvention] = useState("");
   const [room_area, setRoomArea] = useState(25);
-  const [room_limited_people, setRoomPeople] = useState(1);
+  const [room_limited_people, setRoomPeople] = useState(3);
   const [room_price, setRoomRate] = useState(3000000);
   const [buildingName, setBuildingName] = useState();
   const [address_city, setCity] = useState("");
@@ -629,7 +629,7 @@ const CreateBuilding = ({ visible, close, data }) => {
                   <InputNumber
                     addonAfter="Người"
                     style={{ width: "100%" }}
-                    defaultValue={1}
+                    defaultValue={3}
                     controls={false}
                     placeholder="Nhập số lượng người tối đa của phòng"
                     onChange={roomPeopleChange}
@@ -1014,7 +1014,7 @@ const CreateBuilding = ({ visible, close, data }) => {
                   </Row>
                 </Form.Item>
               </Card>
-              <Card title="Tài sản chung" className="card card-asset">
+              <Card title="Tài sản mặc định" className="card card-asset">
                 <Form.Item name="asset">
                   <Row>
                     <Col span={24}>
