@@ -33,7 +33,7 @@ const textSize = {
   fontSize: 15,
 };
 let optionFloor = [];
-function ViewContractBuilding({ openView, closeView, dataContract, dataAsset }) {
+function ViewContractBuilding({ openView, closeView, dataContract, dataAsset, loading }) {
   // console.log(dataContract);
   const navigate = useNavigate();
   const [roomFloor, setRoomFloor] = useState("");
@@ -410,6 +410,7 @@ function ViewContractBuilding({ openView, closeView, dataContract, dataAsset }) 
                 </Col>
               </Row>
               <Table
+                loading={loading}
                 bordered
                 dataSource={dataContract?.list_lease_contracted_room?.filter(obj => roomFloor === "" ? obj : obj.room_floor === roomFloor)?.map(room => {
                   return {

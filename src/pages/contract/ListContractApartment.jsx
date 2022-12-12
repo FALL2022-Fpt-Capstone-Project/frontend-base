@@ -14,7 +14,7 @@ const { Column, ColumnGroup } = Table;
 const LIST_BUILDING_FILTER = "manager/group/all/contracted";
 const GET_SERVICE_GROUP_BY_ID = "manager/service/general?groupId=";
 const GET_FILTER_CONTRACT_GROUP = "manager/contract/group";
-const GET_INVOICE_BY_GROUP = "manager/bill/room/list/";
+const GET_INVOICE_BY_GROUP = "manager/statistical/bill/list-room-billed";
 
 const ListContractApartment = () => {
   const { RangePicker } = DatePicker;
@@ -28,6 +28,7 @@ const ListContractApartment = () => {
   const [ownerIdentity, setOwnerIdentity] = useState("");
   const [groupId, setGroupId] = useState("");
   const [loading, setLoading] = useState(false);
+  const [loadingModal, setLoadingModal] = useState(false);
   const [viewContract, setViewContract] = useState(false);
   const [deleteContract, setDeleteContract] = useState(false);
   const [buildingFilter, setBuildingFilter] = useState("");
@@ -56,6 +57,9 @@ const ListContractApartment = () => {
       })
       .then((res) => {
         setBuildingFilter(res.data.data);
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, "10000");
       })
       .catch((error) => {
         console.log(error);
@@ -100,6 +104,7 @@ const ListContractApartment = () => {
 
   const getFilterContractRenter = async (e) => {
     console.log({
+      name: ownerName,
       phoneNumber: phoneNumber,
       identity: ownerIdentity.toString(),
       isDisable: endContract,
@@ -111,6 +116,7 @@ const ListContractApartment = () => {
     await axios
       .get(GET_FILTER_CONTRACT_GROUP, {
         params: {
+          name: ownerName,
           phoneNumber: phoneNumber,
           identity: ownerIdentity.toString(),
           isDisable: endContract,
@@ -125,7 +131,7 @@ const ListContractApartment = () => {
       })
       .then((res) => {
         setDataSource(res.data.data);
-        console.log(res);
+        console.log(res.data.data);
       })
       .catch((error) => {
         console.log(error);
@@ -133,6 +139,7 @@ const ListContractApartment = () => {
     setLoading(false);
   };
   const apartmentGroupById = async (groupId) => {
+    setLoadingModal(true);
     await axios
       .get(GET_SERVICE_GROUP_BY_ID + groupId, {
         headers: {
@@ -149,11 +156,18 @@ const ListContractApartment = () => {
       .catch((error) => {
         console.log(error);
       });
+    setLoadingModal(false);
   };
 
-  const getInvoiceByGroup = async (groupId) => {
+  const getInvoiceByGroup = async (groupId, dataCheck) => {
+
+    setLoadingModal(true);
     await axios
-      .get(GET_INVOICE_BY_GROUP + groupId, {
+      .get(GET_INVOICE_BY_GROUP, {
+        params: {
+          createdTime: null,
+          groupId: groupId,
+        },
         headers: {
           "Content-Type": "application/json",
           // "Access-Control-Allow-Origin": "*",
@@ -162,15 +176,17 @@ const ListContractApartment = () => {
         // withCredentials: true,
       })
       .then((res) => {
-        console.log(res.data.data);
-        setInvoiceByGroup(res.data.data);
+        const data = res.data.data.filter(room => dataCheck.list_lease_contracted_room.find(obj => obj.room_id === room.room_id));
+        setInvoiceByGroup(data);
+        console.log(data);
       })
       .catch((error) => {
         console.log(error);
       });
+    setLoadingModal(false);
   };
 
-  const reload = () => {
+  const reloadApi = () => {
     getAllContractBuilding();
   }
   return (
@@ -215,7 +231,7 @@ const ListContractApartment = () => {
                           placeholder="Nhập tên người cho thuê"
                           autoComplete="off"
                           onChange={(e) => {
-                            setOwnerName(e);
+                            setOwnerName(e.target.value);
                           }}
                         />
                       </Row>
@@ -229,13 +245,12 @@ const ListContractApartment = () => {
                         </label>
                       </Row>
                       <Row>
-                        <InputNumber
-                          controls={false}
+                        <Input
                           style={{ width: '100%' }}
                           placeholder="Nhập số CCCD"
                           autoComplete="off"
                           onChange={(e) => {
-                            setOwnerIdentity(e);
+                            setOwnerIdentity(e.target.value);
                           }}
                         />
                       </Row>
@@ -321,6 +336,12 @@ const ListContractApartment = () => {
                     <Button onClick={() => {
                       getAllContractBuilding();
                       filterContract.resetFields();
+                      setStartDate("");
+                      setEndDate("");
+                      setPhoneNumber("");
+                      setOwnerName("");
+                      setOwnerIdentity("");
+                      setGroupId("");
                       setEndContract(false);
                     }} icon={<UndoOutlined />}>
                       Đặt lại
@@ -333,7 +354,15 @@ const ListContractApartment = () => {
         </Tabs>
         <Table loading={loading} dataSource={dataSource} scroll={{ x: 1600, y: 600 }} bordered>
           {/* <Column width='10%' title="Tên hợp đồng" dataIndex="contract_name" key="key" /> */}
-          <Column title="Tên người cho thuê" dataIndex="rack_renter_full_name" key="key" />
+          <Column
+            filteredValue={[textSearch]}
+            onFilter={(value, record) => {
+              return (
+                String(record.rack_renter_full_name).trim().toLowerCase()?.includes(value.trim().toLowerCase()) ||
+                String(record.phone_number).trim().toLowerCase()?.includes(value.trim().toLowerCase())
+              );
+            }}
+            title="Tên người cho thuê" dataIndex="rack_renter_full_name" key="key" />
           <Column title="Số điện thoại" dataIndex="phone_number" key="key" />
 
           <Column title="Tên chung cư" dataIndex="group_name" key="key" />
@@ -401,15 +430,15 @@ const ListContractApartment = () => {
                       }}
                     />
                   </Tooltip>
-                  <Tooltip title="Đóng hợp đồng">
+                  <Tooltip title="Kết thúc hợp đồng">
                     <DeleteOutlined style={{
                       fontSize: "20px",
                       margin: "0 5px",
                       color: 'red'
                     }} onClick={() => {
+                      getInvoiceByGroup(record.group_id, record);
                       setDeleteContract(true);
                       setDataContract(record);
-                      apartmentGroupById(record.group_id);
                     }} />
                   </Tooltip>
                 </>
@@ -421,13 +450,17 @@ const ListContractApartment = () => {
           openView={viewContract}
           closeView={setViewContract}
           dataContract={dataContract}
-          dataAsset={dataApartmentServiceGeneral} />
+          dataAsset={dataApartmentServiceGeneral}
+          loading={loadingModal}
+        />
         <DeleteContractBuilding
-          reload={reload}
+          reload={reloadApi}
           openView={deleteContract}
           closeView={setDeleteContract}
           dataContract={dataContract}
-          dataAsset={dataApartmentServiceGeneral} />
+          dataInvoice={invoiceByGroup}
+          loading={loadingModal}
+        />
       </div>
     </div>
   );

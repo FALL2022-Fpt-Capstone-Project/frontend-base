@@ -453,6 +453,7 @@ function ListRoom(props) {
         const mapped = mergeGroup?.map((obj, index) => obj.group_id);
         const filterGroupId = mergeGroup?.filter((obj, index) => mapped.indexOf(obj.group_id) === index);
         setDataApartmentGroup(filterGroupId);
+        console.log(filterGroupId);
         setGroupRoom(pre => {
           return { ...pre, group: filterGroupId }
         });
@@ -679,7 +680,7 @@ function ListRoom(props) {
             </Button>
           </Col>
         </Row>
-        <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+        <Row gutter={[16]}>
           <Col xs={24} lg={24} xl={8} span={8}>
             <Card
               className="card-w100-h100"

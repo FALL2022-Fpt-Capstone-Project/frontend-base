@@ -1,53 +1,127 @@
-import React from "react";
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
-import { Bar } from "react-chartjs-2";
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
-const options = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: "top",
-    },
-    title: {
-      display: true,
-      text: "Thống kê hoá đơn năm 2022",
-      font: {
-        size: 24,
-      },
-    },
-  },
-};
-const month = [
-  "Tháng 1",
-  "Tháng 2",
-  "Tháng 3",
-  "Tháng 4",
-  "Tháng 5",
-  "Tháng 6",
-  "Tháng 7",
-  "Tháng 8",
-  "Tháng 9",
-  "Tháng 10",
-  "Tháng 11",
-  "Tháng 12",
-];
-const data = {
-  labels: month,
-  datasets: [
+import { Col, DatePicker, Row, Select, Table, Tag } from "antd";
+import moment from "moment";
+import React, { useEffect, useState } from "react";
+import axios from "../../api/axios";
+const GET_ROOM_HISTORY = "manager/statistical/bill/list-room-billed";
+
+
+const InvoiceStatistic = ({ dataGroup }) => {
+  let cookie = localStorage.getItem("Cookie");
+  const [groupSelect, setGroupSelect] = useState(null);
+  const [dataSource, setDataSource] = useState([]);
+  const [loadingInvoice, setLoadingInvoice] = useState(false);
+  const columns = [
     {
-      label: "Số hoá đơn đã lập",
-      data: [4, 5, 7, 30, 7, 8, 8, 11, 12, 23, 5, 5],
-      backgroundColor: "rgba(53, 162, 235)",
+      title: "Tên chung cư",
+      dataIndex: "group_name",
+      key: "room_id",
     },
     {
-      label: "Số hoá đơn còn nợ",
-      data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 5],
-      backgroundColor: "rgba(255, 99, 132)",
+      title: "Tên phòng",
+      dataIndex: "room_name",
+      key: "room_id",
     },
-  ],
-};
-const InvoiceStatistic = () => {
-  return <Bar options={options} data={data} />;
+    {
+      title: "Ngày tạo hóa đơn",
+      dataIndex: "created_time",
+      key: "room_id",
+    },
+    {
+      title: "Hạn đóng tiền",
+      // dataIndex: "groupName",
+      key: "room_id",
+    },
+    {
+      title: "Số tiền cần thu",
+      dataIndex: "need_to_paid",
+      key: "room_id",
+      render: (need_to_paid) => {
+        return <Tag color='red'>{new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(need_to_paid)}</Tag>
+      }
+    },
+  ];
+  useEffect(() => {
+    getBillByGroupId();
+  }, []);
+
+  const getBillByGroupId = async (groupId = null, createdTime = null) => {
+    setLoadingInvoice(true);
+    await axios
+      .get(GET_ROOM_HISTORY, {
+        params: {
+          createdTime: createdTime,
+          groupId: groupId,
+        },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie}`,
+        },
+      })
+      .then((res) => {
+        setDataSource(res.data.data);
+        console.log(res.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    setLoadingInvoice(false);
+  };
+  return (
+    <>
+      <Row justify="center">
+        <p className="header-statistic">Thống kê hóa đơn chưa thanh toán</p>
+      </Row>
+      <Row>
+        <p className='statistic-time-title'>Chọn chung cư:</p>
+      </Row>
+      <Row>
+        <Col span={24}>
+          <Select
+            defaultValue={""}
+            placeholder="Chọn chung cư"
+            className='select-w-100'
+            options={[...dataGroup?.map(group => {
+              return { label: group.group_name, value: group.group_id }
+            }), {
+              label: 'Tất cả chung cư',
+              value: ""
+            },]}
+            onChange={(e) => {
+              console.log(e);
+              setGroupSelect(e);
+              getBillByGroupId(e, null);
+            }}
+          />
+        </Col>
+      </Row>
+      <Row>
+        <p className='statistic-time-title'>Tổng số hóa đơn chưa thanh toán: <b style={{ color: 'red' }}>{dataSource?.length}</b></p>
+      </Row>
+      <Row>
+        <Col span={24}>
+          <span className="statistic-time-title">Chọn tháng/năm để thống kê: </span>
+          <DatePicker
+            defaultValue={moment()}
+            placeholder="Chọn thời gian"
+            className="date-picker"
+            size={"large"}
+            picker="month" format={'MM/YYYY'}
+            onChange={(e) => {
+              getBillByGroupId(groupSelect, e.format("MM-YYYY"))
+            }}
+          />
+        </Col>
+      </Row>
+      <Table
+        bordered
+        scroll={{ x: 1200, y: 600 }}
+        columns={columns}
+        loading={loadingInvoice}
+        dataSource={dataSource}
+        pagination={{ defaultPageSize: 5, showSizeChanger: true, pageSizeOptions: ['5', '10', '20'] }}
+      />
+    </>
+  )
 };
 
 export default InvoiceStatistic;
