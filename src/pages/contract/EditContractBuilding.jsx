@@ -413,7 +413,7 @@ const EditContractBuilding = () => {
             rack_renter_email: e.owner_email,
             rack_renter_identity: e.owner_identity_card,
             rack_renter_address: e.address_more_detail,
-            rack_renter_note: "",
+            rack_renter_note: e.note,
         };
         console.log(JSON.stringify(data));
         await axios
@@ -525,6 +525,7 @@ const EditContractBuilding = () => {
         try {
             if (changeTab === "1") {
                 await form.validateFields([
+                    // "contract_name",
                     "contract_payment_cycle",
                     "owner_name",
                     "owner_gender",
@@ -614,6 +615,7 @@ const EditContractBuilding = () => {
 
     useEffect(() => {
         form.setFieldsValue({
+            contract_name: state.contract_name,
             owner_name: state.rack_renter_full_name,
             owner_gender: state.gender,
             owner_phone_number: state.phone_number,
@@ -626,7 +628,8 @@ const EditContractBuilding = () => {
             contract_end_date: moment(state.contract_end_date),
             group_id: state.group_id,
             contract_price: state.contract_price,
-            contract_deposit: state.contract_deposit
+            contract_deposit: state.contract_deposit,
+            contract_note: state.note
         });
     }, []);
 
@@ -832,6 +835,25 @@ const EditContractBuilding = () => {
                                     bordered={false}
                                     className="card-width-100 card-height"
                                 >
+                                    {/* <Form.Item
+                                        className="form-item"
+                                        name="contract_name"
+                                        labelCol={{ span: 24 }}
+                                        label={
+                                            <span>
+                                                <b>Tên hợp đồng: </b>
+                                            </span>
+                                        }
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: "Vui lòng nhập tên hợp đồng",
+                                                whitespace: true,
+                                            },
+                                        ]}
+                                    >
+                                        <Input placeholder="Tên hợp đồng"></Input>
+                                    </Form.Item> */}
                                     <Row>
                                         <Form.Item
                                             className="form-item"
@@ -1129,7 +1151,7 @@ const EditContractBuilding = () => {
                                     <Row>
                                         <Col span={24}>
                                             <p>
-                                                <b>Số lượng phòng đã chọn:</b> {listRoomId.length}
+                                                <b>Số lượng phòng đã thuê:</b> {listRoomId.length}
                                             </p>
                                             <Form.Item
                                                 className="form-item"
@@ -1143,6 +1165,7 @@ const EditContractBuilding = () => {
                                                 ]}
                                             >
                                                 <Tree
+                                                    disabled
                                                     checkable
                                                     onExpand={onExpand}
                                                     expandedKeys={expandedKeys}

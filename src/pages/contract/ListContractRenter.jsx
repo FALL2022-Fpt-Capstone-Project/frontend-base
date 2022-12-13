@@ -9,9 +9,11 @@ import DeleteContractRenter from "./DeleteContractRenter";
 
 const { Search } = Input;
 const LIST_CONTRACT_URL = "manager/contract";
-const LIST_BUILDING_FILTER = "manager/group/all/contracted";
+const LIST_BUILDING_FILTER = "manager/group/all";
 const ASSET_ROOM = "manager/asset/room/";
 const GET_SERVICE_GROUP_BY_ID = "manager/service/general?groupId=";
+const LIST_ASSET_TYPE = "manager/asset/type";
+const GET_INVOICE_BY_ROOM_ID = "manager/bill/room/history/";
 
 const { RangePicker } = DatePicker;
 const ListContractRenter = () => {
@@ -31,6 +33,8 @@ const ListContractRenter = () => {
   const [contractInfor, setContractInfor] = useState([]);
   const [assetRoom, setAssetRoom] = useState([]);
   const [dataApartmentServiceGeneral, setDataApartmentServiceGeneral] = useState([]);
+  const [listAssetType, setListAssetType] = useState([]);
+  const [getInvoiceData, setInvoiceData] = useState([]);
 
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -57,6 +61,7 @@ const ListContractRenter = () => {
   let cookie = localStorage.getItem("Cookie");
   useEffect(() => {
     getAllContract();
+    getAssetType();
   }, []);
 
   const getAllContract = async () => {
@@ -78,6 +83,41 @@ const ListContractRenter = () => {
     setLoading(false);
   };
 
+  const getAssetType = async () => {
+    await axios
+      .get(LIST_ASSET_TYPE, {
+        headers: {
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${cookie}`,
+        },
+        // withCredentials: true,
+      })
+      .then((res) => {
+        setListAssetType(res.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const getInvoiceByRoomId = async (room_id) => {
+    await axios
+      .get(GET_INVOICE_BY_ROOM_ID + room_id, {
+        headers: {
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${cookie}`,
+        },
+        // withCredentials: true,
+      })
+      .then((res) => {
+        setInvoiceData(res.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   useEffect(() => {
     const getBuildingFilter = async () => {
       setLoading(true);
@@ -89,7 +129,7 @@ const ListContractRenter = () => {
           },
         })
         .then((res) => {
-          setBuildingFilter(res.data.data);
+          setBuildingFilter(res.data.data.list_group_contracted);
           console.log(res);
         })
         .catch((error) => {
@@ -177,41 +217,8 @@ const ListContractRenter = () => {
     setEndDate("");
     setEndContract(false);
     setLoading(true);
-    const response = await axios
-      .get(LIST_CONTRACT_URL, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${cookie}`,
-        },
-      })
-      .then((res) => {
-        setDataSource(res.data.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    setLoading(false);
+    getAllContract();
   };
-
-  // const getContractById = async (contractId) => {
-  //   let cookie = localStorage.getItem("Cookie");
-  //   await axios
-  //     .get(GET_CONTRACT + contractId, {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         // "Access-Control-Allow-Origin": "*",
-  //         Authorization: `Bearer ${cookie}`,
-  //       },
-  //       // withCredentials: true,
-  //     })
-  //     .then((res) => {
-  //       // console.log(res);
-  //       setContractInfor(res.data.data);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // };
 
   console.log(dataSource);
 
@@ -253,23 +260,28 @@ const ListContractRenter = () => {
   };
   const reload = () => {
     getAllContract();
-  }
+  };
 
   return (
     <div className="list-contract">
       <div className="list-contract-search">
         <Tabs defaultActiveKey="1">
           <Tabs.TabPane tab="Tìm kiếm nhanh" key="1">
-            <Search
-              placeholder="Tìm kiếm theo số phòng, số điện thoại, tên khách thuê,..."
-              className="quich-search"
-              onSearch={(value) => {
-                setTextSearch(value);
-              }}
-              onChange={(e) => {
-                setTextSearch(e.target.value);
-              }}
-            />
+            <Row>
+              <Col xs={24} lg={16} xl={10} span={10}>
+                <Search
+                  style={{ width: "70%" }}
+                  placeholder="Tìm kiếm theo số phòng, số điện thoại, tên khách thuê,..."
+                  className="quich-search"
+                  onSearch={(value) => {
+                    setTextSearch(value);
+                  }}
+                  onChange={(e) => {
+                    setTextSearch(e.target.value);
+                  }}
+                />
+              </Col>
+            </Row>
           </Tabs.TabPane>
           <Tabs.TabPane tab="Tìm kiếm nâng cao" key="2">
             <Form
@@ -476,7 +488,7 @@ const ListContractRenter = () => {
                     <EditOutlined
                       className="icon"
                       onClick={() => {
-                        navigate('/contract-renter/edit', { state: record });
+                        navigate("/contract-renter/edit", { state: record });
                         // navigate(`/contract-renter/edit/${record.contract_id}/group/${record.group_id}`);
                       }}
                     />
@@ -493,16 +505,19 @@ const ListContractRenter = () => {
                     />
                   </Tooltip>
                   <Tooltip title="Kết thúc hợp đồng">
-                    <DeleteOutlined style={{
-                      fontSize: "20px",
-                      margin: "0 5px",
-                      color: 'red'
-                    }} onClick={() => {
-                      apartmentGroupById(record.group_id);
-                      setDeleteContract(true);
-                      setContractInfor(record);
-                      getAssetRoom(record.room_id);
-                    }} />
+                    <DeleteOutlined
+                      style={{
+                        fontSize: "20px",
+                        margin: "0 5px",
+                        color: "red",
+                      }}
+                      onClick={() => {
+                        apartmentGroupById(record.group_id);
+                        setDeleteContract(true);
+                        setContractInfor(record);
+                        getInvoiceByRoomId(record.room_id);
+                      }}
+                    />
                   </Tooltip>
                 </>
               );
@@ -514,12 +529,18 @@ const ListContractRenter = () => {
       <ViewContractRenter
         openView={viewContract}
         closeView={setViewContract}
-        dataContract={contractInfor} dataAsset={assetRoom} dataService={dataApartmentServiceGeneral} />
+        dataContract={contractInfor}
+        dataAsset={assetRoom}
+        dataService={dataApartmentServiceGeneral}
+        assetType={listAssetType}
+      />
       <DeleteContractRenter
         reload={reload}
         openView={deleteContract}
         closeView={setDeleteContract}
-        dataContract={contractInfor} dataAsset={assetRoom} dataService={dataApartmentServiceGeneral} />
+        dataContract={contractInfor}
+        dataInvoice={getInvoiceData.filter((invoice) => invoice.is_paid === false)}
+      />
     </div>
   );
 };

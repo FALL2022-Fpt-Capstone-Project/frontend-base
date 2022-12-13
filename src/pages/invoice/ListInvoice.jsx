@@ -1,4 +1,4 @@
-import { Button, Col, Form, Input, Row, Table, Tooltip, Select, Tag, ConfigProvider } from "antd";
+import { Col, Input, Row, Table, Tooltip, Select, Tag, ConfigProvider } from "antd";
 import React, { useEffect, useState } from "react";
 import { InboxOutlined, AccountBookOutlined, ProfileOutlined } from "@ant-design/icons";
 import "./listInvoice.scss";
@@ -6,7 +6,7 @@ import axios from "../../api/axios";
 import ListHistoryInvoice from "./ListHistoryInvoice";
 import CreateInvoice from "./CreateInvoice";
 const { Search } = Input;
-const LIST_BUILDING_FILTER = "manager/contract/group";
+const LIST_BUILDING_FILTER = "manager/group/all";
 const ListInvoice = () => {
   const [historyInvoice, setHistoryInvoice] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -23,26 +23,19 @@ const ListInvoice = () => {
     setId(id);
   };
   const options = [];
-  const option = [
-    {
-      value: "15",
-      label: "Kỳ 15",
-    },
-    {
-      value: "30",
-      label: "Kỳ 30",
-    },
-  ];
 
   let cookie = localStorage.getItem("Cookie");
   const [buildingFilter, setBuildingFilter] = useState("");
   const [dataSource, setDataSource] = useState([]);
   const [flag, setFlag] = useState(false);
-  const [statistic, setStatistic] = useState(false);
+  const [paymentCycle, setPaymentCycle] = useState(0);
   const getListInvoice = async () => {
     setLoading(true);
     const response = await axios
       .get(`manager/bill/room/list/${building}`, {
+        params: {
+          paymentCycle: paymentCycle,
+        },
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${cookie}`,
@@ -51,7 +44,6 @@ const ListInvoice = () => {
       .then((res) => {
         setDataSource(res.data.data);
         console.log(res);
-        setStatistic(true);
       })
       .catch((error) => {
         console.log(error);
@@ -59,10 +51,9 @@ const ListInvoice = () => {
     setLoading(false);
   };
   useEffect(() => {
-    console.log(building);
+    console.log(building, paymentCycle);
     getListInvoice();
-  }, [building]);
-
+  }, [building, paymentCycle]);
   useEffect(() => {
     if (flag) {
       getListInvoice();
@@ -78,8 +69,7 @@ const ListInvoice = () => {
           },
         })
         .then((res) => {
-          setBuildingFilter(res.data.data);
-          console.log(res);
+          setBuildingFilter(res.data.data.list_group_contracted);
         })
         .catch((error) => {
           console.log(error);
@@ -90,17 +80,36 @@ const ListInvoice = () => {
   for (let i = 0; i < buildingFilter.length; i++) {
     options.push({
       label: buildingFilter[i].group_name,
-      value: buildingFilter[i].contract_id,
+      value: buildingFilter[i].group_id,
     });
   }
+  const optionPayment = [
+    {
+      label: "Tất cả các kỳ",
+      value: 0,
+    },
+    {
+      label: "Kỳ 15",
+      value: 15,
+    },
+    {
+      label: "Kỳ 30",
+      value: 30,
+    },
+  ];
+  const paymentCycleChange = (value) => {
+    setPaymentCycle(value);
+    console.log(value);
+  };
   const buildingChange = (value, option) => {
     setBuilding(value);
+    // setPaymentCycle(0);
     console.log(value);
   };
   const customizeRenderEmpty = () => (
     <div style={{ textAlign: "center" }}>
       <InboxOutlined style={{ fontSize: 70 }} />
-      <p style={{ fontSize: 20 }}>Không có dữ liệu</p>
+      <p style={{ fontSize: 20 }}>Vui lòng lựa chọn chung cư để hiển thị dữ liệu hoá đơn</p>
     </div>
   );
   return (
@@ -120,7 +129,21 @@ const ListInvoice = () => {
               ></Select>
             </Row>
           </Col>
-          <Col>
+          <Col xs={24} lg={4}>
+            <Row>
+              <h4>Lựa chọn kỳ thanh toán</h4>
+            </Row>
+            <Row>
+              <Select
+                defaultValue={0}
+                options={optionPayment}
+                placeholder="Chọn kỳ thanh toán"
+                onChange={paymentCycleChange}
+                className="add-auto-filter"
+              ></Select>
+            </Row>
+          </Col>
+          <Col xs={24} lg={4}>
             <Row>
               <h4>Tìm kiếm theo tên phòng</h4>
             </Row>
@@ -229,35 +252,7 @@ const ListInvoice = () => {
           loading={loading}
         />
       </ConfigProvider>
-      {statistic ? (
-        <div className="invoice-statistic">
-          <Row>
-            <h2 className="payment-term-alret">* Hiện tại chưa đến kỳ thanh toán</h2>
-          </Row>
-          <Row>
-            <p>
-              Tổng số hoá đơn đến kỳ thu đã lập: <span>5/10 hoá đơn</span>
-            </p>
-          </Row>
-          <Row>
-            <p>
-              Tổng số hoá đơn đã lập trong tháng này: <span>5/10 hoá đơn</span>
-            </p>
-          </Row>
-          <Row>
-            <p>
-              Tổng số hoá đơn chưa thanh toán trong tháng này: <span>5/10 hoá đơn</span>
-            </p>
-          </Row>
-          <Row>
-            <p>
-              Tổng số số tiền đã thu trong tháng này: <span>4,000,000 đ/ 20,000,000đ</span>
-            </p>
-          </Row>
-        </div>
-      ) : (
-        ""
-      )}
+
       <CreateInvoice visible={createInvoice} close={setCreateInvoice} id={id} setFlag={setFlag} />
       <ListHistoryInvoice visible={historyInvoice} close={setHistoryInvoice} roomId={id} setFlag={setFlag} />
     </div>

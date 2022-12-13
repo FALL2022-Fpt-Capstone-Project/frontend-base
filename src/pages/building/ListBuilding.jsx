@@ -19,6 +19,7 @@ const ListBuilding = () => {
   const [id, setId] = useState();
   const [detailBuilding, setDetailBuilding] = useState(false);
   const [updateBuilding, setUpdateBuilding] = useState(false);
+  const [dataDetailBuilding, setDataDetailBuilding] = useState([]);
   const onClickUpdateBuilding = (id) => {
     setUpdateBuilding(true);
     setId(id);
@@ -29,25 +30,6 @@ const ListBuilding = () => {
   };
   let cookie = localStorage.getItem("Cookie");
 
-  useEffect(() => {
-    const getCity = () => {
-      const response = axios
-        .get(LIST_CITY_URL, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${cookie}`,
-          },
-        })
-        .then((res) => {
-          console.log(res.data.data);
-          setBuildingCity(res.data.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    };
-    getCity();
-  }, []);
   useEffect(() => {
     const getAllBuilding = async () => {
       setLoading(true);
@@ -78,6 +60,27 @@ const ListBuilding = () => {
     };
     getAllBuilding();
   }, [cookie, buildingName]);
+
+  useEffect(() => {
+    const getCity = () => {
+      const response = axios
+        .get(LIST_CITY_URL, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cookie}`,
+          },
+        })
+        .then((res) => {
+          console.log(res.data.data);
+          setBuildingCity(res.data.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+    getCity();
+  }, [cookie]);
+
   const reload = () => window.location.reload();
   const handleDeleteBuilding = (id) => {
     console.log(id);
@@ -106,17 +109,32 @@ const ListBuilding = () => {
       });
   };
   let optionsCity = [];
-  for (let i = 0; i < building_address_city.length; i++) {
+  for (let i = 0; i < building_address_city?.length; i++) {
     optionsCity.push({
       label: building_address_city[i].city,
       value: building_address_city[i].id,
     });
   }
-
+  console.log(building_address_city);
   const cityChange = (value, option) => {
     setBuildingCityId(value);
-    setBuildingName(option.label);
+    setBuildingName(option.children);
+    // console.log(option);
   };
+
+  // const buildingDetail = async (id) => {
+  //   await axios
+  //     .get(`manager/group/${id}`, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${cookie}`,
+  //       },
+  //     })
+  //     .then((res) => {
+  //       setDataDetailBuilding(res.data.data)
+  //     });
+  // };
+
   return (
     <div>
       <Row>
@@ -149,8 +167,17 @@ const ListBuilding = () => {
                 padding: "10px 0",
               }}
               onChange={cityChange}
-              options={optionsCity}
-            />
+              // options={optionsCity}
+            >
+              <Select.Option value="">Tất cả</Select.Option>
+              {optionsCity?.map((obj, index) => {
+                return (
+                  <>
+                    <Select.Option value={obj.value}>{obj.label}</Select.Option>
+                  </>
+                );
+              })}
+            </Select>
           </Row>
         </Col>
         <Col span={8}>
@@ -202,23 +229,14 @@ const ListBuilding = () => {
             },
           },
           {
-            title: "Số lượng phòng đã thuê",
+            title: "Số lượng phòng",
             dataIndex: "total_room",
             render: (_, record) => {
-              let contracted = record.list_room_lease_contracted;
-              let contract;
-
-              // console.log(record.list_room_lease_contracted?.total_room_lease_contracted);
-              if (contracted?.total_room_lease_contracted === undefined) {
-                contract = <p>0/{record.total_room}</p>;
-              } else {
-                contract = (
-                  <p>
-                    {contracted?.total_room_lease_contracted}/{record.total_room}
-                  </p>
-                );
-              }
-              return <>{contract}</>;
+              return (
+                <>
+                  <p>{record.total_room}</p>
+                </>
+              );
             },
           },
           {
@@ -268,7 +286,15 @@ const ListBuilding = () => {
               return record.group_contracted ? (
                 <>
                   <Tooltip title="Xem chi tiết chung cư">
-                    <EyeOutlined className="icon" onClick={() => onClickDetailBuilding(record.group_id)} />
+                    <EyeOutlined
+                      className="icon"
+                      onClick={() => {
+                        setDataDetailBuilding(record);
+                        // buildingDetail(record.group_id);
+                        setDetailBuilding(true);
+                        // onClickDetailBuilding(record.group_id)
+                      }}
+                    />
                   </Tooltip>
                 </>
               ) : (
@@ -277,7 +303,15 @@ const ListBuilding = () => {
                     <EditOutlined className="icon" onClick={() => onClickUpdateBuilding(record.group_id)} />
                   </Tooltip>
                   <Tooltip title="Xem chi tiết chung cư">
-                    <EyeOutlined className="icon" onClick={() => onClickDetailBuilding(record.group_id)} />
+                    <EyeOutlined
+                      className="icon"
+                      onClick={() => {
+                        setDataDetailBuilding(record);
+                        // buildingDetail(record.group_id);
+                        setDetailBuilding(true);
+                        // onClickDetailBuilding(record.group_id);
+                      }}
+                    />
                   </Tooltip>
                   <Tooltip title="Xoá chung cư">
                     <Popconfirm
@@ -297,7 +331,7 @@ const ListBuilding = () => {
         ]}
         loading={loading}
       />
-      <DetailBuilding visible={detailBuilding} close={setDetailBuilding} id={id} />
+      <DetailBuilding visible={detailBuilding} close={setDetailBuilding} data={dataDetailBuilding} />
       <UpdateBuilding visible={updateBuilding} close={setUpdateBuilding} id={id} />
     </div>
   );

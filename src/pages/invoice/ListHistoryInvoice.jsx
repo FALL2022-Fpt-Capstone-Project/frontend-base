@@ -1,4 +1,4 @@
-import { Button, Col, Form, Input, Row, Table, Tooltip, Tag, Modal } from "antd";
+import { Button, Col, Form, Input, Row, Table, Tooltip, Tag, Modal, Popconfirm } from "antd";
 import React, { useEffect, useState } from "react";
 import {
   EditOutlined,
@@ -104,7 +104,6 @@ const ListHistoryInvoice = ({ visible, close, roomId, setFlag }) => {
 
     return dateAndTime[0].split("-").reverse().join("-");
   };
-  console.log(roomName);
   return (
     <div className="list-history-invoice">
       <div className="list-history-invoice-search"></div>
@@ -175,7 +174,7 @@ const ListHistoryInvoice = ({ visible, close, roomId, setFlag }) => {
                 let status;
                 if (record.is_paid === false) {
                   status = (
-                    <Tag color="default" key={record.is_paid}>
+                    <Tag color="red" key={record.is_paid}>
                       Chưa thanh toán
                     </Tag>
                   );
@@ -205,11 +204,16 @@ const ListHistoryInvoice = ({ visible, close, roomId, setFlag }) => {
                           </Link>
                         </Tooltip>
                         <Tooltip title="Xoá hoá đơn">
-                          <DeleteOutlined
-                            className="icon icon-delete"
-                            onClick={() => handlerDeleteInvoice(record.id)}
-                          />
-                        </Tooltip>{" "}
+                          <Popconfirm
+                            title="Bạn có muốn xoá hoá đơn này không?"
+                            okText="Đồng ý"
+                            cancelText="Không"
+                            placement="topRight"
+                            onConfirm={() => handlerDeleteInvoice(record.id)}
+                          >
+                            <DeleteOutlined className="icon icon-delete" />
+                          </Popconfirm>
+                        </Tooltip>
                       </>
                     ) : (
                       <>
@@ -219,13 +223,26 @@ const ListHistoryInvoice = ({ visible, close, roomId, setFlag }) => {
                           </Link>
                         </Tooltip>
                         <Tooltip title="Thu tiền">
-                          <DollarCircleOutlined className="icon" onClick={() => handlerPayInvoice(record.id)} />
+                          <Popconfirm
+                            title="Bạn có muốn thanh toán hoá đơn này không?"
+                            okText="Đồng ý"
+                            cancelText="Không"
+                            placement="topRight"
+                            onConfirm={() => handlerPayInvoice(record.id)}
+                          >
+                            <DollarCircleOutlined className="icon" />
+                          </Popconfirm>
                         </Tooltip>
                         <Tooltip title="Xoá hoá đơn">
-                          <DeleteOutlined
-                            className="icon icon-delete"
-                            onClick={() => handlerDeleteInvoice(record.id)}
-                          />
+                          <Popconfirm
+                            title="Bạn có muốn xoá hoá đơn này không?"
+                            okText="Đồng ý"
+                            cancelText="Không"
+                            placement="topRight"
+                            onConfirm={() => handlerDeleteInvoice(record.id)}
+                          >
+                            <DeleteOutlined className="icon icon-delete" />
+                          </Popconfirm>
                         </Tooltip>{" "}
                       </>
                     )}

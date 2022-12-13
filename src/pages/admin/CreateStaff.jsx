@@ -1,4 +1,4 @@
-import { Form, Input, Card, Radio, Select, notification, Button, Modal } from "antd";
+import { Form, Input, Card, Radio, Select, notification, Button, Modal, Checkbox } from "antd";
 import React, { useEffect, useState } from "react";
 import "./createStaff.scss";
 import axios from "../../api/axios";
@@ -10,7 +10,25 @@ const CreateStaff = ({ visible, close }) => {
   const [gender, setGender] = useState("");
   const [roles, setRoles] = useState("staff");
   const [option, setOption] = useState([]);
-
+  const [permission, setPermission] = useState([1, 2, 3, 4, 5, 6, 7]);
+  const staffOptions = [
+    {
+      label: "Quản lý phòng",
+      value: 1,
+    },
+    {
+      label: "Quản lý dịch vụ",
+      value: 2,
+    },
+    {
+      label: "Quản lý hoá đơn",
+      value: 3,
+    },
+    {
+      label: "Quản lý hợp đồng cho thuê",
+      value: 4,
+    },
+  ];
   const [form] = Form.useForm();
   useEffect(() => {
     const getRoleFilter = async () => {
@@ -29,8 +47,10 @@ const CreateStaff = ({ visible, close }) => {
           console.log(error);
         });
     };
-    getRoleFilter();
-  }, [cookie]);
+    if (visible) {
+      getRoleFilter();
+    }
+  }, [cookie, visible]);
   let options = [];
   for (let i = 0; i < option.length; i++) {
     if (option[i] === "STAFF") {
@@ -62,6 +82,7 @@ const CreateStaff = ({ visible, close }) => {
       gender: value.gender,
       roles: value.roles,
       address_more_detail: value.address_more_detail,
+      permission: permission,
     };
     const response = await axios
       .post(ADD_EMPLOYEE_URL, employee, {
@@ -79,7 +100,7 @@ const CreateStaff = ({ visible, close }) => {
         close(false);
         setTimeout(() => {
           reload();
-        }, "3000");
+        }, "1000");
       })
       .catch((e) => {
         notification.error({
@@ -88,9 +109,10 @@ const CreateStaff = ({ visible, close }) => {
           duration: 3,
           placement: "top",
         });
-      }, close(false));
+      });
+
     // console.log(JSON.stringify(response?.data));
-    // console.log(employee);
+    console.log(employee);
   };
   const genderChange = (e) => {
     setGender(e.target.value);
@@ -98,6 +120,9 @@ const CreateStaff = ({ visible, close }) => {
 
   const roleChange = (value) => {
     setRoles(value);
+  };
+  const permissionChange = (checkedValues) => {
+    setPermission(checkedValues);
   };
   return (
     <>
@@ -287,6 +312,19 @@ const CreateStaff = ({ visible, close }) => {
                 options={options}
               />
             </Form.Item>
+            {roles === "staff" && (
+              <Form.Item
+                name="permission"
+                labelCol={{ span: 24 }}
+                label={
+                  <span>
+                    <b>Quyền nhân viên: </b>
+                  </span>
+                }
+              >
+                <Checkbox.Group options={staffOptions} onChange={permissionChange} defaultValue={[1]} />
+              </Form.Item>
+            )}
           </Card>
         </Form>
       </Modal>

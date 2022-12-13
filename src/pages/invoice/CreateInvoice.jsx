@@ -15,13 +15,16 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
   const [roomPrice, setRoomPrice] = useState();
   const [totalRenter, setTotalRenter] = useState();
   const [listService, setListService] = useState();
-  const [vehiPrice, setVehiPrice] = useState();
-  const [internetPrice, setInternetPrice] = useState();
+  const [vehiPrice, setVehiPrice] = useState(0);
+  const [internetPrice, setInternetPrice] = useState(0);
   const [newWater, setNewWater] = useState();
   const [newElec, setNewElec] = useState();
   const [vehiMonth, setVehiMonth] = useState(1);
   const [internetMonth, setInternetMonth] = useState(1);
   const [cleanMonth, setCleanMonth] = useState(1);
+  const [vehiPeople, setVehiPeople] = useState(1);
+  const [internetPeople, setInternetPeople] = useState(1);
+  const [cleanPeople, setCleanPeople] = useState(1);
   const [water, setWater] = useState({});
   const [elec, setElec] = useState({});
   const [vehi, setVehi] = useState({});
@@ -59,22 +62,34 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
       .then((res) => {
         console.log(res);
         form.setFieldsValue({
-          old_elec: res.data.data.list_general_service[0].hand_over_general_service_index,
-          new_elec: res.data.data.list_general_service[0].hand_over_general_service_index,
-          old_water: res.data.data.list_general_service[1].hand_over_general_service_index,
-          new_water: res.data.data.list_general_service[1].hand_over_general_service_index,
-          vehiMonth: res.data.data.list_general_service[2].hand_over_general_service_index,
-          internetMonth: res.data.data.list_general_service[3].hand_over_general_service_index,
+          old_elec: res.data.data.list_general_service?.find((electric) => electric.service_name === "electric")
+            .hand_over_general_service_index,
+          new_elec: res.data.data.list_general_service?.find((electric) => electric.service_name === "electric")
+            .hand_over_general_service_index,
+          old_water: res.data.data.list_general_service?.find((water) => water.service_name === "water")
+            .hand_over_general_service_index,
+          new_water: res.data.data.list_general_service?.find((water) => water.service_name === "water")
+            .hand_over_general_service_index,
+          vehiMonth: res.data.data.list_general_service?.find((vehicles) => vehicles.service_name === "vehicles")
+            .hand_over_general_service_index,
+          internetMonth: res.data.data.list_general_service?.find((internet) => internet.service_name === "internet")
+            .hand_over_general_service_index,
         });
         setRoomId(res.data.data.room_id);
         setRoomName(res.data.data.room_name);
         setRoomPrice(res.data.data.room_price);
         setListService(res.data.data.list_general_service);
         setTotalRenter(res.data.data.total_renter);
-        setNewElec(res.data.data.list_general_service[0].hand_over_general_service_index);
-        setNewWater(res.data.data.list_general_service[1].hand_over_general_service_index);
+        setNewElec(
+          res.data.data.list_general_service.find((electric) => electric.service_name === "electric")
+            .hand_over_general_service_index
+        );
+        setNewWater(
+          res.data.data.list_general_service.find((water) => water.service_name === "water")
+            .hand_over_general_service_index
+        );
       });
-  }, [cookie, id]);
+  }, [cookie, id, form]);
 
   const handleCreateInvoice = async (value) => {
     const invoice = [
@@ -116,6 +131,7 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
           placement: "top",
         });
       });
+    setFlag(false);
     // console.log(JSON.stringify(response?.data));
     console.log(invoice);
   };
@@ -133,6 +149,15 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
     setInternetMonth(value);
   };
   const cleanMonthChange = (value) => {
+    setCleanMonth(value);
+  };
+  const vehiPeopleChange = (value) => {
+    setVehiMonth(value);
+  };
+  const internetPeopleChange = (value) => {
+    setInternetMonth(value);
+  };
+  const cleanPeopleChange = (value) => {
     setCleanMonth(value);
   };
   const dateCreateChange = (date, dateString) => {
@@ -233,6 +258,34 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
 
       serviceType = serviceArray.find(
         (vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Tháng"
+      )?.service_type_id;
+      setVehiPrice(servicePrice);
+      setVehi({
+        service_id: serviceId,
+        service_type: serviceType,
+        service_price: servicePrice,
+        service_index: serviceIndex,
+        service_total_money: serviceTotalMoney,
+      });
+    }
+    if (
+      serviceArray?.some((vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Người")
+    ) {
+      servicePrice = serviceArray.find(
+        (vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Người"
+      )?.service_price;
+      serviceIndex = serviceArray.find(
+        (vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Người"
+      )?.hand_over_general_service_index;
+      serviceTotalMoney =
+        serviceArray.find((vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Người")
+          ?.service_price * serviceIndex;
+      serviceId = serviceArray.find(
+        (vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Người"
+      )?.service_id;
+
+      serviceType = serviceArray.find(
+        (vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Người"
       )?.service_type_id;
       setVehiPrice(servicePrice);
       setVehi({
@@ -563,6 +616,78 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
                                 onChange={cleanMonthChange}
                                 defaultValue={obj.hand_over_general_service_index}
                                 addonAfter="Tháng"
+                              />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col span={10}>
+                            <span>Giá: </span>
+                            <b>{obj.service_price?.toLocaleString("vn") + " đ"}</b>
+                          </Col>
+                        </Row>
+                      </Card>
+                    ) : obj.service_type_name === "Người" && obj.service_name === "vehicles" ? (
+                      <Card className="card card-service">
+                        <Row>
+                          <Col span={10}>
+                            <b>{obj.service_show_name}</b>
+                          </Col>
+                          <Col span={10} offset={4}>
+                            <Form.Item name="vehiMonth">
+                              <InputNumber
+                                onChange={vehiPeopleChange}
+                                defaultValue={obj.hand_over_general_service_index}
+                                addonAfter="Người"
+                                min={obj.hand_over_general_service_index}
+                              />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col span={10}>
+                            <span>Giá: </span>
+                            <b>{obj.service_price?.toLocaleString("vn") + " đ"}</b>
+                          </Col>
+                        </Row>
+                      </Card>
+                    ) : obj.service_type_name === "Người" && obj.service_name === "internet" ? (
+                      <Card className="card card-service">
+                        <Row>
+                          <Col span={10}>
+                            <b>{obj.service_show_name}</b>
+                          </Col>
+                          <Col span={10} offset={4}>
+                            <Form.Item name="internetMonth">
+                              <InputNumber
+                                onChange={internetPeopleChange}
+                                defaultValue={obj.hand_over_general_service_index}
+                                addonAfter="Người"
+                                min={obj.hand_over_general_service_index}
+                              />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col span={10}>
+                            <span>Giá: </span>
+                            <b>{obj.service_price?.toLocaleString("vn") + " đ"}</b>
+                          </Col>
+                        </Row>
+                      </Card>
+                    ) : obj.service_type_name === "Người" && obj.service_name === "cleaning" ? (
+                      <Card className="card card-service">
+                        <Row>
+                          <Col span={10}>
+                            <b>{obj.service_show_name}</b>
+                          </Col>
+                          <Col span={10} offset={4}>
+                            <Form.Item name="internetMonth">
+                              <InputNumber
+                                onChange={cleanPeopleChange}
+                                defaultValue={obj.hand_over_general_service_index}
+                                addonAfter="Người"
+                                min={obj.hand_over_general_service_index}
                               />
                             </Form.Item>
                           </Col>
