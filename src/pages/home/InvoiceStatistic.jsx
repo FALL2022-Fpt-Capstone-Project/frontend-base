@@ -1,9 +1,9 @@
-import { Col, DatePicker, Row, Select, Table, Tag } from "antd";
+import { Col, DatePicker, Divider, Row, Select, Statistic, Table, Tag } from "antd";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
+import { DollarOutlined } from "@ant-design/icons";
 import axios from "../../api/axios";
 const GET_ROOM_HISTORY = "manager/statistical/bill/list-room-billed";
-
 
 const InvoiceStatistic = ({ dataGroup }) => {
   let cookie = localStorage.getItem("Cookie");
@@ -28,7 +28,7 @@ const InvoiceStatistic = ({ dataGroup }) => {
     },
     {
       title: "Hạn đóng tiền",
-      // dataIndex: "groupName",
+      dataIndex: "payment_term",
       key: "room_id",
     },
     {
@@ -71,6 +71,40 @@ const InvoiceStatistic = ({ dataGroup }) => {
       <Row justify="center">
         <p className="header-statistic">Thống kê hóa đơn chưa thanh toán</p>
       </Row>
+      <Row gutter={[16]}>
+        <Col span={12}>
+          <Row>
+            <Statistic
+              title={
+                <>
+                  <span className="revenue-statistic">Tổng số tiền cần thu</span>
+                </>
+              }
+              value={new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(dataSource?.map(invoice => invoice.need_to_paid).reduce((pre, current) => pre + current, 0))}
+              valueStyle={{
+                color: "#cf1322",
+              }}
+              prefix={<DollarOutlined />}
+            />
+          </Row>
+        </Col>
+        <Col span={12}>
+          <Row>
+            <Statistic
+              title={
+                <>
+                  <span className="revenue-statistic">Tổng số hóa đơn chưa thanh toán</span>
+                </>
+              }
+              value={dataSource?.length}
+              valueStyle={{
+                color: "#cf1322",
+              }}
+            />
+          </Row>
+        </Col>
+      </Row>
+      <Divider />
       <Row>
         <p className='statistic-time-title'>Chọn chung cư:</p>
       </Row>
@@ -94,9 +128,14 @@ const InvoiceStatistic = ({ dataGroup }) => {
           />
         </Col>
       </Row>
-      <Row>
+
+      {/* <Row>
         <p className='statistic-time-title'>Tổng số hóa đơn chưa thanh toán: <b style={{ color: 'red' }}>{dataSource?.length}</b></p>
       </Row>
+      <Row>
+        <p className='statistic-time-title'>Tổng số tiền cần thu: <b style={{ color: 'red' }}>
+          {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(dataSource?.map(invoice => invoice.need_to_paid).reduce((pre, current) => pre + current, 0))}</b></p>
+      </Row> */}
       <Row>
         <Col span={24}>
           <span className="statistic-time-title">Chọn tháng/năm để thống kê: </span>
