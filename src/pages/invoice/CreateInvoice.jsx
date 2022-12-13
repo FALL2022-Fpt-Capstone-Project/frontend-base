@@ -62,17 +62,17 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
       .then((res) => {
         console.log(res);
         form.setFieldsValue({
-          old_elec: res.data.data.list_general_service.find((electric) => electric.service_name === "electric")
+          old_elec: res.data.data.list_general_service?.find((electric) => electric.service_name === "electric")
             .hand_over_general_service_index,
-          new_elec: res.data.data.list_general_service.find((electric) => electric.service_name === "electric")
+          new_elec: res.data.data.list_general_service?.find((electric) => electric.service_name === "electric")
             .hand_over_general_service_index,
-          old_water: res.data.data.list_general_service.find((water) => water.service_name === "water")
+          old_water: res.data.data.list_general_service?.find((water) => water.service_name === "water")
             .hand_over_general_service_index,
-          new_water: res.data.data.list_general_service.find((water) => water.service_name === "water")
+          new_water: res.data.data.list_general_service?.find((water) => water.service_name === "water")
             .hand_over_general_service_index,
-          vehiMonth: res.data.data.list_general_service.find((vehicles) => vehicles.service_name === "vehicles")
+          vehiMonth: res.data.data.list_general_service?.find((vehicles) => vehicles.service_name === "vehicles")
             .hand_over_general_service_index,
-          internetMonth: res.data.data.list_general_service.find((internet) => internet.service_name === "internet")
+          internetMonth: res.data.data.list_general_service?.find((internet) => internet.service_name === "internet")
             .hand_over_general_service_index,
         });
         setRoomId(res.data.data.room_id);
@@ -84,9 +84,12 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
           res.data.data.list_general_service.find((electric) => electric.service_name === "electric")
             .hand_over_general_service_index
         );
-        setNewWater(res.data.data.list_general_service[1].hand_over_general_service_index);
+        setNewWater(
+          res.data.data.list_general_service.find((water) => water.service_name === "water")
+            .hand_over_general_service_index
+        );
       });
-  }, [cookie, id]);
+  }, [cookie, id, form]);
 
   const handleCreateInvoice = async (value) => {
     const invoice = [

@@ -126,12 +126,7 @@ const App = () => {
           <Route path="manage-staff/update-staff/:id" element={<UpdateStaff />} />
         </Route>
         <Route
-          element={
-            <RequireAuth
-              allowedRoles={[ROLES.User, ROLES.Admin]}
-              allowedPermission={[PERMISSION.Service, PERMISSION.ContractRenter]}
-            />
-          }
+          element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} allowedPermission={[PERMISSION.Service]} />}
         >
           <Route path="service" element={<Service />} />
         </Route>

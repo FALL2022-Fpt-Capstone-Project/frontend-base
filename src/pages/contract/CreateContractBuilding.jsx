@@ -376,6 +376,8 @@ const CreateContractBuilding = () => {
   // });
   const loadDefault = () => {
     form.setFieldsValue({
+      contract_price: 0,
+      contract_deposit: 0,
       contract_type: 2,
       contract_start_date: contractStartDate,
       owner_gender: true,

@@ -1,7 +1,7 @@
 import { Button, Card, Col, DatePicker, Form, InputNumber, notification, Row, Table, Tag } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import MainLayout from "../../components/layout/MainLayout";
 import moment from "moment";
 import axios from "../../api/axios";
@@ -82,8 +82,10 @@ const PreviewAddAutoInvoice = () => {
   const [listPreview, setListPreview] = useState([]);
   // const [finalListPreview, setFinalListPreview] = useState([]);
   const { state } = useLocation();
-  const [paymentTerm, setPaymentTerm] = useState(state.paymentTerm);
-  const [dateCreate, setDateCreate] = useState(state.dateCreate);
+  const navigate = useNavigate();
+
+  const [paymentTerm, setPaymentTerm] = useState(state?.paymentTerm);
+  const [dateCreate, setDateCreate] = useState(state?.dateCreate);
 
   console.log(state);
   const listInvoiceGenerate = state.selectedRows?.map((obj, index) => {
@@ -93,8 +95,9 @@ const PreviewAddAutoInvoice = () => {
   const [form] = Form.useForm();
   let cookie = localStorage.getItem("Cookie");
 
-  let date_create_format = moment(state.dateCreate, "DD-MM-YYYY");
-  let payment_term_format = moment(state.paymentTerm, "DD-MM-YYYY");
+  let date_create_format = moment(state?.dateCreate, "YYYY-MM-DD");
+  let payment_term_format = moment(state?.paymentTerm, "YYYY-MM-DD");
+
   const initValues = {
     date_create_invoice: date_create_format,
     payment_term: payment_term_format,
@@ -411,6 +414,9 @@ const PreviewAddAutoInvoice = () => {
           duration: 3,
           placement: "top",
         });
+        setTimeout(() => {
+          navigate("/invoice");
+        }, 1000);
         console.log(res);
       })
       .catch((e) => {
@@ -532,6 +538,7 @@ const PreviewAddAutoInvoice = () => {
                       rowSelection={rowSelection}
                       components={components}
                       rowClassName={() => "editable-row"}
+                      rowKey={(record) => record.room_id}
                     />
                   </Form.Item>
                 </Form>
