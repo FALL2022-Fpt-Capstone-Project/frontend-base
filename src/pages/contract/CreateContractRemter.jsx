@@ -1361,10 +1361,12 @@ const CreateContractRenter = () => {
                     >
                       <DatePicker
                         onChange={(e) => {
+                          console.log(e.format('D') < 15);
                           setContractStartDate(e);
                           const startDate = form.getFieldsValue().contract_start_date;
                           form.setFieldsValue({
                             contract_end_date: moment(startDate).add(contractDuration, "M"),
+                            contract_payment_cycle: e.format('D') < 16 ? 15 : 30,
                           });
                         }}
                         allowClear={false}

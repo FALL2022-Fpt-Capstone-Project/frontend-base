@@ -525,7 +525,7 @@ const EditContractBuilding = () => {
         try {
             if (changeTab === "1") {
                 await form.validateFields([
-                    "contract_name",
+                    // "contract_name",
                     "contract_payment_cycle",
                     "owner_name",
                     "owner_gender",
@@ -835,7 +835,7 @@ const EditContractBuilding = () => {
                                     bordered={false}
                                     className="card-width-100 card-height"
                                 >
-                                    <Form.Item
+                                    {/* <Form.Item
                                         className="form-item"
                                         name="contract_name"
                                         labelCol={{ span: 24 }}
@@ -853,7 +853,7 @@ const EditContractBuilding = () => {
                                         ]}
                                     >
                                         <Input placeholder="Tên hợp đồng"></Input>
-                                    </Form.Item>
+                                    </Form.Item> */}
                                     <Row>
                                         <Form.Item
                                             className="form-item"

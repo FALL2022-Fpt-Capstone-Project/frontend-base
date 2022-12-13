@@ -13,6 +13,7 @@ const LIST_BUILDING_FILTER = "manager/group/all";
 const ASSET_ROOM = "manager/asset/room/";
 const GET_SERVICE_GROUP_BY_ID = "manager/service/general?groupId=";
 const LIST_ASSET_TYPE = "manager/asset/type";
+const GET_INVOICE_BY_ROOM_ID = "manager/bill/room/history/";
 
 const { RangePicker } = DatePicker;
 const ListContractRenter = () => {
@@ -33,6 +34,7 @@ const ListContractRenter = () => {
   const [assetRoom, setAssetRoom] = useState([]);
   const [dataApartmentServiceGeneral, setDataApartmentServiceGeneral] = useState([]);
   const [listAssetType, setListAssetType] = useState([]);
+  const [getInvoiceData, setInvoiceData] = useState([]);
 
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -82,7 +84,6 @@ const ListContractRenter = () => {
   };
 
   const getAssetType = async () => {
-    let cookie = localStorage.getItem("Cookie");
     await axios
       .get(LIST_ASSET_TYPE, {
         headers: {
@@ -94,6 +95,23 @@ const ListContractRenter = () => {
       })
       .then((res) => {
         setListAssetType(res.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const getInvoiceByRoomId = async (room_id) => {
+    await axios
+      .get(GET_INVOICE_BY_ROOM_ID + room_id, {
+        headers: {
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${cookie}`,
+        },
+        // withCredentials: true,
+      })
+      .then((res) => {
+        setInvoiceData(res.data.data);
       })
       .catch((error) => {
         console.log(error);
@@ -199,41 +217,8 @@ const ListContractRenter = () => {
     setEndDate("");
     setEndContract(false);
     setLoading(true);
-    const response = await axios
-      .get(LIST_CONTRACT_URL, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${cookie}`,
-        },
-      })
-      .then((res) => {
-        setDataSource(res.data.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    setLoading(false);
+    getAllContract();
   };
-
-  // const getContractById = async (contractId) => {
-  //   let cookie = localStorage.getItem("Cookie");
-  //   await axios
-  //     .get(GET_CONTRACT + contractId, {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         // "Access-Control-Allow-Origin": "*",
-  //         Authorization: `Bearer ${cookie}`,
-  //       },
-  //       // withCredentials: true,
-  //     })
-  //     .then((res) => {
-  //       // console.log(res);
-  //       setContractInfor(res.data.data);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // };
 
   console.log(dataSource);
 
@@ -530,7 +515,7 @@ const ListContractRenter = () => {
                         apartmentGroupById(record.group_id);
                         setDeleteContract(true);
                         setContractInfor(record);
-                        getAssetRoom(record.room_id);
+                        getInvoiceByRoomId(record.room_id);
                       }}
                     />
                   </Tooltip>
@@ -554,9 +539,7 @@ const ListContractRenter = () => {
         openView={deleteContract}
         closeView={setDeleteContract}
         dataContract={contractInfor}
-        dataAsset={assetRoom}
-        dataService={dataApartmentServiceGeneral}
-        assetType={listAssetType}
+        dataInvoice={getInvoiceData.filter((invoice) => invoice.is_paid === false)}
       />
     </div>
   );

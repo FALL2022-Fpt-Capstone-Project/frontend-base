@@ -3,9 +3,14 @@ import { Input, Table, Select, DatePicker, Tag, Tabs, Button, Row, Col, Form, Sw
 import { EyeOutlined, EditOutlined, SearchOutlined, UndoOutlined } from "@ant-design/icons";
 import "./listContract.scss";
 import axios from "../../api/axios";
+import ViewContractRenter from "./ViewContractRenter";
+import { useNavigate } from "react-router-dom";
 const { Search } = Input;
 const LIST_CONTRACT_EXPIRED_URL = "manager/contract";
 const LIST_BUILDING_FILTER = "manager/group/all";
+const ASSET_ROOM = "manager/asset/room/";
+const GET_SERVICE_GROUP_BY_ID = "manager/service/general?groupId=";
+const LIST_ASSET_TYPE = "manager/asset/type";
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -20,6 +25,12 @@ const ListContractExpired = ({ duration }) => {
   const [renterName, setRenterName] = useState("");
   const [building, setBuilding] = useState("");
   const [loading, setLoading] = useState(false);
+  const [viewContract, setViewContract] = useState(false);
+  const [assetRoom, setAssetRoom] = useState([]);
+  const [dataApartmentServiceGeneral, setDataApartmentServiceGeneral] = useState([]);
+  const [listAssetType, setListAssetType] = useState([]);
+  const [contractInfor, setContractInfor] = useState([]);
+  const navigate = useNavigate();
   const options = [];
   const formItemLayout = {
     labelCol: {
@@ -86,7 +97,59 @@ const ListContractExpired = ({ duration }) => {
     };
     getBuildingFilter();
   }, [cookie]);
+  const getAssetType = async () => {
+    await axios
+      .get(LIST_ASSET_TYPE, {
+        headers: {
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${cookie}`,
+        },
+        // withCredentials: true,
+      })
+      .then((res) => {
+        setListAssetType(res.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const getAssetRoom = async (room_id) => {
+    await axios
+      .get(ASSET_ROOM + room_id, {
+        headers: {
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${cookie}`,
+        },
+        // withCredentials: true,
+      })
+      .then((res) => {
+        setAssetRoom(res.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
+  const apartmentGroupById = async (groupId) => {
+    await axios
+      .get(GET_SERVICE_GROUP_BY_ID + groupId, {
+        headers: {
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${cookie}`,
+        },
+        // withCredentials: true,
+      })
+      .then((res) => {
+        console.log(res.data.data);
+        setDataApartmentServiceGeneral(res.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   for (let i = 0; i < buildingFilter.length; i++) {
     options.push({
       label: buildingFilter[i].group_name,
@@ -386,7 +449,7 @@ const ListContractExpired = ({ duration }) => {
                     <EditOutlined
                       className="icon"
                       onClick={() => {
-                        // navigate(`/contract-renter/edit/${record.contract_id}/group/${record.group_id}`);
+                        navigate("/contract-renter/edit", { state: record });
                       }}
                     />
                   </Tooltip>
@@ -394,8 +457,10 @@ const ListContractExpired = ({ duration }) => {
                     <EyeOutlined
                       className="icon"
                       onClick={() => {
-                        // setViewContract(true);
-                        // setContractInfor(record);
+                        apartmentGroupById(record.group_id);
+                        setViewContract(true);
+                        setContractInfor(record);
+                        getAssetRoom(record.room_id);
                       }}
                     />
                   </Tooltip>
@@ -405,6 +470,14 @@ const ListContractExpired = ({ duration }) => {
           },
         ]}
         loading={loading}
+      />
+      <ViewContractRenter
+        openView={viewContract}
+        closeView={setViewContract}
+        dataContract={contractInfor}
+        dataAsset={assetRoom}
+        dataService={dataApartmentServiceGeneral}
+        assetType={listAssetType}
       />
     </div>
   );
