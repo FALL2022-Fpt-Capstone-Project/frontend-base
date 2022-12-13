@@ -1,6 +1,20 @@
 import React, { useEffect, useState } from "react";
 import "./listContract.scss";
-import { Input, Table, Tag, Row, Tabs, Col, Select, DatePicker, Button, Tooltip, Switch, Form, InputNumber } from "antd";
+import {
+  Input,
+  Table,
+  Tag,
+  Row,
+  Tabs,
+  Col,
+  Select,
+  DatePicker,
+  Button,
+  Tooltip,
+  Switch,
+  Form,
+  InputNumber,
+} from "antd";
 import { EyeOutlined, EditOutlined, SearchOutlined, UndoOutlined, DeleteOutlined } from "@ant-design/icons";
 import axios from "../../api/axios";
 import ViewContractBuilding from "./ViewContractBuilding";
@@ -14,7 +28,6 @@ const { Column, ColumnGroup } = Table;
 const LIST_BUILDING_FILTER = "manager/group/all/contracted";
 const GET_SERVICE_GROUP_BY_ID = "manager/service/general?groupId=";
 const GET_FILTER_CONTRACT_GROUP = "manager/contract/group";
-
 
 const ListContractApartment = () => {
   const { RangePicker } = DatePicker;
@@ -61,7 +74,6 @@ const ListContractApartment = () => {
       });
     setLoading(false);
   };
-
 
   const options = [];
   for (let i = 0; i < buildingFilter.length; i++) {
@@ -151,7 +163,7 @@ const ListContractApartment = () => {
   };
   const reload = () => {
     getAllContractBuilding();
-  }
+  };
   return (
     <div className="list-contract">
       <div className="list-contract-search">
@@ -161,7 +173,7 @@ const ListContractApartment = () => {
               <Col xs={24} lg={16} xl={10} span={10}>
                 <Search
                   placeholder="Nhập tên người cho thuê hoặc số điện thoại để tìm kiếm"
-                  style={{ marginBottom: "3%", width: '100%' }}
+                  style={{ marginBottom: "3%", width: "70%" }}
                   onSearch={(value) => {
                     setTextSearch(value);
                   }}
@@ -210,7 +222,7 @@ const ListContractApartment = () => {
                       <Row>
                         <InputNumber
                           controls={false}
-                          style={{ width: '100%' }}
+                          style={{ width: "100%" }}
                           placeholder="Nhập số CCCD"
                           autoComplete="off"
                           onChange={(e) => {
@@ -238,7 +250,6 @@ const ListContractApartment = () => {
                       </Row>
                     </Col>
                   </Form.Item>
-
                 </Row>
                 <Row>
                   <Form.Item name="date" className="form-item-renter">
@@ -251,8 +262,8 @@ const ListContractApartment = () => {
                       <Row>
                         <RangePicker
                           onChange={(e) => {
-                            setStartDate(e[0].format('YYYY-MM-DD'));
-                            setEndDate(e[1].format('YYYY-MM-DD'));
+                            setStartDate(e[0].format("YYYY-MM-DD"));
+                            setEndDate(e[1].format("YYYY-MM-DD"));
                           }}
                           format={"DD-MM-YYYY"}
                           placeholder={["Từ", "Đến"]}
@@ -269,16 +280,23 @@ const ListContractApartment = () => {
                         </label>
                       </Row>
                       <Row>
-                        <Select options={options} placeholder="Chọn chung cư"
+                        <Select
+                          options={options}
+                          placeholder="Chọn chung cư"
                           onChange={(e) => {
                             setGroupId(e);
-                          }}></Select>
+                          }}
+                        ></Select>
                       </Row>
                     </Col>
                   </Form.Item>
                   <Form.Item name="deactive" className="form-item-renter form-item-renter-deactive">
                     <Col className="gutter-row" span={24}>
-                      <Switch onChange={(e) => { setEndContract(e) }} />{" "}
+                      <Switch
+                        onChange={(e) => {
+                          setEndContract(e);
+                        }}
+                      />{" "}
                       {endContract ? <span>Hợp đồng đã kết thúc</span> : <span>Hợp đồng còn hiệu lực</span>}
                     </Col>
                   </Form.Item>
@@ -297,11 +315,14 @@ const ListContractApartment = () => {
                     >
                       Tìm kiếm
                     </Button>
-                    <Button onClick={() => {
-                      getAllContractBuilding();
-                      filterContract.resetFields();
-                      setEndContract(false);
-                    }} icon={<UndoOutlined />}>
+                    <Button
+                      onClick={() => {
+                        getAllContractBuilding();
+                        filterContract.resetFields();
+                        setEndContract(false);
+                      }}
+                      icon={<UndoOutlined />}
+                    >
                       Đặt lại
                     </Button>
                   </Row>
@@ -326,10 +347,19 @@ const ListContractApartment = () => {
             }}
           />
           <Column title="Số lượng tầng" dataIndex="total_floor" key="key" />
-          <Column title="Số lượng phòng đã thuê" width='12%' dataIndex="total_room" key="key"
+          <Column
+            title="Số lượng phòng đã thuê"
+            width="12%"
+            dataIndex="total_room"
+            key="key"
             render={(_, record) => {
-              return <span>{record?.list_lease_contracted_room?.length} / {record?.total_room}</span>
-            }} />
+              return (
+                <span>
+                  {record?.list_lease_contracted_room?.length} / {record?.total_room}
+                </span>
+              );
+            }}
+          />
           <Column
             title="Ngày lập hợp đồng"
             dataIndex="contract_start_date"
@@ -338,7 +368,7 @@ const ListContractApartment = () => {
           />
           <Column title="Ngày kết thúc" dataIndex="contract_end_date" render={(date) => getFullDate(date)} key="key" />
           <Column
-            width='12%'
+            width="12%"
             title="Trạng thái hợp đồng"
             dataIndex="contractIsDisable"
             render={(_, record) => {
@@ -366,9 +396,12 @@ const ListContractApartment = () => {
               return (
                 <>
                   <Tooltip title="Chỉnh sửa">
-                    <EditOutlined onClick={() => {
-                      navigate('/contract-apartment/edit', { state: record });
-                    }} style={{ fontSize: "20px", color: "#46a6ff", margin: "0 5px" }} />
+                    <EditOutlined
+                      onClick={() => {
+                        navigate("/contract-apartment/edit", { state: record });
+                      }}
+                      style={{ fontSize: "20px", color: "#46a6ff", margin: "0 5px" }}
+                    />
                   </Tooltip>
                   <Tooltip title="Xem">
                     <EyeOutlined
@@ -381,15 +414,18 @@ const ListContractApartment = () => {
                     />
                   </Tooltip>
                   <Tooltip title="Đóng hợp đồng">
-                    <DeleteOutlined style={{
-                      fontSize: "20px",
-                      margin: "0 5px",
-                      color: 'red'
-                    }} onClick={() => {
-                      setDeleteContract(true);
-                      setDataContract(record);
-                      apartmentGroupById(record.group_id);
-                    }} />
+                    <DeleteOutlined
+                      style={{
+                        fontSize: "20px",
+                        margin: "0 5px",
+                        color: "red",
+                      }}
+                      onClick={() => {
+                        setDeleteContract(true);
+                        setDataContract(record);
+                        apartmentGroupById(record.group_id);
+                      }}
+                    />
                   </Tooltip>
                 </>
               );
@@ -400,13 +436,15 @@ const ListContractApartment = () => {
           openView={viewContract}
           closeView={setViewContract}
           dataContract={dataContract}
-          dataAsset={dataApartmentServiceGeneral} />
+          dataAsset={dataApartmentServiceGeneral}
+        />
         <DeleteContractBuilding
           reload={reload}
           openView={deleteContract}
           closeView={setDeleteContract}
           dataContract={dataContract}
-          dataAsset={dataApartmentServiceGeneral} />
+          dataAsset={dataApartmentServiceGeneral}
+        />
       </div>
     </div>
   );

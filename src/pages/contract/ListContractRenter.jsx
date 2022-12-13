@@ -9,7 +9,7 @@ import DeleteContractRenter from "./DeleteContractRenter";
 
 const { Search } = Input;
 const LIST_CONTRACT_URL = "manager/contract";
-const LIST_BUILDING_FILTER = "manager/group/all/contracted";
+const LIST_BUILDING_FILTER = "manager/group/all";
 const ASSET_ROOM = "manager/asset/room/";
 const GET_SERVICE_GROUP_BY_ID = "manager/service/general?groupId=";
 const LIST_ASSET_TYPE = "manager/asset/type";
@@ -111,7 +111,7 @@ const ListContractRenter = () => {
           },
         })
         .then((res) => {
-          setBuildingFilter(res.data.data);
+          setBuildingFilter(res.data.data.list_group_contracted);
           console.log(res);
         })
         .catch((error) => {
@@ -275,7 +275,7 @@ const ListContractRenter = () => {
   };
   const reload = () => {
     getAllContract();
-  }
+  };
 
   return (
     <div className="list-contract">
@@ -285,7 +285,7 @@ const ListContractRenter = () => {
             <Row>
               <Col xs={24} lg={16} xl={10} span={10}>
                 <Search
-                  style={{ width: '100%' }}
+                  style={{ width: "70%" }}
                   placeholder="Tìm kiếm theo số phòng, số điện thoại, tên khách thuê,..."
                   className="quich-search"
                   onSearch={(value) => {
@@ -503,7 +503,7 @@ const ListContractRenter = () => {
                     <EditOutlined
                       className="icon"
                       onClick={() => {
-                        navigate('/contract-renter/edit', { state: record });
+                        navigate("/contract-renter/edit", { state: record });
                         // navigate(`/contract-renter/edit/${record.contract_id}/group/${record.group_id}`);
                       }}
                     />
@@ -520,16 +520,19 @@ const ListContractRenter = () => {
                     />
                   </Tooltip>
                   <Tooltip title="Kết thúc hợp đồng">
-                    <DeleteOutlined style={{
-                      fontSize: "20px",
-                      margin: "0 5px",
-                      color: 'red'
-                    }} onClick={() => {
-                      apartmentGroupById(record.group_id);
-                      setDeleteContract(true);
-                      setContractInfor(record);
-                      getAssetRoom(record.room_id);
-                    }} />
+                    <DeleteOutlined
+                      style={{
+                        fontSize: "20px",
+                        margin: "0 5px",
+                        color: "red",
+                      }}
+                      onClick={() => {
+                        apartmentGroupById(record.group_id);
+                        setDeleteContract(true);
+                        setContractInfor(record);
+                        getAssetRoom(record.room_id);
+                      }}
+                    />
                   </Tooltip>
                 </>
               );
@@ -541,14 +544,20 @@ const ListContractRenter = () => {
       <ViewContractRenter
         openView={viewContract}
         closeView={setViewContract}
-        dataContract={contractInfor} dataAsset={assetRoom} dataService={dataApartmentServiceGeneral}
-        assetType={listAssetType} />
+        dataContract={contractInfor}
+        dataAsset={assetRoom}
+        dataService={dataApartmentServiceGeneral}
+        assetType={listAssetType}
+      />
       <DeleteContractRenter
         reload={reload}
         openView={deleteContract}
         closeView={setDeleteContract}
-        dataContract={contractInfor} dataAsset={assetRoom} dataService={dataApartmentServiceGeneral}
-        assetType={listAssetType} />
+        dataContract={contractInfor}
+        dataAsset={assetRoom}
+        dataService={dataApartmentServiceGeneral}
+        assetType={listAssetType}
+      />
     </div>
   );
 };
