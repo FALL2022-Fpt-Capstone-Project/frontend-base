@@ -793,7 +793,7 @@ function ListRoom(props) {
                                 placeholder="Chọn chung cư"
                                 showSearch
                                 filterOption={(input, option) =>
-                                  (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                                  (option?.label ?? '').toLowerCase().includes(input.trim().toLowerCase())
                                 }
                                 style={{ width: "100%", marginBottom: "5%" }}
                                 onChange={(e) => {

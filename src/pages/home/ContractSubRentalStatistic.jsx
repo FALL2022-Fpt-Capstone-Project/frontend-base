@@ -1,4 +1,4 @@
-import { Col, Row, Select, Table } from 'antd';
+import { Col, Divider, Row, Select, Table } from 'antd';
 import moment from 'moment';
 import React, { useState } from 'react';
 
@@ -35,8 +35,9 @@ const ContractSubRentalStatistic = ({ loading, data, dataGroup }) => {
     return (
         <>
             <Row justify="center">
-                <p className="header-statistic">Danh sách hợp đồng cho thuê sắp kết thúc </p>
+                <span className="header-statistic">Danh sách hợp đồng cho thuê sắp kết thúc </span>
             </Row>
+            <Divider />
             <Row>
                 <p className='statistic-time-title'>Chọn chung cư:</p>
             </Row>
@@ -45,6 +46,10 @@ const ContractSubRentalStatistic = ({ loading, data, dataGroup }) => {
                     <Select
                         defaultValue={""}
                         placeholder="Chọn chung cư"
+                        showSearch
+                        filterOption={(input, option) =>
+                            (option?.label ?? '').toLowerCase().includes(input.trim().toLowerCase())
+                        }
                         className='select-w-100'
                         options={[...dataGroup?.map(group => {
                             return { label: group.group_name, value: group.group_id }
