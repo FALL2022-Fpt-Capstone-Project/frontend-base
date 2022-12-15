@@ -462,7 +462,7 @@ const CreateBuilding = ({ visible, close, data }) => {
             building_total_floor: 1,
             building_total_room: 1,
             room_rate: 3000000,
-            room_people: 1,
+            room_people: 3,
             room_area: 25,
           }}
         >

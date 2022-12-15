@@ -22,6 +22,7 @@ const DetailStaff = ({ visible, close, id }) => {
         })
         .then((res) => {
           setUser(res.data.data);
+          console.log(res);
         })
         .catch((e) => {
           console.log(e);
@@ -113,6 +114,29 @@ const DetailStaff = ({ visible, close, id }) => {
 
                 <Col span={14}>
                   <p>{user.phone_number}</p>
+                </Col>
+              </Row>
+              <Row className="detail-row">
+                <Col span={10}>
+                  <h4>Quyền truy cập:</h4>
+                </Col>
+
+                <Col span={14}>
+                  {user.permission?.map((o) => {
+                    return (
+                      <p>
+                        {o === 1
+                          ? "Quản lý phòng"
+                          : o === 2
+                          ? "Dịch vụ"
+                          : o === 3
+                          ? "Quản lý hoá đơn"
+                          : o === 4
+                          ? "Quản lý hợp đồng cho thuê"
+                          : ""}
+                      </p>
+                    );
+                  })}
                 </Col>
               </Row>
               <Row className="detail-row">

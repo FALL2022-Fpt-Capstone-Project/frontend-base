@@ -3,9 +3,14 @@ import { Input, Table, Select, DatePicker, Tag, Tabs, Button, Row, Col, Form, Sw
 import { EyeOutlined, EditOutlined, SearchOutlined, UndoOutlined } from "@ant-design/icons";
 import "./listContract.scss";
 import axios from "../../api/axios";
+import ViewContractRenter from "./ViewContractRenter";
+import { useNavigate } from "react-router-dom";
 const { Search } = Input;
-const LIST_CONTRACT_EXPIRED_URL = "";
+const LIST_CONTRACT_EXPIRED_URL = "manager/contract";
 const LIST_BUILDING_FILTER = "manager/group/all";
+const ASSET_ROOM = "manager/asset/room/";
+const GET_SERVICE_GROUP_BY_ID = "manager/service/general?groupId=";
+const LIST_ASSET_TYPE = "manager/asset/type";
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -13,7 +18,19 @@ const ListContractExpired = ({ duration }) => {
   const [dataSource, setDataSource] = useState([]);
   const [textSearch, setTextSearch] = useState("");
   const [buildingFilter, setBuildingFilter] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [identity, setIdentity] = useState("");
+  const [renterName, setRenterName] = useState("");
+  const [building, setBuilding] = useState("");
   const [loading, setLoading] = useState(false);
+  const [viewContract, setViewContract] = useState(false);
+  const [assetRoom, setAssetRoom] = useState([]);
+  const [dataApartmentServiceGeneral, setDataApartmentServiceGeneral] = useState([]);
+  const [listAssetType, setListAssetType] = useState([]);
+  const [contractInfor, setContractInfor] = useState([]);
+  const navigate = useNavigate();
   const options = [];
   const formItemLayout = {
     labelCol: {
@@ -48,7 +65,7 @@ const ListContractExpired = ({ duration }) => {
           // withCredentials: true,
         })
         .then((res) => {
-          setDataSource(res.data.body);
+          setDataSource(res.data.data);
           console.log(res);
         })
         .catch((error) => {
@@ -70,7 +87,7 @@ const ListContractExpired = ({ duration }) => {
           },
         })
         .then((res) => {
-          setBuildingFilter(res.data.data);
+          setBuildingFilter(res.data.data.list_group_contracted);
           console.log(res);
         })
         .catch((error) => {
@@ -80,7 +97,59 @@ const ListContractExpired = ({ duration }) => {
     };
     getBuildingFilter();
   }, [cookie]);
+  const getAssetType = async () => {
+    await axios
+      .get(LIST_ASSET_TYPE, {
+        headers: {
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${cookie}`,
+        },
+        // withCredentials: true,
+      })
+      .then((res) => {
+        setListAssetType(res.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const getAssetRoom = async (room_id) => {
+    await axios
+      .get(ASSET_ROOM + room_id, {
+        headers: {
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${cookie}`,
+        },
+        // withCredentials: true,
+      })
+      .then((res) => {
+        setAssetRoom(res.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
+  const apartmentGroupById = async (groupId) => {
+    await axios
+      .get(GET_SERVICE_GROUP_BY_ID + groupId, {
+        headers: {
+          "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
+          Authorization: `Bearer ${cookie}`,
+        },
+        // withCredentials: true,
+      })
+      .then((res) => {
+        console.log(res.data.data);
+        setDataApartmentServiceGeneral(res.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   for (let i = 0; i < buildingFilter.length; i++) {
     options.push({
       label: buildingFilter[i].group_name,
@@ -89,18 +158,83 @@ const ListContractExpired = ({ duration }) => {
   }
 
   const getFullDate = (date) => {
-    const dateAndTime = date.split("T");
+    const dateAndTime = date.split(" ");
 
     return dateAndTime[0].split("-").reverse().join("-");
   };
-  const resetForm = () => {
+  const resetForm = async () => {
     form.resetFields();
-    // setDeactive("");
-    // setEndDate("");
-    // setStartDate("");
-    // setFullname("");
-    // setRoles("");
-    // setUsername("");
+    form.resetFields();
+    setRenterName("");
+    setPhoneNumber("");
+    setIdentity("");
+    setBuilding("");
+    setStartDate("");
+    setEndDate("");
+    setLoading(true);
+    const response = await axios
+      .get(LIST_CONTRACT_EXPIRED_URL, {
+        params: { status: 3, duration: duration },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie}`,
+        },
+      })
+      .then((res) => {
+        setDataSource(res.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    setLoading(false);
+  };
+  const getFilterContractRenter = async () => {
+    setLoading(true);
+    const response = await axios
+      .get(LIST_CONTRACT_EXPIRED_URL, {
+        params: {
+          phoneNumber: phoneNumber,
+          renterName: renterName,
+          status: 3,
+          duration: duration,
+          startDate: startDate,
+          endDate: endDate,
+          identity: identity,
+          groupId: building,
+        },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie}`,
+        },
+      })
+      .then((res) => {
+        setDataSource(res.data.data);
+        console.log(res);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    setLoading(false);
+  };
+  const renterNameChange = (e) => {
+    setRenterName(e.target.value);
+  };
+  const phoneNumberChange = (e) => {
+    setPhoneNumber(e.target.value);
+  };
+  const identityChange = (e) => {
+    setIdentity(e.target.value);
+  };
+  const buildingChange = (value) => {
+    setBuilding(value);
+  };
+  const dateChange = (value, dateString) => {
+    let [day1, month1, year1] = dateString[0].split("-");
+    let startDate = `${year1}-${month1}-${day1}`;
+    let [day2, month2, year2] = dateString[1].split("-");
+    let endDate = `${year2}-${month2}-${day2}`;
+    setStartDate(startDate);
+    setEndDate(endDate);
   };
   return (
     <div>
@@ -124,54 +258,53 @@ const ListContractExpired = ({ duration }) => {
               form={form}
               name="filterStaff"
               id="filterStaff"
-              // onFinish={getFilterContractRenter}
-              style={{ width: "100%" }}
+              onFinish={getFilterContractRenter}
             >
-              <Row gutter={[16]} style={{ marginBottom: "20px", marginLeft: "20px" }}>
+              <Row gutter={[16]} className="advanced-search" style={{ marginBottom: "20px", marginLeft: "20px" }}>
                 <Row>
-                  <Form.Item name="full_name" style={{ width: "350px" }}>
-                    <Col className="gutter-row" span={24}>
+                  <Form.Item name="renterName" className="form-item-renter">
+                    <Col className="gutter-row" xs={{ span: 24 }} lg={{ span: 24 }}>
                       <Row>
-                        <label htmlFor="" style={{ marginBottom: "10px" }}>
+                        <label htmlFor="" className="search-name">
                           Tìm kiếm theo tên khách thuê
                         </label>
                       </Row>
                       <Row>
-                        <Input placeholder="Nhập tên khách thuê" autoComplete="off" />
+                        <Input placeholder="Nhập tên khách thuê" autoComplete="off" onChange={renterNameChange} />
                       </Row>
                     </Col>
                   </Form.Item>
 
-                  <Form.Item name="user_name" style={{ width: "350px" }}>
+                  <Form.Item name="identity" className="form-item-renter">
                     <Col className="gutter-row" span={24}>
                       <Row>
-                        <label htmlFor="" style={{ marginBottom: "10px" }}>
+                        <label htmlFor="" className="search-name">
                           Tìm kiếm theo số CCCD
                         </label>
                       </Row>
                       <Row>
-                        <Input placeholder="Nhập số CCCD" autoComplete="off" />
+                        <Input placeholder="Nhập số CCCD" autoComplete="off" onChange={identityChange} />
                       </Row>
                     </Col>
                   </Form.Item>
-                  <Form.Item name="user_name" style={{ width: "350px" }}>
+                  <Form.Item name="phoneNumber" className="form-item-renter">
                     <Col className="gutter-row" span={24}>
                       <Row>
-                        <label htmlFor="" style={{ marginBottom: "10px" }}>
+                        <label htmlFor="" className="search-name">
                           Tìm kiếm theo số điện thoại
                         </label>
                       </Row>
                       <Row>
-                        <Input placeholder="Nhập số điện thoại" autoComplete="off" />
+                        <Input placeholder="Nhập số điện thoại" autoComplete="off" onChange={phoneNumberChange} />
                       </Row>
                     </Col>
                   </Form.Item>
                 </Row>
                 <Row>
-                  <Form.Item name="date" style={{ width: "350px" }}>
+                  <Form.Item name="date" className="form-item-renter">
                     <Col className="gutter-row" span={24}>
                       <Row>
-                        <label htmlFor="" style={{ marginBottom: "10px" }}>
+                        <label htmlFor="" className="search-name">
                           Ngày bắt đầu lập hợp đồng
                         </label>
                       </Row>
@@ -179,34 +312,34 @@ const ListContractExpired = ({ duration }) => {
                         <RangePicker
                           format={"DD-MM-YYYY"}
                           placeholder={["Từ", "Đến"]}
-                          // onChange={dateChange}
+                          onChange={dateChange}
                           style={{ width: "500px" }}
                         />
                       </Row>
                     </Col>
                   </Form.Item>
-                  <Form.Item name="user_name" style={{ width: "350px" }}>
+                  <Form.Item name="groupId" className="form-item-renter">
                     <Col className="gutter-row" span={24}>
                       <Row>
-                        <label htmlFor="" style={{ marginBottom: "10px" }}>
+                        <label htmlFor="" className="search-name">
                           Tìm kiếm theo tên chung cư
                         </label>
                       </Row>
                       <Row>
-                        <Select options={options} placeholder="Chọn chung cư"></Select>
+                        <Select options={options} placeholder="Chọn chung cư" onChange={buildingChange}></Select>
                       </Row>
                     </Col>
                   </Form.Item>
                 </Row>
               </Row>
               <Row style={{ marginBottom: "20px" }}>
-                <Col offset={10}>
-                  <Row>
+                <Col span={24}>
+                  <Row justify="center">
                     <Button
                       type="primary"
                       icon={<SearchOutlined />}
                       style={{ marginRight: "20px" }}
-                      // onClick={getFilterContractRenter}
+                      onClick={getFilterContractRenter}
                       htmlType="submit"
                     >
                       Tìm kiếm
@@ -316,7 +449,7 @@ const ListContractExpired = ({ duration }) => {
                     <EditOutlined
                       className="icon"
                       onClick={() => {
-                        // navigate(`/contract-renter/edit/${record.contract_id}/group/${record.group_id}`);
+                        navigate("/contract-renter/edit", { state: record });
                       }}
                     />
                   </Tooltip>
@@ -324,8 +457,10 @@ const ListContractExpired = ({ duration }) => {
                     <EyeOutlined
                       className="icon"
                       onClick={() => {
-                        // setViewContract(true);
-                        // setContractInfor(record);
+                        apartmentGroupById(record.group_id);
+                        setViewContract(true);
+                        setContractInfor(record);
+                        getAssetRoom(record.room_id);
                       }}
                     />
                   </Tooltip>
@@ -335,6 +470,14 @@ const ListContractExpired = ({ duration }) => {
           },
         ]}
         loading={loading}
+      />
+      <ViewContractRenter
+        openView={viewContract}
+        closeView={setViewContract}
+        dataContract={contractInfor}
+        dataAsset={assetRoom}
+        dataService={dataApartmentServiceGeneral}
+        assetType={listAssetType}
       />
     </div>
   );
