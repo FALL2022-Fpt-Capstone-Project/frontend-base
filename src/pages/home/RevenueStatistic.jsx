@@ -5,7 +5,6 @@ import axios from "../../api/axios";
 import "./home.scss";
 
 const RevenueStatistic = ({ loading, data }) => {
-  console.log(data);
   let cookie = localStorage.getItem("Cookie");
 
   const columns = [

@@ -75,7 +75,7 @@ const ListContractRenter = () => {
       })
       .then((res) => {
         setDataSource(res.data.data);
-        console.log(res);
+        // console.log(res);
       })
       .catch((error) => {
         console.log(error);
@@ -130,7 +130,7 @@ const ListContractRenter = () => {
         })
         .then((res) => {
           setBuildingFilter(res.data.data.list_group_contracted);
-          console.log(res);
+          // console.log(res);
         })
         .catch((error) => {
           console.log(error);
@@ -181,7 +181,7 @@ const ListContractRenter = () => {
       })
       .then((res) => {
         setDataSource(res.data.data);
-        console.log(res);
+        // console.log(res);
       })
       .catch((error) => {
         console.log(error);
@@ -220,7 +220,7 @@ const ListContractRenter = () => {
     getAllContract();
   };
 
-  console.log(dataSource);
+  // console.log(dataSource);
 
   const getAssetRoom = async (room_id) => {
     await axios
@@ -251,7 +251,7 @@ const ListContractRenter = () => {
         // withCredentials: true,
       })
       .then((res) => {
-        console.log(res.data.data);
+        // console.log(res.data.data);
         setDataApartmentServiceGeneral(res.data.data);
       })
       .catch((error) => {
@@ -482,17 +482,9 @@ const ListContractRenter = () => {
             title: "Thao tác",
             dataIndex: "action",
             render: (_, record) => {
-              return (
+              return record.contract_is_disable === true
+                ?
                 <>
-                  <Tooltip title="Chỉnh sửa">
-                    <EditOutlined
-                      className="icon"
-                      onClick={() => {
-                        navigate("/contract-renter/edit", { state: record });
-                        // navigate(`/contract-renter/edit/${record.contract_id}/group/${record.group_id}`);
-                      }}
-                    />
-                  </Tooltip>
                   <Tooltip title="Xem">
                     <EyeOutlined
                       className="icon"
@@ -501,6 +493,29 @@ const ListContractRenter = () => {
                         setViewContract(true);
                         setContractInfor(record);
                         getAssetRoom(record.room_id);
+                      }}
+                    />
+                  </Tooltip>
+                </>
+                :
+                <>
+                  <Tooltip title="Xem">
+                    <EyeOutlined
+                      className="icon"
+                      onClick={() => {
+                        apartmentGroupById(record.group_id);
+                        setViewContract(true);
+                        setContractInfor(record);
+                        getAssetRoom(record.room_id);
+                      }}
+                    />
+                  </Tooltip>
+                  <Tooltip title="Chỉnh sửa">
+                    <EditOutlined
+                      className="icon"
+                      onClick={() => {
+                        navigate("/contract-renter/edit", { state: record });
+                        // navigate(`/contract-renter/edit/${record.contract_id}/group/${record.group_id}`);
                       }}
                     />
                   </Tooltip>
@@ -520,7 +535,6 @@ const ListContractRenter = () => {
                     />
                   </Tooltip>
                 </>
-              );
             },
           },
         ]}
@@ -541,7 +555,7 @@ const ListContractRenter = () => {
         dataContract={contractInfor}
         dataInvoice={getInvoiceData.filter((invoice) => invoice.is_paid === false)}
       />
-    </div>
+    </div >
   );
 };
 

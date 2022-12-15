@@ -21,7 +21,6 @@ function UpdateRoom({ reRender, visible, close, data, dataUpdate, setDataUpdate 
     let cookie = localStorage.getItem("Cookie");
 
     if (dataUpdate !== undefined && visible === true) {
-        console.log('in');
         listFloor = [];
         formUpdateRoom.setFieldsValue({
             roomId: dataUpdate.room_id,
@@ -54,7 +53,6 @@ function UpdateRoom({ reRender, visible, close, data, dataUpdate, setDataUpdate 
             room_price: e.roomPrice,
             room_area: e.roomSquare,
         }];
-        console.log(JSON.stringify(data));
         await axios
             .put(
                 UPDATE_ROOM, data,

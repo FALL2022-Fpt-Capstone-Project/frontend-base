@@ -59,7 +59,7 @@ const InvoiceStatistic = ({ dataGroup }) => {
       })
       .then((res) => {
         setDataSource(res.data.data);
-        console.log(res.data.data);
+        // console.log(res.data.data);
       })
       .catch((error) => {
         console.log(error);
@@ -149,7 +149,6 @@ const InvoiceStatistic = ({ dataGroup }) => {
               value: ""
             },]}
             onChange={(e) => {
-              console.log(e);
               setGroupSelect(e);
               getBillByGroupId(e, null);
             }}

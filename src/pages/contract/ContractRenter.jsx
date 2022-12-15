@@ -56,7 +56,7 @@ const ContractRenter = () => {
           },
         })
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setcountAlmostExpired(res.data.data?.almost_expired_contract);
           setcountExpired(res.data.data?.expired_contract);
           setcountLatest(res.data.data?.latest_contract);

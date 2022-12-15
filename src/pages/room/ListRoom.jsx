@@ -453,7 +453,6 @@ function ListRoom(props) {
         const mapped = mergeGroup?.map((obj, index) => obj.group_id);
         const filterGroupId = mergeGroup?.filter((obj, index) => mapped.indexOf(obj.group_id) === index);
         setDataApartmentGroup(filterGroupId);
-        console.log(filterGroupId);
         setGroupRoom(pre => {
           return { ...pre, group: filterGroupId }
         });

@@ -134,7 +134,7 @@ function AddMultiEquipment({ reload, openView, closeView, assetTypeList, roomId 
                 })
                 .then((res) => {
                     const data = res.data.data;
-                    console.log(data);
+                    // console.log(data);
                     setListAssetName(data);
                     setSelectedRowKeys(data.map(asset => asset.basic_asset_id));
                     setAssetDefaultSelect(data);
@@ -164,7 +164,7 @@ function AddMultiEquipment({ reload, openView, closeView, assetTypeList, roomId 
                 room_id: roomId,
             }
         });
-        console.log(JSON.stringify(data));
+        // console.log(JSON.stringify(data));
         await axios
             .post(ADD_ASSET, data, {
                 headers: {
@@ -173,7 +173,7 @@ function AddMultiEquipment({ reload, openView, closeView, assetTypeList, roomId 
                 },
             })
             .then((res) => {
-                console.log(res.data.data);
+                // console.log(res.data.data);
                 notification.success({
                     message: "Thêm mới tài sản thành công",
                     placement: "top",
@@ -240,7 +240,7 @@ function AddMultiEquipment({ reload, openView, closeView, assetTypeList, roomId 
         selectedRowKeys,
         onChange: (selectedRowKeys, selectedRows) => {
             setSelectedRowKeys(selectedRowKeys);
-            console.log(`selectedRowKeys: ${selectedRowKeys}`, "selectedRows: ", selectedRows);
+            // console.log(`selectedRowKeys: ${selectedRowKeys}`, "selectedRows: ", selectedRows);
             setAssetDefaultSelect(selectedRows);
         },
     };

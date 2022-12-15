@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Button, Card, Col, DatePicker, Divider, Row, Select, Statistic, Tabs } from "antd";
-import { FallOutlined, RiseOutlined, ArrowDownOutlined, ArrowUpOutlined, DollarOutlined } from "@ant-design/icons";
+import { Card, Col, Divider, Row, Select, Statistic } from "antd";
+import { FallOutlined, RiseOutlined, DollarOutlined } from "@ant-design/icons";
 import "./home.scss";
 import RevenueStatistic from "./RevenueStatistic";
 import InvoiceStatistic from "./InvoiceStatistic";
 import MainLayout from "../../components/layout/MainLayout";
-import locale from 'antd/es/date-picker/locale/vi_VN';
 import ContractRentalStatistic from "./ContractRentalStatistic";
 import ContractSubRentalStatistic from "./ContractSubRentalStatistic";
 import axios from "../../api/axios";
 const APARTMENT_DATA_GROUP = "/manager/group/all";
 const ROOM_CONTRACT_COMMING_END = "manager/contract";
+const GROUP_CONTRACT_COMMING_END = "manager/contract/group";
 const GET_BILL_BY_GROUP_ID = "manager/bill/room/histories";
 const durationOption = [];
 
@@ -34,6 +34,7 @@ const Home = () => {
   const [loadingRental, setLoadingRental] = useState(false);
   const [dataApartmentGroup, setDataApartmentGroup] = useState([]);
   const [contractComingEnd, setContractComingEnd] = useState([]);
+  const [contractComingEndGroup, setContractComingEndGroup] = useState([]);
   const [duration, setDuration] = useState(1);
   const [durationRental, setDurationRental] = useState(1);
   const [revenue, setRevenue] = useState([]);
@@ -43,7 +44,8 @@ const Home = () => {
   useEffect(() => {
     getBillByGroupId();
     apartmentGroup();
-    getComingEnd();
+    getComingEndRoom();
+    getComingEndGroup();
   }, []);
 
   let income = 0;
@@ -87,7 +89,7 @@ const Home = () => {
     setLoadingRevenue(false);
   };
 
-  const getComingEnd = async (duration = 1) => {
+  const getComingEndRoom = async (duration = 1) => {
     // console.log(duration);
     setLoadingSubRental(true);
     await axios
@@ -102,13 +104,35 @@ const Home = () => {
         },
       })
       .then((res) => {
-        console.log(res.data.data);
         setContractComingEnd(res.data.data);
       })
       .catch((error) => {
         console.log(error);
       });
     setLoadingSubRental(false);
+  };
+
+  const getComingEndGroup = async (duration = 1) => {
+    // console.log(duration);
+    setLoadingRental(true);
+    await axios
+      .get(GROUP_CONTRACT_COMMING_END, {
+        params: {
+          status: 1,
+          duration: duration,
+        },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie}`,
+        },
+      })
+      .then((res) => {
+        setContractComingEndGroup(res.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    setLoadingRental(false);
   };
 
   const getBillByGroupId = async () => {
@@ -121,7 +145,7 @@ const Home = () => {
       })
       .then((res) => {
         const data = res.data.data;
-        console.log(data);
+        // console.log(data);
         setRevenue(pre => {
           return {
             ...pre,
@@ -133,7 +157,7 @@ const Home = () => {
         console.log(error);
       });
   };
-  console.log(revenue);
+
   return (
     <div className="home">
       <MainLayout title="Trang chủ">
@@ -203,7 +227,7 @@ const Home = () => {
         <Row gutter={[16]}>
           <Col xs={24} xl={12} span={12}>
             <Card bordered className="card card-height-100">
-              <ContractRentalStatistic loading={loadingRental} data={[]} dataGroup={dataApartmentGroup} />
+              <ContractRentalStatistic loading={loadingRental} data={contractComingEndGroup} dataGroup={dataApartmentGroup} />
               <span>
                 <p>
                   <i>Thống kê hợp đồng cho thuê sắp kết thúc trong
@@ -223,6 +247,7 @@ const Home = () => {
                   options={durationOption}
                   onChange={(e) => {
                     setDurationRental(e);
+                    getComingEndGroup(e);
                   }}
                 />
               </span>
@@ -250,7 +275,7 @@ const Home = () => {
                   options={durationOption}
                   onChange={(e) => {
                     setDuration(e);
-                    getComingEnd(e);
+                    getComingEndRoom(e);
                   }}
                 />
               </span>
