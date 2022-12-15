@@ -88,7 +88,7 @@ const UpdateStaff = ({ visible, close, id }) => {
         },
       })
       .then((res) => {
-        window.localStorage.setItem("name", data.full_name);
+        // window.localStorage.setItem("name", data.full_name);
         notification.success({
           message: "Cập nhật thông tin nhân viên thành công",
           duration: 3,

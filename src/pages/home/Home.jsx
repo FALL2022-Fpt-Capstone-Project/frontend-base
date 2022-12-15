@@ -137,143 +137,134 @@ const Home = () => {
   return (
     <div className="home">
       <MainLayout title="Trang chủ">
-        <Tabs defaultActiveKey="1">
-          <Tabs.TabPane tab={<span className="tab-title">Thống kê chung</span>} key="1">
-
-          </Tabs.TabPane>
-          <Tabs.TabPane tab={<span className="tab-title">Thống kê doanh thu</span>} key="2">
-            <Row gutter={[16]}>
-              <Col span={24}>
-                <Card bordered className="card">
-                  <Row>
-                    <Col span={24}>
-                      <RevenueStatistic loading={loadingRevenue} data={revenue} />
-                    </Col>
-                  </Row>
-                  <Divider />
-                  <Row gutter={[16]}>
-                    <Col xs={12} lg={8} xl={8} span={8}>
-                      <Row justify="center">
-                        <Statistic
-                          title={
-                            <>
-                              <span className="revenue-statistic">Tổng thu</span>
-                            </>
-                          }
-                          value={new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(income)}
-                          valueStyle={{
-                            color: "#8bc34a",
-                          }}
-                          prefix={<RiseOutlined />}
-                        />
-                      </Row>
-                    </Col>
-                    <Col xs={12} lg={8} xl={8} span={8}>
-                      <Row justify="center">
-                        <Statistic
-                          title={
-                            <>
-                              <span className="revenue-statistic">Tổng chi</span>
-                            </>
-                          }
-                          value={new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(outcome)}
-                          valueStyle={{
-                            color: "#cf1322",
-                          }}
-                          prefix={<FallOutlined />}
-                        />
-                      </Row>
-                    </Col>
-                    <Col xs={12} lg={8} xl={8} span={8}>
-                      <Row justify="center">
-                        <Statistic
-                          title={
-                            <>
-                              <span className="revenue-statistic">Lợi nhuận</span>
-                            </>
-                          }
-                          value={new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(profit)}
-                          valueStyle={{
-                            color: "#03a9f4",
-                          }}
-                          prefix={<DollarOutlined />}
-                        />
-                      </Row>
-                    </Col>
-                  </Row>
-                </Card>
-              </Col>
-            </Row>
-          </Tabs.TabPane>
-          <Tabs.TabPane tab={<span className="tab-title">Thống kê hợp đồng</span>} key="3">
-            <Row gutter={[16]}>
-              <Col xs={24} xl={12} span={12}>
-                <Card bordered className="card card-height-100">
-                  <ContractRentalStatistic loading={loadingRental} data={[]} dataGroup={dataApartmentGroup} />
-                  <span>
-                    <p>
-                      <i>Thống kê hợp đồng cho thuê sắp kết thúc trong
-                        <b>{" "}{durationRental < 12
-                          ? durationRental + ' tháng'
-                          : durationRental % 12 !== 0 ?
-                            Math.floor(durationRental / 12) + ' năm ' + durationRental % 12 + ' tháng' :
-                            Math.floor(durationRental / 12) + ' năm '} tới
-                        </b>
-                      </i>
-                    </p>
-                    <p><i>Thay đổi thời gian thống kê</i></p>
-                    <Select
-                      defaultValue={1}
-                      style={{ width: '300px' }}
-                      placeholder="Chọn thời gian thống kê"
-                      options={durationOption}
-                      onChange={(e) => {
-                        setDurationRental(e);
+        <Row gutter={[16]}>
+          <Col span={24}>
+            <Card bordered className="card">
+              <Row>
+                <Col span={24}>
+                  <RevenueStatistic loading={loadingRevenue} data={revenue} />
+                </Col>
+              </Row>
+              <Divider />
+              <Row gutter={[16]}>
+                <Col xs={12} lg={8} xl={8} span={8}>
+                  <Row justify="center">
+                    <Statistic
+                      title={
+                        <>
+                          <span className="revenue-statistic">Tổng thu</span>
+                        </>
+                      }
+                      value={new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(income)}
+                      valueStyle={{
+                        color: "#8bc34a",
                       }}
+                      prefix={<RiseOutlined />}
                     />
-                  </span>
-                </Card>
-              </Col>
-              <Col xs={24} xl={12} span={12}>
-                <Card bordered className="card card-height-100">
-                  <ContractSubRentalStatistic loading={loadingSubRental} data={contractComingEnd} dataGroup={dataApartmentGroup} />
-                  <span>
-                    <p>
-                      <i>Thống kê hợp đồng cho thuê sắp kết thúc trong
-                        <b>{" "}{duration < 12
-                          ? duration + ' tháng'
-                          : duration % 12 !== 0 ?
-                            Math.floor(duration / 12) + ' năm ' + duration % 12 + ' tháng' :
-                            Math.floor(duration / 12) + ' năm '} tới
-                        </b>
-                      </i>
-                    </p>
-                    <p><i>Thay đổi thời gian thống kê</i></p>
-                    <Select
-                      defaultValue={1}
-                      style={{ width: '300px' }}
-                      placeholder="Chọn thời gian thống kê"
-                      options={durationOption}
-                      onChange={(e) => {
-                        setDuration(e);
-                        getComingEnd(e);
+                  </Row>
+                </Col>
+                <Col xs={12} lg={8} xl={8} span={8}>
+                  <Row justify="center">
+                    <Statistic
+                      title={
+                        <>
+                          <span className="revenue-statistic">Tổng chi</span>
+                        </>
+                      }
+                      value={new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(outcome)}
+                      valueStyle={{
+                        color: "#cf1322",
                       }}
+                      prefix={<FallOutlined />}
                     />
-                  </span>
-                </Card>
-              </Col>
-            </Row>
-          </Tabs.TabPane>
-          <Tabs.TabPane tab={<span className="tab-title">Thống kê hóa đơn</span>} key="4">
-            <Row>
-              <Col span={24}>
-                <Card bordered className="card">
-                  <InvoiceStatistic dataGroup={dataApartmentGroup} />
-                </Card>
-              </Col>
-            </Row>
-          </Tabs.TabPane>
-        </Tabs>
+                  </Row>
+                </Col>
+                <Col xs={12} lg={8} xl={8} span={8}>
+                  <Row justify="center">
+                    <Statistic
+                      title={
+                        <>
+                          <span className="revenue-statistic">Lợi nhuận</span>
+                        </>
+                      }
+                      value={new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(profit)}
+                      valueStyle={{
+                        color: "#03a9f4",
+                      }}
+                      prefix={<DollarOutlined />}
+                    />
+                  </Row>
+                </Col>
+              </Row>
+            </Card>
+          </Col>
+        </Row>
+        <Divider />
+        <Row gutter={[16]}>
+          <Col xs={24} xl={12} span={12}>
+            <Card bordered className="card card-height-100">
+              <ContractRentalStatistic loading={loadingRental} data={[]} dataGroup={dataApartmentGroup} />
+              <span>
+                <p>
+                  <i>Thống kê hợp đồng cho thuê sắp kết thúc trong
+                    <b>{" "}{durationRental < 12
+                      ? durationRental + ' tháng'
+                      : durationRental % 12 !== 0 ?
+                        Math.floor(durationRental / 12) + ' năm ' + durationRental % 12 + ' tháng' :
+                        Math.floor(durationRental / 12) + ' năm '} tới
+                    </b>
+                  </i>
+                </p>
+                <p><i>Thay đổi thời gian thống kê</i></p>
+                <Select
+                  defaultValue={1}
+                  style={{ width: '300px' }}
+                  placeholder="Chọn thời gian thống kê"
+                  options={durationOption}
+                  onChange={(e) => {
+                    setDurationRental(e);
+                  }}
+                />
+              </span>
+            </Card>
+          </Col>
+          <Col xs={24} xl={12} span={12}>
+            <Card bordered className="card card-height-100">
+              <ContractSubRentalStatistic loading={loadingSubRental} data={contractComingEnd} dataGroup={dataApartmentGroup} />
+              <span>
+                <p>
+                  <i>Thống kê hợp đồng cho thuê sắp kết thúc trong
+                    <b>{" "}{duration < 12
+                      ? duration + ' tháng'
+                      : duration % 12 !== 0 ?
+                        Math.floor(duration / 12) + ' năm ' + duration % 12 + ' tháng' :
+                        Math.floor(duration / 12) + ' năm '} tới
+                    </b>
+                  </i>
+                </p>
+                <p><i>Thay đổi thời gian thống kê</i></p>
+                <Select
+                  defaultValue={1}
+                  style={{ width: '300px' }}
+                  placeholder="Chọn thời gian thống kê"
+                  options={durationOption}
+                  onChange={(e) => {
+                    setDuration(e);
+                    getComingEnd(e);
+                  }}
+                />
+              </span>
+            </Card>
+          </Col>
+        </Row>
+        <Divider />
+        <Row>
+          <Col span={24}>
+            <Card bordered className="card">
+              <InvoiceStatistic dataGroup={dataApartmentGroup} />
+            </Card>
+          </Col>
+        </Row>
       </MainLayout>
     </div>
   );

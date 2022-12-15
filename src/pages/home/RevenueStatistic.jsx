@@ -144,12 +144,13 @@ const RevenueStatistic = ({ loading, data }) => {
           </Row>
         </Col>
       </Row>
-      <Row>
+      {/* <Row>
         <Col span={24}><span className="statistic-time-title">Chọn tháng/năm để thống kê: </span>
           <DatePicker defaultValue={moment()} placeholder="Chọn thời gian" className="margin-top-bottom" size={"large"} picker="month" format={'MM/YYYY'} />
         </Col>
-      </Row>
+      </Row> */}
       <Table
+        className="margin-top-bottom"
         bordered
         scroll={{ x: 1200, y: 600 }}
         columns={columns}

@@ -175,10 +175,10 @@ const UpdateBuilding = ({ visible, close, id }) => {
     setBuildingDistrictId(value);
     setDisableWard(false);
     form.setFieldsValue({ ward: "" });
-    setDistrict(option.children);
+    setDistrict(option.label);
   };
   const wardChange = (value, option) => {
-    setWard(option.children);
+    setWard(option.label);
   };
   const roomPeopleChange = (value) => {
     setRoomPeople(value);
@@ -347,6 +347,10 @@ const UpdateBuilding = ({ visible, close, id }) => {
                     style={{
                       width: "100%",
                     }}
+                    showSearch
+                    filterOption={(input, option) =>
+                      (option?.label?.toLowerCase().trim() ?? "").includes(input?.toLowerCase().trim())
+                    }
                     onChange={cityChange}
                     options={optionsCity}
                   />
@@ -374,15 +378,25 @@ const UpdateBuilding = ({ visible, close, id }) => {
                     disabled={disabledDistrict}
                     onChange={districtChange}
                     // options={optionsDistrict}
+                    showSearch
+                    filterOption={(input, option) =>
+                      (option?.label?.toLowerCase().trim() ?? "").includes(input?.toLowerCase().trim())
+                    }
+                    options={building_address_district === undefined ? [] : [...building_address_district?.map(obj => {
+                      return { label: obj.name, value: obj.code }
+                    }), {
+                      label: 'Chọn Quận/Huyện',
+                      value: ""
+                    },]}
                   >
-                    <Select.Option value="">Chọn Quận/Huyện</Select.Option>
+                    {/* <Select.Option value="">Chọn Quận/Huyện</Select.Option>
                     {building_address_district?.map((obj, index) => {
                       return (
                         <>
                           <Select.Option value={obj.code}>{obj.name}</Select.Option>
                         </>
                       );
-                    })}
+                    })} */}
                   </Select>
                 </Form.Item>
                 <Form.Item
@@ -407,15 +421,25 @@ const UpdateBuilding = ({ visible, close, id }) => {
                     }}
                     disabled={disabledWard}
                     onChange={wardChange}
+                    showSearch
+                    filterOption={(input, option) =>
+                      (option?.label?.toLowerCase().trim() ?? "").includes(input?.toLowerCase().trim())
+                    }
+                    options={building_address_wards === undefined ? [] : [...building_address_wards?.map(obj => {
+                      return { label: obj.name, value: obj.code }
+                    }), {
+                      label: 'Chọn Phường/Xã',
+                      value: ""
+                    },]}
                   >
-                    <Select.Option value="">Chọn Phường/Xã</Select.Option>
+                    {/* <Select.Option value="">Chọn Phường/Xã</Select.Option>
                     {building_address_wards?.map((obj, index) => {
                       return (
                         <>
                           <Select.Option value={obj.code}>{obj.name}</Select.Option>
                         </>
                       );
-                    })}
+                    })} */}
                   </Select>
                 </Form.Item>
 
@@ -427,15 +451,15 @@ const UpdateBuilding = ({ visible, close, id }) => {
                       <b>Địa chỉ chi tiết: </b>
                     </span>
                   }
-                  rules={[
-                    {
-                      message: "Vui lòng nhập địa chỉ!",
-                    },
-                    {
-                      required: true,
-                      message: "Vui lòng nhập địa chỉ!",
-                    },
-                  ]}
+                // rules={[
+                //   {
+                //     message: "Vui lòng nhập địa chỉ!",
+                //   },
+                //   {
+                //     required: true,
+                //     message: "Vui lòng nhập địa chỉ!",
+                //   },
+                // ]}
                 >
                   <Input onChange={(e) => setBuildingAddress(e.target.value)} placeholder="Nhập địa chỉ chi tiết" />
                 </Form.Item>
