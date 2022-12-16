@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
-import Sidebar from "../../components/sidebar/Sidebar";
 import "./contract.scss";
 import axios from "../../api/axios";
 import {
-  EditTwoTone,
-  DeleteOutlined,
   ArrowLeftOutlined,
   UserOutlined,
   AuditOutlined,
@@ -16,8 +13,6 @@ import {
 import moment from "moment";
 import {
   Button,
-  Layout,
-  Modal,
   Form,
   Table,
   Input,
@@ -28,7 +23,6 @@ import {
   Radio,
   DatePicker,
   Tag,
-  Checkbox,
   InputNumber,
   message,
   notification,
@@ -39,22 +33,12 @@ import {
 } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import { Link, useNavigate } from "react-router-dom";
-import Breadcrumbs from "../../components/BreadCrumb ";
 import MainLayout from "../../components/layout/MainLayout";
-const { Content, Sider, Header } = Layout;
 const { Option } = Select;
-// const LIST_ASSET_TYPE = "manager/asset/type";
 const ADD_NEW_CONTRACT = "manager/contract/group/add";
 const APARTMENT_DATA_GROUP = "/manager/group/all";
 const LIST_CONTRACT_APARTMENT_URL = "manager/contract/group";
-// const ASSET_BASIC = "manager/asset/";
 const dateFormatList = ["DD-MM-YYYY"];
-// const defaultAddAsset = {
-//   dateOfDelivery: moment(),
-//   asset_unit: 1,
-//   asset_type: "Khác",
-//   asset_status: true,
-// };
 
 const contract_duration = [];
 for (let i = 6; i < 17; i++) {
@@ -90,11 +74,6 @@ for (let i = 1; i < 17; i++) {
 }
 
 const CreateContractBuilding = () => {
-  // const dataFilter = {
-  //   id: [],
-  //   asset_type: [],
-  // };
-
   const [expandedKeys, setExpandedKeys] = useState([]);
   const [checkedKeys, setCheckedKeys] = useState([]);
   const [selectedKeys, setSelectedKeys] = useState([]);
@@ -104,9 +83,6 @@ const CreateContractBuilding = () => {
   const [dataOwner, setDataOwner] = useState([]);
 
   const onExpand = (expandedKeysValue) => {
-    console.log("onExpand", expandedKeysValue);
-    // if not set autoExpandParent to false, if children expanded, parent can not collapse.
-    // or, you can remove all expanded children keys.
     setExpandedKeys(expandedKeysValue);
     setAutoExpandParent(false);
   };
@@ -114,7 +90,6 @@ const CreateContractBuilding = () => {
     const data_id = checkedKeysValue?.map((obj, index) => obj.split("-"))?.map((o, i) => {
       return { floor: parseInt(o[0]), room: parseInt(o[1]) }
     })?.filter((room, j) => room !== undefined)?.map((obj, index) => obj.room).filter((o, i) => Number.isInteger(o));
-    console.log('onCheck', checkedKeysValue);
     setCheckedKeys(checkedKeysValue);
     setListRoomId(data_id);
     const totalRoomPrice = dataApartmentGroupSelect?.list_rooms
@@ -124,187 +99,38 @@ const CreateContractBuilding = () => {
     form.setFieldsValue({
       list_room: data_id,
       contract_price: totalRoomPrice,
-      // contract_deposit: totalRoomPrice
     });
   };
   const onSelect = (selectedKeysValue, info) => {
-    console.log("onSelect", info);
     setSelectedKeys(selectedKeysValue);
   };
-
-  // const [listAssetType, setListAssetType] = useState([]);
   const navigate = useNavigate();
-  // const [searched, setSearched] = useState("");
-  // const [filterAssetType, setFilterAssetType] = useState([]);
-  // const [assetStatus, setAssetStatus] = useState([]);
   const [componentSize, setComponentSize] = useState("default");
   const [form] = Form.useForm();
-  // const [createAssetForm] = Form.useForm();
-  // const [editAssetForm] = Form.useForm();
-  // const [createAssetQuickForm] = Form.useForm();
-  // const [formAddAsset, setFormAddAsset] = useState(defaultAddAsset);
-  // const [isEditAsset, setIsEditAsset] = useState(false);
   const [loading, setLoading] = useState(false);
-  // const [quickAddAsset, setQuickAddAsset] = useState(false);
-
-  // const [dataAsset, setDataAsset] = useState([]);
-  // const [assetId, setAssetId] = useState(-1);
   const [changeTab, setChangeTab] = useState("1");
   const [visibleSubmit, setVisibleSubmit] = useState(false);
   const [contractStartDate, setContractStartDate] = useState(moment());
   const [dataApartmentGroup, setDataApartmentGroup] = useState([]);
   const [groupSelect, setGroupSelect] = useState([]);
   const [numberOfFloor, setNumberOfFloor] = useState([]);
-  const [contractDuration, setContractDuration] = useState();
+  const [contractDuration, setContractDuration] = useState(6);
   const [dataApartmentGroupSelect, setDataApartmentGroupSelect] = useState([]);
   const [displayFinish, setDisplayFinish] = useState([]);
-  // const [disableEditAsset, setDisableEditAsset] = useState(true);
   const [roomRented, setRoomRented] = useState(0);
   const [treeDataRented, setTreeDataRented] = useState([]);
-
-  // const [assetBasic, setAssetBasic] = useState([]);
 
   let cookie = localStorage.getItem("Cookie");
 
   const onFormLayoutChange = ({ size }) => {
     setComponentSize(size);
   };
-  // const columns = [
-  //   {
-  //     title: "Tên tài sản",
-  //     dataIndex: "asset_name",
-  //     key: "asset_id",
-  //     filteredValue: [searched],
-  //     onFilter: (value, record) => {
-  //       return String(record.asset_name).toLowerCase()?.includes(value.toLowerCase());
-  //     },
-  //   },
-  //   {
-  //     title: "Số lượng",
-  //     dataIndex: "hand_over_asset_quantity",
-  //     key: "asset_id",
-  //   },
-  //   {
-  //     title: "Nhóm tài sản",
-  //     dataIndex: "asset_type_show_name",
-  //     filters: [
-  //       { text: "Phòng ngủ", value: "Phòng ngủ" },
-  //       { text: "Phòng khách", value: "Phòng khách" },
-  //       { text: "Phòng bếp", value: "Phòng bếp" },
-  //       { text: "Phòng tắm", value: "Phòng tắm" },
-  //       { text: "Khác", value: "Khác" },
-  //     ],
-  //     filteredValue: filterAssetType.asset_type_show_name || null,
-  //     onFilter: (value, record) => record.asset_type_show_name.indexOf(value) === 0,
-  //   },
-  //   {
-  //     title: "Ngày bàn giao",
-  //     dataIndex: "hand_over_asset_date_delivery",
-  //     key: "asset_id",
-  //   },
-  //   {
-  //     title: "Thao tác",
-  //     key: "asset_id",
-  //     render: (record) => {
-  //       record.asset_id < 0 ? setDisableEditAsset(false) : setDisableEditAsset(true);
-  //       return (
-  //         <>
-  //           <EditTwoTone
-  //             onClick={() => {
-  //               setIsEditAsset(true);
-  //               editAssetForm.setFieldsValue({
-  //                 asset_id: record.asset_id,
-  //                 asset_name: record.asset_name,
-  //                 hand_over_asset_date_delivery:
-  //                   record.hand_over_asset_date_delivery !== null
-  //                     ? moment(record.hand_over_asset_date_delivery, dateFormatList)
-  //                     : "",
-  //                 hand_over_asset_quantity: record.hand_over_asset_quantity,
-  //                 asset_type_show_name: record.asset_type_show_name,
-  //                 hand_over_asset_status: record.hand_over_asset_status,
-  //               });
-  //             }}
-  //             className="icon-size"
-  //           />
-  //           <DeleteOutlined
-  //             onClick={() => {
-  //               onDeleteAsset(record);
-  //             }}
-  //             className="icon-delete"
-  //           />
-  //         </>
-  //       );
-  //     },
-  //   },
-  // ];
-  // const onDeleteAsset = (record) => {
-  //   Modal.confirm({
-  //     title: `Bạn có chắc chắn muốn xóa ${record.asset_name} này ?`,
-  //     okText: "Có",
-  //     cancelText: "Hủy",
-  //     onOk: () => {
-  //       setDataAsset((pre) => {
-  //         return pre.filter((asset) => asset.asset_id !== record.asset_id);
-  //       });
-  //       message.success(`Đã xóa ${record.asset_name}`);
-  //     },
-  //   });
-  // };
 
   useEffect(() => {
-    // getAssetType();
     apartmentGroup();
     getAllContractBuilding();
-    // getAssetBasic();
   }, []);
 
-  // const getAssetType = async () => {
-  //   await axios
-  //     .get(LIST_ASSET_TYPE, {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         // "Access-Control-Allow-Origin": "*",
-  //         Authorization: `Bearer ${cookie}`,
-  //       },
-  //       // withCredentials: true,
-  //     })
-  //     .then((res) => {
-  //       setListAssetType(res.data.data);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // };
-  // const getAssetBasic = async () => {
-  //   await axios
-  //     .get(ASSET_BASIC, {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         // "Access-Control-Allow-Origin": "*",
-  //         Authorization: `Bearer ${cookie}`,
-  //       },
-  //       // withCredentials: true,
-  //     })
-  //     .then((res) => {
-  //       console.log(res.data.data);
-  //       setDataAsset(
-  //         res.data.data?.map((obj, index) => {
-  //           return {
-  //             asset_id: obj.basic_asset_id,
-  //             asset_name: obj.basic_asset_name,
-  //             hand_over_asset_quantity: 10,
-  //             asset_type_show_name: obj.asset_type_show_name,
-  //             hand_over_asset_date_delivery: currentDay.format("DD-MM-YYYY"),
-  //             asset_type_name: obj.asset_type_name,
-  //             asset_type_id: obj.asset_type_id,
-  //           };
-  //         })
-  //       );
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // };
 
   const getAllContractBuilding = async () => {
     setLoading(true);
@@ -313,10 +139,8 @@ const CreateContractBuilding = () => {
         params: {},
         headers: {
           "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
           Authorization: `Bearer ${cookie}`,
         },
-        // withCredentials: true,
       })
       .then((res) => {
         const ownerIdentity = res.data.data.map(owner => owner.identity_number);
@@ -341,7 +165,7 @@ const CreateContractBuilding = () => {
         }));
       })
       .catch((error) => {
-        console.log(error);
+        // console.log(error);
       });
     setLoading(false);
   };
@@ -356,14 +180,13 @@ const CreateContractBuilding = () => {
         },
       })
       .then((res) => {
-        console.log(res.data.data);
         const mergeGroup = res.data.data.list_group_non_contracted.concat(res.data.data.list_group_contracted);
         const mapped = mergeGroup?.map((obj, index) => obj.group_id);
         const filterGroupId = mergeGroup?.filter((obj, index) => mapped.indexOf(obj.group_id) === index);
         setDataApartmentGroup(filterGroupId);
       })
       .catch((error) => {
-        console.log(error);
+        // console.log(error);
       });
     setLoading(false);
   };
@@ -371,25 +194,19 @@ const CreateContractBuilding = () => {
   useEffect(() => {
     loadDefault();
   }, []);
-  // form.setFieldsValue({
-  //   list_hand_over_asset: dataAsset,
-  // });
+
   const loadDefault = () => {
     form.setFieldsValue({
+      contract_payment_cycle: 1,
       contract_price: 0,
       contract_deposit: 0,
       contract_type: 2,
       contract_start_date: contractStartDate,
+      contract_end_date: moment().add(contractDuration, 'M'),
       owner_gender: true,
+      contract_duration: contractDuration,
       note: "",
     });
-    // createAssetForm.setFieldsValue({
-    //   asset_id: assetId,
-    //   hand_over_asset_date_delivery: formAddAsset.dateOfDelivery,
-    //   hand_over_asset_quantity: formAddAsset.asset_unit,
-    //   asset_type_show_name: formAddAsset.asset_type,
-    //   // hand_over_asset_status: formAddAsset.asset_status,
-    // });
   };
 
   const columnsService = [
@@ -417,25 +234,11 @@ const CreateContractBuilding = () => {
     },
   ];
 
-  // const [addAssetInRoom, setAddAssetInRoom] = useState(false);
-
   const onFinish = async (e) => {
-    // const list_asset = dataAsset?.map((obj, index) => {
-    //   return {
-    //     asset_id: obj.asset_id,
-    //     assets_additional_name: obj.asset_name,
-    //     assets_additional_type: obj.asset_type_id,
-    //     hand_over_asset_quantity: obj.hand_over_asset_quantity,
-    //     hand_over_asset_status: true,
-    //     hand_over_date_delivery: obj.hand_over_asset_date_delivery,
-    //   };
-    // });
     const data = {
       ...e,
       contract_end_date: e.contract_end_date.format("YYYY-MM-DD"),
       contract_start_date: e.contract_start_date.format("YYYY-MM-DD"),
-      // list_room: listRoomId,
-      // list_hand_over_asset: list_asset,
       rack_renter_name: e.owner_name,
       rack_renter_gender: e.owner_gender,
       rack_renter_phone: e.owner_phone_number,
@@ -444,15 +247,12 @@ const CreateContractBuilding = () => {
       rack_renter_address: e.address_more_detail,
       rack_renter_note: "",
     };
-    console.log(JSON.stringify(data));
     await axios
       .post(ADD_NEW_CONTRACT, data, {
         headers: {
           "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
           Authorization: `Bearer ${cookie}`,
         },
-        // withCredentials: true,
       })
       .then((res) => {
         navigate("/contract-apartment");
@@ -474,124 +274,6 @@ const CreateContractBuilding = () => {
   const onFinishContractFail = (e) => {
     message.error("Vui lòng kiểm tra lại thông tin hợp đồng");
   };
-
-  // createAssetForm.setFieldsValue({
-  //   asset_id: assetId,
-  //   hand_over_asset_date_delivery: formAddAsset.dateOfDelivery,
-  //   hand_over_asset_quantity: formAddAsset.asset_unit,
-  //   asset_type_show_name: formAddAsset.asset_type,
-  //   hand_over_asset_status: formAddAsset.asset_status,
-  // });
-  // const addAssetFinish = (e) => {
-  //   console.log(e);
-  //   setAssetId(e.asset_id - 1);
-  //   const duplicate = dataAsset.find(
-  //     (asset) =>
-  //       asset.asset_name.toLowerCase().trim() === e.asset_name.toLowerCase().trim() &&
-  //       asset.hand_over_asset_date_delivery === moment(e.hand_over_asset_date_delivery).format("DD-MM-YYYY")
-  //   );
-  //   if (!duplicate) {
-  //     setDataAsset([
-  //       ...dataAsset,
-  //       { ...e, hand_over_asset_date_delivery: moment(e.hand_over_asset_date_delivery).format("DD-MM-YYYY") },
-  //     ]);
-  //     createAssetForm.setFieldsValue({
-  //       asset_id: assetId,
-  //       asset_name: "",
-  //       hand_over_asset_date_delivery: formAddAsset.dateOfDelivery,
-  //       hand_over_asset_quantity: formAddAsset.asset_unit,
-  //       asset_type_show_name: formAddAsset.asset_type,
-  //       // hand_over_asset_status: formAddAsset.asset_status,
-  //     });
-
-  //     setAddAssetInRoom(false);
-  //     message.success("Thêm mới tài sản thành công");
-  //   } else {
-  //     setAddAssetInRoom(true);
-  //     message.error("Tài sản đã tồn tại");
-  //   }
-  // };
-  // const addAssetFail = (e) => {
-  //   setAddAssetInRoom(true);
-  // };
-  // const addAssetQuickFinish = (e) => {
-  //   console.log(e);
-  //   setLoading(true);
-  //   if (dataAsset.length === 0) {
-  //     const data = assetBasic?.filter(
-  //       (obj, index) => e.list_asset.find(
-  //         pre => pre === obj.basic_asset_id))?.map((o, i) => {
-  //           return {
-  //             asset_type_name: o.asset_type_name,
-  //             asset_type_id: o.asset_type_id,
-  //             asset_id: -o.basic_asset_id,
-  //             asset_name: o.basic_asset_name,
-  //             asset_type_show_name: o.asset_type_show_name,
-  //             hand_over_asset_quantity: e.hand_over_asset_quick_quantity,
-  //             hand_over_asset_date_delivery: e.hand_over_asset_quick_date_delivery?.format("DD-MM-YYYY"),
-  //             basic_asset_id: o.basic_asset_id
-  //           }
-  //         });
-  //     setDataAsset(data);
-  //   } else {
-  //     const data2 = assetBasic?.filter(
-  //       (obj, index) => dataAsset.find(
-  //         pre => pre.basic_asset_id !== obj.basic_asset_id))?.map((o, i) => {
-  //           return {
-  //             asset_type_name: o.asset_type_name,
-  //             asset_type_id: o.asset_type_id,
-  //             asset_id: -o.basic_asset_id,
-  //             asset_name: o.basic_asset_name,
-  //             asset_type_show_name: o.asset_type_show_name,
-  //             hand_over_asset_quantity: e.hand_over_asset_quick_quantity,
-  //             hand_over_asset_date_delivery: e.hand_over_asset_quick_date_delivery?.format("DD-MM-YYYY"),
-  //             basic_asset_id: o.basic_asset_id
-  //           }
-  //         });
-  //     console.log(data2);
-  //   }
-  //   // console.log(data);
-  //   setLoading(false);
-  //   // setQuickAddAsset(false);
-  // }
-  // const addAssetQuickFail = (e) => {
-  //   console.log(e);
-  // }
-
-  // const editAssetFinish = (e) => {
-  //   console.log(e);
-  //   const duplicate = dataAsset.find(
-  //     (asset) =>
-  //       asset.asset_name.toLowerCase().trim() === e.asset_name.toLowerCase().trim() &&
-  //       asset.asset_type_show_name === e.asset_type_show_name &&
-  //       asset.hand_over_asset_date_delivery === moment(e.hand_over_asset_date_delivery).format("DD-MM-YYYY") &&
-  //       asset.hand_over_asset_quantity === e.hand_over_asset_quantity
-  //     // asset.hand_over_asset_status === e.hand_over_asset_status
-  //   );
-  //   if (!duplicate) {
-  //     message.success("Cập nhật tài sản thành công");
-  //     setDataAsset((pre) => {
-  //       return pre.map((asset) => {
-  //         if (asset.asset_id === e.asset_id) {
-  //           return {
-  //             ...e,
-  //             hand_over_asset_date_delivery: moment(e.hand_over_asset_date_delivery).format("DD-MM-YYYY"),
-  //           };
-  //         } else {
-  //           return asset;
-  //         }
-  //       });
-  //     });
-  //     setIsEditAsset(false);
-  //   } else {
-  //     setIsEditAsset(true);
-  //     message.error("Cập nhật tài sản thất bại");
-  //   }
-  // };
-
-  // const editAssetFail = (e) => {
-  //   setIsEditAsset(true);
-  // };
 
   const onNext = async () => {
     try {
@@ -714,7 +396,6 @@ const CreateContractBuilding = () => {
                       placeholder="Nhập tên người cho thuê"
                       onSelect={(e) => {
                         const data = dataOwner.find(owner => owner.identity_number === e);
-                        console.log(data)
                         form.setFieldsValue({
                           owner_name: data.rack_renter_full_name,
                           owner_gender: data.gender,
@@ -848,25 +529,6 @@ const CreateContractBuilding = () => {
                   bordered={false}
                   className="card-width-100 card-height"
                 >
-                  {/* <Form.Item
-                    className="form-item"
-                    name="contract_name"
-                    labelCol={{ span: 24 }}
-                    label={
-                      <span>
-                        <b>Tên hợp đồng: </b>
-                      </span>
-                    }
-                    rules={[
-                      {
-                        required: true,
-                        message: "Vui lòng nhập tên hợp đồng",
-                        whitespace: true,
-                      },
-                    ]}
-                  >
-                    <Input placeholder="Tên hợp đồng"></Input>
-                  </Form.Item> */}
                   <Form.Item
                     className="form-item"
                     name="contract_payment_cycle"
@@ -905,12 +567,6 @@ const CreateContractBuilding = () => {
                         <b>Thời hạn hợp đồng (ít nhất 6 tháng): </b>
                       </span>
                     }
-                  // rules={[
-                  //   {
-                  //     required: true,
-                  //     message: "Vui lòng chọn thời hạn hợp đồng",
-                  //   },
-                  // ]}
                   >
                     <Select
                       placeholder="Thời hạn hợp đồng"
@@ -973,6 +629,17 @@ const CreateContractBuilding = () => {
                         required: true,
                         message: "Vui lòng chọn ngày kết thúc",
                       },
+                      {
+                        validator: (_, value) => {
+                          var startDateFrom = moment(form.getFieldValue("contract_start_date"));
+                          var endDateForm = moment(value);
+                          if (endDateForm < startDateFrom) {
+                            return Promise.reject(new Error('Vui lòng nhập ngày kết thúc lớn hơn ngày hợp đồng có hiệu lực'));
+                          } else {
+                            return Promise.resolve(new Error('Vui lòng chọn ngày kết thúc'));
+                          }
+                        },
+                      }
                     ]}
                   >
                     <DatePicker
@@ -1102,7 +769,6 @@ const CreateContractBuilding = () => {
                                 }
                               ]
                             })?.map((o, i) => o[0]);
-                            console.log(treeDataRented);
                             setTreeDataRented(treeDataRented);
 
 
@@ -1356,7 +1022,6 @@ const CreateContractBuilding = () => {
           >
             <Row>
               <Col span={23}>
-                {/* <Form.Item className="form-item" name="list_general_service" labelCol={{ span: 24 }}> */}
                 <h3>
                   <b>
                     Thông tin về dịch vụ sử dụng
@@ -1365,7 +1030,6 @@ const CreateContractBuilding = () => {
                       : ""}
                   </b>
                 </h3>
-                {/* </Form.Item> */}
               </Col>
             </Row>
             <Row>
@@ -1394,121 +1058,6 @@ const CreateContractBuilding = () => {
               <p style={{ color: "red" }}>(*): Thông tin bắt buộc</p>
             </Row>
           </Tabs.TabPane>
-          {/* <Tabs.TabPane
-                    tab={
-                      <span className="text-size-tab">
-                        4. Tài sản bàn giao{" "}
-                        {displayFinish.find((obj, index) => obj === 4) ? (
-                          <CheckCircleTwoTone style={{ fontSize: "130%" }} twoToneColor="#52c41a" />
-                        ) : (
-                          ""
-                        )}
-                      </span>
-                    }
-                    key="4"
-                  >
-                    <Row>
-                      <Col span={24}>
-                        <p>
-                          <h3>
-                            <b>
-                              Thông tin tài sản bàn giao{" "}
-                              {dataApartmentGroupSelect?.group_name !== undefined
-                                ? dataApartmentGroupSelect?.group_name + " "
-                                : ""}
-                            </b>
-                          </h3>
-                        </p>
-                        <Row>
-                          <Button
-                            icon={<PlusCircleOutlined style={{ fontSize: 15 }} />}
-                            type="primary"
-                            style={{ marginBottom: "1%" }}
-                            onClick={() => {
-                              setQuickAddAsset(true);
-                              createAssetQuickForm.setFieldsValue({
-                                hand_over_asset_quick_date_delivery: moment(),
-                                hand_over_asset_quick_quantity: 1,
-                                list_asset: assetBasic?.map(obj => obj.basic_asset_id)
-                              })
-                            }}
-                          >
-                            Thêm mới nhanh
-                          </Button>
-                        </Row>
-                        <Row>
-                          <p>
-                            <i>
-                              Thêm mới nhanh các tài sản cơ bản (điều hòa, giường tủ, nóng lạnh,...) giúp việc nhập dữ
-                              liệu nhanh hơn
-                            </i>
-                          </p>
-                        </Row>
-                        <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                          <Col xs={24} xl={8} span={8}>
-                            <Input.Search
-                              placeholder="Nhập tên tài sản để tìm kiếm"
-                              style={{ marginBottom: 8, width: 400 }}
-                              onSearch={(e) => {
-                                setSearched(e);
-                              }}
-                            // onChange={(e) => {
-                            //   setSearched(e.target.value);
-                            // }}
-                            />
-                          </Col>
-                          <Col xs={22} xl={14} span={14}>
-                            <Row>
-                              <FilterOutlined style={{ fontSize: "150%" }} />
-                              <p>
-                                <b>Nhóm tài sản: </b>
-                              </p>
-                              <Checkbox.Group
-                                style={{ marginLeft: "1%" }}
-                                options={listAssetType?.map((obj, index) => {
-                                  return obj.asset_type_show_name;
-                                })}
-                                onChange={(checkedValues) => {
-                                  console.log(checkedValues);
-                                  dataFilter.asset_type_show_name = checkedValues;
-                                  setFilterAssetType(dataFilter);
-                                }}
-                              ></Checkbox.Group>
-                            </Row>
-                          </Col>
-                          <Col span={2}>
-                            <PlusCircleOutlined
-                              onClick={() => {
-                                setAddAssetInRoom(true);
-                              }}
-                              style={{ fontSize: 36, color: "#1890ff", float: "right" }}
-                            />
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Table
-                            bordered
-                            onChange={(pagination, filters, sorter, extra) => {
-                              setFilterAssetType(filters);
-                              setAssetStatus(filters);
-                            }}
-                            dataSource={dataAsset}
-                            columns={columns}
-                            scroll={{ x: 800, y: 600 }}
-                            loading={loading}
-                          ></Table>
-                        </Row>
-                      </Col>
-                      <Row>
-                        <p>
-                          <i>
-                            Trên đây là một số <b>tài sản thiết yếu</b>, bạn có thể thêm các tài sản bàn giao khác trong
-                            hợp đồng
-                          </i>
-                        </p>
-                      </Row>
-                    </Row>
-                  </Tabs.TabPane> */}
         </Tabs>
       </Form>
       <Button
@@ -1550,423 +1099,6 @@ const CreateContractBuilding = () => {
       >
         Tiếp
       </Button>
-      {/* <Modal
-                title="Thêm tài sản mới"
-                visible={addAssetInRoom}
-                onCancel={() => {
-                  setAddAssetInRoom(false);
-                }}
-                onOk={() => {
-                  setAddAssetInRoom(false);
-                }}
-                width={500}
-                footer={[
-                  <Button htmlType="submit" key="submit" form="create-asset" type="primary">
-                    Lưu
-                  </Button>,
-                  <Button
-                    key="back"
-                    onClick={() => {
-                      setAddAssetInRoom(false);
-                    }}
-                  >
-                    Huỷ
-                  </Button>,
-                ]}
-              >
-                <Form
-                  form={createAssetForm}
-                  onFinish={addAssetFinish}
-                  onFinishFailed={addAssetFail}
-                  labelCol={{ span: 5 }}
-                  wrapperCol={{ span: 30 }}
-                  layout="horizontal"
-                  initialValues={{ size: componentSize }}
-                  onValuesChange={onFormLayoutChange}
-                  size={"default"}
-                  id="create-asset"
-                >
-                  <Form.Item className="form-item" name="asset_id" style={{ display: "none" }}></Form.Item>
-                  <Form.Item
-                    className="form-item"
-                    name="asset_name"
-                    labelCol={{ span: 24 }}
-                    label={
-                      <span>
-                        <b>Tên tài sản: </b>
-                      </span>
-                    }
-                    rules={[
-                      {
-                        required: true,
-                        message: "Vui lòng nhập tên tài sản",
-                        whitespace: true,
-                      },
-                    ]}
-                  >
-                    <Input placeholder="Tên tài sản"></Input>
-                  </Form.Item>
-                  <Form.Item
-                    className="form-item"
-                    name="hand_over_asset_date_delivery"
-                    labelCol={{ span: 24 }}
-                    label={
-                      <span>
-                        <b>Ngày bàn giao: </b>
-                      </span>
-                    }
-                    rules={[
-                      {
-                        required: true,
-                        message: "Vui lòng chọn ngày bàn giao",
-                      },
-                    ]}
-                  >
-                    <DatePicker
-                      style={{ width: "100%" }}
-                      placeholder="Ngày bàn giao"
-                      defaultValue={moment()}
-                      format="DD-MM-YYYY"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    className="form-item"
-                    name="hand_over_asset_quantity"
-                    labelCol={{ span: 24 }}
-                    label={
-                      <span>
-                        <b>Số lượng: </b>
-                      </span>
-                    }
-                    rules={[
-                      {
-                        required: true,
-                        message: "Vui lòng nhập số lượng",
-                      },
-                      {
-                        pattern: new RegExp(/^[0-9]*$/),
-                        message: "Vui lòng nhập số nguyên",
-                      }
-                    ]}
-                  >
-                    <InputNumber defaultValue={1} style={{ width: "100%" }} min={1} />
-                  </Form.Item>
-                  <Form.Item
-                    className="form-item"
-                    name="asset_type_show_name"
-                    labelCol={{ span: 24 }}
-                    label={
-                      <span>
-                        <b>Nhóm tài sản: </b>
-                      </span>
-                    }
-                    rules={[
-                      {
-                        required: true,
-                        message: "Vui lòng chọn nhóm tài sản",
-                      },
-                    ]}
-                  >
-                    <Select placeholder="Chọn nhóm tài sản">
-                      {listAssetType?.map((obj, index) => {
-                        return (
-                          <Select.Option value={obj.asset_type_show_name}>{obj.asset_type_show_name}</Select.Option>
-                        );
-                      })}
-                    </Select>
-                  </Form.Item>
-                  <Form.Item
-                    className="form-item"
-                    name="hand_over_asset_status"
-                    labelCol={{ span: 24 }}
-                    label={
-                      <span>
-                        <b>Trạng thái </b>
-                      </span>
-                    }
-                    rules={[
-                      {
-                        required: true,
-                        message: "Vui lòng chọn trạng thái",
-                      },
-                    ]}
-                  >
-                    <Radio.Group>
-                      <Radio value={true}>
-                        <Tag color="success">Tốt</Tag>
-                      </Radio>
-                      <Radio value={false}>
-                        <Tag color="error">Hỏng</Tag>
-                      </Radio>
-                    </Radio.Group>
-                  </Form.Item>
-                </Form>
-              </Modal> */}
-
-      {/* <Modal
-                title="Thêm mới tài sản nhanh"
-                visible={quickAddAsset}
-                onCancel={() => {
-                  setQuickAddAsset(false);
-                }}
-                onOk={() => {
-                  setQuickAddAsset(false);
-                }}
-                width={500}
-                footer={[
-                  <Button htmlType="submit" key="submit" form="quick-add-asset" type="primary">
-                    Lưu
-                  </Button>,
-                  <Button
-                    key="back"
-                    onClick={() => {
-                      setQuickAddAsset(false);
-                    }}
-                  >
-                    Huỷ
-                  </Button>,
-                ]}
-              >
-                <Form
-                  form={createAssetQuickForm}
-                  onFinish={addAssetQuickFinish}
-                  onFinishFailed={addAssetQuickFail}
-                  labelCol={{ span: 5 }}
-                  wrapperCol={{ span: 30 }}
-                  layout="horizontal"
-                  initialValues={{ size: componentSize }}
-                  onValuesChange={onFormLayoutChange}
-                  size={"default"}
-                  id="quick-add-asset"
-                >
-                  <Form.Item
-                    className="form-item"
-                    name="list_asset"
-                    labelCol={{ span: 24 }}
-                    label={
-                      <span>
-                        <b>Chọn tài sản có sẵn: </b>
-                      </span>
-                    }
-                    rules={[
-                      {
-                        required: true,
-                        message: "Vui lòng chọn tài sản",
-                      },
-                    ]}
-                  >
-                    <Select
-                      mode="multiple"
-                      showSearch
-                      optionFilterProp="children"
-                      filterOption={(input, option) =>
-                        (option?.label.toLowerCase().trim() ?? "").includes(input.toLocaleLowerCase().trim())
-                      }
-                      filterSort={(optionA, optionB) =>
-                        (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())
-                      }
-                      placeholder="Chọn tài sản có sẵn"
-                      options={assetBasic?.map((obj, index) => {
-                        return { value: obj.basic_asset_id, label: obj.basic_asset_name };
-                      })} />
-                  </Form.Item>
-                  <Form.Item
-                    className="form-item"
-                    name="hand_over_asset_quick_date_delivery"
-                    labelCol={{ span: 24 }}
-                    label={
-                      <span>
-                        <b>Ngày bàn giao: </b>
-                      </span>
-                    }
-                    rules={[
-                      {
-                        required: true,
-                        message: "Vui lòng chọn ngày bàn giao",
-                      },
-                    ]}
-                  >
-                    <DatePicker
-                      style={{ width: "100%" }}
-                      placeholder="Ngày bàn giao"
-                      defaultValue={moment()}
-                      format="DD-MM-YYYY"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    className="form-item"
-                    name="hand_over_asset_quick_quantity"
-                    labelCol={{ span: 24 }}
-                    label={
-                      <span>
-                        <b>Số lượng mỗi tài sản: </b>
-                      </span>
-                    }
-                    rules={[
-                      {
-                        required: true,
-                        message: "Vui lòng nhập số lượng",
-                      },
-                    ]}
-                  >
-                    <InputNumber defaultValue={1} style={{ width: "100%" }} min={1} />
-                  </Form.Item>
-                </Form>
-              </Modal> */}
-
-      {/* <Modal
-                title="Chỉnh sửa tài sản trong phòng"
-                visible={isEditAsset}
-                onCancel={() => {
-                  setIsEditAsset(false);
-                }}
-                onOk={() => {
-                  setIsEditAsset(false);
-                }}
-                width={500}
-                footer={[
-                  <Button htmlType="submit" key="submit" form="edit-asset" type="primary">
-                    Lưu
-                  </Button>,
-                  <Button
-                    key="back"
-                    onClick={() => {
-                      setIsEditAsset(false);
-                    }}
-                  >
-                    Huỷ
-                  </Button>,
-                ]}
-              >
-                <Form
-                  form={editAssetForm}
-                  onFinish={editAssetFinish}
-                  onFinishFailed={editAssetFail}
-                  labelCol={{ span: 5 }}
-                  wrapperCol={{ span: 30 }}
-                  layout="horizontal"
-                  initialValues={{ size: componentSize }}
-                  onValuesChange={onFormLayoutChange}
-                  size={"default"}
-                  id="edit-asset"
-                >
-                  <Form.Item className="form-item" name="asset_id" style={{ display: "none" }}></Form.Item>
-                  <Form.Item
-                    className="form-item"
-                    name="asset_name"
-                    labelCol={{ span: 24 }}
-                    label={
-                      <span>
-                        <b>Tên tài sản: </b>
-                      </span>
-                    }
-                    rules={[
-                      {
-                        required: true,
-                        message: "Vui lòng nhập tên tài sản",
-                        whitespace: true,
-                      },
-                    ]}
-                  >
-                    <Input disabled={disableEditAsset} placeholder="Tên tài sản"></Input>
-                  </Form.Item>
-                  <Form.Item
-                    className="form-item"
-                    name="hand_over_asset_date_delivery"
-                    labelCol={{ span: 24 }}
-                    label={
-                      <span>
-                        <b>Ngày bàn giao: </b>
-                      </span>
-                    }
-                    rules={[
-                      {
-                        required: true,
-                        message: "Vui lòng chọn ngày bàn giao",
-                      },
-                    ]}
-                  >
-                    <DatePicker
-                      style={{ width: "100%" }}
-                      placeholder="Ngày bàn giao"
-                      defaultValue={moment()}
-                      format="DD-MM-YYYY"
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    className="form-item"
-                    name="hand_over_asset_quantity"
-                    labelCol={{ span: 24 }}
-                    label={
-                      <span>
-                        <b>Số lượng: </b>
-                      </span>
-                    }
-                    rules={[
-                      {
-                        required: true,
-                        message: "Vui lòng nhập số lượng",
-                      },
-                      {
-                        pattern: new RegExp(/^[0-9]*$/),
-                        message: "Vui lòng nhập số nguyên",
-                      }
-                    ]}
-                  >
-                    <InputNumber defaultValue={1} style={{ width: "100%" }} min={1} />
-                  </Form.Item>
-                  <Form.Item
-                    className="form-item"
-                    name="asset_type_show_name"
-                    labelCol={{ span: 24 }}
-                    label={
-                      <span>
-                        <b>Nhóm tài sản: </b>
-                      </span>
-                    }
-                    rules={[
-                      {
-                        required: true,
-                        message: "Vui lòng chọn Nhóm tài sản",
-                      },
-                    ]}
-                  >
-                    <Select disabled={disableEditAsset} placeholder={"Nhóm tài sản"}>
-                      {listAssetType?.map((obj, index) => {
-                        return (
-                          <Select.Option value={obj.asset_type_show_name}>{obj.asset_type_show_name}</Select.Option>
-                        );
-                      })}
-                    </Select>
-                  </Form.Item>
-                  <Form.Item
-                    className="form-item"
-                    name="hand_over_asset_status"
-                    labelCol={{ span: 24 }}
-                    label={
-                      <span>
-                        <b>Trạng thái </b>
-                      </span>
-                    }
-                    rules={[
-                      {
-                        required: true,
-                        message: "Vui lòng chọn trạng thái",
-                      },
-                    ]}
-                  >
-                    <Radio.Group>
-                      <Radio value={true}>
-                        <Tag color="success">Tốt</Tag>
-                      </Radio>
-                      <Radio value={false}>
-                        <Tag color="error">Hỏng</Tag>
-                      </Radio>
-                    </Radio.Group>
-                  </Form.Item>
-                </Form>
-              </Modal> */}
-
     </MainLayout>
   );
 };

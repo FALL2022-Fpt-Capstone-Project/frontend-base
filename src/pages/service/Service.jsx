@@ -55,7 +55,7 @@ function Service(props) {
         // withCredentials: true,
       })
       .then((res) => {
-        console.log(res.data.data);
+        // console.log(res.data.data);
         setDataApartmentServiceGeneral(res.data.data);
       })
       .catch((error) => {
@@ -104,7 +104,7 @@ function Service(props) {
       })
       .then((res) => {
         setListServiceName(res.data.data);
-        console.log(res.data.data);
+        // console.log(res.data.data);
       })
       .catch((error) => {
         console.log(error);
@@ -121,7 +121,7 @@ function Service(props) {
       })
       .then((res) => {
         setServiceCalCuMethod(res.data.data);
-        console.log(res.data.data);
+        // console.log(res.data.data);
       })
       .catch((error) => {
         console.log(error);
@@ -167,7 +167,6 @@ function Service(props) {
             <Tooltip title="Chỉnh sửa">
               <EditTwoTone
                 onClick={() => {
-                  console.log(record);
                   setEditServiceGeneral(true);
                   formEditSerivce.setFieldsValue({
                     general_service_id: record.general_service_id,
@@ -276,7 +275,6 @@ function Service(props) {
         }
       )
       .then((res) => {
-        console.log(res);
         notification.success({
           message: "Cập nhật dịch vụ thành công",
           placement: "top",

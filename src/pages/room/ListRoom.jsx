@@ -453,7 +453,6 @@ function ListRoom(props) {
         const mapped = mergeGroup?.map((obj, index) => obj.group_id);
         const filterGroupId = mergeGroup?.filter((obj, index) => mapped.indexOf(obj.group_id) === index);
         setDataApartmentGroup(filterGroupId);
-        console.log(filterGroupId);
         setGroupRoom(pre => {
           return { ...pre, group: filterGroupId }
         });
@@ -793,7 +792,7 @@ function ListRoom(props) {
                                 placeholder="Chọn chung cư"
                                 showSearch
                                 filterOption={(input, option) =>
-                                  (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                                  (option?.label ?? '').toLowerCase().includes(input.trim().toLowerCase())
                                 }
                                 style={{ width: "100%", marginBottom: "5%" }}
                                 onChange={(e) => {

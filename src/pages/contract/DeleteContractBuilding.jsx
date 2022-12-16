@@ -13,7 +13,7 @@ const textSize = {
 };
 
 function DeleteContractBuilding({ reload, openView, closeView, dataContract, dataInvoice, loading }) {
-    console.log(dataInvoice);
+    // console.log(dataInvoice);
     let cookie = localStorage.getItem("Cookie");
 
     const handleOk = () => {

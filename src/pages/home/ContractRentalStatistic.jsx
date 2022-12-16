@@ -1,4 +1,4 @@
-import { Col, Row, Select, Table } from 'antd';
+import { Col, Divider, Row, Select, Table } from 'antd';
 import React, { useState } from 'react';
 
 const ContractRentalStatistic = ({ loading, data, dataGroup }) => {
@@ -6,25 +6,26 @@ const ContractRentalStatistic = ({ loading, data, dataGroup }) => {
   const columns = [
     {
       title: "Tên người cho thuê",
-      // dataIndex: "groupName",
-      // key: "room_id",
+      dataIndex: "rack_renter_full_name",
+      key: "contract_id",
     },
     {
       title: "Tên chung cư",
-      // dataIndex: "groupName",
-      // key: "room_id",
+      dataIndex: "group_name",
+      key: "contract_id",
     },
     {
       title: "Ngày kết thúc",
-      // dataIndex: "groupName",
-      // key: "room_id",
+      dataIndex: "contract_end_date",
+      key: "room_id",
     },
   ]
   return (
     <>
       <Row justify="center">
-        <p className="header-statistic">Danh sách hợp đồng đi thuê sắp kết thúc </p>
+        <span className="header-statistic">Danh sách hợp đồng đi thuê sắp kết thúc </span>
       </Row>
+      <Divider />
       <Row>
         <p className='statistic-time-title'>Chọn chung cư:</p>
       </Row>
@@ -32,6 +33,10 @@ const ContractRentalStatistic = ({ loading, data, dataGroup }) => {
         <Col span={24}>
           <Select
             defaultValue={""}
+            showSearch
+            filterOption={(input, option) =>
+              (option?.label ?? '').toLowerCase().includes(input.trim().toLowerCase())
+            }
             placeholder="Chọn chung cư"
             className='select-w-100'
             options={[...dataGroup?.map(group => {
@@ -52,7 +57,7 @@ const ContractRentalStatistic = ({ loading, data, dataGroup }) => {
       <Table
         columns={columns}
         loading={loading}
-        dataSource={[]}
+        dataSource={groupSelect === "" ? data : data.filter(room => room.group_id === groupSelect)}
         pagination={{ defaultPageSize: 5, showSizeChanger: true, pageSizeOptions: ['5', '10', '20'] }}
         scroll={{ x: 600, y: 500 }}
       />

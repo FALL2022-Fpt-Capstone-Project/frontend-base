@@ -132,7 +132,9 @@ function AddRoom({ reRender, visible, close, data, assetType }) {
     useEffect(() => {
         formAddRoom.setFieldsValue({
             numberOfPeople: 3,
-            list_additional_asset: []
+            list_additional_asset: [],
+            roomPrice: 3000000,
+            roomSquare: 25
         });
     }, []);
 
@@ -194,37 +196,6 @@ function AddRoom({ reRender, visible, close, data, assetType }) {
                 }
             )
             .then((res) => {
-                // console.log(res.data.data);
-                // const key = `open${Date.now()}`;
-                // const btn = (
-                //     <>
-                //         <Button onClick={() => {
-                //             navigate('equipment', {
-                //                 state: res.data.data?.map(room => {
-                //                     return { ...room, roomName: room.room_name }
-                //                 })
-                //             });
-                //             notification.close(key);
-                //         }} type="primary">
-                //             Có
-                //         </Button>
-                //         <Button onClick={() => {
-                //             notification.close(key);
-                //         }}
-                //         >
-                //             Không
-                //         </Button>
-                //     </>
-                // );
-                // notification.success({
-                //     message: "Thêm mới thành công phòng " + e.roomName,
-                //     description: "Phòng chưa có trang thiết bị bạn có muốn thêm trang biết bị ?",
-                //     btn,
-                //     key,
-                //     placement: "top",
-                //     duration: 6,
-                // });
-                // console.log(res);
                 notification.success({
                     message: "Thêm mới thành công phòng " + e.roomName,
                     placement: "top",
