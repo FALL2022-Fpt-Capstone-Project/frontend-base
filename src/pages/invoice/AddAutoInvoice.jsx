@@ -5,9 +5,8 @@ import {
   ConfigProvider,
   DatePicker,
   Form,
-  Input,
-  InputNumber,
   notification,
+  InputNumber,
   Row,
   Select,
   Table,
@@ -15,7 +14,7 @@ import {
   Tag,
 } from "antd";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { InboxOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { InboxOutlined, ArrowLeftOutlined, ExclamationCircleFilled } from "@ant-design/icons";
 import axios from "../../api/axios";
 import moment from "moment";
 import "./invoice.scss";
@@ -107,14 +106,8 @@ const AddAutoInvoice = () => {
   const [selectedRows, setSelectedRows] = useState([]);
 
   const [paymentTerm, setPaymentTerm] = useState();
-  // const [waterPriceByIndex, setWaterPriceByIndex] = useState();
-  // const [waterPriceByMonth, setwaterPriceByMonth] = useState();
-  // const [waterPriceByPeople, setWaterPriceByPeople] = useState();
-  // const [elecPriceByIndex, setElecPriceByIndex] = useState();
-  // const [elecPriceByMonth, setElecPriceByMonth] = useState();
-  // const [elecPriceByPeople, setElecPriceByPeople] = useState();
-  // const [vehiPriceByMonth, setVehiPriceByMonth] = useState();
-  // const [vehiPriceByPeople, setVehiPriceByPeople] = useState();
+  const [dateCreate, setDateCreate] = useState();
+
   const [form] = Form.useForm();
   const navigate = useNavigate();
   let cookie = localStorage.getItem("Cookie");
@@ -229,15 +222,20 @@ const AddAutoInvoice = () => {
   let month = moment().month();
   let year = moment().year();
 
-  let date_create = moment().year(year).month(month).date(day);
-  // useEffect(() => {
-  //   setDateCreate(date_create);
-  // }, [date_create]);
-  const [dateCreate, setDateCreate] = useState(date_create);
-  let date_create_format = moment(date_create, "DD-MM-YYYY");
+  let date_create = `${year}-${month + 1}-${day}`;
+  let date_payment = `${year}-${month + 1}-${day + 1}`;
+  let date_create_format = moment(date_create, "YYYY-MM-DD");
+  let date_payment_format = moment(date_payment, "YYYY-MM-DD");
   const initValues = {
     date_create_invoice: date_create_format,
+    payment_term: date_payment_format,
   };
+  useEffect(() => {
+    setDateCreate(date_create);
+  }, [date_create]);
+  useEffect(() => {
+    setPaymentTerm(date_payment);
+  }, [date_payment]);
   const dateCreateChange = (date, dateString) => {
     setDateCreate(dateString);
   };
@@ -543,40 +541,11 @@ const AddAutoInvoice = () => {
         button={
           <Link to="/invoice">
             <Button type="primary" icon={<ArrowLeftOutlined />} size="middle" className="button-add">
-              Quản lý hoá đơn
+              Quay lại quản lý hoá đơn
             </Button>
           </Link>
         }
       >
-        <Row>
-          <Col xs={24} lg={4}>
-            <Row>
-              <h4>Chọn chung cư để tạo nhanh hoá đơn</h4>
-            </Row>
-            <Row>
-              <Select
-                options={options}
-                placeholder="Chọn chung cư"
-                onChange={buildingChange}
-                className="add-auto-filter"
-              ></Select>
-            </Row>
-          </Col>
-          <Col xs={24} lg={4}>
-            <Row>
-              <h4>Lựa chọn kỳ thanh toán</h4>
-            </Row>
-            <Row>
-              <Select
-                defaultValue={0}
-                options={optionPayment}
-                placeholder="Chọn kỳ thanh toán"
-                onChange={paymentCycleChange}
-                className="add-auto-filter"
-              ></Select>
-            </Row>
-          </Col>
-        </Row>
         <Form
           form={form}
           onFinish={handlerPreview}
@@ -589,26 +558,46 @@ const AddAutoInvoice = () => {
           <Card
             title={
               <>
-                <Tag color="blue" className="text-tag">
-                  <h3>
-                    <span className="font-size-tag">
-                      <b> Tạo mới nhanh hoá đơn {buildingName}</b>
-                    </span>
-                  </h3>
-                </Tag>
+                <Row>
+                  <b style={{ fontSize: "18px", padding: "10px" }}> Tạo mới nhanh hoá đơn {buildingName}</b>
+                  <div className="noti">
+                    <ExclamationCircleFilled style={{ color: "#ffc12d" }} />
+                    <span style={{ fontSize: "14px", marginLeft: "5px" }}>Hiện tại đã đến thời gian tạo hoá đơn</span>
+                  </div>
+                </Row>
+                <p className="alert">Tạo mới nhanh hoá đơn theo tiêu chí kỳ thanh toán</p>
               </>
             }
             className="card"
           >
             <Row>
-              {dayPayment.includes(day) ? (
-                <p className="alert-red">* Hiện tại đã đến thời gian tạo hoá đơn</p>
-              ) : (
-                <p className="alert-red">* Hiện tại chưa đến thời gian tạo hoá đơn</p>
-              )}
+              <Col xs={24} lg={4}>
+                <Row style={{ marginBottom: "8px" }}>
+                  <b>* Chọn chung cư để tạo nhanh hoá đơn</b>
+                </Row>
+                <Row>
+                  <Select
+                    options={options}
+                    placeholder="Chọn chung cư"
+                    onChange={buildingChange}
+                    className="add-auto-filter"
+                  ></Select>
+                </Row>
+              </Col>
+              {/* <Col xs={24} lg={4}>
+            <Row>
+              <h4>Lựa chọn kỳ thanh toán</h4>
             </Row>
             <Row>
-              <p className="alert">* Tạo mới nhanh hoá đơn theo tiêu chí kỳ thanh toán</p>
+              <Select
+                defaultValue={0}
+                options={optionPayment}
+                placeholder="Chọn kỳ thanh toán"
+                onChange={paymentCycleChange}
+                className="add-auto-filter"
+              ></Select>
+            </Row>
+          </Col> */}
             </Row>
             <Row>
               <Col lg={4} xs={24}>
@@ -663,7 +652,7 @@ const AddAutoInvoice = () => {
             </Row>
             <Row>
               <Col xs={24} lg={24}>
-                <Tabs defaultActiveKey="1">
+                <Tabs defaultActiveKey="1" size="large">
                   <Tabs.TabPane tab={`Phòng chưa lập hoá đơn (${dataSourceNotBilled?.length})`} key="1">
                     <p className="auto-description">
                       Bạn đã lựa chọn{" "}

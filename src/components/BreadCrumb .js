@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Breadcrumb } from "antd";
+import { Breadcrumb, Button } from "antd";
 import "./breadcrumb.scss";
 
 const breadcrumbNameMap = {
@@ -25,7 +25,7 @@ const breadcrumbNameMap = {
   "/invoice/create-invoice-auto/preview": "Xem trước hoá đơn tạo mới nhanh",
 };
 
-const Breadcrumbs = () => {
+const Breadcrumbs = ({ button }) => {
   const location = useLocation();
   const pathSnippets = location.pathname.split("/").filter((i) => i);
   // console.log("pathSnippets: " + pathSnippets);
@@ -34,8 +34,8 @@ const Breadcrumbs = () => {
     // console.log("url: " + url);
     return (
       <Breadcrumb.Item key={url} className="breadcrumb">
-        {/* <Link to={url}>{breadcrumbNameMap[url]}</Link> */}
-        <span style={{ color: "black" }}>{breadcrumbNameMap[url]}</span>
+        <Link>{breadcrumbNameMap[url]}</Link>
+        {/* <span>{breadcrumbNameMap[url]}</span> */}
       </Breadcrumb.Item>
     );
   });
@@ -43,6 +43,7 @@ const Breadcrumbs = () => {
   return (
     <div className="demo">
       <Breadcrumb>{breadcrumbItems}</Breadcrumb>
+      {button}
     </div>
   );
 };
