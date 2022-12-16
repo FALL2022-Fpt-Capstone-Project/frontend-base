@@ -32,8 +32,8 @@ const CreateBuilding = ({ visible, close, data }) => {
   const [form] = Form.useForm();
 
   const [group_name, setGroupName] = useState("");
-  const [total_floor, setBuildingFloor] = useState(1);
-  const [total_room_per_floor, setBuildingRoom] = useState(1);
+  const [total_floor, setBuildingFloor] = useState(8);
+  const [total_room_per_floor, setBuildingRoom] = useState(3);
   const [building_address_city, setBuildingCity] = useState("");
   const [room_name_convention, setRoomNameConvention] = useState("");
   const [room_area, setRoomArea] = useState(25);
@@ -60,8 +60,8 @@ const CreateBuilding = ({ visible, close, data }) => {
   const [park, setPark] = useState();
   const [internet, setInternet] = useState();
   const [clean, setClean] = useState();
-  const [electricPrice, setElectricPrice] = useState(0);
-  const [waterPrice, setWaterPrice] = useState(0);
+  const [electricPrice, setElectricPrice] = useState(3500);
+  const [waterPrice, setWaterPrice] = useState(30000);
   const [parkPrice, setParkPrice] = useState(0);
   const [internetPrice, setInternetPrice] = useState(0);
   const [cleanPrice, setCleanPrice] = useState(0);
@@ -351,10 +351,10 @@ const CreateBuilding = ({ visible, close, data }) => {
     setBuildingDistrictId(value);
     setDisableWard(false);
     form.setFieldsValue({ ward: "" });
-    setDistrict(option.children);
+    setDistrict(option.label);
   };
   const wardChange = (value, option) => {
-    setWard(option.children);
+    setWard(option.label);
   };
   const changeRoom = (value) => {
     setBuildingRoom(value);
@@ -459,8 +459,8 @@ const CreateBuilding = ({ visible, close, data }) => {
           autoComplete="off"
           scrollToFirstError
           initialValues={{
-            building_total_floor: 1,
-            building_total_room: 1,
+            building_total_floor: 8,
+            building_total_room: 3,
             room_rate: 3000000,
             room_people: 3,
             room_area: 25,
@@ -479,9 +479,6 @@ const CreateBuilding = ({ visible, close, data }) => {
                   }
                   rules={[
                     {
-                      message: "Vui lòng nhập tên chung cư!",
-                    },
-                    {
                       required: true,
                       message: "Vui lòng nhập tên chung cư!",
                     },
@@ -491,7 +488,7 @@ const CreateBuilding = ({ visible, close, data }) => {
                           return element?.toLowerCase() === value.toLowerCase();
                         });
                         if (!includesValue || !value) {
-                          return Promise.resolve();
+                          return Promise.resolve(new Error("Vui lòng nhập tên chung cư!"));
                         } else {
                           return Promise.reject(new Error("Tên chung cư đã tồn tại trong hệ thống!"));
                         }
@@ -525,7 +522,7 @@ const CreateBuilding = ({ visible, close, data }) => {
                 >
                   <InputNumber
                     placeholder="Nhập số lượng tầng của chung cư"
-                    controls={false}
+                    // controls={false}
                     defaultValue={1}
                     formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                     parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
@@ -551,7 +548,7 @@ const CreateBuilding = ({ visible, close, data }) => {
                 >
                   <InputNumber
                     placeholder="Nhập số lượng phòng"
-                    controls={false}
+                    // controls={false}
                     defaultValue={1}
                     formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                     parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
@@ -630,7 +627,7 @@ const CreateBuilding = ({ visible, close, data }) => {
                     addonAfter="Người"
                     style={{ width: "100%" }}
                     defaultValue={3}
-                    controls={false}
+                    // controls={false}
                     placeholder="Nhập số lượng người tối đa của phòng"
                     onChange={roomPeopleChange}
                   />
@@ -715,15 +712,13 @@ const CreateBuilding = ({ visible, close, data }) => {
                     filterOption={(input, option) =>
                       (option?.label?.toLowerCase().trim() ?? "").includes(input?.toLowerCase().trim())
                     }
+                    options={building_address_district === undefined ? [] : [...building_address_district?.map(obj => {
+                      return { label: obj.name, value: obj.code }
+                    }), {
+                      label: 'Chọn Quận/Huyện',
+                      value: ""
+                    },]}
                   >
-                    <Select.Option value="">Chọn Quận/Huyện</Select.Option>
-                    {building_address_district?.map((obj, index) => {
-                      return (
-                        <>
-                          <Select.Option value={obj.code}>{obj.name}</Select.Option>
-                        </>
-                      );
-                    })}
                   </Select>
                 </Form.Item>
                 <Form.Item
@@ -752,15 +747,13 @@ const CreateBuilding = ({ visible, close, data }) => {
                     filterOption={(input, option) =>
                       (option?.label?.toLowerCase().trim() ?? "").includes(input?.toLowerCase().trim())
                     }
+                    options={building_address_wards === undefined ? [] : [...building_address_wards?.map(obj => {
+                      return { label: obj.name, value: obj.code }
+                    }), {
+                      label: 'Chọn Phường/Xã',
+                      value: ""
+                    },]}
                   >
-                    <Select.Option value="">Chọn Phường/Xã</Select.Option>
-                    {building_address_wards?.map((obj, index) => {
-                      return (
-                        <>
-                          <Select.Option value={obj.code}>{obj.name}</Select.Option>
-                        </>
-                      );
-                    })}
                   </Select>
                 </Form.Item>
 
@@ -772,15 +765,15 @@ const CreateBuilding = ({ visible, close, data }) => {
                       <b>Địa chỉ chi tiết: </b>
                     </span>
                   }
-                  rules={[
-                    {
-                      message: "Vui lòng nhập địa chỉ!",
-                    },
-                    {
-                      required: true,
-                      message: "Vui lòng nhập địa chỉ!",
-                    },
-                  ]}
+                // rules={[
+                //   {
+                //     message: "Vui lòng nhập địa chỉ!",
+                //   },
+                //   {
+                //     required: true,
+                //     message: "Vui lòng nhập địa chỉ!",
+                //   },
+                // ]}
                 >
                   <Input onChange={(e) => setBuildingAddress(e.target.value)} placeholder="Nhập địa chỉ chi tiết" />
                 </Form.Item>
@@ -835,7 +828,7 @@ const CreateBuilding = ({ visible, close, data }) => {
                           placeholder="Nhập giá tiền dịch vụ"
                           controls={false}
                           addonAfter="VNĐ"
-                          defaultValue={0}
+                          defaultValue={3500}
                           formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                           parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
                           style={{ width: "100%" }}
@@ -850,7 +843,7 @@ const CreateBuilding = ({ visible, close, data }) => {
                           placeholder="Nhập giá tiền dịch vụ"
                           controls={false}
                           addonAfter="VNĐ"
-                          defaultValue={0}
+                          defaultValue={30000}
                           formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                           parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
                           style={{ width: "100%" }}
@@ -1077,7 +1070,7 @@ const CreateBuilding = ({ visible, close, data }) => {
                                   width: "100%",
                                 }}
                                 defaultValue="Chọn nhóm tài sản"
-                                // onChange={internetChange}
+                              // onChange={internetChange}
                               >
                                 {listAssetTypeName?.map((obj, index) => {
                                   return (

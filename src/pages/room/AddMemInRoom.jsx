@@ -24,7 +24,6 @@ const fontSizeIcon = {
 
 function AddMemInRoom(data) {
     const { state } = useLocation();
-    console.log(state);
     // const { room_id } = useParams();
     const [componentSize, setComponentSize] = useState("default");
     const [loading, setLoading] = useState(false);
@@ -50,7 +49,6 @@ function AddMemInRoom(data) {
             })
             .then((res) => {
                 setContractRoom(res.data.data?.find((obj, index) => obj.room_id === parseInt(state)));
-                console.log(res.data.data?.find((obj, index) => obj.room_id === parseInt(state)));
             })
             .catch((error) => {
                 console.log(error);

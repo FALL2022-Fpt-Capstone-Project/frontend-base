@@ -161,15 +161,15 @@ const ListBuilding = () => {
           </Row>
           <Row>
             <Select
-              defaultValue="Chọn thành phố"
+              defaultValue={""}
               style={{
                 width: "300px",
                 padding: "10px 0",
               }}
               onChange={cityChange}
-              // options={optionsCity}
+            // options={optionsCity}
             >
-              <Select.Option value="">Tất cả</Select.Option>
+              <Select.Option value="">Tất cả thành phố</Select.Option>
               {optionsCity?.map((obj, index) => {
                 return (
                   <>

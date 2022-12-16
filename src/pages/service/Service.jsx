@@ -55,7 +55,7 @@ function Service(props) {
         // withCredentials: true,
       })
       .then((res) => {
-        console.log(res.data.data);
+        // console.log(res.data.data);
         setDataApartmentServiceGeneral(res.data.data);
       })
       .catch((error) => {
@@ -104,7 +104,7 @@ function Service(props) {
       })
       .then((res) => {
         setListServiceName(res.data.data);
-        console.log(res.data.data);
+        // console.log(res.data.data);
       })
       .catch((error) => {
         console.log(error);
@@ -121,7 +121,7 @@ function Service(props) {
       })
       .then((res) => {
         setServiceCalCuMethod(res.data.data);
-        console.log(res.data.data);
+        // console.log(res.data.data);
       })
       .catch((error) => {
         console.log(error);
@@ -167,7 +167,6 @@ function Service(props) {
             <Tooltip title="Chỉnh sửa">
               <EditTwoTone
                 onClick={() => {
-                  console.log(record);
                   setEditServiceGeneral(true);
                   formEditSerivce.setFieldsValue({
                     general_service_id: record.general_service_id,
@@ -213,10 +212,9 @@ function Service(props) {
         ADD_NEW_SERIVCE,
         {
           ...e,
-          group_id:
-            groupIdSelect,
+          group_id: groupIdSelect,
           service_id: parseInt(e.service_id),
-          contract_id: dataApartmentGroup?.find(obj => obj.group_id === groupIdSelect)?.group_contracted ? 1 : null
+          contract_id: dataApartmentGroup?.find((obj) => obj.group_id === groupIdSelect)?.group_contracted ? 1 : null,
         },
         {
           headers: {
@@ -276,7 +274,6 @@ function Service(props) {
         }
       )
       .then((res) => {
-        console.log(res);
         notification.success({
           message: "Cập nhật dịch vụ thành công",
           placement: "top",
@@ -332,7 +329,7 @@ function Service(props) {
       .post(
         QUICK_ADD_SERVICE + groupIdSelect,
         {
-          groupId: groupIdSelect
+          groupId: groupIdSelect,
         },
         {
           headers: {
@@ -368,7 +365,6 @@ function Service(props) {
   );
 
   return (
-
     <MainLayout title="Thiết lập dịch vụ chung">
       <Row>
         <Col span={6} offset={18}>
@@ -432,8 +428,7 @@ function Service(props) {
         <Col>
           <p>
             <i>
-              <b>Thêm mới nhanh: </b> các dịch vụ cơ bản (điện, nước, internet, xe) giúp việc nhập dữ liệu nhanh
-              hơn
+              <b>Thêm mới nhanh: </b> các dịch vụ cơ bản (điện, nước, internet, xe) giúp việc nhập dữ liệu nhanh hơn
             </i>
           </p>
         </Col>
@@ -580,13 +575,7 @@ function Service(props) {
         }}
         width={500}
         footer={[
-          <Button
-            style={{ overflow: "auto" }}
-            htmlType="submit"
-            key="submit"
-            form="edit-service"
-            type="primary"
-          >
+          <Button style={{ overflow: "auto" }} htmlType="submit" key="submit" form="edit-service" type="primary">
             Lưu
           </Button>,
           <Button

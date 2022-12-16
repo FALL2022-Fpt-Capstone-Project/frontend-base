@@ -31,6 +31,7 @@ const ListHistoryInvoice = ({ visible, close, roomId, setFlag }) => {
       .then((res) => {
         setDataSource(res.data.data);
         setRoomName(res.data.data[0]?.room_name);
+        console.log(res);
       })
       .catch((error) => {
         console.log(error);

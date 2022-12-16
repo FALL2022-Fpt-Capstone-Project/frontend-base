@@ -16,18 +16,17 @@ const marginBottom = {
   marginBottom: "1%",
 };
 const cardTop = {
-  height: '100%',
-  border: '1px solid #C0C0C0',
-  borderRadius: '10px'
+  height: "100%",
+  border: "1px solid #C0C0C0",
+  borderRadius: "10px",
 };
 
 const cardBellow = {
-  height: '100%',
-  marginTop: '2%',
-  border: '1px solid #C0C0C0',
-  borderRadius: '10px'
+  height: "100%",
+  marginTop: "2%",
+  border: "1px solid #C0C0C0",
+  borderRadius: "10px",
 };
-
 
 const textSize = {
   fontSize: 15,
@@ -43,18 +42,16 @@ function ViewContractBuilding({ openView, closeView, dataContract, dataAsset, lo
   const handleCancel = () => {
     closeView(false);
   };
-  useEffect(() => {
-
-  }, []);
+  useEffect(() => {}, []);
 
   if (dataContract.length !== 0) {
-    optionFloor = [{ label: 'Tất cả các tầng', value: "" }];
+    optionFloor = [{ label: "Tất cả các tầng", value: "" }];
     for (let i = 1; i <= dataContract?.total_floor; i++) {
       optionFloor.push({
         value: i,
         label: "Tầng " + i,
       });
-    };
+    }
   }
 
   const columns = [
@@ -68,8 +65,8 @@ function ViewContractBuilding({ openView, closeView, dataContract, dataAsset, lo
       dataIndex: "roomFloor",
       key: "room_id",
       render: (roomFloor) => {
-        return 'Tầng ' + roomFloor
-      }
+        return "Tầng " + roomFloor;
+      },
     },
     {
       title: "Giá phòng",
@@ -86,15 +83,15 @@ function ViewContractBuilding({ openView, closeView, dataContract, dataAsset, lo
       dataIndex: "roomSquare",
       key: "room_id",
       render: (roomSquare) => {
-        return roomSquare + " m2"
+        return roomSquare + " m2";
       },
     },
     {
       title: "Trạng thái phòng",
       dataIndex: "roomStatus",
-      key: 'roomStatus',
+      key: "roomStatus",
       render: (roomStatus) => {
-        return roomStatus ? <Tag color="success">Đã ký hợp đồng</Tag> : <Tag color="error">Chưa có hợp đồng</Tag>
+        return roomStatus ? <Tag color="success">Đã ký hợp đồng</Tag> : <Tag color="error">Chưa có hợp đồng</Tag>;
       },
     },
   ];
@@ -119,7 +116,7 @@ function ViewContractBuilding({ openView, closeView, dataContract, dataAsset, lo
           ]}
         >
           <Tabs defaultActiveKey="1">
-            <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>Thông tin chung</span>} key="1">
+            <Tabs.TabPane tab={<span style={{ fontSize: "17px" }}>Thông tin chung</span>} key="1">
               <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                 <Col xs={24} xl={12} span={12}>
                   <Card
@@ -144,7 +141,7 @@ function ViewContractBuilding({ openView, closeView, dataContract, dataAsset, lo
                         <h4>Giới tính: </h4>
                       </Col>
                       <Col span={12}>
-                        <p>{dataContract?.gender ? 'Nam' : 'Nữ'}</p>
+                        <p>{dataContract?.gender ? "Nam" : "Nữ"}</p>
                       </Col>
                     </Row>
                     <Row>
@@ -236,11 +233,16 @@ function ViewContractBuilding({ openView, closeView, dataContract, dataAsset, lo
                         <h4>Thời hạn hợp đồng:</h4>
                       </Col>
                       <Col span={12}>
-                        <p>{dataContract?.contract_term < 12
-                          ? dataContract?.contract_term + ' tháng'
-                          : dataContract?.contract_term % 12 !== 0 ?
-                            Math.floor(dataContract?.contract_term / 12) + ' năm ' + dataContract?.contract_term % 12 + ' tháng' :
-                            Math.floor(dataContract?.contract_term / 12) + ' năm '}</p>
+                        <p>
+                          {dataContract?.contract_term < 12
+                            ? dataContract?.contract_term + " tháng"
+                            : dataContract?.contract_term % 12 !== 0
+                            ? Math.floor(dataContract?.contract_term / 12) +
+                              " năm " +
+                              (dataContract?.contract_term % 12) +
+                              " tháng"
+                            : Math.floor(dataContract?.contract_term / 12) + " năm "}
+                        </p>
                       </Col>
                     </Row>
                     <Row>
@@ -248,7 +250,7 @@ function ViewContractBuilding({ openView, closeView, dataContract, dataAsset, lo
                         <h4>Ngày hợp đồng có hiệu lực:</h4>
                       </Col>
                       <Col span={12}>
-                        <p>{moment(dataContract?.contract_start_date).format('DD-MM-YYYY')}</p>
+                        <p>{moment(dataContract?.contract_start_date).format("DD-MM-YYYY")}</p>
                       </Col>
                     </Row>
                     <Row>
@@ -256,7 +258,7 @@ function ViewContractBuilding({ openView, closeView, dataContract, dataAsset, lo
                         <h4>Ngày kết thúc: </h4>
                       </Col>
                       <Col span={12}>
-                        <p>{moment(dataContract?.contract_end_date).format('DD-MM-YYYY')}</p>
+                        <p>{moment(dataContract?.contract_end_date).format("DD-MM-YYYY")}</p>
                       </Col>
                     </Row>
                     <Row>
@@ -272,7 +274,9 @@ function ViewContractBuilding({ openView, closeView, dataContract, dataAsset, lo
                         <h4>Trạng thái hợp đồng: </h4>
                       </Col>
                       <Col span={12}>
-                        <Tag color={dataContract?.contract_is_disable ? 'red' : 'green'}>{dataContract?.contract_is_disable ? 'Hết hiệu lực' : 'Còn hiệu lực'}</Tag>
+                        <Tag color={dataContract?.contract_is_disable ? "red" : "green"}>
+                          {dataContract?.contract_is_disable ? "Hết hiệu lực" : "Còn hiệu lực"}
+                        </Tag>
                       </Col>
                     </Row>
                     <Row>
@@ -303,7 +307,11 @@ function ViewContractBuilding({ openView, closeView, dataContract, dataAsset, lo
                       </Col>
                       <Col span={12}>
                         <p>
-                          <b>{new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(dataContract.contract_price)}</b>
+                          <b>
+                            {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
+                              dataContract.contract_price
+                            )}
+                          </b>
                         </p>
                       </Col>
                     </Row>
@@ -313,7 +321,11 @@ function ViewContractBuilding({ openView, closeView, dataContract, dataAsset, lo
                       </Col>
                       <Col span={12}>
                         <p>
-                          <b>{new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(dataContract.contract_deposit)}</b>
+                          <b>
+                            {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
+                              dataContract.contract_deposit
+                            )}
+                          </b>
                         </p>
                       </Col>
                     </Row>
@@ -336,17 +348,24 @@ function ViewContractBuilding({ openView, closeView, dataContract, dataAsset, lo
                             <h4>{obj.service_show_name}: </h4>
                           </Col>
                           <Col span={12}>
-                            <p><b>{new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(obj.service_price)}</b> ({obj.service_type_name})</p>
+                            <p>
+                              <b>
+                                {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
+                                  obj.service_price
+                                )}
+                              </b>{" "}
+                              ({obj.service_type_name})
+                            </p>
                           </Col>
                         </Row>
-                      )
+                      );
                     })}
                   </Card>
                 </Col>
               </Row>
               <Button
                 onClick={() => {
-                  navigate('/contract-apartment/edit', { state: dataContract });
+                  navigate("/contract-apartment/edit", { state: dataContract });
                 }}
                 style={{ marginTop: "3%" }}
                 type="primary"
@@ -355,7 +374,7 @@ function ViewContractBuilding({ openView, closeView, dataContract, dataAsset, lo
                 Chỉnh sửa thông tin hợp đồng
               </Button>
             </Tabs.TabPane>
-            <Tabs.TabPane tab={<span style={{ fontSize: '17px' }}>Danh sách phòng đã thuê</span>} key="2">
+            <Tabs.TabPane tab={<span style={{ fontSize: "17px" }}>Danh sách phòng đã thuê</span>} key="2">
               <Row style={{ marginBottom: "2%" }} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                 <Col xs={24} md={12} lg={8} xl={8} span={8}>
                   <Statistic
@@ -364,8 +383,11 @@ function ViewContractBuilding({ openView, closeView, dataContract, dataAsset, lo
                         <span style={textSize}>Phòng chưa có hợp đồng </span>
                       </>
                     }
-                    value={dataContract?.list_lease_contracted_room?.filter(room => room.contract_id === null).length + "/"
-                      + dataContract?.list_lease_contracted_room?.length}
+                    value={
+                      dataContract?.list_lease_contracted_room?.filter((room) => room.contract_id === null).length +
+                      "/" +
+                      dataContract?.list_lease_contracted_room?.length
+                    }
                   />
                 </Col>
                 <Col xs={24} md={12} lg={8} xl={8} span={8}>
@@ -375,8 +397,12 @@ function ViewContractBuilding({ openView, closeView, dataContract, dataAsset, lo
                         <span style={textSize}>Phòng đã ký hợp đồng </span>
                       </>
                     }
-                    value={dataContract?.list_lease_contracted_room?.filter(room => Number.isInteger(room.contract_id)).length + "/"
-                      + dataContract?.list_lease_contracted_room?.length}
+                    value={
+                      dataContract?.list_lease_contracted_room?.filter((room) => Number.isInteger(room.contract_id))
+                        .length +
+                      "/" +
+                      dataContract?.list_lease_contracted_room?.length
+                    }
                   />
                 </Col>
                 <Col xs={24} md={12} lg={8} xl={8} span={8}>
@@ -386,9 +412,11 @@ function ViewContractBuilding({ openView, closeView, dataContract, dataAsset, lo
                         <span style={textSize}>Tổng số tiền phòng (VND) </span>
                       </>
                     }
-                    value={new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).
-                      format(dataContract?.list_lease_contracted_room?.map((obj, index) => obj.room_price)?.reduce(
-                        (previousValue, currentValue) => previousValue + currentValue, 0))}
+                    value={new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
+                      dataContract?.list_lease_contracted_room
+                        ?.map((obj, index) => obj.room_price)
+                        ?.reduce((previousValue, currentValue) => previousValue + currentValue, 0)
+                    )}
                   />
                 </Col>
               </Row>
@@ -405,23 +433,25 @@ function ViewContractBuilding({ openView, closeView, dataContract, dataAsset, lo
                     defaultValue={""}
                     options={optionFloor}
                     placeholder="Chọn tầng"
-                    style={{ width: "100%" }}>
-                  </Select>
+                    style={{ width: "100%" }}
+                  ></Select>
                 </Col>
               </Row>
               <Table
                 loading={loading}
                 bordered
-                dataSource={dataContract?.list_lease_contracted_room?.filter(obj => roomFloor === "" ? obj : obj.room_floor === roomFloor)?.map(room => {
-                  return {
-                    room_id: room.room_id,
-                    roomName: room.room_name,
-                    roomFloor: room.room_floor,
-                    roomPrice: room.room_price,
-                    roomSquare: room.room_area,
-                    roomStatus: room.contract_id === null ? false : true
-                  }
-                })}
+                dataSource={dataContract?.list_lease_contracted_room
+                  ?.filter((obj) => (roomFloor === "" ? obj : obj.room_floor === roomFloor))
+                  ?.map((room) => {
+                    return {
+                      room_id: room.room_id,
+                      roomName: room.room_name,
+                      roomFloor: room.room_floor,
+                      roomPrice: room.room_price,
+                      roomSquare: room.room_area,
+                      roomStatus: room.contract_id === null ? false : true,
+                    };
+                  })}
                 scroll={{ x: 1000, y: 800 }}
                 columns={columns}
               />

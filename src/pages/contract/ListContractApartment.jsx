@@ -1,24 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "./listContract.scss";
-import {
-  Input,
-  Table,
-  Tag,
-  Row,
-  Tabs,
-  Col,
-  Select,
-  DatePicker,
-  Button,
-  Tooltip,
-  Switch,
-  Form,
-  InputNumber,
-} from "antd";
+import { Input, Table, Tag, Row, Tabs, Col, Select, DatePicker, Button, Tooltip, Switch, Form } from "antd";
 import { EyeOutlined, EditOutlined, SearchOutlined, UndoOutlined, DeleteOutlined } from "@ant-design/icons";
 import axios from "../../api/axios";
 import ViewContractBuilding from "./ViewContractBuilding";
-import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import DeleteContractBuilding from "./DeleteContractBuilding";
 
@@ -71,9 +56,6 @@ const ListContractApartment = () => {
       })
       .then((res) => {
         setBuildingFilter(res.data.data);
-        // setTimeout(() => {
-        //   window.location.reload();
-        // }, "10000");
       })
       .catch((error) => {
         console.log(error);
@@ -102,7 +84,7 @@ const ListContractApartment = () => {
       })
       .then((res) => {
         setDataSource(res.data.data);
-        console.log(res.data.data);
+        // console.log(res.data.data);
       })
       .catch((error) => {
         console.log(error);
@@ -116,15 +98,6 @@ const ListContractApartment = () => {
   };
 
   const getFilterContractRenter = async (e) => {
-    console.log({
-      name: ownerName,
-      phoneNumber: phoneNumber,
-      identity: ownerIdentity.toString(),
-      isDisable: endContract,
-      startDate: startDate,
-      endDate: endDate,
-      groupId: groupId,
-    });
     setLoading(true);
     await axios
       .get(GET_FILTER_CONTRACT_GROUP, {
@@ -144,7 +117,7 @@ const ListContractApartment = () => {
       })
       .then((res) => {
         setDataSource(res.data.data);
-        console.log(res.data.data);
+        // console.log(res.data.data);
       })
       .catch((error) => {
         console.log(error);
@@ -163,7 +136,7 @@ const ListContractApartment = () => {
         // withCredentials: true,
       })
       .then((res) => {
-        console.log(res.data.data);
+        // console.log(res.data.data);
         setDataApartmentServiceGeneral(res.data.data);
       })
       .catch((error) => {
@@ -192,7 +165,7 @@ const ListContractApartment = () => {
           dataCheck.list_lease_contracted_room.find((obj) => obj.room_id === room.room_id)
         );
         setInvoiceByGroup(data);
-        console.log(data);
+        // console.log(data);
       })
       .catch((error) => {
         console.log(error);
@@ -448,16 +421,8 @@ const ListContractApartment = () => {
             title="Thao tác"
             key="action"
             render={(_, record) => {
-              return (
+              return record.contract_is_disable === true ? (
                 <>
-                  <Tooltip title="Chỉnh sửa">
-                    <EditOutlined
-                      onClick={() => {
-                        navigate("/contract-apartment/edit", { state: record });
-                      }}
-                      style={{ fontSize: "20px", color: "#46a6ff", margin: "0 5px" }}
-                    />
-                  </Tooltip>
                   <Tooltip title="Xem">
                     <EyeOutlined
                       style={{ fontSize: "20px", color: "#46a6ff", margin: "0 5px" }}
@@ -466,6 +431,27 @@ const ListContractApartment = () => {
                         setDataContract(record);
                         apartmentGroupById(record.group_id);
                       }}
+                    />
+                  </Tooltip>
+                </>
+              ) : (
+                <>
+                  <Tooltip title="Xem">
+                    <EyeOutlined
+                      style={{ fontSize: "20px", color: "#46a6ff", margin: "0 5px" }}
+                      onClick={() => {
+                        setViewContract(true);
+                        setDataContract(record);
+                        apartmentGroupById(record.group_id);
+                      }}
+                    />
+                  </Tooltip>
+                  <Tooltip title="Chỉnh sửa">
+                    <EditOutlined
+                      onClick={() => {
+                        navigate("/contract-apartment/edit", { state: record });
+                      }}
+                      style={{ fontSize: "20px", color: "#46a6ff", margin: "0 5px" }}
                     />
                   </Tooltip>
                   <Tooltip title="Kết thúc hợp đồng">

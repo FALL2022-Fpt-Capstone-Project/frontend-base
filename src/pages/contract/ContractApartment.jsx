@@ -13,8 +13,9 @@ const fontSize = {
 };
 const ContractApartment = () => {
   return (
-    <MainLayout title={"Quản lý hợp đồng đi thuê"}>
-      <div className="btn-contract">
+    <MainLayout
+      title={"Quản lý hợp đồng đi thuê"}
+      button={
         <Button
           type="primary"
           icon={<PlusCircleOutlined style={fontSize} />}
@@ -24,7 +25,8 @@ const ContractApartment = () => {
         >
           Thêm mới hợp đồng đi thuê
         </Button>
-      </div>
+      }
+    >
       <div
         className="site-layout-background"
         style={{

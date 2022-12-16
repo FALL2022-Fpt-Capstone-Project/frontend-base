@@ -41,9 +41,12 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
   let year = moment().year();
 
   let date_create = `${year}-${month + 1}-${day}`;
+  let date_payment = `${year}-${month + 1}-${day + 1}`;
   let date_create_format = moment(date_create, "YYYY-MM-DD");
+  let date_payment_format = moment(date_payment, "YYYY-MM-DD");
   const initValues = {
     date_create_invoice: date_create_format,
+    payment_term: date_payment_format,
   };
   const monthChange = (value) => {
     setRoomMonth(value);
@@ -51,6 +54,9 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
   useEffect(() => {
     setDateCreate(date_create);
   }, [date_create]);
+  useEffect(() => {
+    setPaymentTerm(date_payment);
+  }, [date_payment]);
   useEffect(() => {
     axios
       .get(`manager/bill/room/information/${id}`, {
@@ -489,12 +495,9 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
                 return (
                   <>
                     {obj.service_type_name === "Đồng hồ điện/nước" && obj.service_name === "electric" ? (
-                      <Card className="card card-service">
+                      <Card className="card card-service" title={obj.service_show_name}>
                         <Row>
                           <Col span={10}>
-                            <b>{obj.service_show_name}</b>
-                          </Col>
-                          <Col span={10} offset={4}>
                             <Form.Item name="old_elec">
                               <InputNumber
                                 disabled
@@ -502,12 +505,6 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
                                 addonAfter="Số cũ"
                               />
                             </Form.Item>
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Col span={10}>
-                            <span>Giá: </span>
-                            <b>{obj.service_price?.toLocaleString("vn") + " đ"}</b>
                           </Col>
                           <Col span={10} offset={4}>
                             <Form.Item name="new_elec">
@@ -520,14 +517,17 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
                             </Form.Item>
                           </Col>
                         </Row>
-                      </Card>
-                    ) : obj.service_type_name === "Đồng hồ điện/nước" && obj.service_name === "water" ? (
-                      <Card className="card card-service">
                         <Row>
                           <Col span={10}>
-                            <b>{obj.service_show_name}</b>
+                            <span>Giá: </span>
+                            <b>{obj.service_price?.toLocaleString("vn") + " đ"}</b>
                           </Col>
-                          <Col span={10} offset={4}>
+                        </Row>
+                      </Card>
+                    ) : obj.service_type_name === "Đồng hồ điện/nước" && obj.service_name === "water" ? (
+                      <Card className="card card-service" title={obj.service_show_name}>
+                        <Row>
+                          <Col span={10}>
                             <Form.Item name="old_water">
                               <InputNumber
                                 disabled
@@ -536,12 +536,7 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
                               />
                             </Form.Item>
                           </Col>
-                        </Row>
-                        <Row>
-                          <Col span={10}>
-                            <span>Giá: </span>
-                            <b>{obj.service_price?.toLocaleString("vn") + " đ"}</b>
-                          </Col>
+
                           <Col span={10} offset={4}>
                             <Form.Item name="new_water">
                               <InputNumber
@@ -553,14 +548,17 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
                             </Form.Item>
                           </Col>
                         </Row>
-                      </Card>
-                    ) : obj.service_type_name === "Tháng" && obj.service_name === "vehicles" ? (
-                      <Card className="card card-service">
                         <Row>
                           <Col span={10}>
-                            <b>{obj.service_show_name}</b>
+                            <span>Giá: </span>
+                            <b>{obj.service_price?.toLocaleString("vn") + " đ"}</b>
                           </Col>
-                          <Col span={10} offset={4}>
+                        </Row>
+                      </Card>
+                    ) : obj.service_type_name === "Tháng" && obj.service_name === "vehicles" ? (
+                      <Card className="card card-service" title={obj.service_show_name}>
+                        <Row>
+                          <Col span={10}>
                             <Form.Item name="vehiMonth">
                               <InputNumber
                                 onChange={vehiMonthChange}
@@ -580,12 +578,9 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
                         </Row>
                       </Card>
                     ) : obj.service_type_name === "Tháng" && obj.service_name === "internet" ? (
-                      <Card className="card card-service">
+                      <Card className="card card-service" title={obj.service_show_name}>
                         <Row>
                           <Col span={10}>
-                            <b>{obj.service_show_name}</b>
-                          </Col>
-                          <Col span={10} offset={4}>
                             <Form.Item name="internetMonth">
                               <InputNumber
                                 onChange={internetMonthChange}
@@ -605,12 +600,9 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
                         </Row>
                       </Card>
                     ) : obj.service_type_name === "Tháng" && obj.service_name === "cleaning" ? (
-                      <Card className="card card-service">
+                      <Card className="card card-service" title={obj.service_show_name}>
                         <Row>
                           <Col span={10}>
-                            <b>{obj.service_show_name}</b>
-                          </Col>
-                          <Col span={10} offset={4}>
                             <Form.Item name="internetMonth">
                               <InputNumber
                                 onChange={cleanMonthChange}
@@ -628,12 +620,9 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
                         </Row>
                       </Card>
                     ) : obj.service_type_name === "Người" && obj.service_name === "vehicles" ? (
-                      <Card className="card card-service">
+                      <Card className="card card-service" title={obj.service_show_name}>
                         <Row>
                           <Col span={10}>
-                            <b>{obj.service_show_name}</b>
-                          </Col>
-                          <Col span={10} offset={4}>
                             <Form.Item name="vehiMonth">
                               <InputNumber
                                 onChange={vehiPeopleChange}
@@ -652,12 +641,9 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
                         </Row>
                       </Card>
                     ) : obj.service_type_name === "Người" && obj.service_name === "internet" ? (
-                      <Card className="card card-service">
+                      <Card className="card card-service" title={obj.service_show_name}>
                         <Row>
                           <Col span={10}>
-                            <b>{obj.service_show_name}</b>
-                          </Col>
-                          <Col span={10} offset={4}>
                             <Form.Item name="internetMonth">
                               <InputNumber
                                 onChange={internetPeopleChange}
@@ -676,12 +662,9 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
                         </Row>
                       </Card>
                     ) : obj.service_type_name === "Người" && obj.service_name === "cleaning" ? (
-                      <Card className="card card-service">
+                      <Card className="card card-service" title={obj.service_show_name}>
                         <Row>
                           <Col span={10}>
-                            <b>{obj.service_show_name}</b>
-                          </Col>
-                          <Col span={10} offset={4}>
                             <Form.Item name="internetMonth">
                               <InputNumber
                                 onChange={cleanPeopleChange}
