@@ -17,8 +17,12 @@ const RevenueStatistic = ({ loading, data }) => {
       title: "Số phòng đi thuê",
       key: "group_id",
       render: (record) => {
-        return record?.list_rooms?.filter(group => Number.isInteger(group?.group_contract_id)).length + " / " + record?.list_rooms?.length
-      }
+        return (
+          record?.list_rooms?.filter((group) => Number.isInteger(group?.group_contract_id)).length +
+          " / " +
+          record?.list_rooms?.length
+        );
+      },
     },
     {
       title: "Số phòng đã cho thuê lại",
@@ -26,84 +30,122 @@ const RevenueStatistic = ({ loading, data }) => {
       render: (record) => {
         return (
           <>
-            {
-              record?.list_rooms?.filter(group => Number.isInteger(group?.group_contract_id) && Number.isInteger(group?.contract_id))?.length
-              + " / " + record?.list_rooms?.filter(group => Number.isInteger(group?.group_contract_id))?.length
-            }
+            {record?.list_rooms?.filter(
+              (group) => Number.isInteger(group?.group_contract_id) && Number.isInteger(group?.contract_id)
+            )?.length +
+              " / " +
+              record?.list_rooms?.filter((group) => Number.isInteger(group?.group_contract_id))?.length}
           </>
-        )
-
-      }
+        );
+      },
     },
     {
       title: "Số tiền thu",
       key: "group_id",
       render: (record) => {
-        return (<>
-          <span>
-            {
-              record.group_contracted ?
-                new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" })
-                  .format(data?.billGroup?.filter(bill => bill.group_id === record.group_id && bill.is_paid === true)?.map(obj => obj.total_money)?.reduce((pre, current) => pre + current, 0)) : 0 + "đ"
-            }
-          </span>
-        </>)
-      }
+        return (
+          <>
+            <span>
+              {record.group_contracted
+                ? new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
+                    data?.billGroup
+                      ?.filter((bill) => bill.group_id === record.group_id && bill.is_paid === true)
+                      ?.map((obj) => obj.total_money)
+                      ?.reduce((pre, current) => pre + current, 0)
+                  )
+                : 0 + "đ"}
+            </span>
+          </>
+        );
+      },
     },
     {
       title: "Số tiền chi",
       key: "group_id",
       render: (record) => {
-        return (<>
-          <span>
-            {
-              record.group_contracted ?
-                new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(record?.list_room_lease_contracted?.map(contract => contract.contract_price)
-                  ?.reduce((pre, current) => pre + current, 0)) : 0 + "đ"
-            }
-          </span>
-        </>)
-      }
+        return (
+          <>
+            <span>
+              {record.group_contracted
+                ? new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
+                    record?.list_room_lease_contracted
+                      ?.map((contract) => contract.contract_price)
+                      ?.reduce((pre, current) => pre + current, 0)
+                  )
+                : 0 + "đ"}
+            </span>
+          </>
+        );
+      },
     },
     {
       title: "Lợi nhuận",
       key: "group_id",
       render: (record) => {
-        return (<>
-          <Tag color={data?.billGroup?.filter(bill => bill.group_id === record.group_id && bill.is_paid === true)
-            ?.map(obj => obj.total_money)?.reduce((pre, current) => pre + current, 0) - record?.list_room_lease_contracted?.map(contract => contract.contract_price)
-              ?.reduce((pre, current) => pre + current, 0) > 0 ? 'green' : 'red'}>
-            {
-              record.group_contracted
-                ?
-                new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
-                  data?.billGroup?.filter(bill => bill.group_id === record.group_id && bill.is_paid === true)?.map(obj => obj.total_money)?.reduce((pre, current) => pre + current, 0) - record?.list_room_lease_contracted?.map(contract => contract.contract_price)
-                    ?.reduce((pre, current) => pre + current, 0)
-                )
-                : 0 + "đ"
-            }
-          </Tag>
-        </>)
-      }
+        return (
+          <>
+            <Tag
+              color={
+                data?.billGroup
+                  ?.filter((bill) => bill.group_id === record.group_id && bill.is_paid === true)
+                  ?.map((obj) => obj.total_money)
+                  ?.reduce((pre, current) => pre + current, 0) -
+                  record?.list_room_lease_contracted
+                    ?.map((contract) => contract.contract_price)
+                    ?.reduce((pre, current) => pre + current, 0) >
+                0
+                  ? "green"
+                  : "red"
+              }
+            >
+              {record.group_contracted
+                ? new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
+                    data?.billGroup
+                      ?.filter((bill) => bill.group_id === record.group_id && bill.is_paid === true)
+                      ?.map((obj) => obj.total_money)
+                      ?.reduce((pre, current) => pre + current, 0) -
+                      record?.list_room_lease_contracted
+                        ?.map((contract) => contract.contract_price)
+                        ?.reduce((pre, current) => pre + current, 0)
+                  )
+                : 0 + "đ"}
+            </Tag>
+          </>
+        );
+      },
     },
   ];
 
   let totalRentalRoom = 0;
-  totalRentalRoom = data?.group?.map(group => {
-    return group?.list_rooms?.filter(group => Number.isInteger(group?.group_contract_id))?.length
-  })?.reduce((pre, current) => pre + current, 0);
+  totalRentalRoom = data?.group
+    ?.map((group) => {
+      return group?.list_rooms?.filter((group) => Number.isInteger(group?.group_contract_id))?.length;
+    })
+    ?.reduce((pre, current) => pre + current, 0);
 
   let roomEmpty = 0;
-  roomEmpty = data?.group?.map(group => {
-    return group?.list_rooms?.filter(group => Number.isInteger(group?.group_contract_id))?.length
-  })?.reduce((pre, current) => pre + current, 0) - data?.group?.map(group => {
-    return group?.list_rooms?.filter(group => Number.isInteger(group?.group_contract_id) && Number.isInteger(group?.contract_id)).length
-  })?.reduce((pre, current) => pre + current, 0);
+  roomEmpty =
+    data?.group
+      ?.map((group) => {
+        return group?.list_rooms?.filter((group) => Number.isInteger(group?.group_contract_id))?.length;
+      })
+      ?.reduce((pre, current) => pre + current, 0) -
+    data?.group
+      ?.map((group) => {
+        return group?.list_rooms?.filter(
+          (group) => Number.isInteger(group?.group_contract_id) && Number.isInteger(group?.contract_id)
+        ).length;
+      })
+      ?.reduce((pre, current) => pre + current, 0);
 
   let roomSubRental = 0;
-  roomSubRental = data?.group?.map(group => {
-    return group?.list_rooms?.filter(group => Number.isInteger(group?.group_contract_id) && Number.isInteger(group?.contract_id))?.length
-  })?.reduce((pre, current) => pre + current, 0);
+  roomSubRental = data?.group
+    ?.map((group) => {
+      return group?.list_rooms?.filter(
+        (group) => Number.isInteger(group?.group_contract_id) && Number.isInteger(group?.contract_id)
+      )?.length;
+    })
+    ?.reduce((pre, current) => pre + current, 0);
 
   return (
     <>
@@ -155,10 +197,10 @@ const RevenueStatistic = ({ loading, data }) => {
         columns={columns}
         loading={loading}
         dataSource={data.group}
-        pagination={{ defaultPageSize: 5, showSizeChanger: true, pageSizeOptions: ['5', '10', '20'] }}
+        pagination={{ defaultPageSize: 5, showSizeChanger: true, pageSizeOptions: ["5", "10", "20"] }}
       />
     </>
-  )
+  );
 };
 
 export default RevenueStatistic;

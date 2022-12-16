@@ -8,7 +8,7 @@ import {
   DollarOutlined,
   HomeOutlined,
   CheckCircleTwoTone,
-  DownOutlined
+  DownOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
 import {
@@ -87,14 +87,20 @@ const CreateContractBuilding = () => {
     setAutoExpandParent(false);
   };
   const onCheck = (checkedKeysValue) => {
-    const data_id = checkedKeysValue?.map((obj, index) => obj.split("-"))?.map((o, i) => {
-      return { floor: parseInt(o[0]), room: parseInt(o[1]) }
-    })?.filter((room, j) => room !== undefined)?.map((obj, index) => obj.room).filter((o, i) => Number.isInteger(o));
+    const data_id = checkedKeysValue
+      ?.map((obj, index) => obj.split("-"))
+      ?.map((o, i) => {
+        return { floor: parseInt(o[0]), room: parseInt(o[1]) };
+      })
+      ?.filter((room, j) => room !== undefined)
+      ?.map((obj, index) => obj.room)
+      .filter((o, i) => Number.isInteger(o));
     setCheckedKeys(checkedKeysValue);
     setListRoomId(data_id);
     const totalRoomPrice = dataApartmentGroupSelect?.list_rooms
-      ?.filter((room, i) => data_id.find(obj => room.room_id === obj))
-      ?.map(o => o.room_price)?.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
+      ?.filter((room, i) => data_id.find((obj) => room.room_id === obj))
+      ?.map((o) => o.room_price)
+      ?.reduce((previousValue, currentValue) => previousValue + currentValue, 0);
 
     form.setFieldsValue({
       list_room: data_id,
@@ -131,7 +137,6 @@ const CreateContractBuilding = () => {
     getAllContractBuilding();
   }, []);
 
-
   const getAllContractBuilding = async () => {
     setLoading(true);
     await axios
@@ -143,26 +148,30 @@ const CreateContractBuilding = () => {
         },
       })
       .then((res) => {
-        const ownerIdentity = res.data.data.map(owner => owner.identity_number);
+        const ownerIdentity = res.data.data.map((owner) => owner.identity_number);
         const filterOwner = res.data.data.filter((obj, index) => ownerIdentity.indexOf(obj.identity_number) === index);
 
-        setDataOwner(filterOwner.map(owner => {
-          return {
-            rack_renter_full_name: owner.rack_renter_full_name,
-            gender: owner.gender,
-            rack_renter: owner.rack_renter,
-            phone_number: owner.phone_number,
-            rack_renter_email: owner.rack_renter_email,
-            identity_number: owner.identity_number,
-            rack_renter_more_details: owner.rack_renter_more_details
-          }
-        }));
-        setOptionAutoComplete(filterOwner?.map(owner => {
-          return {
-            value: owner.identity_number,
-            label: owner.rack_renter_full_name + " (" + owner.phone_number + ")",
-          }
-        }));
+        setDataOwner(
+          filterOwner.map((owner) => {
+            return {
+              rack_renter_full_name: owner.rack_renter_full_name,
+              gender: owner.gender,
+              rack_renter: owner.rack_renter,
+              phone_number: owner.phone_number,
+              rack_renter_email: owner.rack_renter_email,
+              identity_number: owner.identity_number,
+              rack_renter_more_details: owner.rack_renter_more_details,
+            };
+          })
+        );
+        setOptionAutoComplete(
+          filterOwner?.map((owner) => {
+            return {
+              value: owner.identity_number,
+              label: owner.rack_renter_full_name + " (" + owner.phone_number + ")",
+            };
+          })
+        );
       })
       .catch((error) => {
         // console.log(error);
@@ -202,7 +211,7 @@ const CreateContractBuilding = () => {
       contract_deposit: 0,
       contract_type: 2,
       contract_start_date: contractStartDate,
-      contract_end_date: moment().add(contractDuration, 'M'),
+      contract_end_date: moment().add(contractDuration, "M"),
       owner_gender: true,
       contract_duration: contractDuration,
       note: "",
@@ -391,18 +400,20 @@ const CreateContractBuilding = () => {
                     ]}
                   >
                     <AutoComplete
-                      filterOption={(input, option) => (option?.label.toLowerCase().trim() ?? '').includes(input.toLowerCase().trim())}
+                      filterOption={(input, option) =>
+                        (option?.label.toLowerCase().trim() ?? "").includes(input.toLowerCase().trim())
+                      }
                       options={optionAutoComplete}
                       placeholder="Nhập tên người cho thuê"
                       onSelect={(e) => {
-                        const data = dataOwner.find(owner => owner.identity_number === e);
+                        const data = dataOwner.find((owner) => owner.identity_number === e);
                         form.setFieldsValue({
                           owner_name: data.rack_renter_full_name,
                           owner_gender: data.gender,
                           owner_phone_number: data.phone_number,
                           owner_email: data.rack_renter_email,
                           owner_identity_card: data.identity_number,
-                          address_more_detail: data.rack_renter_more_details
+                          address_more_detail: data.rack_renter_more_details,
                         });
                       }}
                     />
@@ -502,13 +513,7 @@ const CreateContractBuilding = () => {
                       </span>
                     }
                   >
-                    <TextArea
-                      className="textArea"
-                      maxLength={200}
-                      rows={5}
-                      placeholder="Ghi chú"
-                      value={""}
-                    />
+                    <TextArea className="textArea" maxLength={200} rows={5} placeholder="Ghi chú" value={""} />
                   </Form.Item>
                 </Card>
               </Col>
@@ -549,7 +554,7 @@ const CreateContractBuilding = () => {
                   >
                     <Select placeholder="Kỳ thanh toán" style={{ width: "100%" }}>
                       {contract_payment_cycle.map((obj, index) => {
-                        return <Option value={obj.contractTermValue}>{obj.contractTermName}</Option>
+                        return <Option value={obj.contractTermValue}>{obj.contractTermName}</Option>;
                       })}
                     </Select>
                   </Form.Item>
@@ -634,12 +639,14 @@ const CreateContractBuilding = () => {
                           var startDateFrom = moment(form.getFieldValue("contract_start_date"));
                           var endDateForm = moment(value);
                           if (endDateForm < startDateFrom) {
-                            return Promise.reject(new Error('Vui lòng nhập ngày kết thúc lớn hơn ngày hợp đồng có hiệu lực'));
+                            return Promise.reject(
+                              new Error("Vui lòng nhập ngày kết thúc lớn hơn ngày hợp đồng có hiệu lực")
+                            );
                           } else {
-                            return Promise.resolve(new Error('Vui lòng chọn ngày kết thúc'));
+                            return Promise.resolve(new Error("Vui lòng chọn ngày kết thúc"));
                           }
                         },
-                      }
+                      },
                     ]}
                   >
                     <DatePicker
@@ -715,9 +722,7 @@ const CreateContractBuilding = () => {
                             (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
                           }
                           onChange={(e) => {
-                            setDataApartmentGroupSelect(
-                              dataApartmentGroup.find((obj, index) => obj.group_id === e)
-                            );
+                            setDataApartmentGroupSelect(dataApartmentGroup.find((obj, index) => obj.group_id === e));
                             const list_rooms = dataApartmentGroup
                               ?.find((obj, index) => obj.group_id === e)
                               ?.list_rooms?.filter((obj, index) => obj.group_contract_id === null);
@@ -733,20 +738,25 @@ const CreateContractBuilding = () => {
                               ?.filter((obj, index) => mapped_list_rooms.indexOf(obj) === index)
                               .sort((a, b) => a - b);
 
-                            const floor_room = get_floors?.map((obj, index) => {
-                              const children = list_rooms?.filter((o, i) => o.room_floor === obj)?.map((room, j) => { return [{ title: `Phòng ${room.room_name}`, key: obj + "-" + room.room_id }] })?.map((a, b) => a[0]);
-                              return [
-                                {
-                                  title: `Tầng ${obj} | Số lượng: ${children.length}`,
-                                  key: obj.toString(),
-                                  children: children
-                                }
-                              ]
-                            })?.map((o, i) => o[0]);
+                            const floor_room = get_floors
+                              ?.map((obj, index) => {
+                                const children = list_rooms
+                                  ?.filter((o, i) => o.room_floor === obj)
+                                  ?.map((room, j) => {
+                                    return [{ title: `Phòng ${room.room_name}`, key: obj + "-" + room.room_id }];
+                                  })
+                                  ?.map((a, b) => a[0]);
+                                return [
+                                  {
+                                    title: `Tầng ${obj} | Số lượng: ${children.length}`,
+                                    key: obj.toString(),
+                                    children: children,
+                                  },
+                                ];
+                              })
+                              ?.map((o, i) => o[0]);
 
-                            setGroupSelect(dataApartmentGroup?.find(
-                              (obj, index) => obj.group_id === e
-                            ));
+                            setGroupSelect(dataApartmentGroup?.find((obj, index) => obj.group_id === e));
 
                             setNumberOfFloor(floor_room);
 
@@ -756,31 +766,34 @@ const CreateContractBuilding = () => {
                               ?.filter((obj, index) => mapped_list_rooms_rented.indexOf(obj) === index)
                               .sort((a, b) => a - b);
 
-                            const treeDataRented = get_floors_rented?.map((obj, index) => {
-                              const children = list_rooms_rented?.filter((o, i) => o.room_floor === obj)
-                                ?.map((room, j) => {
-                                  return [{ title: `Phòng ${room.room_name}`, key: obj + "-" + room.room_id }]
-                                })?.map((a, b) => a[0]);
-                              return [
-                                {
-                                  title: `Tầng ${obj} | Số lượng: ${children.length}`,
-                                  key: obj.toString(),
-                                  children: children
-                                }
-                              ]
-                            })?.map((o, i) => o[0]);
+                            const treeDataRented = get_floors_rented
+                              ?.map((obj, index) => {
+                                const children = list_rooms_rented
+                                  ?.filter((o, i) => o.room_floor === obj)
+                                  ?.map((room, j) => {
+                                    return [{ title: `Phòng ${room.room_name}`, key: obj + "-" + room.room_id }];
+                                  })
+                                  ?.map((a, b) => a[0]);
+                                return [
+                                  {
+                                    title: `Tầng ${obj} | Số lượng: ${children.length}`,
+                                    key: obj.toString(),
+                                    children: children,
+                                  },
+                                ];
+                              })
+                              ?.map((o, i) => o[0]);
                             setTreeDataRented(treeDataRented);
 
-
                             form.setFieldsValue({
-                              address_city: dataApartmentGroup?.find((obj, index) => obj.group_id === e)
-                                ?.address?.address_city,
-                              address_district: dataApartmentGroup?.find((obj, index) => obj.group_id === e)
-                                ?.address?.address_district,
+                              address_city: dataApartmentGroup?.find((obj, index) => obj.group_id === e)?.address
+                                ?.address_city,
+                              address_district: dataApartmentGroup?.find((obj, index) => obj.group_id === e)?.address
+                                ?.address_district,
                               address_more_details: dataApartmentGroup?.find((obj, index) => obj.group_id === e)
                                 ?.address?.address_more_details,
-                              address_wards: dataApartmentGroup?.find((obj, index) => obj.group_id === e)
-                                ?.address?.address_wards,
+                              address_wards: dataApartmentGroup?.find((obj, index) => obj.group_id === e)?.address
+                                ?.address_wards,
                             });
                             setCheckedKeys([]);
                             setListRoomId([]);
@@ -796,15 +809,27 @@ const CreateContractBuilding = () => {
                   <Divider />
                   <Row>
                     <Col span={12}>
-                      <p><b>Số lượng tầng:</b> </p>
+                      <p>
+                        <b>Số lượng tầng:</b>{" "}
+                      </p>
                     </Col>
                     <Col span={12}>
-                      <p>{groupSelect?.list_rooms?.map((obj, index) => obj.room_floor)?.filter((o, i) => groupSelect?.list_rooms?.map((obj, index) => obj.room_floor)?.indexOf(o) === i)?.length}</p>
+                      <p>
+                        {
+                          groupSelect?.list_rooms
+                            ?.map((obj, index) => obj.room_floor)
+                            ?.filter(
+                              (o, i) => groupSelect?.list_rooms?.map((obj, index) => obj.room_floor)?.indexOf(o) === i
+                            )?.length
+                        }
+                      </p>
                     </Col>
                   </Row>
                   <Row>
                     <Col span={12}>
-                      <p><b>Số lượng phòng:</b> </p>
+                      <p>
+                        <b>Số lượng phòng:</b>{" "}
+                      </p>
                     </Col>
                     <Col span={12}>
                       <p>{groupSelect?.list_rooms?.length}</p>
@@ -822,7 +847,9 @@ const CreateContractBuilding = () => {
                   </Row>
                   <Row>
                     <Col span={12}>
-                      <p><b>Quận/Huyện:</b> </p>
+                      <p>
+                        <b>Quận/Huyện:</b>{" "}
+                      </p>
                     </Col>
                     <Col span={12}>
                       <p>{groupSelect?.address?.address_district}</p>
@@ -882,7 +909,9 @@ const CreateContractBuilding = () => {
                       </Tag>
                     </>
                   }
-                  bordered={false} className="card-width-100 card-height">
+                  bordered={false}
+                  className="card-width-100 card-height"
+                >
                   <Row>
                     <Col xs={12} lg={24} xl={24} span={24}>
                       <p>
@@ -919,18 +948,11 @@ const CreateContractBuilding = () => {
                         </p>
                       </Row>
                       <Row>
-                        <Tree
-                          showIcon
-                          checkable={false}
-                          treeData={treeDataRented}
-                          switcherIcon={<DownOutlined />}
-                        />
+                        <Tree showIcon checkable={false} treeData={treeDataRented} switcherIcon={<DownOutlined />} />
                       </Row>
                     </Col>
                   </Row>
-                  <Row>
-
-                  </Row>
+                  <Row></Row>
                 </Card>
               </Col>
               <Col xs={24} lg={8} xl={8} span={8}>
@@ -1079,21 +1101,14 @@ const CreateContractBuilding = () => {
         Quay lại
       </Button>
       {visibleSubmit ? (
-        <Button
-          htmlType="submit"
-          style={{ marginTop: "1%", marginRight: "1%" }}
-          type="primary"
-          form="create-contract"
-        >
+        <Button htmlType="submit" style={{ marginTop: "1%", marginRight: "1%" }} type="primary" form="create-contract">
           Tạo mới hợp đồng
         </Button>
       ) : (
         ""
       )}
       <Button
-        style={
-          visibleSubmit ? { display: "none" } : { marginTop: "1%", marginRight: "0.5%", display: "inline" }
-        }
+        style={visibleSubmit ? { display: "none" } : { marginTop: "1%", marginRight: "0.5%", display: "inline" }}
         type="primary"
         onClick={onNext}
       >

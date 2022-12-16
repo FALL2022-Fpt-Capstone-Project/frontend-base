@@ -482,8 +482,7 @@ const ListContractRenter = () => {
             title: "Thao tác",
             dataIndex: "action",
             render: (_, record) => {
-              return record.contract_is_disable === true
-                ?
+              return record.contract_is_disable === true ? (
                 <>
                   <Tooltip title="Xem">
                     <EyeOutlined
@@ -497,7 +496,7 @@ const ListContractRenter = () => {
                     />
                   </Tooltip>
                 </>
-                :
+              ) : (
                 <>
                   <Tooltip title="Xem">
                     <EyeOutlined
@@ -535,6 +534,7 @@ const ListContractRenter = () => {
                     />
                   </Tooltip>
                 </>
+              );
             },
           },
         ]}
@@ -555,7 +555,7 @@ const ListContractRenter = () => {
         dataContract={contractInfor}
         dataInvoice={getInvoiceData.filter((invoice) => invoice.is_paid === false)}
       />
-    </div >
+    </div>
   );
 };
 

@@ -49,15 +49,24 @@ const Home = () => {
   }, []);
 
   let income = 0;
-  income = revenue?.group?.map(group => {
-    return revenue?.billGroup?.filter(bill => bill.group_id === group.group_id && bill.is_paid === true)
-      ?.map(obj => obj.total_money)?.reduce((pre, current) => pre + current, 0)
-  })?.reduce((pre, current) => pre + current, 0);
+  income = revenue?.group
+    ?.map((group) => {
+      return revenue?.billGroup
+        ?.filter((bill) => bill.group_id === group.group_id && bill.is_paid === true)
+        ?.map((obj) => obj.total_money)
+        ?.reduce((pre, current) => pre + current, 0);
+    })
+    ?.reduce((pre, current) => pre + current, 0);
 
   let outcome = 0;
-  outcome = dataApartmentGroup?.map(group => {
-    return group.list_rooms?.filter(obj => Number.parseInt(obj.group_contract_id))?.map(room => room.room_price).reduce((pre, current) => pre + current, 0)
-  })?.reduce((a, b) => a + b, 0);
+  outcome = dataApartmentGroup
+    ?.map((group) => {
+      return group.list_rooms
+        ?.filter((obj) => Number.parseInt(obj.group_contract_id))
+        ?.map((room) => room.room_price)
+        .reduce((pre, current) => pre + current, 0);
+    })
+    ?.reduce((a, b) => a + b, 0);
 
   let profit = 0;
   profit = income - outcome;
@@ -76,11 +85,11 @@ const Home = () => {
         const mapped = mergeGroup?.map((obj, index) => obj.group_id);
         const filterGroupId = mergeGroup?.filter((obj, index) => mapped.indexOf(obj.group_id) === index);
         setDataApartmentGroup(filterGroupId);
-        setRevenue(pre => {
+        setRevenue((pre) => {
           return {
             ...pre,
-            group: filterGroupId
-          }
+            group: filterGroupId,
+          };
         });
       })
       .catch((error) => {
@@ -146,11 +155,11 @@ const Home = () => {
       .then((res) => {
         const data = res.data.data;
         // console.log(data);
-        setRevenue(pre => {
+        setRevenue((pre) => {
           return {
             ...pre,
-            billGroup: data
-          }
+            billGroup: data,
+          };
         });
       })
       .catch((error) => {
@@ -227,22 +236,32 @@ const Home = () => {
         <Row gutter={[16]}>
           <Col xs={24} xl={12} span={12}>
             <Card bordered className="card card-height-100">
-              <ContractRentalStatistic loading={loadingRental} data={contractComingEndGroup} dataGroup={dataApartmentGroup} />
+              <ContractRentalStatistic
+                loading={loadingRental}
+                data={contractComingEndGroup}
+                dataGroup={dataApartmentGroup}
+              />
               <span>
                 <p>
-                  <i>Thống kê hợp đồng cho thuê sắp kết thúc trong
-                    <b>{" "}{durationRental < 12
-                      ? durationRental + ' tháng'
-                      : durationRental % 12 !== 0 ?
-                        Math.floor(durationRental / 12) + ' năm ' + durationRental % 12 + ' tháng' :
-                        Math.floor(durationRental / 12) + ' năm '} tới
+                  <i>
+                    Thống kê hợp đồng cho thuê sắp kết thúc trong
+                    <b>
+                      {" "}
+                      {durationRental < 12
+                        ? durationRental + " tháng"
+                        : durationRental % 12 !== 0
+                        ? Math.floor(durationRental / 12) + " năm " + (durationRental % 12) + " tháng"
+                        : Math.floor(durationRental / 12) + " năm "}{" "}
+                      tới
                     </b>
                   </i>
                 </p>
-                <p><i>Thay đổi thời gian thống kê</i></p>
+                <p>
+                  <i>Thay đổi thời gian thống kê</i>
+                </p>
                 <Select
                   defaultValue={1}
-                  style={{ width: '300px' }}
+                  style={{ width: "300px" }}
                   placeholder="Chọn thời gian thống kê"
                   options={durationOption}
                   onChange={(e) => {
@@ -255,22 +274,32 @@ const Home = () => {
           </Col>
           <Col xs={24} xl={12} span={12}>
             <Card bordered className="card card-height-100">
-              <ContractSubRentalStatistic loading={loadingSubRental} data={contractComingEnd} dataGroup={dataApartmentGroup} />
+              <ContractSubRentalStatistic
+                loading={loadingSubRental}
+                data={contractComingEnd}
+                dataGroup={dataApartmentGroup}
+              />
               <span>
                 <p>
-                  <i>Thống kê hợp đồng cho thuê sắp kết thúc trong
-                    <b>{" "}{duration < 12
-                      ? duration + ' tháng'
-                      : duration % 12 !== 0 ?
-                        Math.floor(duration / 12) + ' năm ' + duration % 12 + ' tháng' :
-                        Math.floor(duration / 12) + ' năm '} tới
+                  <i>
+                    Thống kê hợp đồng cho thuê sắp kết thúc trong
+                    <b>
+                      {" "}
+                      {duration < 12
+                        ? duration + " tháng"
+                        : duration % 12 !== 0
+                        ? Math.floor(duration / 12) + " năm " + (duration % 12) + " tháng"
+                        : Math.floor(duration / 12) + " năm "}{" "}
+                      tới
                     </b>
                   </i>
                 </p>
-                <p><i>Thay đổi thời gian thống kê</i></p>
+                <p>
+                  <i>Thay đổi thời gian thống kê</i>
+                </p>
                 <Select
                   defaultValue={1}
-                  style={{ width: '300px' }}
+                  style={{ width: "300px" }}
                   placeholder="Chọn thời gian thống kê"
                   options={durationOption}
                   onChange={(e) => {

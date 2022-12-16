@@ -36,8 +36,12 @@ const InvoiceStatistic = ({ dataGroup }) => {
       dataIndex: "need_to_paid",
       key: "room_id",
       render: (need_to_paid) => {
-        return <Tag color='red'>{new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(need_to_paid)}</Tag>
-      }
+        return (
+          <Tag color="red">
+            {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(need_to_paid)}
+          </Tag>
+        );
+      },
     },
   ];
   useEffect(() => {
@@ -87,7 +91,9 @@ const InvoiceStatistic = ({ dataGroup }) => {
                   <span className="revenue-statistic">Tổng số tiền cần thu</span>
                 </>
               }
-              value={new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(dataSource?.map(invoice => invoice.need_to_paid).reduce((pre, current) => pre + current, 0))}
+              value={new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
+                dataSource?.map((invoice) => invoice.need_to_paid).reduce((pre, current) => pre + current, 0)
+              )}
               valueStyle={{
                 color: "#cf1322",
               }}
@@ -126,9 +132,10 @@ const InvoiceStatistic = ({ dataGroup }) => {
             defaultValue={moment()}
             placeholder="Chọn thời gian"
             size={"large"}
-            picker="month" format={'MM/YYYY'}
+            picker="month"
+            format={"MM/YYYY"}
             onChange={(e) => {
-              getBillByGroupId(groupSelect, e.format("MM-YYYY"))
+              getBillByGroupId(groupSelect, e.format("MM-YYYY"));
             }}
           />
         </Col>
@@ -137,17 +144,18 @@ const InvoiceStatistic = ({ dataGroup }) => {
           <Select
             defaultValue={""}
             placeholder="Chọn chung cư"
-            className='select-w-100'
+            className="select-w-100"
             showSearch
-            filterOption={(input, option) =>
-              (option?.label ?? '').toLowerCase().includes(input.trim().toLowerCase())
-            }
-            options={[...dataGroup?.map(group => {
-              return { label: group.group_name, value: group.group_id }
-            }), {
-              label: 'Tất cả chung cư',
-              value: ""
-            },]}
+            filterOption={(input, option) => (option?.label ?? "").toLowerCase().includes(input.trim().toLowerCase())}
+            options={[
+              ...dataGroup?.map((group) => {
+                return { label: group.group_name, value: group.group_id };
+              }),
+              {
+                label: "Tất cả chung cư",
+                value: "",
+              },
+            ]}
             onChange={(e) => {
               setGroupSelect(e);
               getBillByGroupId(e, null);
@@ -162,11 +170,11 @@ const InvoiceStatistic = ({ dataGroup }) => {
           columns={columns}
           loading={loadingInvoice}
           dataSource={dataSource?.sort((a, b) => b.need_to_paid - a.need_to_paid)}
-          pagination={{ defaultPageSize: 5, showSizeChanger: true, pageSizeOptions: ['5', '10', '20'] }}
+          pagination={{ defaultPageSize: 5, showSizeChanger: true, pageSizeOptions: ["5", "10", "20"] }}
         />
       </ConfigProvider>
     </>
-  )
+  );
 };
 
 export default InvoiceStatistic;

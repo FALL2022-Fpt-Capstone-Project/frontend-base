@@ -11,7 +11,7 @@ import {
   AuditOutlined,
   DollarOutlined,
   CheckCircleTwoTone,
-  FilterOutlined
+  FilterOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
 import {
@@ -44,15 +44,15 @@ const LIST_OLD_RENTER = "/manager/renter";
 const LIST_ASSET_TYPE = "manager/asset/type";
 const APARTMENT_DATA_GROUP = "/manager/group/all";
 const ADD_NEW_CONTRACT = "/manager/contract/room/add";
-const ASSET_ROOM = "manager/asset/room/"
+const ASSET_ROOM = "manager/asset/room/";
 const ADD_ASSET = "manager/asset/room/add";
 const UPDATE_ASSET = "manager/asset/room/update";
 const DELETE_ASSET = "manager/asset/room/delete";
 
 const card = {
-  height: '100%',
-  border: '1px solid #C0C0C0',
-  borderRadius: '10px'
+  height: "100%",
+  border: "1px solid #C0C0C0",
+  borderRadius: "10px",
 };
 
 const fontSizeIcon = {
@@ -130,7 +130,6 @@ const CreateContractRenter = () => {
   const [renterId, setRenterId] = useState();
   const [roomId, setRoomId] = useState();
   const [optionAutoComplete, setOptionAutoComplete] = useState([]);
-
 
   let cookie = localStorage.getItem("Cookie");
   useEffect(() => {
@@ -269,12 +268,14 @@ const CreateContractRenter = () => {
       })
       .then((res) => {
         setDataOldRenter(res.data.data);
-        setOptionAutoComplete(res.data.data.map(renter => {
-          return {
-            value: renter.renter_id,
-            label: renter.renter_full_name + " (" + renter.phone_number + ")",
-          }
-        }))
+        setOptionAutoComplete(
+          res.data.data.map((renter) => {
+            return {
+              value: renter.renter_id,
+              label: renter.renter_full_name + " (" + renter.phone_number + ")",
+            };
+          })
+        );
       })
       .catch((error) => {
         // console.log(error);
@@ -611,7 +612,7 @@ const CreateContractRenter = () => {
       .map((obj, index) => {
         return {
           general_service_id: listServiceOfBuilding[listServiceOfBuilding.length - 1].general_service_id[index],
-          hand_over_general_service_index: obj.hand_over_service_index
+          hand_over_general_service_index: obj.hand_over_service_index,
         };
       })
       .filter((o, i) => i !== listServiceOfBuilding.length - 1);
@@ -659,7 +660,7 @@ const CreateContractRenter = () => {
       asset_name: dataAsset.asset_name.trim(),
       asset_type_id: dataAsset.asset_type_show_name,
       asset_quantity: dataAsset.hand_over_asset_quantity,
-      room_id: roomId
+      room_id: roomId,
     };
 
     await axios
@@ -702,7 +703,7 @@ const CreateContractRenter = () => {
       asset_name: dataAsset.asset_name,
       asset_type_id: dataAsset.asset_type_show_name,
       asset_quantity: dataAsset.hand_over_asset_quantity,
-      room_id: roomId
+      room_id: roomId,
     };
     await axios
       .put(UPDATE_ASSET, [data], {
@@ -747,7 +748,7 @@ const CreateContractRenter = () => {
     form.setFieldsValue({
       contract_type: 1,
       contract_start_date: contractStartDate,
-      contract_end_date: moment()?.add(contractDuration, 'M'),
+      contract_end_date: moment()?.add(contractDuration, "M"),
       contract_duration: contractDuration,
       renter_gender: genderChange,
       contract_bill_cycle: contractBillCycle,
@@ -801,7 +802,7 @@ const CreateContractRenter = () => {
             "contract_price",
             "contract_deposit",
             "contract_end_date",
-            "contract_start_date"
+            "contract_start_date",
           ]);
           setDisplayFinish([...displayFinish, 1]);
         }
@@ -948,10 +949,12 @@ const CreateContractRenter = () => {
                     >
                       {/* <span><b>Tên khách thuê: </b></span> */}
                       <AutoComplete
-                        filterOption={(input, option) => (option?.label.toLowerCase().trim() ?? '').includes(input.toLowerCase().trim())}
+                        filterOption={(input, option) =>
+                          (option?.label.toLowerCase().trim() ?? "").includes(input.toLowerCase().trim())
+                        }
                         options={optionAutoComplete}
                         onSelect={(e) => {
-                          const data = dataOldRenter.find(renter => renter.renter_id === e);
+                          const data = dataOldRenter.find((renter) => renter.renter_id === e);
                           form.setFieldsValue({
                             renter_name: data.renter_full_name,
                             renter_phone_number: data.phone_number,
@@ -1151,7 +1154,10 @@ const CreateContractRenter = () => {
                           setRoomStatus(false);
                           setRoom(
                             dataApartmentGroupSelect?.list_rooms?.filter(
-                              (data) => data.room_floor === e && data.contract_id === null && Number.isInteger(data.group_contract_id)
+                              (data) =>
+                                data.room_floor === e &&
+                                data.contract_id === null &&
+                                Number.isInteger(data.group_contract_id)
                             )
                           );
                           setFloorRoom((pre) => {
@@ -1196,22 +1202,19 @@ const CreateContractRenter = () => {
                         placeholder="Chọn phòng"
                         disabled={roomStatus}
                         onChange={(e) => {
-                          const data = dataApartmentGroupSelect?.list_rooms?.filter((obj, index) => obj.contract_id === null && Number.isInteger(obj.group_contract_id));
+                          const data = dataApartmentGroupSelect?.list_rooms?.filter(
+                            (obj, index) => obj.contract_id === null && Number.isInteger(obj.group_contract_id)
+                          );
 
                           if (e !== "") {
                             setRoomId(e);
                             getAssetRoom(e);
                             setRoomSelect(data?.find((obj) => obj.room_id === e));
                             form.setFieldsValue({
-                              contract_price: data?.find(
-                                (obj) => obj.room_id === e
-                              ).room_price,
-                              contract_deposit: data?.find(
-                                (obj) => obj.room_id === e
-                              ).room_price,
+                              contract_price: data?.find((obj) => obj.room_id === e).room_price,
+                              contract_deposit: data?.find((obj) => obj.room_id === e).room_price,
                             });
                           }
-
                         }}
                       >
                         <Select.Option value="">Chọn phòng</Select.Option>
@@ -1224,11 +1227,7 @@ const CreateContractRenter = () => {
                         })}
                       </Select>
                     </Form.Item>
-                    <Form.Item
-                      className="form-item"
-                      name="contract_type"
-                      style={{ display: "none" }}
-                    ></Form.Item>
+                    <Form.Item className="form-item" name="contract_type" style={{ display: "none" }}></Form.Item>
                     <Form.Item
                       className="form-item"
                       name="contract_duration"
@@ -1238,12 +1237,12 @@ const CreateContractRenter = () => {
                           <b>Thời hạn hợp đồng (ít nhất 1 tháng): </b>
                         </span>
                       }
-                    // rules={[
-                    //   {
-                    //     required: true,
-                    //     message: "Vui lòng chọn thời hạn hợp đồng",
-                    //   },
-                    // ]}
+                      // rules={[
+                      //   {
+                      //     required: true,
+                      //     message: "Vui lòng chọn thời hạn hợp đồng",
+                      //   },
+                      // ]}
                     >
                       <Select
                         placeholder="Thời hạn hợp đồng"
@@ -1283,7 +1282,7 @@ const CreateContractRenter = () => {
                           const startDate = form.getFieldsValue().contract_start_date;
                           form.setFieldsValue({
                             contract_end_date: moment(startDate).add(contractDuration, "M"),
-                            contract_payment_cycle: e.format('D') < 16 ? 15 : 30,
+                            contract_payment_cycle: e.format("D") < 16 ? 15 : 30,
                           });
                         }}
                         allowClear={false}
@@ -1312,12 +1311,14 @@ const CreateContractRenter = () => {
                             var startDateFrom = moment(form.getFieldValue("contract_start_date"));
                             var endDateForm = moment(value);
                             if (endDateForm < startDateFrom) {
-                              return Promise.reject(new Error('Vui lòng nhập ngày kết thúc lớn hơn ngày hợp đồng có hiệu lực'));
+                              return Promise.reject(
+                                new Error("Vui lòng nhập ngày kết thúc lớn hơn ngày hợp đồng có hiệu lực")
+                              );
                             } else {
-                              return Promise.resolve(new Error('Vui lòng chọn ngày kết thúc'));
+                              return Promise.resolve(new Error("Vui lòng chọn ngày kết thúc"));
                             }
                           },
-                        }
+                        },
                       ]}
                     >
                       <DatePicker
@@ -1381,8 +1382,7 @@ const CreateContractRenter = () => {
 
                     <span>
                       <i>
-                        <b>Kỳ 15:</b> Khách thuê vào từ ngày 1-15 <br /> <b>Kỳ 30:</b> Khách thuê vào từ ngày
-                        16-31
+                        <b>Kỳ 15:</b> Khách thuê vào từ ngày 1-15 <br /> <b>Kỳ 30:</b> Khách thuê vào từ ngày 16-31
                       </i>
                     </span>
                   </Card>
@@ -1459,10 +1459,10 @@ const CreateContractRenter = () => {
                         <i>
                           <b>Lưu ý:</b>
                           <br />
-                          <b>- Chu kỳ thanh toán: </b> nếu bạn thu tiền 1 lần vào cuối tháng thì bạn chọn là kỳ
-                          30. Trường hợp có số lượng phòng nhiều, chia làm 2 đợt thu, bạn dựa vào ngày vào của
-                          khách, ví dụ: vào từ ngày 1 đến 15 của tháng thì gán kỳ 15; nếu vào từ ngày 16 đến 31
-                          của tháng thì gán kỳ 30. Khi tính tiền phòng bạn sẽ tính tiền theo kỳ.
+                          <b>- Chu kỳ thanh toán: </b> nếu bạn thu tiền 1 lần vào cuối tháng thì bạn chọn là kỳ 30.
+                          Trường hợp có số lượng phòng nhiều, chia làm 2 đợt thu, bạn dựa vào ngày vào của khách, ví dụ:
+                          vào từ ngày 1 đến 15 của tháng thì gán kỳ 15; nếu vào từ ngày 16 đến 31 của tháng thì gán kỳ
+                          30. Khi tính tiền phòng bạn sẽ tính tiền theo kỳ.
                           <br />
                           <b>- Chu kỳ tính tiền: </b> là số tháng được tính trên mỗi hóa đơn.
                           <br />
@@ -1504,9 +1504,13 @@ const CreateContractRenter = () => {
             </Row>
             <Row>
               <Col xs={24} sm={12} md={16} xl={6} span={6}>
-                {dataApartmentGroupSelect?.list_general_service?.filter(service =>
-                  service?.service_show_name?.toLowerCase()?.trim().includes('điện')
-                  || service?.service_show_name?.toLowerCase()?.trim().includes('nước'))?.map((obj, index) => {
+                {dataApartmentGroupSelect?.list_general_service
+                  ?.filter(
+                    (service) =>
+                      service?.service_show_name?.toLowerCase()?.trim().includes("điện") ||
+                      service?.service_show_name?.toLowerCase()?.trim().includes("nước")
+                  )
+                  ?.map((obj, index) => {
                     return (
                       <>
                         <Form.Item
@@ -1538,12 +1542,12 @@ const CreateContractRenter = () => {
                               String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
                                 ? "Nhập chỉ số hiện tại"
                                 : "Số " +
-                                obj.service_type_name +
-                                " / " +
-                                obj.service_price.toLocaleString("vn-VN", {
-                                  style: "currency",
-                                  currency: "VND",
-                                })
+                                  obj.service_type_name +
+                                  " / " +
+                                  obj.service_price.toLocaleString("vn-VN", {
+                                    style: "currency",
+                                    currency: "VND",
+                                  })
                             }
                             addonAfter={
                               String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
@@ -1701,14 +1705,15 @@ const CreateContractRenter = () => {
                       setFilterAssetType(filters);
                       setAssetStatus(filters);
                     }}
-                    dataSource={dataAsset?.map(asset => {
+                    dataSource={dataAsset?.map((asset) => {
                       return {
                         asset_id: asset.room_asset_id,
                         asset_name: asset.asset_name,
                         hand_over_asset_quantity: asset.asset_quantity,
-                        asset_type_show_name: listAssetType?.find(a => a?.id === asset?.asset_type_id)?.asset_type_show_name,
-                        asset_type_id: listAssetType?.find(a => a?.id === asset?.asset_type_id)?.id,
-                      }
+                        asset_type_show_name: listAssetType?.find((a) => a?.id === asset?.asset_type_id)
+                          ?.asset_type_show_name,
+                        asset_type_id: listAssetType?.find((a) => a?.id === asset?.asset_type_id)?.id,
+                      };
                     })}
                     columns={columns}
                     scroll={{ x: 800, y: 600 }}
@@ -1799,7 +1804,7 @@ const CreateContractRenter = () => {
             <Col xs={12} lg={8} span={8}>
               <Select
                 defaultValue={""}
-                style={{ width: '100%' }}
+                style={{ width: "100%" }}
                 onChange={(e) => {
                   filterRenter(e);
                 }}
@@ -1916,7 +1921,7 @@ const CreateContractRenter = () => {
                 {
                   pattern: new RegExp(/^[0-9]*$/),
                   message: "Vui lòng nhập số nguyên",
-                }
+                },
               ]}
             >
               <InputNumber defaultValue={1} style={{ width: "100%" }} min={1} />
@@ -1939,9 +1944,7 @@ const CreateContractRenter = () => {
             >
               <Select placeholder="Chọn nhóm tài sản">
                 {listAssetType?.map((obj, index) => {
-                  return (
-                    <Select.Option value={obj.id}>{obj.asset_type_show_name}</Select.Option>
-                  );
+                  return <Select.Option value={obj.id}>{obj.asset_type_show_name}</Select.Option>;
                 })}
               </Select>
             </Form.Item>
@@ -2023,7 +2026,7 @@ const CreateContractRenter = () => {
                 {
                   pattern: new RegExp(/^[0-9]*$/),
                   message: "Vui lòng nhập số nguyên",
-                }
+                },
               ]}
             >
               <InputNumber defaultValue={1} style={{ width: "100%" }} min={1} />
@@ -2046,9 +2049,7 @@ const CreateContractRenter = () => {
             >
               <Select placeholder={"Nhóm tài sản"}>
                 {listAssetType?.map((obj, index) => {
-                  return (
-                    <Select.Option value={obj.id}>{obj.asset_type_show_name}</Select.Option>
-                  );
+                  return <Select.Option value={obj.id}>{obj.asset_type_show_name}</Select.Option>;
                 })}
               </Select>
             </Form.Item>
@@ -2057,11 +2058,10 @@ const CreateContractRenter = () => {
       </Modal>
       <Modal
         title={
-          <h2>{
-            roomSelect?.room_name === undefined
+          <h2>
+            {roomSelect?.room_name === undefined
               ? "Thêm thành viên "
-              : "Thêm thành viên vào phòng " + roomSelect?.room_name
-          }
+              : "Thêm thành viên vào phòng " + roomSelect?.room_name}
           </h2>
         }
         open={isAddMem}
@@ -2080,7 +2080,7 @@ const CreateContractRenter = () => {
           </Button>,
         ]}
       >
-        <Card style={{ border: '1px solid #C0C0C0', borderRadius: '10px' }}>
+        <Card style={{ border: "1px solid #C0C0C0", borderRadius: "10px" }}>
           <Form
             form={formAddMem}
             onFinish={onFinishAddMem}

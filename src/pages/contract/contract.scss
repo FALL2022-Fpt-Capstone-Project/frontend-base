@@ -1,104 +1,104 @@
-  .sider-title {
-    color: #fff;
-    font-size: 24px;
-    padding: 10px;
-    text-align: center;
-    font-weight: bold;
+.sider-title {
+  color: #fff;
+  font-size: 24px;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+.site-layout {
+  .ant-layout-header {
+    padding: 0 10px;
   }
-  .site-layout {
-    .ant-layout-header {
-      padding: 0 10px;
+  .layout-header {
+    background: #fff;
+    display: flex;
+    align-items: center;
+
+    .header-title {
+      color: #868d96;
+      font-size: 20px;
+      font-weight: bold;
     }
-    .layout-header {
-      background: #fff;
+  }
+
+  .layout-content {
+    .btn-contract {
       display: flex;
       align-items: center;
+      justify-content: flex-end;
+      margin-right: 20px;
 
-      .header-title {
-        color: #868d96;
-        font-size: 20px;
-        font-weight: bold;
-      }
-    }
-
-    .layout-content {
-      .btn-contract {
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
+      .button-collapse {
         margin-right: 20px;
-
-        .button-collapse {
-          margin-right: 20px;
-        }
       }
+    }
 
-      .contract-statistic {
-        .contract-card {
-          display: flex;
-          margin: 20px 0 20px 20px;
-        }
-        .card-info {
-          margin-left: 20px;
-          font-style: italic;
-          font-size: 16px;
-        }
+    .contract-statistic {
+      .contract-card {
+        display: flex;
+        margin: 20px 0 20px 20px;
       }
-      // .ant-breadcrumb {
-      //   padding: 0 30px;
-      // }
+      .card-info {
+        margin-left: 20px;
+        font-style: italic;
+        font-size: 16px;
+      }
     }
-    .form-item {
-      width: 100%;
-      padding: 0;
-      margin-bottom: 2% !important;
-    }
+    // .ant-breadcrumb {
+    //   padding: 0 30px;
+    // }
   }
-  .icon-size {
-    font-size: 130%;
-    color: #1890ff;
-  }
-  .icon-delete {
-    color: red;
-    font-size: 130%;
-    margin-left: 6%;
-  }
-  .page-layout {
-    min-height: 100vh;
-    min-width: 100vh;
-  }
-  .page-content {
-    margin: 10px 16px;
-  }
-  .button-cover {
-    overflow: auto;
-  }
-  .button-back {
-    margin-right: 5px;
-    float: right;
-  }
-  .site-layout-background {
-    min-height: 360px;
-  }
-  .text-size-tab {
-    font-size: 17px;
-  }
-  .text-tag {
-    word-break: break-all;
-    white-space: normal;
-    height: auto;
-  }
-  .font-size-tag {
-    font-size: 15px;
-  }
-  .card-width-100 {
+  .form-item {
     width: 100%;
+    padding: 0;
+    margin-bottom: 2% !important;
   }
-  .card-height {
-    height: 100%;
-    border: 1px solid #C0C0C0; 
-    border-radius: 10px
-  }
-  .textArea {
-    resize: none;
-  }
+}
+.icon-size {
+  font-size: 130%;
+  color: #1890ff;
+}
+.icon-delete {
+  color: red;
+  font-size: 130%;
+  margin-left: 6%;
+}
+.page-layout {
+  min-height: 100vh;
+  min-width: 100vh;
+}
+.page-content {
+  margin: 10px 16px;
+}
+.button-cover {
+  overflow: auto;
+}
+.button-back {
+  margin-right: 5px;
+  float: right;
+}
+.site-layout-background {
+  min-height: 360px;
+}
+.text-size-tab {
+  font-size: 17px;
+}
+.text-tag {
+  word-break: break-all;
+  white-space: normal;
+  height: auto;
+}
+.font-size-tag {
+  font-size: 15px;
+}
+.card-width-100 {
+  width: 100%;
+}
+.card-height {
+  height: 100%;
+  border: 1px solid #c0c0c0;
+  border-radius: 10px;
+}
+.textArea {
+  resize: none;
+}

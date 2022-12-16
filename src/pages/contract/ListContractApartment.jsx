@@ -1,19 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./listContract.scss";
-import {
-  Input,
-  Table,
-  Tag,
-  Row,
-  Tabs,
-  Col,
-  Select,
-  DatePicker,
-  Button,
-  Tooltip,
-  Switch,
-  Form,
-} from "antd";
+import { Input, Table, Tag, Row, Tabs, Col, Select, DatePicker, Button, Tooltip, Switch, Form } from "antd";
 import { EyeOutlined, EditOutlined, SearchOutlined, UndoOutlined, DeleteOutlined } from "@ant-design/icons";
 import axios from "../../api/axios";
 import ViewContractBuilding from "./ViewContractBuilding";
@@ -434,8 +421,7 @@ const ListContractApartment = () => {
             title="Thao tác"
             key="action"
             render={(_, record) => {
-              return record.contract_is_disable === true
-                ?
+              return record.contract_is_disable === true ? (
                 <>
                   <Tooltip title="Xem">
                     <EyeOutlined
@@ -448,7 +434,7 @@ const ListContractApartment = () => {
                     />
                   </Tooltip>
                 </>
-                :
+              ) : (
                 <>
                   <Tooltip title="Xem">
                     <EyeOutlined
@@ -483,6 +469,7 @@ const ListContractApartment = () => {
                     />
                   </Tooltip>
                 </>
+              );
             }}
           />
         </Table>
@@ -502,7 +489,7 @@ const ListContractApartment = () => {
           loading={loadingModal}
         />
       </div>
-    </div >
+    </div>
   );
 };
 
