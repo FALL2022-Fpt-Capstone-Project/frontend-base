@@ -1,22 +1,6 @@
 import React, { useEffect, useState } from "react";
-import {
-  Input,
-  Table,
-  Select,
-  DatePicker,
-  Tag,
-  Row,
-  Col,
-  Button,
-  Tabs,
-  Form,
-  Modal,
-  Switch,
-  Tooltip,
-  Card,
-} from "antd";
+import { Input, Table, DatePicker, Tag, Row, Col, Button, Tabs, Form, Switch, Tooltip } from "antd";
 import axios from "../../api/axios";
-import { NavLink, useLocation } from "react-router-dom";
 import "./listStaff.scss";
 import { EditOutlined, EyeOutlined, SearchOutlined, UndoOutlined } from "@ant-design/icons";
 import UpdateStaff from "./UpdateStaff";
@@ -28,8 +12,6 @@ const ListStaff = () => {
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState();
   const [deactive, setDeactive] = useState(false);
-  const [roles, setRoles] = useState("");
-  const [rolesFilter, setRolesFilter] = useState("");
   const [full_name, setFullname] = useState("");
   const [user_name, setUsername] = useState("");
   const [phone_number, setPhonenumber] = useState("");
@@ -82,7 +64,7 @@ const ListStaff = () => {
         },
       })
       .then((res) => {
-        setDataSource(res.data.data);
+        setDataSource(res.data.data.filter((data) => data.role_name === "ROLE_STAFF"));
         console.log(res);
       })
       .catch((error) => {
@@ -98,47 +80,11 @@ const ListStaff = () => {
       getAllEmployees();
     }
   }, [flag]);
-  useEffect(() => {
-    const getRoleFilter = async () => {
-      setLoading(true);
-      const response = await axios
-        .get(LIST_ROLES_URL, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${cookie}`,
-          },
-        })
-        .then((res) => {
-          setRolesFilter(res.data.data);
-          console.log(res);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-      setLoading(false);
-    };
-    getRoleFilter();
-  }, [cookie]);
-
-  for (let i = 0; i < rolesFilter.length; i++) {
-    if (rolesFilter[i] === "STAFF") {
-      options.push({
-        label: "Nhân viên",
-        value: rolesFilter[i].toLowerCase(),
-      });
-    } else {
-      options.push({
-        label: rolesFilter[i],
-        value: rolesFilter[i].toLowerCase(),
-      });
-    }
-  }
 
   const getFilterEmployees = async (value) => {
     const data = {
       full_name: full_name,
       user_name: user_name,
-      roles: roles,
       deactive: deactive,
       startDate: startDate,
       endDate: endDate,
@@ -151,7 +97,6 @@ const ListStaff = () => {
         params: {
           name: full_name,
           userName: user_name,
-          role: roles,
           deactivate: deactive,
           startDate: startDate,
           endDate: endDate,
@@ -163,7 +108,7 @@ const ListStaff = () => {
         },
       })
       .then((res) => {
-        setDataSource(res.data.data);
+        setDataSource(res.data.data.filter((data) => data.role_name === "ROLE_STAFF"));
         console.log(res);
       })
       .catch((error) => {
@@ -174,9 +119,6 @@ const ListStaff = () => {
   };
   const deactiveChange = (value) => {
     setDeactive(value);
-  };
-  const roleChange = (value) => {
-    setRoles(value);
   };
   const nameChange = (e) => {
     setFullname(e.target.value);
@@ -206,7 +148,6 @@ const ListStaff = () => {
     setEndDate("");
     setStartDate("");
     setFullname("");
-    setRoles("");
     setUsername("");
     setLoading(true);
     const response = await axios
@@ -217,7 +158,7 @@ const ListStaff = () => {
         },
       })
       .then((res) => {
-        setDataSource(res.data.data);
+        setDataSource(res.data.data.filter((data) => data.role_name === "ROLE_STAFF"));
         console.log(res);
       })
       .catch((error) => {
@@ -299,26 +240,6 @@ const ListStaff = () => {
                       </Row>
                       <Row>
                         <RangePicker format={"DD-MM-YYYY"} placeholder={["Từ", "Đến"]} onChange={dateChange} />
-                      </Row>
-                    </Col>
-                  </Form.Item>
-                  <Form.Item name="role" style={{ width: "250px" }}>
-                    <Col className="gutter-row" span={24}>
-                      <Row>
-                        <label htmlFor="" style={{ marginBottom: "10px" }}>
-                          Tìm kiếm theo chức vụ
-                        </label>
-                      </Row>
-                      <Row style={{ flexWrap: "nowrap", width: "700px" }}>
-                        <Select
-                          onChange={roleChange}
-                          style={{
-                            width: 150,
-                            marginRight: 50,
-                          }}
-                          options={options}
-                          placeholder="Chọn chức vụ"
-                        />
                       </Row>
                     </Col>
                   </Form.Item>

@@ -93,7 +93,6 @@ const MainLayout = ({ children, button, title }) => {
         >
           <Breadcrumbs button={button} />
           <Divider />
-          {/* <div>{button}</div> */}
           <div className="site-layout-background">{children}</div>
         </Content>
       </Layout>

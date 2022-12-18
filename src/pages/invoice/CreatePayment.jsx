@@ -3,9 +3,13 @@ import "./invoice.scss";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
+const ADD_INVOICE_URL = "manager/bill/money-source/out/add";
 
-const CreatePayment = ({ visible }) => {
+const CreatePayment = ({ visible, close, groupName, setFlag, groupId }) => {
   const [dateCreate, setDateCreate] = useState();
+  const [groupMoney, setGroupMoney] = useState(0);
+  const [serviceMoney, setServiceMoney] = useState(0);
+  const [otherMoney, setOtherMoney] = useState(0);
   const [form] = Form.useForm();
   let cookie = localStorage.getItem("Cookie");
 
@@ -27,32 +31,82 @@ const CreatePayment = ({ visible }) => {
   const disabledDate = (current) => {
     return current && current < date_create_format;
   };
+  const handleCreateInvoice = async (value) => {
+    const invoice = {
+      group_id: groupId,
+      time: dateCreate,
+      room_group_money: groupMoney,
+      service_money: serviceMoney,
+      other_money: otherMoney,
+    };
+
+    const response = await axios
+      .post(ADD_INVOICE_URL, invoice, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie}`,
+        },
+      })
+      .then((res) => {
+        notification.success({
+          message: "Thêm mới hoá đơn thành công",
+          duration: 3,
+          placement: "top",
+        });
+        close(false);
+        setFlag(true);
+
+        setTimeout(() => {
+          setFlag(false);
+        }, "500");
+        console.log(res);
+      })
+      .catch((e) => {
+        notification.error({
+          message: "Thêm mới hoá đơn thất bại",
+          description: "Vui lòng kiểm tra lại thông tin và thử lại.",
+          duration: 3,
+          placement: "top",
+        });
+      });
+    setFlag(false);
+    // console.log(JSON.stringify(response?.data));
+    console.log(invoice);
+  };
+  const groupMoneyChange = (value) => {
+    setGroupMoney(value);
+  };
+  const serviceMoneyChange = (value) => {
+    setServiceMoney(value);
+  };
+  const otherMoneyChange = (value) => {
+    setOtherMoney(value);
+  };
   return (
     <>
       <Modal
-        title={<h2>Tạo hoá đơn chi cho</h2>}
+        title={<h2>Tạo hoá đơn chi cho {groupName}</h2>}
         open={visible}
-        // destroyOnClose={true}
-        // afterClose={() => form.resetFields()}
-        // onOk={() => {
-        //   close(false);
-        // }}
-        // onCancel={() => {
-        //   close(false);
-        // }}
+        destroyOnClose={true}
+        afterClose={() => form.resetFields()}
+        onOk={() => {
+          close(false);
+        }}
+        onCancel={() => {
+          close(false);
+        }}
         footer={[
           <>
             <Row>
               <Col span={12} style={{ marginLeft: "-100px" }}>
                 <p>Tổng cộng hoá đơn:</p>
-                {/* <p className="total_price">3000000.toLocaleString("vn") + " đ"</p> */}
-                <p className="total_price">300,000,000 đ</p>
+                <p className="total_price">{(groupMoney + serviceMoney + otherMoney).toLocaleString("vn") + " đ"}</p>
               </Col>
               <Col span={12} style={{ marginLeft: "100px" }}>
                 <Button
                   key="back"
                   onClick={() => {
-                    // close(false);
+                    close(false);
                   }}
                 >
                   Đóng
@@ -68,7 +122,7 @@ const CreatePayment = ({ visible }) => {
       >
         <Form
           form={form}
-          // onFinish={handleCreateInvoice}
+          onFinish={handleCreateInvoice}
           // onFinishFailed={onFinishFail}
           layout="horizontal"
           size={"default"}
@@ -109,7 +163,7 @@ const CreatePayment = ({ visible }) => {
               <Col span={24}>
                 <Form.Item
                   className="form-item"
-                  name="room_month"
+                  name="buiding_price"
                   labelCol={{ span: 24 }}
                   label={
                     <span>
@@ -121,8 +175,10 @@ const CreatePayment = ({ visible }) => {
                     style={{ width: "100%" }}
                     controls={false}
                     placeholder="Nhập số tiền thuê chung cư"
-                    // onChange={monthChange}
-                    defaultValue={10000000}
+                    onChange={groupMoneyChange}
+                    defaultValue={0}
+                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
                     min={0}
                   />
                 </Form.Item>
@@ -132,7 +188,7 @@ const CreatePayment = ({ visible }) => {
               <Col span={24}>
                 <Form.Item
                   className="form-item"
-                  name="room_month"
+                  name="service_price"
                   labelCol={{ span: 24 }}
                   label={
                     <span>
@@ -144,8 +200,10 @@ const CreatePayment = ({ visible }) => {
                     style={{ width: "100%" }}
                     controls={false}
                     placeholder="Nhập số tiền dịch vụ"
-                    // onChange={monthChange}
-                    defaultValue={1000000}
+                    onChange={serviceMoneyChange}
+                    defaultValue={0}
+                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
                     min={0}
                   />
                 </Form.Item>
@@ -155,7 +213,7 @@ const CreatePayment = ({ visible }) => {
               <Col span={24}>
                 <Form.Item
                   className="form-item"
-                  name="room_month"
+                  name="other_price"
                   labelCol={{ span: 24 }}
                   label={
                     <span>
@@ -167,8 +225,10 @@ const CreatePayment = ({ visible }) => {
                     style={{ width: "100%" }}
                     controls={false}
                     placeholder="Nhập số tiền khác"
-                    // onChange={monthChange}
-                    defaultValue={2000000}
+                    onChange={otherMoneyChange}
+                    defaultValue={0}
+                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
                     min={0}
                   />
                 </Form.Item>

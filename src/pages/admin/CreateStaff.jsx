@@ -1,15 +1,12 @@
-import { Form, Input, Card, Radio, Select, notification, Button, Modal, Checkbox } from "antd";
-import React, { useEffect, useState } from "react";
+import { Form, Input, Card, Radio, notification, Button, Modal, Checkbox } from "antd";
+import React, { useState } from "react";
 import "./createStaff.scss";
 import axios from "../../api/axios";
 const ADD_EMPLOYEE_URL = "manager/staff/add";
-const LIST_ROLES_URL = "manager/staff/roles";
 
 const CreateStaff = ({ visible, close }) => {
   let cookie = localStorage.getItem("Cookie");
   const [gender, setGender] = useState("");
-  const [roles, setRoles] = useState("staff");
-  const [option, setOption] = useState([]);
   const [permission, setPermission] = useState([1, 2, 3, 4, 5, 6, 7]);
   const staffOptions = [
     {
@@ -30,57 +27,15 @@ const CreateStaff = ({ visible, close }) => {
     },
   ];
   const [form] = Form.useForm();
-  useEffect(() => {
-    const getRoleFilter = async () => {
-      const response = await axios
-        .get(LIST_ROLES_URL, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${cookie}`,
-          },
-        })
-        .then((res) => {
-          setOption(res.data.data);
-          console.log(res);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    };
-    if (visible) {
-      getRoleFilter();
-    }
-  }, [cookie, visible]);
-  let options = [];
-  for (let i = 0; i < option.length; i++) {
-    if (option[i] === "STAFF") {
-      options.push({
-        value: option[i].toLowerCase(),
-        label: "Nhân viên",
-      });
-    } else {
-      options.push({
-        value: option[i].toLowerCase(),
-        label: option[i],
-      });
-    }
-  }
   const reload = () => window.location.reload();
   const handleCreateEmployee = async (value) => {
-    if (typeof value.roles == "undefined") {
-      value.roles = "staff";
-    }
-    if (typeof value.gender == "undefined") {
-      value.gender = true;
-    }
-
     const employee = {
       full_name: value.full_name,
       user_name: value.user_name,
       password: value.password,
       phone_number: value.phone_number,
       gender: value.gender,
-      roles: value.roles,
+      roles: "staff",
       address_more_detail: value.address_more_detail,
       permission: permission,
     };
@@ -118,9 +73,6 @@ const CreateStaff = ({ visible, close }) => {
     setGender(e.target.value);
   };
 
-  const roleChange = (value) => {
-    setRoles(value);
-  };
   const permissionChange = (checkedValues) => {
     setPermission(checkedValues);
   };
@@ -211,6 +163,11 @@ const CreateStaff = ({ visible, close }) => {
                   required: true,
                   message: "Vui lòng nhập mật khẩu!",
                 },
+                {
+                  pattern: /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,30}$/,
+                  message: "Mật khẩu phải chứa cả số và ký tự đặc biệt",
+                },
+                { min: 8, message: "Mật khẩu phải có ít nhất 8 ký tự" },
               ]}
             >
               <Input.Password placeholder="Nhập mật khẩu" />
@@ -294,37 +251,16 @@ const CreateStaff = ({ visible, close }) => {
               <Input autoComplete="off" placeholder="Nhập địa chỉ" />
             </Form.Item>
             <Form.Item
-              className="form-item"
-              name="roles"
+              name="permission"
               labelCol={{ span: 24 }}
               label={
                 <span>
-                  <b>Vai trò: </b>
+                  <b>Quyền nhân viên: </b>
                 </span>
               }
             >
-              <Select
-                defaultValue="staff"
-                style={{
-                  width: 120,
-                }}
-                onChange={roleChange}
-                options={options}
-              />
+              <Checkbox.Group options={staffOptions} onChange={permissionChange} defaultValue={[1]} />
             </Form.Item>
-            {roles === "staff" && (
-              <Form.Item
-                name="permission"
-                labelCol={{ span: 24 }}
-                label={
-                  <span>
-                    <b>Quyền nhân viên: </b>
-                  </span>
-                }
-              >
-                <Checkbox.Group options={staffOptions} onChange={permissionChange} defaultValue={[1]} />
-              </Form.Item>
-            )}
           </Card>
         </Form>
       </Modal>
