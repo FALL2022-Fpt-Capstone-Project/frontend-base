@@ -26,7 +26,7 @@ function AddRoomAuto({ visible, close, data }) {
             list_floor: e.roomFloor
         };
         // console.log(data);
-        console.log(JSON.stringify(dataSend));
+        // console.log(JSON.stringify(dataSend));
         await axios
             .post(
                 ADD_ROOM_PREVIEW, dataSend,
@@ -38,7 +38,7 @@ function AddRoomAuto({ visible, close, data }) {
                 }
             )
             .then((res) => {
-                console.log(res.data.data);
+                // console.log(res.data.data);
                 if (res.data.data.list_generate_room.length === 0) {
                     notification.error({
                         message: "Chung cư bạn chọn đã đầy, vui lòng chọn chung cư khác",
@@ -51,7 +51,7 @@ function AddRoomAuto({ visible, close, data }) {
                 }
             })
             .catch((error) => {
-                console.log(error);
+                // console.log(error);
                 notification.error({
                     message: "Thêm mới phòng nhanh thất bại",
                     placement: "top",
@@ -60,7 +60,6 @@ function AddRoomAuto({ visible, close, data }) {
             });
     };
     const onFinishFail = (e) => {
-        console.log(e);
         notification.error({
             message: "Thêm mới phòng nhanh thất bại",
             placement: "top",
@@ -75,6 +74,16 @@ function AddRoomAuto({ visible, close, data }) {
             return Promise.resolve(new Error('Vui lòng nhập số lượng phòng'));
         }
     };
+
+    useEffect(() => {
+        formAddRoomAuto.setFieldsValue({
+            numberOfRoom: 3,
+            roomConvention: "A",
+            limitPeople: 3,
+            generalRoomPrice: 3000000,
+            roomSquare: 25
+        });
+    }, []);
 
     return (
         <>

@@ -29,7 +29,7 @@ const DELETE_ASSET = "manager/asset/room/delete";
 
 function RoomEquipment(data) {
     const { state } = useLocation();
-    console.log(state[0]);
+    // console.log(state[0]);
     const dataFilter = {
         id: [],
         asset_type: [],
@@ -74,7 +74,7 @@ function RoomEquipment(data) {
                 // withCredentials: true,
             })
             .then((res) => {
-                console.log(res.data.data);
+                // console.log(res.data.data);
                 setListAssetType(res.data.data);
                 createAssetForm.setFieldsValue({
                     asset_type_show_name: res.data.data?.find(
@@ -100,7 +100,7 @@ function RoomEquipment(data) {
                 // withCredentials: true,
             })
             .then((res) => {
-                console.log(res.data.data);
+                // console.log(res.data.data);
                 setAssetRoom(res.data.data);
             })
             .catch((error) => {
@@ -187,7 +187,7 @@ function RoomEquipment(data) {
     };
 
     const onDeleteAssetAPI = async (asset_id, asset_name) => {
-        console.log(asset_id);
+        // console.log(asset_id);
         // let cookie = localStorage.getItem("Cookie");
         await axios
             .delete(DELETE_ASSET + "?roomAssetId=" + [asset_id], {
@@ -214,7 +214,7 @@ function RoomEquipment(data) {
     };
 
     const onDeleteListAssetAPI = async () => {
-        console.log(listAssetId);
+        // console.log(listAssetId);
         let cookie = localStorage.getItem("Cookie");
         await axios
             .delete(DELETE_ASSET + "?roomAssetId=" + listAssetId, {
@@ -250,7 +250,7 @@ function RoomEquipment(data) {
             room_id: state[0].room_id
             // hand_over_date_delivery: dataAsset?.hand_over_date_delivery?.format("DD-MM-YYYY"),
         };
-        console.log(JSON.stringify([data]));
+        // console.log(JSON.stringify([data]));
         await axios
             .post(ADD_ASSET, [data], {
                 headers: {
@@ -259,7 +259,7 @@ function RoomEquipment(data) {
                 },
             })
             .then((res) => {
-                console.log(res.data.data);
+                // console.log(res.data.data);
                 notification.success({
                     message: "Thêm mới tài sản thành công",
                     placement: "top",
@@ -273,7 +273,7 @@ function RoomEquipment(data) {
                 });
             })
             .catch((error) => {
-                console.log(error);
+                // console.log(error);
                 notification.error({
                     message: "Thêm mới tài sản thất bại",
                     placement: "top",
@@ -287,7 +287,7 @@ function RoomEquipment(data) {
     };
 
     const editAssetFinish = async (dataAsset) => {
-        console.log(dataAsset);
+        // console.log(dataAsset);
         const data = {
             room_asset_id: dataAsset.asset_id,
             asset_name: dataAsset.asset_name,
@@ -295,7 +295,7 @@ function RoomEquipment(data) {
             asset_quantity: dataAsset.hand_over_asset_quantity,
             room_id: state[0].room_id
         };
-        console.log(JSON.stringify([data]));
+        // console.log(JSON.stringify([data]));
         await axios
             .put(UPDATE_ASSET, [data], {
                 headers: {
@@ -487,7 +487,7 @@ function RoomEquipment(data) {
                         Đóng
                     </Button>,
                     <Button htmlType="submit" key="submit" form="create-asset" type="primary">
-                        Lưu
+                        Thêm mới
                     </Button>,
                 ]}
             >

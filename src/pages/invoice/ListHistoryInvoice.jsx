@@ -31,6 +31,7 @@ const ListHistoryInvoice = ({ visible, close, roomId, setFlag }) => {
       .then((res) => {
         setDataSource(res.data.data);
         setRoomName(res.data.data[0]?.room_name);
+        console.log(res);
       })
       .catch((error) => {
         console.log(error);
@@ -39,8 +40,10 @@ const ListHistoryInvoice = ({ visible, close, roomId, setFlag }) => {
   };
   useEffect(() => {
     console.log(roomId);
-    getListInvoice();
-  }, [roomId]);
+    if (visible) {
+      getListInvoice();
+    }
+  }, [roomId, visible]);
 
   const handlerPayInvoice = async (id) => {
     setLoading(true);

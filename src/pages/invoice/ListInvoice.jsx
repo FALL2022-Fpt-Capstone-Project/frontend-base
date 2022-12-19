@@ -1,10 +1,11 @@
-import { Col, Input, Row, Table, Tooltip, Select, Tag, ConfigProvider } from "antd";
+import { Col, Input, Row, Table, Tooltip, Select, Tag, ConfigProvider, Button } from "antd";
 import React, { useEffect, useState } from "react";
-import { InboxOutlined, AccountBookOutlined, ProfileOutlined } from "@ant-design/icons";
+import { InboxOutlined, AccountBookOutlined, ProfileOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import "./listInvoice.scss";
 import axios from "../../api/axios";
 import ListHistoryInvoice from "./ListHistoryInvoice";
 import CreateInvoice from "./CreateInvoice";
+import { Link } from "react-router-dom";
 const { Search } = Input;
 const LIST_BUILDING_FILTER = "manager/group/all";
 const ListInvoice = () => {
@@ -109,16 +110,16 @@ const ListInvoice = () => {
   const customizeRenderEmpty = () => (
     <div style={{ textAlign: "center" }}>
       <InboxOutlined style={{ fontSize: 70 }} />
-      <p style={{ fontSize: 20 }}>Vui lòng lựa chọn chung cư để hiển thị dữ liệu hoá đơn</p>
+      <p style={{ fontSize: 20 }}>Vui lòng lựa chọn chung cư để hiển thị dữ liệu hoá đơn thu</p>
     </div>
   );
   return (
     <div className="list-invoice">
       <div className="list-invoice-search">
         <Row>
-          <Col xs={24} lg={4}>
+          <Col xs={24} lg={5}>
             <Row>
-              <h4>Chọn chung cư để xem hoá đơn</h4>
+              <h4>Chọn chung cư để xem hoá đơn thu</h4>
             </Row>
             <Row>
               <Select
@@ -129,7 +130,7 @@ const ListInvoice = () => {
               ></Select>
             </Row>
           </Col>
-          <Col xs={24} lg={4}>
+          <Col xs={24} lg={5}>
             <Row>
               <h4>Lựa chọn kỳ thanh toán</h4>
             </Row>
@@ -143,7 +144,7 @@ const ListInvoice = () => {
               ></Select>
             </Row>
           </Col>
-          <Col xs={24} lg={4}>
+          <Col xs={24} lg={5}>
             <Row>
               <h4>Tìm kiếm theo tên phòng</h4>
             </Row>
@@ -159,6 +160,13 @@ const ListInvoice = () => {
                 }}
               />
             </Row>
+          </Col>
+          <Col xs={24} lg={4} offset={5} style={{ marginTop: "15px" }}>
+            <Link to="/invoice/create-invoice-auto">
+              <Button type="primary" icon={<PlusCircleOutlined />} size="middle" className="button-add">
+                Tạo mới nhanh hoá đơn thu
+              </Button>
+            </Link>
           </Col>
         </Row>
       </div>

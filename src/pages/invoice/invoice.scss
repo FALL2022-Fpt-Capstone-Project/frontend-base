@@ -65,7 +65,7 @@
   margin-top: 20px;
 }
 .auto-description {
-  font-size: 16px;
+  font-size: 14px;
 }
 .invoice-statistic {
   font-size: 15px;
@@ -82,8 +82,10 @@
   cursor: pointer;
 }
 .alert {
-  font-style: italic;
-  font-weight: bold;
+  font-size: 14px;
+  color: rgb(107, 106, 106);
+  margin-top: 12px;
+  margin-left: 20px;
 }
 .alert-red {
   font-weight: bold;
@@ -98,4 +100,13 @@
   .ant-layout {
     overflow: x;
   }
+}
+.noti {
+  background-color: #fff9e9;
+  margin-left: 24px;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+  border-radius: 5px;
 }

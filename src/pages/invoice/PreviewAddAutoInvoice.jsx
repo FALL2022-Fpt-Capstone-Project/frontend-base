@@ -1,81 +1,12 @@
-import { Button, Card, Col, DatePicker, Form, InputNumber, notification, Row, Table, Tag } from "antd";
-import { ArrowLeftOutlined } from "@ant-design/icons";
+import { Button, Card, Col, DatePicker, Form, InputNumber, notification, Row, Table, Tag, Tooltip } from "antd";
+import { ArrowLeftOutlined, EyeOutlined } from "@ant-design/icons";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import MainLayout from "../../components/layout/MainLayout";
 import moment from "moment";
 import axios from "../../api/axios";
 const ADD_INVOICE_URL = "manager/bill/room/create";
-const EditableContext = React.createContext(null);
-const EditableRow = ({ index, ...props }) => {
-  const [form] = Form.useForm();
-  return (
-    <Form form={form} component={false}>
-      <EditableContext.Provider value={form}>
-        <tr {...props} />
-      </EditableContext.Provider>
-    </Form>
-  );
-};
-const EditableCell = ({ title, editable, children, dataIndex, record, handleSave, ...restProps }) => {
-  const [editing, setEditing] = useState(false);
-  const inputRef = useRef(null);
-  const form = useContext(EditableContext);
-  useEffect(() => {
-    if (editing) {
-      inputRef.current.focus();
-    }
-  }, [editing]);
-  const toggleEdit = () => {
-    setEditing(!editing);
-    form.setFieldsValue({
-      [dataIndex]: record[dataIndex],
-    });
-  };
-  const save = async () => {
-    try {
-      const values = await form.validateFields();
-      toggleEdit();
-      handleSave({
-        ...record,
-        ...values,
-      });
-    } catch (errInfo) {
-      console.log("Save failed:", errInfo);
-    }
-  };
-  let childNode = children;
-  if (editable) {
-    childNode = editing ? (
-      <Form.Item
-        style={{
-          margin: 0,
-          width: "100%",
-        }}
-        name={dataIndex}
-        rules={[
-          {
-            required: true,
-            message: `Vui lòng không để trống!`,
-          },
-        ]}
-      >
-        <InputNumber ref={inputRef} onPressEnter={save} onBlur={save} />
-      </Form.Item>
-    ) : (
-      <div
-        className="editable-cell-value-wrap"
-        style={{
-          paddingRight: 24,
-        }}
-        onClick={toggleEdit}
-      >
-        {children}
-      </div>
-    );
-  }
-  return <td {...restProps}>{childNode}</td>;
-};
+
 const PreviewAddAutoInvoice = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -102,15 +33,7 @@ const PreviewAddAutoInvoice = () => {
     date_create_invoice: date_create_format,
     payment_term: payment_term_format,
   };
-  const onSelectChange = (newSelectedRowKeys, selectedRows) => {
-    console.log("selectedRowKeys changed: ", selectedRows);
-    setSelectedRowKeys(newSelectedRowKeys);
-    setSelectedRows(selectedRows);
-  };
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };
+
   const dateCreateChange = (date, dateString) => {
     setDateCreate(dateString);
   };
@@ -120,7 +43,7 @@ const PreviewAddAutoInvoice = () => {
   const disabledDate = (current) => {
     return current && current < date_create_format;
   };
-  const defaultColumnsNotBilled = [
+  const columnsNotBilled = [
     {
       title: "Tên phòng",
       dataIndex: "room_name",
@@ -132,16 +55,6 @@ const PreviewAddAutoInvoice = () => {
     {
       title: "Tiền phòng",
       dataIndex: "room_price",
-      editable: true,
-      width: "15%",
-      render: (text, record) => (
-        <InputNumber
-          style={{ width: "50%" }}
-          value={record.room_price}
-          formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-          parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
-        />
-      ),
     },
 
     {
@@ -151,11 +64,6 @@ const PreviewAddAutoInvoice = () => {
     {
       title: "Số điện mới",
       dataIndex: "room_current_electric_index",
-      width: "10%",
-      editable: true,
-      render: (text, record, index) => (
-        <InputNumber min={record.room_old_electric_index} style={{ width: "100%" }} value={text} />
-      ),
     },
     {
       title: "Số nước cũ",
@@ -164,11 +72,6 @@ const PreviewAddAutoInvoice = () => {
     {
       title: "Số nước mới",
       dataIndex: "room_current_water_index",
-      width: "10%",
-      editable: true,
-      render: (text, record, index) => (
-        <InputNumber min={record.room_old_water_index} style={{ width: "100%" }} value={text} />
-      ),
     },
     {
       title: "Tổng cộng",
@@ -286,109 +189,87 @@ const PreviewAddAutoInvoice = () => {
         );
       },
     },
-  ];
-  const components = {
-    body: {
-      row: EditableRow,
-      cell: EditableCell,
+    {
+      title: "Thao tác",
+      dataIndex: "action",
+      render: (_, record) => {
+        return (
+          <>
+            <Tooltip title="Xem hoá đơn">
+              <Link target="_blank" to="/detail-invoice">
+                <EyeOutlined className="icon" />
+              </Link>
+            </Tooltip>
+          </>
+        );
+      },
     },
-  };
-  const handleSave = (row) => {
-    const newData = [...dataSource];
-    const index = newData.findIndex((item) => row.key === item.key);
-    const item = newData[index];
-    newData.splice(index, 1, {
-      ...item,
-      ...row,
-    });
-    setDataSource(newData);
-  };
-  const columnsNotBilled = defaultColumnsNotBilled.map((col) => {
-    if (!col.editable) {
-      return col;
-    }
-    return {
-      ...col,
-      onCell: (record) => ({
-        record,
-        editable: col.editable,
-        dataIndex: col.dataIndex,
-        title: col.title,
-        handleSave,
-      }),
-    };
-  });
-  useEffect(() => {
-    setListPreview(
-      selectedRows.map((obj) => {
-        return {
-          room_id: obj.room_id,
-          room_price: obj.room_price,
-          bill_cycle: obj.bill_cycle,
-          list_general_service: obj.list_general_service,
-          service_bill: obj.list_general_service.map((service) => {
-            return {
-              service_id: service.service_id,
-              service_type: service.service_type_id,
-              service_price: service.service_price,
-              service_index:
-                service.service_name === "electric"
-                  ? service.service_type_name === "Đồng hồ điện/nước"
-                    ? obj.room_current_electric_index - obj.room_old_electric_index
-                    : service.service_type_name === "Tháng"
-                    ? 1
-                    : obj.total_renter
-                  : service.service_name === "water"
-                  ? service.service_type_name === "Đồng hồ điện/nước"
-                    ? obj.room_current_water_index - obj.room_old_water_index
-                    : service.service_type_name === "Tháng"
-                    ? 1
-                    : obj.total_renter
-                  : service.service_name === "internet"
-                  ? service.service_type_name === "Đồng hồ điện/nước"
-                    ? 1
-                    : service.service_type_name === "Tháng"
-                    ? 1
-                    : obj.total_renter
-                  : service.service_type_name === "Đồng hồ điện/nước"
-                  ? 1
-                  : service.service_type_name === "Tháng"
-                  ? 1
-                  : obj.total_renter,
-              service_total_money:
-                service.service_name === "electric"
-                  ? service.service_type_name === "Đồng hồ điện/nước"
-                    ? (obj.room_current_electric_index - obj.room_old_electric_index) * service.service_price
-                    : service.service_type_name === "Tháng"
-                    ? service.service_price
-                    : obj.total_renter * service.service_price
-                  : service.service_name === "water"
-                  ? service.service_type_name === "Đồng hồ điện/nước"
-                    ? (obj.room_current_water_index - obj.room_old_water_index) * service.service_price
-                    : service.service_type_name === "Tháng"
-                    ? service.service_price
-                    : obj.total_renter * service.service_price
-                  : service.service_name === "internet"
-                  ? service.service_type_name === "Đồng hồ điện/nước"
-                    ? service.service_price
-                    : service.service_type_name === "Tháng"
-                    ? service.service_price
-                    : obj.total_renter * service.service_price
-                  : service.service_type_name === "Đồng hồ điện/nước"
-                  ? service.service_price
-                  : service.service_type_name === "Tháng"
-                  ? service.service_price
-                  : obj.total_renter * service.service_price,
-            };
-          }),
-        };
-      })
-    );
-  }, [selectedRows]);
+  ];
 
-  console.log(listPreview);
-  console.log(selectedRows);
   const handleCreateInvoice = async (value) => {
+    let listPreview = value.items.map((obj) => {
+      return {
+        room_id: obj.room_id,
+        room_price: obj.room_price,
+        bill_cycle: obj.bill_cycle,
+        list_general_service: obj.list_general_service,
+        service_bill: obj.list_general_service.map((service) => {
+          return {
+            service_id: service.service_id,
+            service_type: service.service_type_id,
+            service_price: service.service_price,
+            service_index:
+              service.service_name === "electric"
+                ? service.service_type_name === "Đồng hồ điện/nước"
+                  ? obj.room_current_electric_index - obj.room_old_electric_index
+                  : service.service_type_name === "Tháng"
+                  ? 1
+                  : obj.total_renter
+                : service.service_name === "water"
+                ? service.service_type_name === "Đồng hồ điện/nước"
+                  ? obj.room_current_water_index - obj.room_old_water_index
+                  : service.service_type_name === "Tháng"
+                  ? 1
+                  : obj.total_renter
+                : service.service_name === "internet"
+                ? service.service_type_name === "Đồng hồ điện/nước"
+                  ? 1
+                  : service.service_type_name === "Tháng"
+                  ? 1
+                  : obj.total_renter
+                : service.service_type_name === "Đồng hồ điện/nước"
+                ? 1
+                : service.service_type_name === "Tháng"
+                ? 1
+                : obj.total_renter,
+            service_total_money:
+              service.service_name === "electric"
+                ? service.service_type_name === "Đồng hồ điện/nước"
+                  ? (obj.room_current_electric_index - obj.room_old_electric_index) * service.service_price
+                  : service.service_type_name === "Tháng"
+                  ? service.service_price
+                  : obj.total_renter * service.service_price
+                : service.service_name === "water"
+                ? service.service_type_name === "Đồng hồ điện/nước"
+                  ? (obj.room_current_water_index - obj.room_old_water_index) * service.service_price
+                  : service.service_type_name === "Tháng"
+                  ? service.service_price
+                  : obj.total_renter * service.service_price
+                : service.service_name === "internet"
+                ? service.service_type_name === "Đồng hồ điện/nước"
+                  ? service.service_price
+                  : service.service_type_name === "Tháng"
+                  ? service.service_price
+                  : obj.total_renter * service.service_price
+                : service.service_type_name === "Đồng hồ điện/nước"
+                ? service.service_price
+                : service.service_type_name === "Tháng"
+                ? service.service_price
+                : obj.total_renter * service.service_price,
+          };
+        }),
+      };
+    });
     let finalListPreview = listPreview.map((obj, idx) => {
       return {
         payment_term: paymentTerm,
@@ -396,7 +277,7 @@ const PreviewAddAutoInvoice = () => {
         room_id: obj.room_id,
         total_room_money: obj.room_price * obj.bill_cycle,
         total_service_money: obj.service_bill.reduce(function (acc, obj) {
-          return acc + obj.serviceTotalMoney;
+          return acc + obj.service_total_money;
         }, 0),
         service_bill: obj.service_bill,
       };
@@ -429,18 +310,24 @@ const PreviewAddAutoInvoice = () => {
         console.log(e);
       });
     console.log(JSON.stringify(response?.data));
+    console.log(listPreview);
     console.log(finalListPreview);
   };
+  form.setFieldsValue({ items: dataSource });
   return (
     <div className="building">
       <MainLayout
         title="Xem trước hoá đơn tạo mới nhanh"
         button={
-          <Link to="/invoice">
-            <Button type="primary" icon={<ArrowLeftOutlined />} size="middle" className="button-add">
-              Quản lý hoá đơn
-            </Button>
-          </Link>
+          <Button
+            type="primary"
+            icon={<ArrowLeftOutlined />}
+            onClick={() => navigate(-1)}
+            size="middle"
+            className="button-add"
+          >
+            Quay lại tạo mới nhanh hoá đơn
+          </Button>
         }
       >
         <Form
@@ -509,39 +396,22 @@ const PreviewAddAutoInvoice = () => {
                 <p className="auto-description">
                   Bạn đã lựa chọn{" "}
                   <b>
-                    {selectedRowKeys.length}/{dataSource?.length}
+                    {dataSource?.length}/{dataSource?.length}
                   </b>{" "}
                   phòng để tạo mới nhanh hoá đơn
                 </p>
-                <Form>
-                  <Form.Item
-                    rules={[
-                      {
-                        message: "Vui lòng nhập trường này",
-                      },
-                      {
-                        required: true,
-                        message: "Vui lòng nhập trường này!",
-                      },
-                    ]}
-                  >
-                    <Table
-                      bordered
-                      // dataSource={dataSource}
-                      dataSource={dataSource}
-                      scroll={{
-                        x: 700,
-                      }}
-                      columns={columnsNotBilled}
-                      pagination={{ pageSize: 5 }}
-                      // loading={loading}
-                      rowSelection={rowSelection}
-                      components={components}
-                      rowClassName={() => "editable-row"}
-                      rowKey={(record) => record.room_id}
-                    />
-                  </Form.Item>
-                </Form>
+                <Form.Item name="items">
+                  <Table
+                    bordered
+                    dataSource={dataSource}
+                    scroll={{
+                      x: 700,
+                    }}
+                    columns={columnsNotBilled}
+                    pagination={{ pageSize: 5 }}
+                    // loading={loading}
+                  />
+                </Form.Item>
                 <Button
                   className="btn-add-invoice"
                   htmlType="submit"

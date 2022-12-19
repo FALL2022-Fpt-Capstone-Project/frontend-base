@@ -72,7 +72,7 @@ const MainLayout = ({ children, button, title }) => {
                     </span>
                   </Space>
                 </Dropdown>{" "}
-                <Avatar
+                {/* <Avatar
                   size={{
                     xs: 24,
                     sm: 32,
@@ -80,7 +80,7 @@ const MainLayout = ({ children, button, title }) => {
                     lg: 40,
                   }}
                   icon={<UserOutlined />}
-                />
+                /> */}
               </Col>
             </Row>
           </div>
@@ -91,9 +91,8 @@ const MainLayout = ({ children, button, title }) => {
           }}
           className="layout-content"
         >
-          <Breadcrumbs />
+          <Breadcrumbs button={button} />
           <Divider />
-          <div>{button}</div>
           <div className="site-layout-background">{children}</div>
         </Content>
       </Layout>
