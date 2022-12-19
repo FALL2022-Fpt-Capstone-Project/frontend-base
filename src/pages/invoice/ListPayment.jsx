@@ -1,19 +1,52 @@
 import React, { useEffect, useState } from "react";
-import { Col, Input, Row, Table, Tooltip, Select, Tag, ConfigProvider } from "antd";
-import { InboxOutlined, AccountBookOutlined, ProfileOutlined } from "@ant-design/icons";
+import { Col, DatePicker, Row, Table, Tooltip, Select, Tag, ConfigProvider, Popconfirm, Button } from "antd";
+import { InboxOutlined, DeleteOutlined, PlusCircleOutlined, EyeOutlined } from "@ant-design/icons";
 
 import axios from "../../api/axios";
 import CreatePayment from "./CreatePayment";
+import { Link } from "react-router-dom";
 
 const LIST_BUILDING_FILTER = "manager/group/all";
 const ListPayment = () => {
   let cookie = localStorage.getItem("Cookie");
   const [buildingFilter, setBuildingFilter] = useState("");
+  const [building, setBuilding] = useState(null);
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  const [building, setBuilding] = useState(null);
-
+  const [createPaymentInvoice, setCreatePaymentInvoice] = useState(false);
+  const [groupName, setGroupName] = useState();
+  const [flag, setFlag] = useState(false);
+  const onClickCreatePaymentInvoice = () => {
+    setCreatePaymentInvoice(true);
+  };
+  const getListInvoice = async () => {
+    setLoading(true);
+    const response = await axios
+      .get(`manager/bill/money-source/out?groupId=${building}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie}`,
+        },
+      })
+      .then((res) => {
+        setDataSource(res.data.data);
+        setGroupName(res.data.data[0].group_name);
+        console.log(res);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    setLoading(false);
+  };
+  useEffect(() => {
+    console.log(building);
+    getListInvoice();
+  }, [building]);
+  useEffect(() => {
+    if (flag) {
+      getListInvoice();
+    }
+  }, [flag]);
   useEffect(() => {
     const getBuildingFilter = async () => {
       const response = await axios
@@ -40,22 +73,26 @@ const ListPayment = () => {
       value: buildingFilter[i].group_id,
     });
   }
-  const buildingChange = (value, option) => {
+  const buildingChange = (value) => {
     setBuilding(value);
-    // setPaymentCycle(0);
-    console.log(value);
   };
+  console.log(building);
   const customizeRenderEmpty = () => (
     <div style={{ textAlign: "center" }}>
       <InboxOutlined style={{ fontSize: 70 }} />
       <p style={{ fontSize: 20 }}>Vui lòng lựa chọn chung cư để hiển thị dữ liệu hoá đơn chi</p>
     </div>
   );
+  const getFullDate = (date) => {
+    const dateAndTime = date.split(" ");
+
+    return dateAndTime[0].split("-").reverse().join("-");
+  };
   return (
     <div className="list-invoice">
       <div className="list-invoice-search">
         <Row>
-          <Col xs={24} lg={4}>
+          <Col xs={24} lg={5}>
             <Row>
               <h4>Chọn chung cư để xem hoá đơn chi</h4>
             </Row>
@@ -67,6 +104,26 @@ const ListPayment = () => {
                 className="add-auto-filter"
               ></Select>
             </Row>
+          </Col>
+          <Col xs={24} lg={5}>
+            <Row>
+              <h4>Tìm kiếm hoá đơn theo thời gian</h4>
+            </Row>
+            <Row>
+              <DatePicker picker="month" placeholder="Chọn thời gian" format={"MM/YYYY"} />
+            </Row>
+          </Col>
+          <Col xs={24} lg={4} offset={10} style={{ marginTop: "15px" }}>
+            <Button
+              disabled={building === null ? true : false}
+              type="primary"
+              icon={<PlusCircleOutlined />}
+              size="middle"
+              className="button-add"
+              onClick={onClickCreatePaymentInvoice}
+            >
+              Tạo mới hoá đơn chi
+            </Button>
           </Col>
         </Row>
       </div>
@@ -83,84 +140,69 @@ const ListPayment = () => {
               dataIndex: "group_name",
             },
             {
-              title: "Tên phòng",
-              dataIndex: "room_name",
-              // filteredValue: [textSearch],
-              onFilter: (value, record) => {
-                return String(record.room_name).toLowerCase()?.includes(value.toLowerCase());
-              },
-            },
-            // {
-            //   title: "Người đại diện",
-            //   dataIndex: "represent_renter_name",
-            //   filteredValue: [textSearch],
-            //   onFilter: (value, record) => {
-            //     return String(record.represent_renter_name).toLowerCase()?.includes(value.toLowerCase());
-            //   },
-            // },
-            {
-              title: "Chu kỳ thanh toán",
-              dataIndex: "payment_circle",
-            },
-            {
-              title: "Số điện",
-              dataIndex: "current_electric_index",
-            },
-
-            {
-              title: "Số nước",
-              dataIndex: "current_water_index",
-            },
-
-            {
-              title: "Tiền phòng",
-              dataIndex: "room_price",
+              title: "Tổng tiền thuê chung cư",
+              dataIndex: "room_group_money",
               render: (value) => {
                 return value.toLocaleString("vn") + " đ";
               },
             },
             {
-              title: "Trạng thái hoá đơn",
-              dataIndex: "is_all_paid",
-              render: (_, record) => {
-                let status;
-                if (record.is_all_paid === false) {
-                  status = (
-                    <Tag color="red" key={record.is_all_paid}>
-                      Chưa thanh toán hết hoá đơn
-                    </Tag>
-                  );
-                } else if (record.is_all_paid === true) {
-                  status = (
-                    <Tag color="green" key={record.is_all_paid}>
-                      Đã thanh toán hết hoá đơn
-                    </Tag>
-                  );
-                }
-                return <>{status}</>;
+              title: "Tổng tiền dịch vụ",
+              dataIndex: "service_money",
+              render: (value) => {
+                return value.toLocaleString("vn") + " đ";
+              },
+            },
+            {
+              title: "Số tiền khác",
+              dataIndex: "other_money",
+              render: (value) => {
+                return value.toLocaleString("vn") + " đ";
+              },
+            },
+            {
+              title: "Ngày lập hoá đơn",
+              dataIndex: "time",
+              render: (date) => getFullDate(date),
+            },
+            {
+              title: "Tổng cộng",
+              dataIndex: "total_money",
+              render: (value) => {
+                return value?.toLocaleString("vn") + " đ";
               },
             },
             {
               title: "Thao tác",
               dataIndex: "action",
-              // render: (_, record) => {
-              //   return (
-              //     <>
-              //       <Tooltip title="Xem lịch sử hoá đơn">
-              //         <AccountBookOutlined className="icon" onClick={() => onClickHistoryInvoice(record.room_id)} />
-              //       </Tooltip>
-              //       <Tooltip title="Tạo hoá đơn">
-              //         <ProfileOutlined className="icon" onClick={() => onClickCreateInvoice(record.room_id)} />
-              //       </Tooltip>
-              //     </>
-              //   );
-              // },
+              render: (_, record) => {
+                return (
+                  <>
+                    <Tooltip title="Xoá hoá đơn">
+                      <Popconfirm
+                        title="Bạn có muốn xoá hoá đơn này không?"
+                        okText="Đồng ý"
+                        cancelText="Không"
+                        placement="topRight"
+                      >
+                        <DeleteOutlined className="icon icon-delete" style={{ color: "red" }} />
+                      </Popconfirm>
+                    </Tooltip>
+                  </>
+                );
+              },
             },
           ]}
           loading={loading}
         />
       </ConfigProvider>
-      {/* <CreatePayment visible={true} /> */}
+      <CreatePayment
+        visible={createPaymentInvoice}
+        close={setCreatePaymentInvoice}
+        groupName={groupName}
+        groupId={building}
+        setFlag={setFlag}
+      />
     </div>
   );
 };

@@ -25,11 +25,11 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
   const [vehiPeople, setVehiPeople] = useState(1);
   const [internetPeople, setInternetPeople] = useState(1);
   const [cleanPeople, setCleanPeople] = useState(1);
-  const [water, setWater] = useState({});
-  const [elec, setElec] = useState({});
-  const [vehi, setVehi] = useState({});
-  const [internet, setInternet] = useState({});
-  const [clean, setClean] = useState({});
+  const [water, setWater] = useState();
+  const [elec, setElec] = useState();
+  const [vehi, setVehi] = useState();
+  const [internet, setInternet] = useState();
+  const [clean, setClean] = useState();
   const [dateCreate, setDateCreate] = useState();
   const [paymentTerm, setPaymentTerm] = useState();
   const [form] = Form.useForm();
@@ -58,44 +58,54 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
     setPaymentTerm(date_payment);
   }, [date_payment]);
   useEffect(() => {
-    axios
-      .get(`manager/bill/room/information/${id}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${cookie}`,
-        },
-      })
-      .then((res) => {
-        console.log(res);
-        form.setFieldsValue({
-          old_elec: res.data.data.list_general_service?.find((electric) => electric.service_name === "electric")
-            .hand_over_general_service_index,
-          new_elec: res.data.data.list_general_service?.find((electric) => electric.service_name === "electric")
-            .hand_over_general_service_index,
-          old_water: res.data.data.list_general_service?.find((water) => water.service_name === "water")
-            .hand_over_general_service_index,
-          new_water: res.data.data.list_general_service?.find((water) => water.service_name === "water")
-            .hand_over_general_service_index,
-          vehiMonth: res.data.data.list_general_service?.find((vehicles) => vehicles.service_name === "vehicles")
-            .hand_over_general_service_index,
-          internetMonth: res.data.data.list_general_service?.find((internet) => internet.service_name === "internet")
-            .hand_over_general_service_index,
+    if (visible) {
+      axios
+        .get(`manager/bill/room/information/${id}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cookie}`,
+          },
+        })
+        .then((res) => {
+          console.log(res);
+          form.setFieldsValue({
+            old_elec: res.data.data.list_general_service?.find((electric) => electric.service_name === "electric")
+              .hand_over_general_service_index,
+            new_elec: res.data.data.list_general_service?.find((electric) => electric.service_name === "electric")
+              .hand_over_general_service_index,
+            old_water: res.data.data.list_general_service?.find((water) => water.service_name === "water")
+              .hand_over_general_service_index,
+            new_water: res.data.data.list_general_service?.find((water) => water.service_name === "water")
+              .hand_over_general_service_index,
+            vehiMonth:
+              res.data.data?.list_general_service?.find((vehicles) => vehicles.service_name === "vehicles")
+                .hand_over_general_service_index !== undefined
+                ? res.data.data.list_general_service?.find((vehicles) => vehicles.service_name === "vehicles")
+                    .hand_over_general_service_index
+                : null,
+            internetMonth:
+              res.data.data?.list_general_service?.find((internet) => internet.service_name === "internet")
+                .hand_over_general_service_index !== undefined
+                ? res.data.data.list_general_service?.find((internet) => internet.service_name === "internet")
+                    .hand_over_general_service_index
+                : null,
+          });
+          setRoomId(res.data.data.room_id);
+          setRoomName(res.data.data.room_name);
+          setRoomPrice(res.data.data.room_price);
+          setListService(res.data.data.list_general_service);
+          setTotalRenter(res.data.data.total_renter);
+          setNewElec(
+            res.data.data.list_general_service.find((electric) => electric.service_name === "electric")
+              .hand_over_general_service_index
+          );
+          setNewWater(
+            res.data.data.list_general_service.find((water) => water.service_name === "water")
+              .hand_over_general_service_index
+          );
         });
-        setRoomId(res.data.data.room_id);
-        setRoomName(res.data.data.room_name);
-        setRoomPrice(res.data.data.room_price);
-        setListService(res.data.data.list_general_service);
-        setTotalRenter(res.data.data.total_renter);
-        setNewElec(
-          res.data.data.list_general_service.find((electric) => electric.service_name === "electric")
-            .hand_over_general_service_index
-        );
-        setNewWater(
-          res.data.data.list_general_service.find((water) => water.service_name === "water")
-            .hand_over_general_service_index
-        );
-      });
-  }, [cookie, id, form]);
+    }
+  }, [cookie, id, form, visible]);
 
   const handleCreateInvoice = async (value) => {
     const invoice = [
@@ -176,7 +186,8 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
     return current && current < date_create_format;
   };
   const serviceArray = listService;
-  let service_bill = [];
+  let results = [];
+
   useEffect(() => {
     let serviceId = 0;
     let serviceType = 0;
@@ -331,8 +342,10 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
       });
     }
   }, [serviceArray, newWater, newElec]);
-  service_bill?.push(elec, water, vehi, internet);
-
+  results?.push(elec, water, vehi, internet);
+  const service_bill = results.filter((element) => {
+    return element !== undefined;
+  });
   let serviceTotalMoney = internetPrice * internetMonth + vehiPrice * vehiMonth + electMoney + waterMoney;
   let totalMoney = serviceTotalMoney + roomPrice;
   return (
@@ -500,7 +513,7 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
                           <Col span={10}>
                             <Form.Item name="old_elec">
                               <InputNumber
-                                disabled
+                                readOnly
                                 defaultValue={obj.hand_over_general_service_index}
                                 addonAfter="Số cũ"
                               />
@@ -530,7 +543,7 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
                           <Col span={10}>
                             <Form.Item name="old_water">
                               <InputNumber
-                                disabled
+                                readOnly
                                 defaultValue={obj.hand_over_general_service_index}
                                 addonAfter="Số cũ"
                               />
