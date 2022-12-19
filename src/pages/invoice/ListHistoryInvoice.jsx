@@ -40,8 +40,10 @@ const ListHistoryInvoice = ({ visible, close, roomId, setFlag }) => {
   };
   useEffect(() => {
     console.log(roomId);
-    getListInvoice();
-  }, [roomId]);
+    if (visible) {
+      getListInvoice();
+    }
+  }, [roomId, visible]);
 
   const handlerPayInvoice = async (id) => {
     setLoading(true);

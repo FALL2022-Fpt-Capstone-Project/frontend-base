@@ -1,8 +1,7 @@
-import { Form, Input, Radio, Select, notification, Switch, Button, Modal, Card, Checkbox } from "antd";
+import { Form, Input, Radio, notification, Switch, Button, Modal, Card, Checkbox } from "antd";
 import "./updateStaff.scss";
 import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
-const { Option } = Select;
 
 const UpdateStaff = ({ visible, close, id }) => {
   const [full_name, setName] = useState("");
@@ -12,7 +11,6 @@ const UpdateStaff = ({ visible, close, id }) => {
   const [password, setPassword] = useState("");
   const [gender, setGender] = useState("");
   const [deactivate, setDeactivate] = useState();
-  const [roles, setRoles] = useState("");
   const [permission, setPermission] = useState([1, 2, 3, 4, 5, 6, 7]);
   const staffOptions = [
     {
@@ -45,16 +43,12 @@ const UpdateStaff = ({ visible, close, id }) => {
           },
         })
         .then((res) => {
-          let role = res.data.data?.role_name;
-          let roleSlice = role.slice(5);
-          let roleFinal = roleSlice.toLowerCase();
           form.setFieldsValue({
             full_name: res.data.data?.full_name,
             user_name: res.data.data?.user_name,
             phone_number: res.data.data?.phone_number,
             address_more_detail: res.data.data?.address_more_detail,
             gender: res.data.data?.gender,
-            roles: roleFinal,
             status: res.data.data?.is_deactivate,
             permission: res.data.data?.permission,
           });
@@ -63,7 +57,6 @@ const UpdateStaff = ({ visible, close, id }) => {
           setPhoneNumber(res.data.data?.phone_number);
           setAddress_more_detail(res.data.data?.address_more_detail);
           setGender(res.data.data?.gender);
-          setRoles(roleFinal);
           setDeactivate(res.data.data?.is_deactivate);
           setPermission(res.data.data?.permission);
         });
@@ -76,7 +69,7 @@ const UpdateStaff = ({ visible, close, id }) => {
     gender: gender,
     address_more_detail: address_more_detail,
     deactivate: deactivate,
-    roles: roles,
+    roles: "staff",
     permission: permission,
   };
   function Update(e) {
@@ -101,7 +94,7 @@ const UpdateStaff = ({ visible, close, id }) => {
       })
       .catch((e) =>
         notification.error({
-          message: "Cập nhật thông tin thất bại",
+          message: "Cập nhật thông tin nhân viên thất bại",
           description: "Vui lòng kiểm tra lại thông tin và thử lại.",
           duration: 3,
           placement: "top",
@@ -110,10 +103,6 @@ const UpdateStaff = ({ visible, close, id }) => {
     console.log(data);
   }
 
-  const roleChange = (value) => {
-    setRoles(value);
-    console.log(value);
-  };
   const genderChange = (e) => {
     setGender(e.target.value);
   };
@@ -212,6 +201,13 @@ const UpdateStaff = ({ visible, close, id }) => {
                 </span>
               }
               hasFeedback
+              rules={[
+                {
+                  pattern: /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,30}$/,
+                  message: "Mật khẩu phải chứa cả số và ký tự đặc biệt",
+                },
+                { min: 8, message: "Mật khẩu phải có ít nhất 8 ký tự" },
+              ]}
             >
               <Input.Password onChange={(e) => setPassword(e.target.value)} placeholder="Nhập mật khẩu" />
             </Form.Item>
@@ -272,39 +268,17 @@ const UpdateStaff = ({ visible, close, id }) => {
               <Input onChange={(e) => setAddress_more_detail(e.target.value)} value={address_more_detail} />
             </Form.Item>
             <Form.Item
-              className="form-item"
-              name="roles"
+              name="permission"
               labelCol={{ span: 24 }}
               label={
                 <span>
-                  <b>Vai trò: </b>
+                  <b>Quyền nhân viên: </b>
                 </span>
               }
             >
-              <Select
-                defaultValue={roles}
-                style={{
-                  width: 120,
-                }}
-                onChange={(value) => roleChange(value)}
-              >
-                <Option value="admin">ADMIN</Option>
-                <Option value="staff">Nhân viên</Option>
-              </Select>
+              <Checkbox.Group options={staffOptions} onChange={permissionChange} defaultValue={permission} />
             </Form.Item>
-            {roles === "staff" && (
-              <Form.Item
-                name="permission"
-                labelCol={{ span: 24 }}
-                label={
-                  <span>
-                    <b>Quyền nhân viên: </b>
-                  </span>
-                }
-              >
-                <Checkbox.Group options={staffOptions} onChange={permissionChange} defaultValue={permission} />
-              </Form.Item>
-            )}
+
             <Form.Item
               name="status"
               labelCol={{ span: 24 }}
