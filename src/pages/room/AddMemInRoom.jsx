@@ -171,11 +171,11 @@ function AddMemInRoom(data) {
         if (contractRoom?.list_renter?.length < contractRoom?.room?.room_limit_people) {
             const data = {
                 ...dataMem,
-                name: dataMem.name,
+                name: dataMem.name.trim(),
                 gender: dataMem.gender,
                 email: "",
-                phone_number: dataMem.phone_number,
-                identity_card: dataMem.identity_card,
+                phone_number: dataMem.phone_number.trim(),
+                identity_card: dataMem.identity_card.trim(),
                 license_plates: dataMem.license_plates,
                 room_id: contractRoom?.room_id,
                 address_more_detail: dataMem.address_more_detail,

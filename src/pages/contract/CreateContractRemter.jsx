@@ -281,6 +281,7 @@ const CreateContractRenter = () => {
         // console.log(error);
       });
   };
+  console.log(dataOldRenter);
   const filterRenter = async (groupId) => {
     setLoading(true);
     await axios
@@ -497,37 +498,44 @@ const CreateContractRenter = () => {
   ];
 
   const onFinishAddMem = (e) => {
-    if (dataMember.length < roomSelect?.room_limit_people - 1) {
-      if (dataMember.find((mem) => mem.phone_number.toLowerCase().trim() === e.phone_number.toLowerCase().trim())) {
-        if (dataMember.find((mem) => mem.identity_card.toLowerCase().trim() !== e.identity_card.toLowerCase().trim())) {
-          setIsAddMem(true);
-          message.error("Trùng số điện thoại");
+    if (dataOldRenter?.find(mem => mem.identity_number === e.identity_card.toLowerCase().trim())) {
+      message.error("Số CMND đã tồn tại");
+    } else if (form.getFieldsValue().renter_identity_card === e.identity_card.toLowerCase().trim()) {
+      message.error("Số CMND đã trùng với người đại diện");
+    } else {
+      console.log('out');
+      if (dataMember.length < roomSelect?.room_limit_people - 1) {
+        if (dataMember.find((mem) => mem.phone_number.toLowerCase().trim() === e.phone_number.toLowerCase().trim())) {
+          if (dataMember.find((mem) => mem.identity_card.toLowerCase().trim() !== e.identity_card.toLowerCase().trim())) {
+            setIsAddMem(true);
+            message.error("Trùng số điện thoại");
+          } else {
+            setIsAddMem(true);
+            message.error("Trùng số điện thoại và CMND");
+          }
         } else {
-          setIsAddMem(true);
-          message.error("Trùng số điện thoại và CMND");
+          if (dataMember.find((mem) => mem.identity_card.toLowerCase().trim() === e.identity_card.toLowerCase().trim())) {
+            setIsAddMem(true);
+            message.error("Trùng số CMND");
+          } else {
+            setMemberId(e.member_id + 1);
+            setDataMember([...dataMember, e]);
+            message.success("Thêm mới thành viên thành công");
+            setIsAddMem(false);
+            formAddMem.setFieldsValue({
+              member_id: memberId,
+              name: "",
+              identity_card: "",
+              phone_number: "",
+              license_plates: "",
+              address_more_detail: "",
+            });
+          }
         }
       } else {
-        if (dataMember.find((mem) => mem.identity_card.toLowerCase().trim() === e.identity_card.toLowerCase().trim())) {
-          setIsAddMem(true);
-          message.error("Trùng số CMND");
-        } else {
-          setMemberId(e.member_id + 1);
-          setDataMember([...dataMember, e]);
-          message.success("Thêm mới thành viên thành công");
-          setIsAddMem(false);
-          formAddMem.setFieldsValue({
-            member_id: memberId,
-            name: "",
-            identity_card: "",
-            phone_number: "",
-            license_plates: "",
-            address_more_detail: "",
-          });
-        }
+        setIsAddMem(true);
+        message.error("Số lượng thành viên đã đầy");
       }
-    } else {
-      setIsAddMem(true);
-      message.error("Số lượng thành viên đã đầy");
     }
   };
   const onFinishFailAddMem = (e) => {
@@ -1237,12 +1245,12 @@ const CreateContractRenter = () => {
                           <b>Thời hạn hợp đồng (ít nhất 1 tháng): </b>
                         </span>
                       }
-                      // rules={[
-                      //   {
-                      //     required: true,
-                      //     message: "Vui lòng chọn thời hạn hợp đồng",
-                      //   },
-                      // ]}
+                    // rules={[
+                    //   {
+                    //     required: true,
+                    //     message: "Vui lòng chọn thời hạn hợp đồng",
+                    //   },
+                    // ]}
                     >
                       <Select
                         placeholder="Thời hạn hợp đồng"
@@ -1542,12 +1550,12 @@ const CreateContractRenter = () => {
                               String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
                                 ? "Nhập chỉ số hiện tại"
                                 : "Số " +
-                                  obj.service_type_name +
-                                  " / " +
-                                  obj.service_price.toLocaleString("vn-VN", {
-                                    style: "currency",
-                                    currency: "VND",
-                                  })
+                                obj.service_type_name +
+                                " / " +
+                                obj.service_price.toLocaleString("vn-VN", {
+                                  style: "currency",
+                                  currency: "VND",
+                                })
                             }
                             addonAfter={
                               String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())

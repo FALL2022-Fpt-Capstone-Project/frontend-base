@@ -507,7 +507,7 @@ const EditContractBuilding = () => {
                                                 },
                                             ]}
                                         >
-                                            <Input placeholder="CCCD/CMND"></Input>
+                                            <Input disabled placeholder="CCCD/CMND"></Input>
                                         </Form.Item>
                                         <Form.Item
                                             className="form-item"

@@ -1,5 +1,5 @@
 import "./room.scss";
-import { Form, Input, Radio, Select, Switch, Layout, Button, Row, Col, Table, Modal, message, Checkbox, notification, DatePicker, InputNumber, Spin } from "antd";
+import { Form, Input, Select, Button, Row, Col, Table, Modal, Checkbox, notification,  InputNumber,Card } from "antd";
 import React, { useEffect, useState } from 'react';
 import {
     PlusCircleOutlined,
@@ -8,13 +8,10 @@ import {
     FilterOutlined,
     ArrowLeftOutlined
 } from "@ant-design/icons";
-import Sidebar from "../../components/sidebar/Sidebar";
-import Breadcrumbs from "../../components/BreadCrumb ";
 import axios from "../../api/axios";
 import { useLocation } from "react-router-dom";
 import AddMultiEquipment from "./AddMultiEquipment";
 import MainLayout from "../../components/layout/MainLayout";
-const { Content, Sider, Header } = Layout;
 const fontSizeIcon = {
     fontSize: "120%",
 };
@@ -491,85 +488,87 @@ function RoomEquipment(data) {
                     </Button>,
                 ]}
             >
-                <Form
-                    form={createAssetForm}
-                    onFinish={addAssetFinish}
-                    onFinishFailed={addAssetFail}
-                    labelCol={{ span: 5 }}
-                    wrapperCol={{ span: 30 }}
-                    layout="horizontal"
-                    initialValues={{ size: componentSize }}
-                    onValuesChange={onFormLayoutChange}
-                    size={"default"}
-                    id="create-asset"
-                >
-                    <Form.Item
-                        className="form-item"
-                        name="asset_name"
-                        labelCol={{ span: 24 }}
-                        label={
-                            <span>
-                                <b>Tên tài sản: </b>
-                            </span>
-                        }
-                        rules={[
-                            {
-                                required: true,
-                                message: "Vui lòng nhập tên tài sản",
-                                whitespace: true,
-                            },
-                        ]}
+                <Card title="Thông tin tài sản" className='card'>
+                    <Form
+                        form={createAssetForm}
+                        onFinish={addAssetFinish}
+                        onFinishFailed={addAssetFail}
+                        labelCol={{ span: 5 }}
+                        wrapperCol={{ span: 30 }}
+                        layout="horizontal"
+                        initialValues={{ size: componentSize }}
+                        onValuesChange={onFormLayoutChange}
+                        size={"default"}
+                        id="create-asset"
                     >
-                        <Input placeholder="Tên tài sản"></Input>
-                    </Form.Item>
-                    <Form.Item
-                        className="form-item"
-                        name="hand_over_asset_quantity"
-                        labelCol={{ span: 24 }}
-                        label={
-                            <span>
-                                <b>Số lượng: </b>
-                            </span>
-                        }
-                        rules={[
-                            {
-                                required: true,
-                                message: "Vui lòng nhập số lượng",
-                            },
-                            {
-                                pattern: new RegExp(/^[0-9]*$/),
-                                message: "Vui lòng nhập số nguyên",
+                        <Form.Item
+                            className="form-item"
+                            name="asset_name"
+                            labelCol={{ span: 24 }}
+                            label={
+                                <span>
+                                    <b>Tên tài sản: </b>
+                                </span>
                             }
-                        ]}
-                    >
-                        <InputNumber placeholder="Nhập số lượng tài sản" style={{ width: "100%" }} min={1} />
-                    </Form.Item>
-                    <Form.Item
-                        className="form-item"
-                        name="asset_type_show_name"
-                        labelCol={{ span: 24 }}
-                        label={
-                            <span>
-                                <b>Nhóm tài sản: </b>
-                            </span>
-                        }
-                        rules={[
-                            {
-                                required: true,
-                                message: "Vui lòng chọn nhóm tài sản",
-                            },
-                        ]}
-                    >
-                        <Select placeholder="Chọn nhóm tài sản">
-                            {listAssetType?.map((obj, index) => {
-                                return <Select.Option value={obj.id}>{obj.asset_type_show_name}</Select.Option>;
-                            })}
-                        </Select>
-                    </Form.Item>
-                </Form>
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "Vui lòng nhập tên tài sản",
+                                    whitespace: true,
+                                },
+                            ]}
+                        >
+                            <Input placeholder="Tên tài sản"></Input>
+                        </Form.Item>
+                        <Form.Item
+                            className="form-item"
+                            name="hand_over_asset_quantity"
+                            labelCol={{ span: 24 }}
+                            label={
+                                <span>
+                                    <b>Số lượng: </b>
+                                </span>
+                            }
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "Vui lòng nhập số lượng",
+                                },
+                                {
+                                    pattern: new RegExp(/^[0-9]*$/),
+                                    message: "Vui lòng nhập số nguyên",
+                                }
+                            ]}
+                        >
+                            <InputNumber placeholder="Nhập số lượng tài sản" style={{ width: "100%" }} min={1} />
+                        </Form.Item>
+                        <Form.Item
+                            className="form-item"
+                            name="asset_type_show_name"
+                            labelCol={{ span: 24 }}
+                            label={
+                                <span>
+                                    <b>Nhóm tài sản: </b>
+                                </span>
+                            }
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "Vui lòng chọn nhóm tài sản",
+                                },
+                            ]}
+                        >
+                            <Select placeholder="Chọn nhóm tài sản">
+                                {listAssetType?.map((obj, index) => {
+                                    return <Select.Option value={obj.id}>{obj.asset_type_show_name}</Select.Option>;
+                                })}
+                            </Select>
+                        </Form.Item>
+                    </Form>
+                </Card>
             </Modal>
             <Modal
-                title="Chỉnh sửa tài sản trong phòng"
+                title={<h2>Chỉnh sửa tài sản trong phòng</h2>}
                 visible={isEditAsset}
                 onCancel={() => {
                     setIsEditAsset(false);
@@ -592,85 +591,87 @@ function RoomEquipment(data) {
                     </Button>,
                 ]}
             >
-                <Form
-                    form={editAssetForm}
-                    onFinish={editAssetFinish}
-                    onFinishFailed={editAssetFail}
-                    labelCol={{ span: 5 }}
-                    wrapperCol={{ span: 30 }}
-                    layout="horizontal"
-                    initialValues={{ size: componentSize }}
-                    onValuesChange={onFormLayoutChange}
-                    size={"default"}
-                    id="edit-asset"
-                >
-                    <Form.Item name="asset_id" style={{ display: 'none' }}></Form.Item>
-                    <Form.Item
-                        className="form-item"
-                        name="asset_name"
-                        labelCol={{ span: 24 }}
-                        label={
-                            <span>
-                                <b>Tên tài sản: </b>
-                            </span>
-                        }
-                        rules={[
-                            {
-                                required: true,
-                                message: "Vui lòng nhập tên tài sản",
-                                whitespace: true,
-                            },
-                        ]}
+                <Card title="Thông tin tài sản" className='card'>
+                    <Form
+                        form={editAssetForm}
+                        onFinish={editAssetFinish}
+                        onFinishFailed={editAssetFail}
+                        labelCol={{ span: 5 }}
+                        wrapperCol={{ span: 30 }}
+                        layout="horizontal"
+                        initialValues={{ size: componentSize }}
+                        onValuesChange={onFormLayoutChange}
+                        size={"default"}
+                        id="edit-asset"
                     >
-                        <Input placeholder="Tên tài sản"></Input>
-                    </Form.Item>
-                    <Form.Item
-                        className="form-item"
-                        name="hand_over_asset_quantity"
-                        labelCol={{ span: 24 }}
-                        label={
-                            <span>
-                                <b>Số lượng: </b>
-                            </span>
-                        }
-                        rules={[
-                            {
-                                required: true,
-                                message: "Vui lòng nhập số lượng",
-                            },
-                            {
-                                pattern: new RegExp(/^[0-9]*$/),
-                                message: "Vui lòng nhập số nguyên",
+                        <Form.Item name="asset_id" style={{ display: 'none' }}></Form.Item>
+                        <Form.Item
+                            className="form-item"
+                            name="asset_name"
+                            labelCol={{ span: 24 }}
+                            label={
+                                <span>
+                                    <b>Tên tài sản: </b>
+                                </span>
                             }
-                        ]}
-                    >
-                        <InputNumber style={{ width: "100%" }} min={1} />
-                    </Form.Item>
-                    <Form.Item
-                        className="form-item"
-                        name="asset_type_show_name"
-                        labelCol={{ span: 24 }}
-                        label={
-                            <span>
-                                <b>Nhóm tài sản: </b>
-                            </span>
-                        }
-                        rules={[
-                            {
-                                required: true,
-                                message: "Vui lòng chọn nhóm tài sản",
-                            },
-                        ]}
-                    >
-                        <Select placeholder={"Nhóm tài sản"}>
-                            {listAssetType?.map((obj, index) => {
-                                return (
-                                    <Select.Option value={obj.id}>{obj.asset_type_show_name}</Select.Option>
-                                );
-                            })}
-                        </Select>
-                    </Form.Item>
-                </Form>
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "Vui lòng nhập tên tài sản",
+                                    whitespace: true,
+                                },
+                            ]}
+                        >
+                            <Input placeholder="Tên tài sản"></Input>
+                        </Form.Item>
+                        <Form.Item
+                            className="form-item"
+                            name="hand_over_asset_quantity"
+                            labelCol={{ span: 24 }}
+                            label={
+                                <span>
+                                    <b>Số lượng: </b>
+                                </span>
+                            }
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "Vui lòng nhập số lượng",
+                                },
+                                {
+                                    pattern: new RegExp(/^[0-9]*$/),
+                                    message: "Vui lòng nhập số nguyên",
+                                }
+                            ]}
+                        >
+                            <InputNumber style={{ width: "100%" }} min={1} />
+                        </Form.Item>
+                        <Form.Item
+                            className="form-item"
+                            name="asset_type_show_name"
+                            labelCol={{ span: 24 }}
+                            label={
+                                <span>
+                                    <b>Nhóm tài sản: </b>
+                                </span>
+                            }
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "Vui lòng chọn nhóm tài sản",
+                                },
+                            ]}
+                        >
+                            <Select placeholder={"Nhóm tài sản"}>
+                                {listAssetType?.map((obj, index) => {
+                                    return (
+                                        <Select.Option value={obj.id}>{obj.asset_type_show_name}</Select.Option>
+                                    );
+                                })}
+                            </Select>
+                        </Form.Item>
+                    </Form>
+                </Card>
             </Modal>
             <AddMultiEquipment reload={reloadData} openView={addMultiAsset} closeView={setAddMultiAsset} assetTypeList={listAssetType} roomId={state[0].room_id} />
         </MainLayout>
