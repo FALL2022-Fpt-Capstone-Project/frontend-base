@@ -18,7 +18,7 @@ const ContractStatistic = () => {
         responsive: true,
         plugins: {
             legend: {
-                display: false,
+                display: true,
             },
             title: {
                 display: true,
@@ -34,14 +34,14 @@ const ContractStatistic = () => {
         labels: contractRenter?.list_by_month?.map(obj => { return "Tháng " + obj?.month }),
         datasets: [
             {
-                label: 'Số hợp đồng đã kết thúc',
-                data: contractRenter?.list_by_month?.map(obj => { return obj?.total_ended }),
-                backgroundColor: "rgba(255, 99, 132, 0.5)",
-            },
-            {
                 label: 'Số hợp đồng đã lập',
                 data: contractRenter?.list_by_month?.map(obj => { return obj?.total_created }),
                 backgroundColor: "rgba(53, 162, 235)",
+            },
+            {
+                label: 'Số hợp đồng đã kết thúc',
+                data: contractRenter?.list_by_month?.map(obj => { return obj?.total_ended }),
+                backgroundColor: "rgba(255, 99, 132, 0.5)",
             },
         ],
     };
@@ -67,7 +67,7 @@ const ContractStatistic = () => {
                 console.log(error);
             });
     };
-    
+
     return (
         <>
             <Row>
@@ -96,7 +96,7 @@ const ContractStatistic = () => {
                         }
                         value={contractRenter?.total_all_created}
                         valueStyle={{
-                            color: "#8bc34a",
+                            color: "rgba(53, 162, 235)",
                         }}
                     />
                 </Col>
