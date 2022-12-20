@@ -1,206 +1,95 @@
-import { Col, DatePicker, Divider, Row, Statistic, Table, Tag } from "antd";
-import moment from "moment";
 import React, { useEffect, useState } from "react";
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
+import { Bar } from "react-chartjs-2";
+import { Col, DatePicker, Row } from "antd";
+import moment from "moment";
 import axios from "../../api/axios";
-import "./home.scss";
+const GET_REVENUE = "manager/statistical/chart/revenue";
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const RevenueStatistic = ({ loading, data }) => {
+
+
+const RevenueStatistic = () => {
   let cookie = localStorage.getItem("Cookie");
+  const [selectYear, setSelectYear] = useState(moment().format('YYYY'));
+  const [revenue, setRevenue] = useState([]);
+  useEffect(() => {
+    getRevenue();
+  }, []);
 
-  const columns = [
-    {
-      title: "Tên chung cư",
-      dataIndex: "group_name",
-      key: "group_id",
-    },
-    {
-      title: "Số phòng đi thuê",
-      key: "group_id",
-      render: (record) => {
-        return (
-          record?.list_rooms?.filter((group) => Number.isInteger(group?.group_contract_id)).length +
-          " / " +
-          record?.list_rooms?.length
-        );
+  const data = {
+    labels: revenue?.map(obj => {
+      return 'Tháng ' + obj?.month
+    }),
+    datasets: [
+      {
+        data: revenue?.map(obj => {
+          return obj?.revenue
+        }),
+        backgroundColor: "rgba(53, 162, 235)",
       },
-    },
-    {
-      title: "Số phòng đã cho thuê lại",
-      key: "group_id",
-      render: (record) => {
-        return (
-          <>
-            {record?.list_rooms?.filter(
-              (group) => Number.isInteger(group?.group_contract_id) && Number.isInteger(group?.contract_id)
-            )?.length +
-              " / " +
-              record?.list_rooms?.filter((group) => Number.isInteger(group?.group_contract_id))?.length}
-          </>
-        );
-      },
-    },
-    {
-      title: "Số tiền thu",
-      key: "group_id",
-      render: (record) => {
-        return (
-          <>
-            <span>
-              {record.group_contracted
-                ? new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
-                    data?.billGroup
-                      ?.filter((bill) => bill.group_id === record.group_id && bill.is_paid === true)
-                      ?.map((obj) => obj.total_money)
-                      ?.reduce((pre, current) => pre + current, 0)
-                  )
-                : 0 + "đ"}
-            </span>
-          </>
-        );
-      },
-    },
-    {
-      title: "Số tiền chi",
-      key: "group_id",
-      render: (record) => {
-        return (
-          <>
-            <span>
-              {record.group_contracted
-                ? new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
-                    record?.list_room_lease_contracted
-                      ?.map((contract) => contract.contract_price)
-                      ?.reduce((pre, current) => pre + current, 0)
-                  )
-                : 0 + "đ"}
-            </span>
-          </>
-        );
-      },
-    },
-    {
-      title: "Lợi nhuận",
-      key: "group_id",
-      render: (record) => {
-        return (
-          <>
-            <Tag
-              color={
-                data?.billGroup
-                  ?.filter((bill) => bill.group_id === record.group_id && bill.is_paid === true)
-                  ?.map((obj) => obj.total_money)
-                  ?.reduce((pre, current) => pre + current, 0) -
-                  record?.list_room_lease_contracted
-                    ?.map((contract) => contract.contract_price)
-                    ?.reduce((pre, current) => pre + current, 0) >
-                0
-                  ? "green"
-                  : "red"
-              }
-            >
-              {record.group_contracted
-                ? new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
-                    data?.billGroup
-                      ?.filter((bill) => bill.group_id === record.group_id && bill.is_paid === true)
-                      ?.map((obj) => obj.total_money)
-                      ?.reduce((pre, current) => pre + current, 0) -
-                      record?.list_room_lease_contracted
-                        ?.map((contract) => contract.contract_price)
-                        ?.reduce((pre, current) => pre + current, 0)
-                  )
-                : 0 + "đ"}
-            </Tag>
-          </>
-        );
-      },
-    },
-  ];
+    ],
+  };
 
-  let totalRentalRoom = 0;
-  totalRentalRoom = data?.group
-    ?.map((group) => {
-      return group?.list_rooms?.filter((group) => Number.isInteger(group?.group_contract_id))?.length;
-    })
-    ?.reduce((pre, current) => pre + current, 0);
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: false,
+      },
+      title: {
+        display: true,
+        text: "Doanh thu " + selectYear + " (VNĐ)",
+        font: {
+          size: 21,
+        },
+        color: '#868d96'
+      },
+    },
+  };
 
-  let roomEmpty = 0;
-  roomEmpty =
-    data?.group
-      ?.map((group) => {
-        return group?.list_rooms?.filter((group) => Number.isInteger(group?.group_contract_id))?.length;
+  const getRevenue = async (year = moment()) => {
+    await axios
+      .get(GET_REVENUE, {
+        params: {
+          year: year.format('YYYY'),
+        },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie}`,
+        },
       })
-      ?.reduce((pre, current) => pre + current, 0) -
-    data?.group
-      ?.map((group) => {
-        return group?.list_rooms?.filter(
-          (group) => Number.isInteger(group?.group_contract_id) && Number.isInteger(group?.contract_id)
-        ).length;
+      .then((res) => {
+        setRevenue(res.data.data);
       })
-      ?.reduce((pre, current) => pre + current, 0);
-
-  let roomSubRental = 0;
-  roomSubRental = data?.group
-    ?.map((group) => {
-      return group?.list_rooms?.filter(
-        (group) => Number.isInteger(group?.group_contract_id) && Number.isInteger(group?.contract_id)
-      )?.length;
-    })
-    ?.reduce((pre, current) => pre + current, 0);
-
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   return (
     <>
-      <Row justify="center">
-        <span className="header-statistic">Thống kê doanh thu các chung cư</span>
+      <Row>
+        <Col span={24}>
+          <span className="statistic-time-title">Chọn năm: </span>
+          <DatePicker
+            defaultValue={moment()}
+            placeholder="Chọn thời gian"
+            size={"large"}
+            picker="year"
+            // format={"MM/YYYY"}
+            onChange={(e) => {
+              setSelectYear(e.format('YYYY'));
+              getRevenue(e);
+              // getBillByGroupId(groupSelect, e.format("MM-YYYY"));
+            }}
+          />
+        </Col>
+        <div className="bar-chart">
+          <Bar options={options} data={data} />
+        </div>
       </Row>
-      <Divider />
-      <Row gutter={[16]}>
-        <Col span={12}>
-          <Row>
-            <Statistic
-              title={
-                <>
-                  <span className="revenue-statistic">Tổng số phòng đã cho thuê lại</span>
-                </>
-              }
-              value={roomSubRental + " / " + totalRentalRoom}
-              valueStyle={{
-                color: "#8bc34a",
-              }}
-            />
-          </Row>
-        </Col>
-        <Col span={12}>
-          <Row>
-            <Statistic
-              title={
-                <>
-                  <span className="revenue-statistic">Tổng số phòng còn trống</span>
-                </>
-              }
-              value={roomEmpty + " / " + totalRentalRoom}
-              valueStyle={{
-                color: "#cf1322",
-              }}
-            />
-          </Row>
-        </Col>
-      </Row>
-      {/* <Row>
-        <Col span={24}><span className="statistic-time-title">Chọn tháng/năm để thống kê: </span>
-          <DatePicker defaultValue={moment()} placeholder="Chọn thời gian" className="margin-top-bottom" size={"large"} picker="month" format={'MM/YYYY'} />
-        </Col>
-      </Row> */}
-      <Table
-        className="margin-top-bottom"
-        bordered
-        scroll={{ x: 1200, y: 600 }}
-        columns={columns}
-        loading={loading}
-        dataSource={data.group}
-        pagination={{ defaultPageSize: 5, showSizeChanger: true, pageSizeOptions: ["5", "10", "20"] }}
-      />
     </>
-  );
+  )
 };
 
 export default RevenueStatistic;

@@ -77,6 +77,7 @@ function Personal(props) {
         address_more_detail: address_more_detail,
         deactivate: deactivate,
         roles: roles,
+        permission: localStorage.getItem("permission")?.split(",")?.map(obj => Number.parseInt(obj)),
         // password: password,
     };
 

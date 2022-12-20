@@ -49,11 +49,6 @@ const iconSize = {
   fontSize: "130%",
   marginRight: "8%",
 };
-const width100 = {
-  width: "100%",
-  display: "flex",
-  float: "left",
-};
 
 const APARTMENT_DATA_GROUP = "/manager/group/all";
 const ROOM_INFOR = "manager/room/";
