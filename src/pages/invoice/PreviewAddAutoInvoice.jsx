@@ -1,6 +1,7 @@
 import { Button, Card, Col, DatePicker, Form, Modal, notification, Row, Table } from "antd";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "./invoice.scss";
 import moment from "moment";
 import axios from "../../api/axios";
 const ADD_INVOICE_URL = "manager/bill/room/create";
@@ -16,9 +17,114 @@ const PreviewAddAutoInvoice = ({ visible, close, state }) => {
   if (state !== undefined) {
     listInvoiceGenerate = state.selectedRows?.map((obj, index) => {
       return { ...obj, key: index };
+    })?.map(record => {
+      let waterPrice = 0;
+      let elecPrice = 0;
+      let cleanPrice = 0;
+      let vehiclesPrice = 0;
+      let internetPrice = 0;
+      let total = 0;
+
+      if (
+        record.list_general_service.some(
+          (water) => water?.service_name === "water" && water.service_type_name === "Đồng hồ điện/nước"
+        )
+      ) {
+        waterPrice =
+          record.list_general_service.find(
+            (water) => water?.service_name === "water" && water.service_type_name === "Đồng hồ điện/nước"
+          )?.service_price *
+          (record.room_current_water_index - record.room_old_water_index);
+      } else if (
+        record.list_general_service.some(
+          (water) => water?.service_name === "water" && water.service_type_name === "Người"
+        )
+      ) {
+        waterPrice =
+          record.list_general_service.find(
+            (water) => water?.service_name === "water" && water.service_type_name === "Người"
+          )?.service_price * record.total_renter;
+      } else if (
+        record.list_general_service.some(
+          (water) => water?.service_name === "water" && water.service_type_name === "Tháng"
+        )
+      ) {
+        waterPrice = record.list_general_service.find(
+          (water) => water?.service_name === "water" && water.service_type_name === "Tháng"
+        )?.service_price;
+      }
+      if (
+        record.list_general_service.find(
+          (elec) => elec?.service_name === "electric" && elec.service_type_name === "Đồng hồ điện/nước"
+        )
+      ) {
+        elecPrice =
+          record.list_general_service.find(
+            (elec) => elec?.service_name === "electric" && elec.service_type_name === "Đồng hồ điện/nước"
+          )?.service_price *
+          (record.room_current_electric_index - record.room_old_electric_index);
+      }
+
+      if (
+        record.list_general_service.some(
+          (internet) => internet?.service_name === "internet" && internet.service_type_name === "Tháng"
+        )
+      ) {
+        internetPrice = record.list_general_service.find(
+          (internet) => internet?.service_name === "internet" && internet.service_type_name === "Tháng"
+        )?.service_price;
+      } else if (
+        record.list_general_service.some(
+          (internet) => internet?.service_name === "internet" && internet.service_type_name === "Người"
+        )
+      ) {
+        internetPrice =
+          record.list_general_service.find(
+            (internet) => internet?.service_name === "internet" && internet.service_type_name === "Người"
+          )?.service_price * record.total_renter;
+      }
+
+      if (
+        record.list_general_service.some(
+          (vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Tháng"
+        )
+      ) {
+        vehiclesPrice = record.list_general_service.find(
+          (vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Tháng"
+        )?.service_price;
+      } else if (
+        record.list_general_service.some(
+          (vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Người"
+        )
+      ) {
+        vehiclesPrice =
+          record.list_general_service.find(
+            (vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Người"
+          )?.service_price * record.total_renter;
+      }
+      if (
+        record.list_general_service.some(
+          (cleaning) => cleaning?.service_name === "cleaning" && cleaning.service_type_name === "Tháng"
+        )
+      ) {
+        cleanPrice = record.list_general_service.find(
+          (cleaning) => cleaning?.service_name === "cleaning" && cleaning.service_type_name === "Tháng"
+        )?.service_price;
+      } else if (
+        record.list_general_service.some(
+          (vehicles) => vehicles?.service_name === "cleaning" && vehicles.service_type_name === "Người"
+        )
+      ) {
+        cleanPrice =
+          record.list_general_service.find(
+            (cleaning) => cleaning?.service_name === "cleaning" && cleaning.service_type_name === "Người"
+          )?.service_price * record.total_renter;
+      }
+
+      total = waterPrice + elecPrice + cleanPrice + vehiclesPrice + internetPrice + record.room_price;
+      return { ...record, total_money: total };
     });
   }
-  console.log(listInvoiceGenerate);
   const [form] = Form.useForm();
   let cookie = localStorage.getItem("Cookie");
   let date_create_format = moment(state?.dateCreate, "YYYY-MM-DD");
@@ -72,117 +178,9 @@ const PreviewAddAutoInvoice = ({ visible, close, state }) => {
       title: "Tổng cộng",
       dataIndex: "total_money",
       width: "11%",
-      render: (text, record, index) => {
-        let waterPrice = 0;
-        let elecPrice = 0;
-        let cleanPrice = 0;
-        let vehiclesPrice = 0;
-        let internetPrice = 0;
-        let total = 0;
-
-        if (
-          record.list_general_service.some(
-            (water) => water?.service_name === "water" && water.service_type_name === "Đồng hồ điện/nước"
-          )
-        ) {
-          waterPrice =
-            record.list_general_service.find(
-              (water) => water?.service_name === "water" && water.service_type_name === "Đồng hồ điện/nước"
-            )?.service_price *
-            (record.room_current_water_index - record.room_old_water_index);
-        } else if (
-          record.list_general_service.some(
-            (water) => water?.service_name === "water" && water.service_type_name === "Người"
-          )
-        ) {
-          waterPrice =
-            record.list_general_service.find(
-              (water) => water?.service_name === "water" && water.service_type_name === "Người"
-            )?.service_price * record.total_renter;
-        } else if (
-          record.list_general_service.some(
-            (water) => water?.service_name === "water" && water.service_type_name === "Tháng"
-          )
-        ) {
-          waterPrice = record.list_general_service.find(
-            (water) => water?.service_name === "water" && water.service_type_name === "Tháng"
-          )?.service_price;
-        }
-        if (
-          record.list_general_service.find(
-            (elec) => elec?.service_name === "electric" && elec.service_type_name === "Đồng hồ điện/nước"
-          )
-        ) {
-          elecPrice =
-            record.list_general_service.find(
-              (elec) => elec?.service_name === "electric" && elec.service_type_name === "Đồng hồ điện/nước"
-            )?.service_price *
-            (record.room_current_electric_index - record.room_old_electric_index);
-        }
-
-        if (
-          record.list_general_service.some(
-            (internet) => internet?.service_name === "internet" && internet.service_type_name === "Tháng"
-          )
-        ) {
-          internetPrice = record.list_general_service.find(
-            (internet) => internet?.service_name === "internet" && internet.service_type_name === "Tháng"
-          )?.service_price;
-        } else if (
-          record.list_general_service.some(
-            (internet) => internet?.service_name === "internet" && internet.service_type_name === "Người"
-          )
-        ) {
-          internetPrice =
-            record.list_general_service.find(
-              (internet) => internet?.service_name === "internet" && internet.service_type_name === "Người"
-            )?.service_price * record.total_renter;
-        }
-
-        if (
-          record.list_general_service.some(
-            (vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Tháng"
-          )
-        ) {
-          vehiclesPrice = record.list_general_service.find(
-            (vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Tháng"
-          )?.service_price;
-        } else if (
-          record.list_general_service.some(
-            (vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Người"
-          )
-        ) {
-          vehiclesPrice =
-            record.list_general_service.find(
-              (vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Người"
-            )?.service_price * record.total_renter;
-        }
-        if (
-          record.list_general_service.some(
-            (cleaning) => cleaning?.service_name === "cleaning" && cleaning.service_type_name === "Tháng"
-          )
-        ) {
-          cleanPrice = record.list_general_service.find(
-            (cleaning) => cleaning?.service_name === "cleaning" && cleaning.service_type_name === "Tháng"
-          )?.service_price;
-        } else if (
-          record.list_general_service.some(
-            (vehicles) => vehicles?.service_name === "cleaning" && vehicles.service_type_name === "Người"
-          )
-        ) {
-          cleanPrice =
-            record.list_general_service.find(
-              (cleaning) => cleaning?.service_name === "cleaning" && cleaning.service_type_name === "Người"
-            )?.service_price * record.total_renter;
-        }
-
-        total = waterPrice + elecPrice + cleanPrice + vehiclesPrice + internetPrice + record.room_price;
-        return (
-          <>
-            <b>{total.toLocaleString("vn") + " đ"}</b>
-          </>
-        );
-      },
+      render: (record) => {
+        return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(record)
+      }
     },
   ];
 
@@ -203,49 +201,49 @@ const PreviewAddAutoInvoice = ({ visible, close, state }) => {
                 ? service.service_type_name === "Đồng hồ điện/nước"
                   ? obj.room_current_electric_index - obj.room_old_electric_index
                   : service.service_type_name === "Tháng"
-                  ? 1
-                  : obj.total_renter
+                    ? 1
+                    : obj.total_renter
                 : service.service_name === "water"
-                ? service.service_type_name === "Đồng hồ điện/nước"
-                  ? obj.room_current_water_index - obj.room_old_water_index
-                  : service.service_type_name === "Tháng"
-                  ? 1
-                  : obj.total_renter
-                : service.service_name === "internet"
-                ? service.service_type_name === "Đồng hồ điện/nước"
-                  ? 1
-                  : service.service_type_name === "Tháng"
-                  ? 1
-                  : obj.total_renter
-                : service.service_type_name === "Đồng hồ điện/nước"
-                ? 1
-                : service.service_type_name === "Tháng"
-                ? 1
-                : obj.total_renter,
+                  ? service.service_type_name === "Đồng hồ điện/nước"
+                    ? obj.room_current_water_index - obj.room_old_water_index
+                    : service.service_type_name === "Tháng"
+                      ? 1
+                      : obj.total_renter
+                  : service.service_name === "internet"
+                    ? service.service_type_name === "Đồng hồ điện/nước"
+                      ? 1
+                      : service.service_type_name === "Tháng"
+                        ? 1
+                        : obj.total_renter
+                    : service.service_type_name === "Đồng hồ điện/nước"
+                      ? 1
+                      : service.service_type_name === "Tháng"
+                        ? 1
+                        : obj.total_renter,
             service_total_money:
               service.service_name === "electric"
                 ? service.service_type_name === "Đồng hồ điện/nước"
                   ? (obj.room_current_electric_index - obj.room_old_electric_index) * service.service_price
                   : service.service_type_name === "Tháng"
-                  ? service.service_price
-                  : obj.total_renter * service.service_price
+                    ? service.service_price
+                    : obj.total_renter * service.service_price
                 : service.service_name === "water"
-                ? service.service_type_name === "Đồng hồ điện/nước"
-                  ? (obj.room_current_water_index - obj.room_old_water_index) * service.service_price
-                  : service.service_type_name === "Tháng"
-                  ? service.service_price
-                  : obj.total_renter * service.service_price
-                : service.service_name === "internet"
-                ? service.service_type_name === "Đồng hồ điện/nước"
-                  ? service.service_price
-                  : service.service_type_name === "Tháng"
-                  ? service.service_price
-                  : obj.total_renter * service.service_price
-                : service.service_type_name === "Đồng hồ điện/nước"
-                ? service.service_price
-                : service.service_type_name === "Tháng"
-                ? service.service_price
-                : obj.total_renter * service.service_price,
+                  ? service.service_type_name === "Đồng hồ điện/nước"
+                    ? (obj.room_current_water_index - obj.room_old_water_index) * service.service_price
+                    : service.service_type_name === "Tháng"
+                      ? service.service_price
+                      : obj.total_renter * service.service_price
+                  : service.service_name === "internet"
+                    ? service.service_type_name === "Đồng hồ điện/nước"
+                      ? service.service_price
+                      : service.service_type_name === "Tháng"
+                        ? service.service_price
+                        : obj.total_renter * service.service_price
+                    : service.service_type_name === "Đồng hồ điện/nước"
+                      ? service.service_price
+                      : service.service_type_name === "Tháng"
+                        ? service.service_price
+                        : obj.total_renter * service.service_price,
           };
         }),
       };
@@ -404,8 +402,16 @@ const PreviewAddAutoInvoice = ({ visible, close, state }) => {
                     }}
                     columns={columnsNotBilled}
                     pagination={{ pageSize: 5 }}
-                    // loading={loading}
+                  // loading={loading}
                   />
+                  <Row justify="start">
+                    <p>Tổng tiền tất cả hóa đơn:</p>
+                    <p className="total-all-invoice">
+                      {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
+                        listInvoiceGenerate?.map((invoice) => invoice.total_money).reduce((pre, current) => pre + current, 0)
+                      )}
+                    </p>
+                  </Row>
                 </Form.Item>
               </Col>
             </Row>
