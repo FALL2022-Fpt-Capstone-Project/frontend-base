@@ -1,24 +1,9 @@
-import { render } from "@testing-library/react";
-import {
-  AutoComplete,
-  Button,
-  Card,
-  Col,
-  Form,
-  Input,
-  InputNumber,
-  message,
-  Modal,
-  notification,
-  Row,
-  Select,
-} from "antd";
+import { AutoComplete, Button, Card, Col, Form, InputNumber, Modal, notification, Row, Select } from "antd";
 import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
-import ListRoom from "./ListRoom";
 
 const UPDATE_ROOM = "manager/room/update";
-const ROOM_INFOR = "manager/room/";
+
 let listFloor = [
   {
     label: "Chọn tầng",
@@ -53,7 +38,6 @@ function UpdateRoom({ reRender, visible, close, data, dataUpdate, setDataUpdate 
         value: i,
       });
     }
-    // setRoomFloor(listFloor);
     setDataUpdate();
   }
 
@@ -232,11 +216,7 @@ function UpdateRoom({ reRender, visible, close, data, dataUpdate, setDataUpdate 
                         },
                       ]}
                     >
-                      <Select
-                        // disabled={statusSelectFloor}
-                        placeholder="Chọn tầng"
-                        options={roomFloor.length === 0 ? listFloor : roomFloor}
-                      />
+                      <Select placeholder="Chọn tầng" options={roomFloor.length === 0 ? listFloor : roomFloor} />
                     </Form.Item>
                     <Form.Item
                       className="form-item"

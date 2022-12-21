@@ -27,7 +27,6 @@ function IncreaseRoomPrice({ reRender, visible, close, data }) {
           placement: "top",
           duration: 6,
         });
-        // console.log(res);
         close(false);
         formCoupon.resetFields();
         formCoupon.setFieldsValue({
@@ -36,7 +35,6 @@ function IncreaseRoomPrice({ reRender, visible, close, data }) {
         reRender();
       })
       .catch((error) => {
-        // console.log(error);
         notification.error({
           message: "Cập nhật giá phòng thất bại",
           description: error.response.data.data,

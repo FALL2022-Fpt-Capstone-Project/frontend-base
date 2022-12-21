@@ -142,17 +142,13 @@ const CreateContractRenter = () => {
       .get(APARTMENT_DATA_GROUP, {
         headers: {
           "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
           Authorization: `Bearer ${cookie}`,
         },
-        // withCredentials: true,
       })
       .then((res) => {
         setDataApartmentGroup(res.data.data.list_group_contracted);
       })
-      .catch((error) => {
-        // console.log(error);
-      });
+      .catch((error) => {});
     setLoading(false);
   };
 
@@ -277,9 +273,7 @@ const CreateContractRenter = () => {
           })
         );
       })
-      .catch((error) => {
-        // console.log(error);
-      });
+      .catch((error) => {});
   };
   const filterRenter = async (groupId) => {
     setLoading(true);
@@ -290,17 +284,13 @@ const CreateContractRenter = () => {
         },
         headers: {
           "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
           Authorization: `Bearer ${cookie}`,
         },
-        // withCredentials: true,
       })
       .then((res) => {
         setDataOldRenter(res.data.data);
       })
-      .catch((error) => {
-        // console.log(error);
-      });
+      .catch((error) => {});
     setLoading(false);
   };
 
@@ -313,10 +303,8 @@ const CreateContractRenter = () => {
       .get(LIST_ASSET_TYPE, {
         headers: {
           "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
           Authorization: `Bearer ${cookie}`,
         },
-        // withCredentials: true,
       })
       .then((res) => {
         setListAssetType(res.data.data);
@@ -326,9 +314,7 @@ const CreateContractRenter = () => {
           )?.id,
         });
       })
-      .catch((error) => {
-        // console.log(error);
-      });
+      .catch((error) => {});
   };
 
   const renterColumn = [
@@ -684,7 +670,6 @@ const CreateContractRenter = () => {
         });
       })
       .catch((error) => {
-        // console.log(error);
         notification.error({
           message: "Thêm mới tài sản thất bại",
           placement: "top",
@@ -722,7 +707,6 @@ const CreateContractRenter = () => {
         getAssetRoom(roomId);
       })
       .catch((error) => {
-        // console.log(error);
         notification.error({
           message: "Thêm mới tài sản thất bại",
           placement: "top",
@@ -844,9 +828,7 @@ const CreateContractRenter = () => {
       .then((res) => {
         setDataAsset(res.data.data);
       })
-      .catch((error) => {
-        // console.log(error);
-      });
+      .catch((error) => {});
     setLoading(false);
   };
 
@@ -947,7 +929,6 @@ const CreateContractRenter = () => {
                         </span>
                       }
                     >
-                      {/* <span><b>Tên khách thuê: </b></span> */}
                       <AutoComplete
                         filterOption={(input, option) =>
                           (option?.label.toLowerCase().trim() ?? "").includes(input.toLowerCase().trim())
@@ -1237,12 +1218,6 @@ const CreateContractRenter = () => {
                           <b>Thời hạn hợp đồng (ít nhất 1 tháng): </b>
                         </span>
                       }
-                      // rules={[
-                      //   {
-                      //     required: true,
-                      //     message: "Vui lòng chọn thời hạn hợp đồng",
-                      //   },
-                      // ]}
                     >
                       <Select
                         placeholder="Thời hạn hợp đồng"

@@ -146,7 +146,7 @@ const App = () => {
           <Route path="invoice/create-invoice-auto/preview" element={<PreviewAddAutoInvoice />} />
         </Route>
 
-        <Route path="detail-invoice" element={<DetailInvoice />} />
+        <Route path="detail-invoice/:id" element={<DetailInvoice />} />
         <Route
           element={
             <RequireAuth allowedRoles={[ROLES.User, ROLES.Admin]} allowedPermission={[1, 2, 3, 4, 5, 6, 7, 8]} />

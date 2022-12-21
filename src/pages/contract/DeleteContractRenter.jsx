@@ -9,9 +9,7 @@ const textSize = {
   fontSize: 15,
 };
 function DeleteContractRenter({ reload, openView, closeView, dataContract, dataInvoice }) {
-  // const [dataApartmentGroup, setDataApartmentGroup] = useState([]);
   let cookie = localStorage.getItem("Cookie");
-  // console.log(dataInvoice);
   const handleOk = () => {
     closeView(false);
   };
@@ -45,7 +43,6 @@ function DeleteContractRenter({ reload, openView, closeView, dataContract, dataI
   ];
 
   const onDeleteRoomContract = async (contract_id, total_money) => {
-    // let cookie = localStorage.getItem("Cookie");
     await axios
       .post(
         DELETE_ROOM_CONTRACT,
@@ -121,13 +118,7 @@ function DeleteContractRenter({ reload, openView, closeView, dataContract, dataI
                     />
                   </Col>
                 </Row>
-                <Table
-                  // loading={loading}
-                  columns={columnInvoice}
-                  dataSource={dataInvoice}
-                  scroll={{ x: 1000, y: 800 }}
-                  bordered
-                />
+                <Table columns={columnInvoice} dataSource={dataInvoice} scroll={{ x: 1000, y: 800 }} bordered />
               </Tabs.TabPane>
             </Tabs>
             <Button
