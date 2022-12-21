@@ -10,7 +10,6 @@ const textSize = {
 };
 
 function DeleteContractBuilding({ reload, openView, closeView, dataContract, dataInvoice, loading }) {
-  // console.log(dataInvoice);
   let cookie = localStorage.getItem("Cookie");
 
   const handleOk = () => {
@@ -53,7 +52,6 @@ function DeleteContractBuilding({ reload, openView, closeView, dataContract, dat
   ];
 
   const onDeleteGroupContract = async (contract_id, total_money) => {
-    // let cookie = localStorage.getItem("Cookie");
     await axios
       .post(
         DELETE_GROUP_CONTRACT,

@@ -75,7 +75,6 @@ const ListContractRenter = () => {
       })
       .then((res) => {
         setDataSource(res.data.data);
-        // console.log(res);
       })
       .catch((error) => {
         console.log(error);
@@ -88,10 +87,8 @@ const ListContractRenter = () => {
       .get(LIST_ASSET_TYPE, {
         headers: {
           "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
           Authorization: `Bearer ${cookie}`,
         },
-        // withCredentials: true,
       })
       .then((res) => {
         setListAssetType(res.data.data);
@@ -105,10 +102,8 @@ const ListContractRenter = () => {
       .get(GET_INVOICE_BY_ROOM_ID + room_id, {
         headers: {
           "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
           Authorization: `Bearer ${cookie}`,
         },
-        // withCredentials: true,
       })
       .then((res) => {
         setInvoiceData(res.data.data);
@@ -166,12 +161,12 @@ const ListContractRenter = () => {
     const response = await axios
       .get(LIST_CONTRACT_URL, {
         params: {
-          phoneNumber: phoneNumber,
-          renterName: renterName,
+          phoneNumber: phoneNumber.trim(),
+          renterName: renterName.trim(),
           isDisable: endContract,
           startDate: startDate,
           endDate: endDate,
-          identity: identity,
+          identity: identity.trim(),
           groupId: building,
         },
         headers: {
@@ -220,17 +215,13 @@ const ListContractRenter = () => {
     getAllContract();
   };
 
-  // console.log(dataSource);
-
   const getAssetRoom = async (room_id) => {
     await axios
       .get(ASSET_ROOM + room_id, {
         headers: {
           "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
           Authorization: `Bearer ${cookie}`,
         },
-        // withCredentials: true,
       })
       .then((res) => {
         setAssetRoom(res.data.data);
@@ -245,13 +236,10 @@ const ListContractRenter = () => {
       .get(GET_SERVICE_GROUP_BY_ID + groupId, {
         headers: {
           "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
           Authorization: `Bearer ${cookie}`,
         },
-        // withCredentials: true,
       })
       .then((res) => {
-        // console.log(res.data.data);
         setDataApartmentServiceGeneral(res.data.data);
       })
       .catch((error) => {
@@ -421,13 +409,13 @@ const ListContractRenter = () => {
             render: (room) => room.room_name,
             onFilter: (value, record) => {
               return (
-                String(record.room.room_name).toLowerCase()?.includes(value.toLowerCase()) ||
+                String(record.room.room_name).toLowerCase()?.includes(value.toLowerCase().trim()) ||
                 String(record.list_renter.find((obj, index) => obj?.represent === true)?.renter_full_name)
                   .toLowerCase()
-                  ?.includes(value.toLowerCase()) ||
+                  ?.includes(value.toLowerCase().trim()) ||
                 String(record.list_renter.find((obj, index) => obj?.represent === true)?.phone_number)
                   .toLowerCase()
-                  ?.includes(value.toLowerCase())
+                  ?.includes(value.toLowerCase().trim())
               );
             },
           },

@@ -12,14 +12,16 @@ import {
   Table,
   Tabs,
   Tag,
+  Tooltip,
 } from "antd";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { InboxOutlined, ArrowLeftOutlined, ExclamationCircleFilled } from "@ant-design/icons";
+import { InboxOutlined, ArrowLeftOutlined, ExclamationCircleFilled, EyeOutlined } from "@ant-design/icons";
 import axios from "../../api/axios";
 import moment from "moment";
 import "./invoice.scss";
 import MainLayout from "../../components/layout/MainLayout";
 import { Link, useNavigate } from "react-router-dom";
+import PreviewAddAutoInvoice from "./PreviewAddAutoInvoice";
 const LIST_BUILDING_FILTER = "manager/group/all";
 const LIST_INVOICE_ADD_AUTO = "manager/bill/room/bill-status";
 const LIST_INVOICE_PREVIEW = "manager/bill/room/create/preview";
@@ -104,7 +106,7 @@ const AddAutoInvoice = () => {
   const [dataSource, setDataSource] = useState([]);
   const [dataSourceNotBilled, setDataSourceNotBilled] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
-
+  const [previewState, setPrevieState] = useState();
   const [paymentTerm, setPaymentTerm] = useState();
   const [dateCreate, setDateCreate] = useState();
 
@@ -167,8 +169,8 @@ const AddAutoInvoice = () => {
       setDataSourceBilled(billed);
       let notBilled = dataSource.filter((bill) => bill.is_billed === false);
       setDataSourceNotBilled(notBilled);
-      // setSelectedRows(notBilled);
-      // setSelectedRowKeys(notBilled.map((obj) => obj.room_id));
+      setSelectedRows(notBilled);
+      setSelectedRowKeys(notBilled.map((obj) => obj.room_id));
     };
     getListInvoice();
   }, [dataSource]);
@@ -182,7 +184,9 @@ const AddAutoInvoice = () => {
         },
       })
       .then((res) => {
-        navigate("preview", { state: { selectedRows, dateCreate, paymentTerm } });
+        setPreviewInvoice(true);
+        setPrevieState({ selectedRows, dateCreate, paymentTerm });
+        // navigate("preview", { state: { selectedRows, dateCreate, paymentTerm } });
         console.log(res);
       })
       .catch((e) => {
@@ -447,6 +451,21 @@ const AddAutoInvoice = () => {
         );
       },
     },
+    {
+      title: "Thao tác",
+      dataIndex: "action",
+      render: (_, record) => {
+        return (
+          <>
+            <Tooltip title="Xem hoá đơn">
+              <Link target="_blank" to="/detail-invoice">
+                <EyeOutlined className="icon" />
+              </Link>
+            </Tooltip>
+          </>
+        );
+      },
+    },
   ];
   const defaultColumnsBilled = [
     {
@@ -505,6 +524,7 @@ const AddAutoInvoice = () => {
       ...row,
     });
     setDataSource(newData);
+    setSelectedRows(newData);
   };
   const columnsNotBilled = defaultColumnsNotBilled.map((col) => {
     if (!col.editable) {
@@ -534,10 +554,23 @@ const AddAutoInvoice = () => {
       <p style={{ fontSize: 20 }}>Không có dữ liệu để hiển thị</p>
     </div>
   );
+  const [previewInvoice, setPreviewInvoice] = useState(false);
+  const onClickPreviewInvoice = () => {
+    setPreviewInvoice(true);
+  };
   return (
     <div className="invoice">
       <MainLayout
-        title="Tạo mới nhanh hoá đơn"
+        title={
+          <>
+            <p style={{ marginTop: "30px" }}>
+              Tạo mới nhanh hoá đơn{" "}
+              <span style={{ fontSize: "14px", color: "#6B6A6A" }}>
+                (Tạo mới nhanh hoá đơn theo tiêu chí kỳ thanh toán)
+              </span>
+            </p>
+          </>
+        }
         button={
           <Link to="/invoice">
             <Button type="primary" icon={<ArrowLeftOutlined />} size="middle" className="button-add">
@@ -555,23 +588,9 @@ const AddAutoInvoice = () => {
           id="createInvoice"
           initialValues={initValues}
         >
-          <Card
-            title={
-              <>
-                <Row>
-                  <b style={{ fontSize: "18px", padding: "10px" }}> Tạo mới nhanh hoá đơn {buildingName}</b>
-                  <div className="noti">
-                    <ExclamationCircleFilled style={{ color: "#ffc12d" }} />
-                    <span style={{ fontSize: "14px", marginLeft: "5px" }}>Hiện tại đã đến thời gian tạo hoá đơn</span>
-                  </div>
-                </Row>
-                <p className="alert">Tạo mới nhanh hoá đơn theo tiêu chí kỳ thanh toán</p>
-              </>
-            }
-            className="card"
-          >
+          <Card className="card">
             <Row>
-              <Col xs={24} lg={4}>
+              <Col xs={24} lg={6}>
                 <Row style={{ marginBottom: "8px" }}>
                   <b>* Chọn chung cư để tạo nhanh hoá đơn</b>
                 </Row>
@@ -584,20 +603,6 @@ const AddAutoInvoice = () => {
                   ></Select>
                 </Row>
               </Col>
-              {/* <Col xs={24} lg={4}>
-            <Row>
-              <h4>Lựa chọn kỳ thanh toán</h4>
-            </Row>
-            <Row>
-              <Select
-                defaultValue={0}
-                options={optionPayment}
-                placeholder="Chọn kỳ thanh toán"
-                onChange={paymentCycleChange}
-                className="add-auto-filter"
-              ></Select>
-            </Row>
-          </Col> */}
             </Row>
             <Row>
               <Col lg={4} xs={24}>
@@ -687,7 +692,7 @@ const AddAutoInvoice = () => {
                             rowSelection={rowSelection}
                             components={components}
                             rowClassName={() => "editable-row"}
-                            // rowKey={(record) => record.room_id}
+                            rowKey={(record) => record.room_id}
                           />
                         </ConfigProvider>
                       </Form.Item>
@@ -739,6 +744,7 @@ const AddAutoInvoice = () => {
           </Card>
         </Form>
       </MainLayout>
+      <PreviewAddAutoInvoice visible={previewInvoice} close={setPreviewInvoice} state={previewState} />
     </div>
   );
 };

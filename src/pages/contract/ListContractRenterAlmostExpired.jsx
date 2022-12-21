@@ -99,10 +99,8 @@ const ListContractRenterAlmostExpired = ({ duration }) => {
       .get(LIST_ASSET_TYPE, {
         headers: {
           "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
           Authorization: `Bearer ${cookie}`,
         },
-        // withCredentials: true,
       })
       .then((res) => {
         setListAssetType(res.data.data);
@@ -116,10 +114,8 @@ const ListContractRenterAlmostExpired = ({ duration }) => {
       .get(ASSET_ROOM + room_id, {
         headers: {
           "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
           Authorization: `Bearer ${cookie}`,
         },
-        // withCredentials: true,
       })
       .then((res) => {
         setAssetRoom(res.data.data);
@@ -134,10 +130,8 @@ const ListContractRenterAlmostExpired = ({ duration }) => {
       .get(GET_SERVICE_GROUP_BY_ID + groupId, {
         headers: {
           "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
           Authorization: `Bearer ${cookie}`,
         },
-        // withCredentials: true,
       })
       .then((res) => {
         console.log(res.data.data);
@@ -190,13 +184,13 @@ const ListContractRenterAlmostExpired = ({ duration }) => {
     const response = await axios
       .get(LIST_CONTRACT_ALMOST_EXPIRED_URL, {
         params: {
-          phoneNumber: phoneNumber,
+          phoneNumber: phoneNumber.trim(),
           status: 1,
           duration: duration,
-          renterName: renterName,
+          renterName: renterName.trim(),
           startDate: startDate,
           endDate: endDate,
-          identity: identity,
+          identity: identity.trim(),
           groupId: building,
         },
         headers: {
@@ -376,13 +370,13 @@ const ListContractRenterAlmostExpired = ({ duration }) => {
             render: (room) => room.room_name,
             onFilter: (value, record) => {
               return (
-                String(record.room.room_name).toLowerCase()?.includes(value.toLowerCase()) ||
+                String(record.room.room_name).toLowerCase()?.includes(value.toLowerCase().trim()) ||
                 String(record.list_renter.find((obj, index) => obj?.represent === true)?.renter_full_name)
                   .toLowerCase()
-                  ?.includes(value.toLowerCase()) ||
+                  ?.includes(value.toLowerCase().trim()) ||
                 String(record.list_renter.find((obj, index) => obj?.represent === true)?.phone_number)
                   .toLowerCase()
-                  ?.includes(value.toLowerCase())
+                  ?.includes(value.toLowerCase().trim())
               );
             },
           },

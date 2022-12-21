@@ -684,7 +684,6 @@ function Service(props) {
             >
               <TextArea className="text-area" rows={5} placeholder="Ghi chú"></TextArea>
             </Form.Item>
-
           </Form>
         </Card>
       </Modal>

@@ -13,14 +13,14 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu } from "antd";
 import React, { useEffect, useState } from "react";
 import "./sidebar.scss";
-import axios from "../../api/axios";
+import useAuth from "../../hooks/useAuth";
 
 const Sidebar = () => {
   const [contractRenterLink, setContractRenterLink] = useState("/contract-renter");
   const [contractApartmentLink, setContractApartmentLink] = useState("/contract-apartment");
   const [invoiceLink, setInvoiceLink] = useState("/invoice");
   const [roomLink, setRoomLink] = useState("/room");
-
+  const { auth } = useAuth();
   const location = useLocation();
   useEffect(() => {
     if (location.pathname.includes("/room/equipment")) {
@@ -70,7 +70,7 @@ const Sidebar = () => {
     }
   }, [location.pathname]);
 
-  let role = localStorage.getItem("Role");
+  let role = "ROLE_ADMIN";
 
   return (
     <div>
@@ -96,7 +96,6 @@ const Sidebar = () => {
             <span>Quản lý phòng</span>
             <Link to="/room" />
           </Menu.Item>
-
           <Menu.Item key={invoiceLink}>
             <ProfileOutlined />
             <span>Quản lý hoá đơn</span>

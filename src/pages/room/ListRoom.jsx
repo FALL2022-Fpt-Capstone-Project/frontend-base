@@ -144,8 +144,6 @@ function ListRoom(props) {
       render: (roomPrice) => {
         return <span>{new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(roomPrice)}</span>;
       },
-      // defaultSortOrder: 'ascend',
-      // sorter: (a, b) => a.roomPrice - b.roomPrice
     },
     {
       title: "Tiền cọc",
@@ -176,116 +174,6 @@ function ListRoom(props) {
       width: 150,
       key: "room_id",
       render: (record) => {
-        // return <>
-        //   <Row justify="center">
-        //     <Popover
-        //       // open={operation}
-        //       // onOpenChange={handleOpenChange}
-        //       placement="left"
-        //       trigger="click"
-        //       title={"Thao tác"}
-        //       content={
-        //         <div>
-        //           <Row>
-        //             <Col span={24}>
-        //               <Button
-        //                 style={width100}
-        //                 onClick={() => {
-        //                   setSetRoomDetail(true);
-        //                   setRoomDetailData(record);
-        //                   // setOperation(false);
-        //                 }}
-        //                 icon={
-        //                   <EyeTwoTone
-        //                     style={iconSize}
-        //                   />
-        //                 }>
-        //                 Xem chi tiết
-        //               </Button>
-        //             </Col>
-        //           </Row>
-        //           <Row>
-        //             <Col span={24}>
-        //               <Button
-        //                 style={width100}
-        //                 onClick={() => {
-        //                   setUpdateRoom(true);
-        //                   setDataRoomUpdate(record);
-        //                 }}
-        //                 icon={
-        //                   <EditTwoTone
-        //                     style={iconSize}
-        //                   />
-        //                 }>
-        //                 Chỉnh sửa phòng
-        //               </Button>
-        //             </Col>
-        //           </Row>
-        //           {
-        //             !record.roomStatus
-        //               ?
-        //               <>
-        //                 <Row>
-        //                   <Col span={24}>
-        //                     <Button
-        //                       style={width100}
-        //                       onClick={() => {
-        //                         onDeleteRoom(record);
-        //                       }}
-        //                       icon={
-        //                         <DeleteOutlined style={{
-        //                           fontSize: "130%",
-        //                           marginRight: "8%",
-        //                           color: 'red'
-        //                         }} />
-        //                       }>
-        //                       Xóa phòng
-        //                     </Button>
-        //                   </Col>
-        //                 </Row>
-        //               </>
-        //               :
-        //               <Row>
-        //                 <Col span={24}>
-        //                   <Button
-        //                     style={width100}
-        //                     onClick={() => {
-        //                       navigate(`/room/member/${record.room_id}`);
-        //                     }}
-        //                     icon={
-        //                       <UserOutlined
-        //                         style={iconSize}
-        //                       />
-        //                     }>
-        //                     Thêm thành viên
-        //                   </Button>
-        //                 </Col>
-        //               </Row>
-        //           }
-        //           <Row>
-        //             <Col span={24}>
-        //               <Button
-        //                 onClick={() => {
-        //                   navigate('equipment', { state: [record] })
-        //                 }}
-        //                 style={width100}
-        //                 icon={
-        //                   <BulbOutlined style={iconSize} />
-        //                 }>
-        //                 Trang thiết bị
-        //               </Button>
-        //             </Col>
-        //           </Row>
-        //         </div>
-        //       }>
-        //       <Tooltip title="Thao tác">
-        //         <MoreOutlined onClick={() => {
-        //           // setOperation(true);
-        //         }} style={{ borderRadius: "50%", border: '1px solid black', fontSize: '200%' }} />
-        //       </Tooltip>
-        //     </Popover>
-        //   </Row>
-        // </>
         return (
           <>
             <Tooltip title="Xem chi tiết">
@@ -349,7 +237,6 @@ function ListRoom(props) {
     },
   ];
   const onDeleteRoomAPI = async (room_id, room_name) => {
-    // let cookie = localStorage.getItem("Cookie");
     await axios
       .delete(DELETE_ROOM + room_id, {
         headers: {
@@ -375,7 +262,6 @@ function ListRoom(props) {
   };
 
   const onDeleteListRoomAPI = async () => {
-    // let cookie = localStorage.getItem("Cookie");
     await axios
       .delete(DELETE_LIST_ROOM + "?roomId=" + listRoomId, {
         headers: {
@@ -389,9 +275,6 @@ function ListRoom(props) {
           placement: "top",
           duration: 3,
         });
-        // apartmentGroup();
-        // getRoomInfor(groupIdSelect);
-        // getAllContract();
         reload();
         setListRoomId([]);
       })
@@ -418,7 +301,6 @@ function ListRoom(props) {
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
       setRowSelected(selectedRows);
-      // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
       setListRoomId(selectedRows.map((room) => room.room_id));
     },
     getCheckboxProps: (record) => ({
@@ -429,9 +311,6 @@ function ListRoom(props) {
   useEffect(() => {
     getAssetType();
     reload();
-    // apartmentGroup();
-    // getRoomInfor();
-    // getAllContract();
     setRoomStatus({ ...room_status, roomStatus: [true, false] });
     formFilter.setFieldsValue({
       roomGroup: "",
@@ -462,11 +341,8 @@ function ListRoom(props) {
       .catch((error) => {
         console.log(error);
       });
-    // setLoading(false);
   };
-  // console.log(groupRoom);
   const getAllContract = async () => {
-    // setLoading(true);
     await axios
       .get(GET_ALL_CONTRACT, {
         headers: {
@@ -532,7 +408,6 @@ function ListRoom(props) {
             ?.reduce((previousValue, currentValue) => previousValue + currentValue, 0)
         );
         setRoomInfor(room_data);
-        // setDataSource(data);
       })
       .catch((error) => {
         console.log(error);
@@ -631,10 +506,8 @@ function ListRoom(props) {
       .get(ASSET_ROOM + room_id, {
         headers: {
           "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
           Authorization: `Bearer ${cookie}`,
         },
-        // withCredentials: true,
       })
       .then((res) => {
         setAssetRoom(res.data.data);
@@ -722,19 +595,7 @@ function ListRoom(props) {
                   </p>
                 </Col>
               </Row>
-              <Tree
-                showIcon
-                checkable={false}
-                // onExpand={onExpand}
-                // expandedKeys={expandedKeys}
-                // autoExpandParent={autoExpandParent}
-                // onCheck={onCheck}
-                // checkedKeys={checkedKeys}
-                // onSelect={onSelect}
-                // selectedKeys={selectedKeys}
-                treeData={treeData}
-                switcherIcon={<DownOutlined />}
-              />
+              <Tree showIcon checkable={false} treeData={treeData} switcherIcon={<DownOutlined />} />
             </Card>
           </Col>
           <Col xs={24} lg={24} xl={16} span={16}>
@@ -755,7 +616,6 @@ function ListRoom(props) {
                     title={
                       <>
                         <span style={textSize}>Số phòng trống </span>
-                        {/* <Button icon={<ArrowRightOutlined />} style={{ borderRadius: "50%" }}></Button> */}
                       </>
                     }
                     value={numberOfRoomEmpty + "/" + numberOfRoom}
@@ -782,7 +642,6 @@ function ListRoom(props) {
                         onSearch={(e) => {
                           setSearchRoom(e);
                         }}
-                        // onChange={(e) => { setSearchRoom(e.target.value) }}
                         placeholder="Nhập tên phòng hoặc tên chung cư để tìm kiếm"
                       />
                     </Col>
@@ -971,7 +830,6 @@ function ListRoom(props) {
                     endDate: groupRoom?.contracts?.find((o, i) => o.room_id === obj.room_id)?.contract_end_date,
                   };
                 })}
-                // pagination={{ defaultPageSize: 10, showSizeChanger: true, pageSizeOptions: ['10', '20', '30'] }}
                 columns={columns}
                 scroll={{ x: 1000, y: 800 }}
               ></Table>

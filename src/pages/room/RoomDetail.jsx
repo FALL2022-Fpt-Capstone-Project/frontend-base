@@ -1,8 +1,7 @@
-import { Button, Card, Checkbox, Col, Form, Input, InputNumber, Modal, Row, Select, Table, Tabs, Tag } from "antd";
+import { Button, Card, Checkbox, Col, Input, Modal, Row, Table, Tabs, Tag } from "antd";
 import React, { useEffect, useState } from "react";
 import moment from "moment";
 import { UserOutlined, FilterOutlined } from "@ant-design/icons";
-import axios from "../../api/axios";
 const sizeHeader = {
   fontSize: "17px",
 };
@@ -59,7 +58,6 @@ function RoomDetail({ visible, close, data, dataAsset, assetType }) {
       onFilter: (value, record) => record.asset_type_show_name.indexOf(value) === 0,
     },
   ];
-  // console.log(data);
   return (
     <>
       <Modal

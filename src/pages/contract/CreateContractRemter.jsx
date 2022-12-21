@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Sidebar from "../../components/sidebar/Sidebar";
 import "./contract.scss";
 import axios from "../../api/axios";
 import {
@@ -16,7 +15,6 @@ import {
 import moment from "moment";
 import {
   Button,
-  Layout,
   Modal,
   Form,
   Table,
@@ -142,17 +140,13 @@ const CreateContractRenter = () => {
       .get(APARTMENT_DATA_GROUP, {
         headers: {
           "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
           Authorization: `Bearer ${cookie}`,
         },
-        // withCredentials: true,
       })
       .then((res) => {
         setDataApartmentGroup(res.data.data.list_group_contracted);
       })
-      .catch((error) => {
-        // console.log(error);
-      });
+      .catch((error) => {});
     setLoading(false);
   };
 
@@ -277,9 +271,7 @@ const CreateContractRenter = () => {
           })
         );
       })
-      .catch((error) => {
-        // console.log(error);
-      });
+      .catch((error) => {});
   };
   console.log(dataOldRenter);
   const filterRenter = async (groupId) => {
@@ -291,17 +283,13 @@ const CreateContractRenter = () => {
         },
         headers: {
           "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
           Authorization: `Bearer ${cookie}`,
         },
-        // withCredentials: true,
       })
       .then((res) => {
         setDataOldRenter(res.data.data);
       })
-      .catch((error) => {
-        // console.log(error);
-      });
+      .catch((error) => {});
     setLoading(false);
   };
 
@@ -314,10 +302,8 @@ const CreateContractRenter = () => {
       .get(LIST_ASSET_TYPE, {
         headers: {
           "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
           Authorization: `Bearer ${cookie}`,
         },
-        // withCredentials: true,
       })
       .then((res) => {
         setListAssetType(res.data.data);
@@ -327,9 +313,7 @@ const CreateContractRenter = () => {
           )?.id,
         });
       })
-      .catch((error) => {
-        // console.log(error);
-      });
+      .catch((error) => {});
   };
 
   const renterColumn = [
@@ -498,15 +482,17 @@ const CreateContractRenter = () => {
   ];
 
   const onFinishAddMem = (e) => {
-    if (dataOldRenter?.find(mem => mem.identity_number === e.identity_card.toLowerCase().trim())) {
+    if (dataOldRenter?.find((mem) => mem.identity_number === e.identity_card.toLowerCase().trim())) {
       message.error("Số CMND đã tồn tại");
     } else if (form.getFieldsValue().renter_identity_card === e.identity_card.toLowerCase().trim()) {
       message.error("Số CMND đã trùng với người đại diện");
     } else {
-      console.log('out');
+      console.log("out");
       if (dataMember.length < roomSelect?.room_limit_people - 1) {
         if (dataMember.find((mem) => mem.phone_number.toLowerCase().trim() === e.phone_number.toLowerCase().trim())) {
-          if (dataMember.find((mem) => mem.identity_card.toLowerCase().trim() !== e.identity_card.toLowerCase().trim())) {
+          if (
+            dataMember.find((mem) => mem.identity_card.toLowerCase().trim() !== e.identity_card.toLowerCase().trim())
+          ) {
             setIsAddMem(true);
             message.error("Trùng số điện thoại");
           } else {
@@ -514,7 +500,9 @@ const CreateContractRenter = () => {
             message.error("Trùng số điện thoại và CMND");
           }
         } else {
-          if (dataMember.find((mem) => mem.identity_card.toLowerCase().trim() === e.identity_card.toLowerCase().trim())) {
+          if (
+            dataMember.find((mem) => mem.identity_card.toLowerCase().trim() === e.identity_card.toLowerCase().trim())
+          ) {
             setIsAddMem(true);
             message.error("Trùng số CMND");
           } else {
@@ -692,7 +680,6 @@ const CreateContractRenter = () => {
         });
       })
       .catch((error) => {
-        // console.log(error);
         notification.error({
           message: "Thêm mới tài sản thất bại",
           placement: "top",
@@ -730,7 +717,6 @@ const CreateContractRenter = () => {
         getAssetRoom(roomId);
       })
       .catch((error) => {
-        // console.log(error);
         notification.error({
           message: "Thêm mới tài sản thất bại",
           placement: "top",
@@ -852,9 +838,7 @@ const CreateContractRenter = () => {
       .then((res) => {
         setDataAsset(res.data.data);
       })
-      .catch((error) => {
-        // console.log(error);
-      });
+      .catch((error) => {});
     setLoading(false);
   };
 
@@ -955,7 +939,6 @@ const CreateContractRenter = () => {
                         </span>
                       }
                     >
-                      {/* <span><b>Tên khách thuê: </b></span> */}
                       <AutoComplete
                         filterOption={(input, option) =>
                           (option?.label.toLowerCase().trim() ?? "").includes(input.toLowerCase().trim())
@@ -1245,12 +1228,12 @@ const CreateContractRenter = () => {
                           <b>Thời hạn hợp đồng (ít nhất 1 tháng): </b>
                         </span>
                       }
-                    // rules={[
-                    //   {
-                    //     required: true,
-                    //     message: "Vui lòng chọn thời hạn hợp đồng",
-                    //   },
-                    // ]}
+                      // rules={[
+                      //   {
+                      //     required: true,
+                      //     message: "Vui lòng chọn thời hạn hợp đồng",
+                      //   },
+                      // ]}
                     >
                       <Select
                         placeholder="Thời hạn hợp đồng"
@@ -1550,12 +1533,12 @@ const CreateContractRenter = () => {
                               String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
                                 ? "Nhập chỉ số hiện tại"
                                 : "Số " +
-                                obj.service_type_name +
-                                " / " +
-                                obj.service_price.toLocaleString("vn-VN", {
-                                  style: "currency",
-                                  currency: "VND",
-                                })
+                                  obj.service_type_name +
+                                  " / " +
+                                  obj.service_price.toLocaleString("vn-VN", {
+                                    style: "currency",
+                                    currency: "VND",
+                                  })
                             }
                             addonAfter={
                               String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
