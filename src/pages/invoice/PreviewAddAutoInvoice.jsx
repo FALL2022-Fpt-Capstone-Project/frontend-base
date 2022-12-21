@@ -1,31 +1,26 @@
-import { Button, Card, Col, DatePicker, Form, InputNumber, notification, Row, Table, Tag, Tooltip } from "antd";
-import { ArrowLeftOutlined, EyeOutlined } from "@ant-design/icons";
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import MainLayout from "../../components/layout/MainLayout";
+import { Button, Card, Col, DatePicker, Form, Modal, notification, Row, Table } from "antd";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import axios from "../../api/axios";
 const ADD_INVOICE_URL = "manager/bill/room/create";
 
-const PreviewAddAutoInvoice = () => {
-  const [selectedRows, setSelectedRows] = useState([]);
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [listPreview, setListPreview] = useState([]);
-  // const [finalListPreview, setFinalListPreview] = useState([]);
-  const { state } = useLocation();
+const PreviewAddAutoInvoice = ({ visible, close, state }) => {
   const navigate = useNavigate();
 
   const [paymentTerm, setPaymentTerm] = useState(state?.paymentTerm);
   const [dateCreate, setDateCreate] = useState(state?.dateCreate);
 
   console.log(state);
-  const listInvoiceGenerate = state.selectedRows?.map((obj, index) => {
-    return { ...obj, key: index };
-  });
-  const [dataSource, setDataSource] = useState(listInvoiceGenerate);
+  let listInvoiceGenerate;
+  if (state !== undefined) {
+    listInvoiceGenerate = state.selectedRows?.map((obj, index) => {
+      return { ...obj, key: index };
+    });
+  }
+  console.log(listInvoiceGenerate);
   const [form] = Form.useForm();
   let cookie = localStorage.getItem("Cookie");
-
   let date_create_format = moment(state?.dateCreate, "YYYY-MM-DD");
   let payment_term_format = moment(state?.paymentTerm, "YYYY-MM-DD");
 
@@ -189,21 +184,6 @@ const PreviewAddAutoInvoice = () => {
         );
       },
     },
-    {
-      title: "Thao tác",
-      dataIndex: "action",
-      render: (_, record) => {
-        return (
-          <>
-            <Tooltip title="Xem hoá đơn">
-              <Link target="_blank" to="/detail-invoice">
-                <EyeOutlined className="icon" />
-              </Link>
-            </Tooltip>
-          </>
-        );
-      },
-    },
   ];
 
   const handleCreateInvoice = async (value) => {
@@ -313,22 +293,41 @@ const PreviewAddAutoInvoice = () => {
     console.log(listPreview);
     console.log(finalListPreview);
   };
-  form.setFieldsValue({ items: dataSource });
+  form.setFieldsValue({ items: listInvoiceGenerate });
   return (
-    <div className="building">
-      <MainLayout
-        title="Xem trước hoá đơn tạo mới nhanh"
-        button={
+    <>
+      <Modal
+        title={<h2>Xem trước tạo mới nhanh hoá đơn</h2>}
+        open={visible}
+        destroyOnClose={true}
+        afterClose={() => form.resetFields()}
+        onOk={() => {
+          close(false);
+        }}
+        onCancel={() => {
+          close(false);
+        }}
+        width={"auto"}
+        footer={[
           <Button
-            type="primary"
-            icon={<ArrowLeftOutlined />}
-            onClick={() => navigate(-1)}
-            size="middle"
-            className="button-add"
+            key="back"
+            onClick={() => {
+              close(false);
+            }}
           >
-            Quay lại tạo mới nhanh hoá đơn
-          </Button>
-        }
+            Đóng
+          </Button>,
+          <Button
+            className="btn-add-invoice"
+            htmlType="submit"
+            key="submit"
+            form="createInvoice"
+            type="primary"
+            size="middle"
+          >
+            Tạo mới hoá đơn
+          </Button>,
+        ]}
       >
         <Form
           form={form}
@@ -394,16 +393,12 @@ const PreviewAddAutoInvoice = () => {
             <Row>
               <Col xs={24} lg={24}>
                 <p className="auto-description">
-                  Bạn đã lựa chọn{" "}
-                  <b>
-                    {dataSource?.length}/{dataSource?.length}
-                  </b>{" "}
-                  phòng để tạo mới nhanh hoá đơn
+                  Bạn đã lựa chọn <b>{listInvoiceGenerate?.length}</b> phòng để tạo mới nhanh hoá đơn
                 </p>
                 <Form.Item name="items">
                   <Table
                     bordered
-                    dataSource={dataSource}
+                    dataSource={listInvoiceGenerate}
                     scroll={{
                       x: 700,
                     }}
@@ -412,22 +407,12 @@ const PreviewAddAutoInvoice = () => {
                     // loading={loading}
                   />
                 </Form.Item>
-                <Button
-                  className="btn-add-invoice"
-                  htmlType="submit"
-                  key="submit"
-                  form="createInvoice"
-                  type="primary"
-                  size="middle"
-                >
-                  Tạo mới hoá đơn
-                </Button>
               </Col>
             </Row>
           </Card>
         </Form>
-      </MainLayout>
-    </div>
+      </Modal>
+    </>
   );
 };
 

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Sidebar from "../../components/sidebar/Sidebar";
 import "./contract.scss";
 import axios from "../../api/axios";
 import {
@@ -16,7 +15,6 @@ import {
 import moment from "moment";
 import {
   Button,
-  Layout,
   Modal,
   Form,
   Table,
@@ -142,17 +140,13 @@ const CreateContractRenter = () => {
       .get(APARTMENT_DATA_GROUP, {
         headers: {
           "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
           Authorization: `Bearer ${cookie}`,
         },
-        // withCredentials: true,
       })
       .then((res) => {
         setDataApartmentGroup(res.data.data.list_group_contracted);
       })
-      .catch((error) => {
-        // console.log(error);
-      });
+      .catch((error) => {});
     setLoading(false);
   };
 
@@ -277,10 +271,9 @@ const CreateContractRenter = () => {
           })
         );
       })
-      .catch((error) => {
-        // console.log(error);
-      });
+      .catch((error) => {});
   };
+  console.log(dataOldRenter);
   const filterRenter = async (groupId) => {
     setLoading(true);
     await axios
@@ -290,17 +283,13 @@ const CreateContractRenter = () => {
         },
         headers: {
           "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
           Authorization: `Bearer ${cookie}`,
         },
-        // withCredentials: true,
       })
       .then((res) => {
         setDataOldRenter(res.data.data);
       })
-      .catch((error) => {
-        // console.log(error);
-      });
+      .catch((error) => {});
     setLoading(false);
   };
 
@@ -313,10 +302,8 @@ const CreateContractRenter = () => {
       .get(LIST_ASSET_TYPE, {
         headers: {
           "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
           Authorization: `Bearer ${cookie}`,
         },
-        // withCredentials: true,
       })
       .then((res) => {
         setListAssetType(res.data.data);
@@ -326,9 +313,7 @@ const CreateContractRenter = () => {
           )?.id,
         });
       })
-      .catch((error) => {
-        // console.log(error);
-      });
+      .catch((error) => {});
   };
 
   const renterColumn = [
@@ -497,37 +482,48 @@ const CreateContractRenter = () => {
   ];
 
   const onFinishAddMem = (e) => {
-    if (dataMember.length < roomSelect?.room_limit_people - 1) {
-      if (dataMember.find((mem) => mem.phone_number.toLowerCase().trim() === e.phone_number.toLowerCase().trim())) {
-        if (dataMember.find((mem) => mem.identity_card.toLowerCase().trim() !== e.identity_card.toLowerCase().trim())) {
-          setIsAddMem(true);
-          message.error("Trùng số điện thoại");
+    if (dataOldRenter?.find((mem) => mem.identity_number === e.identity_card.toLowerCase().trim())) {
+      message.error("Số CMND đã tồn tại");
+    } else if (form.getFieldsValue().renter_identity_card === e.identity_card.toLowerCase().trim()) {
+      message.error("Số CMND đã trùng với người đại diện");
+    } else {
+      console.log("out");
+      if (dataMember.length < roomSelect?.room_limit_people - 1) {
+        if (dataMember.find((mem) => mem.phone_number.toLowerCase().trim() === e.phone_number.toLowerCase().trim())) {
+          if (
+            dataMember.find((mem) => mem.identity_card.toLowerCase().trim() !== e.identity_card.toLowerCase().trim())
+          ) {
+            setIsAddMem(true);
+            message.error("Trùng số điện thoại");
+          } else {
+            setIsAddMem(true);
+            message.error("Trùng số điện thoại và CMND");
+          }
         } else {
-          setIsAddMem(true);
-          message.error("Trùng số điện thoại và CMND");
+          if (
+            dataMember.find((mem) => mem.identity_card.toLowerCase().trim() === e.identity_card.toLowerCase().trim())
+          ) {
+            setIsAddMem(true);
+            message.error("Trùng số CMND");
+          } else {
+            setMemberId(e.member_id + 1);
+            setDataMember([...dataMember, e]);
+            message.success("Thêm mới thành viên thành công");
+            setIsAddMem(false);
+            formAddMem.setFieldsValue({
+              member_id: memberId,
+              name: "",
+              identity_card: "",
+              phone_number: "",
+              license_plates: "",
+              address_more_detail: "",
+            });
+          }
         }
       } else {
-        if (dataMember.find((mem) => mem.identity_card.toLowerCase().trim() === e.identity_card.toLowerCase().trim())) {
-          setIsAddMem(true);
-          message.error("Trùng số CMND");
-        } else {
-          setMemberId(e.member_id + 1);
-          setDataMember([...dataMember, e]);
-          message.success("Thêm mới thành viên thành công");
-          setIsAddMem(false);
-          formAddMem.setFieldsValue({
-            member_id: memberId,
-            name: "",
-            identity_card: "",
-            phone_number: "",
-            license_plates: "",
-            address_more_detail: "",
-          });
-        }
+        setIsAddMem(true);
+        message.error("Số lượng thành viên đã đầy");
       }
-    } else {
-      setIsAddMem(true);
-      message.error("Số lượng thành viên đã đầy");
     }
   };
   const onFinishFailAddMem = (e) => {
@@ -684,7 +680,6 @@ const CreateContractRenter = () => {
         });
       })
       .catch((error) => {
-        // console.log(error);
         notification.error({
           message: "Thêm mới tài sản thất bại",
           placement: "top",
@@ -722,7 +717,6 @@ const CreateContractRenter = () => {
         getAssetRoom(roomId);
       })
       .catch((error) => {
-        // console.log(error);
         notification.error({
           message: "Thêm mới tài sản thất bại",
           placement: "top",
@@ -844,9 +838,7 @@ const CreateContractRenter = () => {
       .then((res) => {
         setDataAsset(res.data.data);
       })
-      .catch((error) => {
-        // console.log(error);
-      });
+      .catch((error) => {});
     setLoading(false);
   };
 
@@ -947,7 +939,6 @@ const CreateContractRenter = () => {
                         </span>
                       }
                     >
-                      {/* <span><b>Tên khách thuê: </b></span> */}
                       <AutoComplete
                         filterOption={(input, option) =>
                           (option?.label.toLowerCase().trim() ?? "").includes(input.toLowerCase().trim())

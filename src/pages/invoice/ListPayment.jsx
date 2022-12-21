@@ -1,5 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Col, DatePicker, Row, Table, Tooltip, Select, Tag, ConfigProvider, Popconfirm, Button } from "antd";
+import {
+  Col,
+  DatePicker,
+  Row,
+  Table,
+  Tooltip,
+  Select,
+  Tag,
+  ConfigProvider,
+  Popconfirm,
+  Button,
+  Modal,
+  notification,
+} from "antd";
 import { InboxOutlined, DeleteOutlined, PlusCircleOutlined, EyeOutlined } from "@ant-design/icons";
 
 import axios from "../../api/axios";
@@ -65,6 +78,32 @@ const ListPayment = () => {
     };
     getBuildingFilter();
   }, [cookie]);
+
+  const onDeletePaymentInvoice = async (e) => {
+    let cookie = localStorage.getItem("Cookie");
+    await axios
+      .delete(`manager/bill/money-source/out/delete/${e.id}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie}`,
+        },
+      })
+      .then((res) => {
+        notification.success({
+          message: "Xóa hoá đơn thành công",
+          placement: "top",
+          duration: 3,
+        });
+        getListInvoice();
+      })
+      .catch((error) => {
+        notification.error({
+          message: "Xóa hoá đơn thất bại",
+          placement: "top",
+          duration: 3,
+        });
+      });
+  };
   const options = [];
 
   for (let i = 0; i < buildingFilter.length; i++) {
@@ -179,14 +218,21 @@ const ListPayment = () => {
                 return (
                   <>
                     <Tooltip title="Xoá hoá đơn">
-                      <Popconfirm
-                        title="Bạn có muốn xoá hoá đơn này không?"
-                        okText="Đồng ý"
-                        cancelText="Không"
-                        placement="topRight"
-                      >
-                        <DeleteOutlined className="icon icon-delete" style={{ color: "red" }} />
-                      </Popconfirm>
+                      <DeleteOutlined
+                        className="icon icon-delete"
+                        style={{ color: "red" }}
+                        onClick={() => {
+                          const data = record;
+                          Modal.confirm({
+                            title: `Bạn có chắc chắn muốn xóa hoá đơn này?`,
+                            okText: "Có",
+                            cancelText: "Hủy",
+                            onOk: () => {
+                              return onDeletePaymentInvoice(data);
+                            },
+                          });
+                        }}
+                      />
                     </Tooltip>
                   </>
                 );

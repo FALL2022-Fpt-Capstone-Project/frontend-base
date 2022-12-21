@@ -202,7 +202,12 @@ const ListHistoryInvoice = ({ visible, close, roomId, setFlag }) => {
                     {record.is_paid === true ? (
                       <>
                         <Tooltip title="Xem hoá đơn">
-                          <Link target="_blank" to="/detail-invoice">
+                          <Link
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            to={`/detail-invoice/${record.id}`}
+                            onClick={() => localStorage.setItem("invoice_id", `${record.id}`)}
+                          >
                             <EyeOutlined className="icon" />
                           </Link>
                         </Tooltip>
@@ -221,7 +226,12 @@ const ListHistoryInvoice = ({ visible, close, roomId, setFlag }) => {
                     ) : (
                       <>
                         <Tooltip title="Xem hoá đơn">
-                          <Link target="_blank" to="/detail-invoice">
+                          <Link
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            to={`/detail-invoice/${record.id}`}
+                            onClick={() => localStorage.setItem("invoice_id", `${record.id}`)}
+                          >
                             <EyeOutlined className="icon" />
                           </Link>
                         </Tooltip>

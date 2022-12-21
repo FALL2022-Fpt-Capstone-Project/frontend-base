@@ -95,12 +95,12 @@ const ListStaff = () => {
     const response = await axios
       .get(LIST_EMPLOYEE_URL, {
         params: {
-          name: full_name,
-          userName: user_name,
+          name: full_name.trim(),
+          userName: user_name.trim(),
           deactivate: deactive,
           startDate: startDate,
           endDate: endDate,
-          phoneNumber: phone_number,
+          phoneNumber: phone_number.trim(),
         },
         headers: {
           "Content-Type": "application/json",
@@ -283,9 +283,9 @@ const ListStaff = () => {
             filteredValue: [textSearch],
             onFilter: (value, record) => {
               return (
-                String(record.full_name).toLowerCase()?.includes(value.toLowerCase()) ||
-                String(record.user_name).toLowerCase()?.includes(value.toLowerCase()) ||
-                String(record.phone_number).toLowerCase()?.includes(value.toLowerCase())
+                String(record.full_name).toLowerCase()?.includes(value.toLowerCase().trim()) ||
+                String(record.user_name).toLowerCase()?.includes(value.toLowerCase().trim()) ||
+                String(record.phone_number).toLowerCase()?.includes(value.toLowerCase().trim())
               );
             },
           },

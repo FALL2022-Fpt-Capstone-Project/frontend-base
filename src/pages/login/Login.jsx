@@ -37,9 +37,9 @@ const Login = () => {
       });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     setLoading(true);
-    const response = await axios
+    const response = axios
       .post(LOGIN_URL, JSON.stringify({ user_name, password }), {
         headers: {
           "Content-Type": "application/json",

@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useLocation, Navigate, Outlet } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 
@@ -7,7 +8,6 @@ const RequireAuth = ({ allowedRoles, allowedPermission }) => {
 
   let roles = localStorage.getItem("Role");
   let permission = localStorage.getItem("permission");
-
   return allowedRoles?.includes(roles) && allowedPermission?.some((per) => permission.includes(per)) ? (
     <Outlet />
   ) : (
