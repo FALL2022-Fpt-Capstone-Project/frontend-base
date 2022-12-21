@@ -8,6 +8,7 @@ import ListContractRenterAlmostExpired from "./ListContractRenterAlmostExpired";
 import ListContractRenterLatest from "./ListContractRenterLatest";
 import axios from "../../api/axios";
 import MainLayout from "../../components/layout/MainLayout";
+import { Link } from "react-router-dom";
 const { Option } = Select;
 const fontSize = {
   fontSize: 15,
@@ -56,7 +57,6 @@ const ContractRenter = () => {
           },
         })
         .then((res) => {
-          // console.log(res);
           setcountAlmostExpired(res.data.data?.almost_expired_contract);
           setcountExpired(res.data.data?.expired_contract);
           setcountLatest(res.data.data?.latest_contract);
@@ -80,15 +80,11 @@ const ContractRenter = () => {
         >
           Thống kê hợp đồng
         </Button>
-        <Button
-          type="primary"
-          icon={<PlusCircleOutlined style={fontSize} />}
-          size="middle"
-          className="button-add"
-          href="/contract-renter/create"
-        >
-          Thêm mới hợp đồng cho thuê
-        </Button>
+        <Link to="/contract-renter/create">
+          <Button type="primary" icon={<PlusCircleOutlined style={fontSize} />} size="middle" className="button-add">
+            Thêm mới hợp đồng cho thuê
+          </Button>
+        </Link>
       </div>
 
       {isStatistic && (

@@ -29,14 +29,17 @@ const CreateStaff = ({ visible, close }) => {
   const [form] = Form.useForm();
   const reload = () => window.location.reload();
   const handleCreateEmployee = async (value) => {
+    if (typeof value.gender == "undefined") {
+      value.gender = true;
+    }
     const employee = {
-      full_name: value.full_name,
-      user_name: value.user_name,
+      full_name: value.full_name.trim(),
+      user_name: value.user_name.trim(),
       password: value.password,
-      phone_number: value.phone_number,
+      phone_number: value.phone_number.trim(),
       gender: value.gender,
       roles: "staff",
-      address_more_detail: value.address_more_detail,
+      address_more_detail: value.address_more_detail.trim(),
       permission: permission,
     };
     const response = await axios
@@ -64,6 +67,7 @@ const CreateStaff = ({ visible, close }) => {
           duration: 3,
           placement: "top",
         });
+        console.log(e);
       });
 
     // console.log(JSON.stringify(response?.data));

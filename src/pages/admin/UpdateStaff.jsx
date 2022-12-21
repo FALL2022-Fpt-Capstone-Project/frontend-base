@@ -63,11 +63,11 @@ const UpdateStaff = ({ visible, close, id }) => {
     }
   }, [id, cookie, visible]);
   const data = {
-    full_name: full_name,
-    user_name: user_name,
-    phone_number: phone_number,
+    full_name: full_name.trim(),
+    user_name: user_name.trim(),
+    phone_number: phone_number.trim(),
     gender: gender,
-    address_more_detail: address_more_detail,
+    address_more_detail: address_more_detail.trim(),
     deactivate: deactivate,
     roles: "staff",
     permission: permission,

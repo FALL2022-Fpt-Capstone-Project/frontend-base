@@ -326,15 +326,11 @@ const CreateContractBuilding = () => {
   return (
     <MainLayout title={"Tạo mới hợp đồng đi thuê"}>
       <div style={{ overflow: "auto" }}>
-        <Button
-          href="/contract-apartment"
-          type="primary"
-          icon={<ArrowLeftOutlined />}
-          style={{ marginRight: 5, float: "right" }}
-          className="button-back"
-        >
-          Danh sách hợp đồng
-        </Button>
+        <Link to="/contract-apartment">
+          <Button type="primary" style={{ marginRight: 5, float: "right" }} className="button-back">
+            Danh sách hợp đồng
+          </Button>
+        </Link>
       </div>
       <Form
         onFinish={onFinish}

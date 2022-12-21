@@ -1,13 +1,11 @@
 import React from "react";
-import Sidebar from "../../components/sidebar/Sidebar";
 import "./contract.scss";
-import { Button, Divider, Layout } from "antd";
+import { Button } from "antd";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import ListContractApartment from "./ListContractApartment";
 import "./contract.scss";
-import Breadcrumbs from "../../components/BreadCrumb ";
 import MainLayout from "../../components/layout/MainLayout";
-const { Content, Sider, Header } = Layout;
+import { Link } from "react-router-dom";
 const fontSize = {
   fontSize: 15,
 };
@@ -16,15 +14,11 @@ const ContractApartment = () => {
     <MainLayout
       title={"Quản lý hợp đồng đi thuê"}
       button={
-        <Button
-          type="primary"
-          icon={<PlusCircleOutlined style={fontSize} />}
-          size="middle"
-          className="button-add"
-          href="/contract-apartment/create"
-        >
-          Thêm mới hợp đồng đi thuê
-        </Button>
+        <Link to="/contract-apartment/create">
+          <Button type="primary" icon={<PlusCircleOutlined style={fontSize} />} size="middle" className="button-add">
+            Thêm mới hợp đồng đi thuê
+          </Button>
+        </Link>
       }
     >
       <div

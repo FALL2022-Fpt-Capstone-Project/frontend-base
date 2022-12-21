@@ -77,14 +77,11 @@ const ListContractApartment = () => {
         params: {},
         headers: {
           "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
           Authorization: `Bearer ${cookie}`,
         },
-        // withCredentials: true,
       })
       .then((res) => {
         setDataSource(res.data.data);
-        // console.log(res.data.data);
       })
       .catch((error) => {
         console.log(error);
@@ -102,9 +99,9 @@ const ListContractApartment = () => {
     await axios
       .get(GET_FILTER_CONTRACT_GROUP, {
         params: {
-          name: ownerName,
-          phoneNumber: phoneNumber,
-          identity: ownerIdentity.toString(),
+          name: ownerName.trim(),
+          phoneNumber: phoneNumber.trim(),
+          identity: ownerIdentity.toString().trim(),
           isDisable: endContract,
           startDate: startDate,
           endDate: endDate,
@@ -117,7 +114,6 @@ const ListContractApartment = () => {
       })
       .then((res) => {
         setDataSource(res.data.data);
-        // console.log(res.data.data);
       })
       .catch((error) => {
         console.log(error);
@@ -130,13 +126,10 @@ const ListContractApartment = () => {
       .get(GET_SERVICE_GROUP_BY_ID + groupId, {
         headers: {
           "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
           Authorization: `Bearer ${cookie}`,
         },
-        // withCredentials: true,
       })
       .then((res) => {
-        // console.log(res.data.data);
         setDataApartmentServiceGeneral(res.data.data);
       })
       .catch((error) => {
@@ -155,17 +148,14 @@ const ListContractApartment = () => {
         },
         headers: {
           "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
           Authorization: `Bearer ${cookie}`,
         },
-        // withCredentials: true,
       })
       .then((res) => {
         const data = res.data.data.filter((room) =>
           dataCheck.list_lease_contracted_room.find((obj) => obj.room_id === room.room_id)
         );
         setInvoiceByGroup(data);
-        // console.log(data);
       })
       .catch((error) => {
         console.log(error);

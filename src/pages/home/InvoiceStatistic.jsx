@@ -1,7 +1,7 @@
-import { Col, ConfigProvider, DatePicker, Divider, Row, Select, Statistic, Table, Tag } from "antd";
+import { Button, Col, ConfigProvider, DatePicker, Divider, Row, Select, Statistic, Table, Tag } from "antd";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
-import { DollarOutlined, InboxOutlined } from "@ant-design/icons";
+import { DollarOutlined, InboxOutlined, ArrowRightOutlined } from "@ant-design/icons";
 import axios from "../../api/axios";
 const GET_ROOM_HISTORY = "manager/statistical/bill/list-room-billed";
 
@@ -70,16 +70,18 @@ const InvoiceStatistic = ({ dataGroup }) => {
       });
     setLoadingInvoice(false);
   };
+
   const customizeRenderEmpty = () => (
     <div style={{ textAlign: "center" }}>
       <InboxOutlined style={{ fontSize: 70 }} />
       <p style={{ fontSize: 20 }}>Không còn hóa đơn nào chưa thanh toán</p>
     </div>
   );
+  
   return (
     <>
       <Row justify="center">
-        <span className="header-statistic">Thống kê hóa đơn chưa thanh toán</span>
+        <span className="header-statistic">Hóa đơn chưa thanh toán</span>
       </Row>
       <Divider />
       <Row gutter={[16]}>
@@ -127,7 +129,7 @@ const InvoiceStatistic = ({ dataGroup }) => {
       </Row> */}
       <Row className="margin-top-bottom">
         <Col span={18}>
-          <span className="statistic-time-title">Chọn tháng/năm để thống kê: </span>
+          <span className="statistic-time-title">Chọn tháng/năm: </span>
           <DatePicker
             defaultValue={moment()}
             placeholder="Chọn thời gian"
@@ -166,13 +168,14 @@ const InvoiceStatistic = ({ dataGroup }) => {
       <ConfigProvider renderEmpty={customizeRenderEmpty}>
         <Table
           bordered
-          scroll={{ x: 1200, y: 600 }}
+          scroll={{ x: 1200, y: 300 }}
           columns={columns}
           loading={loadingInvoice}
           dataSource={dataSource?.sort((a, b) => b.need_to_paid - a.need_to_paid)}
           pagination={{ defaultPageSize: 5, showSizeChanger: true, pageSizeOptions: ["5", "10", "20"] }}
         />
       </ConfigProvider>
+      <Button icon={<ArrowRightOutlined />} type="primary">Quản lý hóa đơn</Button>
     </>
   );
 };

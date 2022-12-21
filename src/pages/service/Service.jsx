@@ -14,6 +14,7 @@ import {
   message,
   Tooltip,
   ConfigProvider,
+  Card,
 } from "antd";
 import { PlusCircleOutlined, EditTwoTone, DeleteOutlined, InboxOutlined } from "@ant-design/icons";
 import axios from "../../api/axios";
@@ -447,7 +448,7 @@ function Service(props) {
         </Col>
       </Row>
       <Modal
-        title={"Thêm dịch vụ mới chung cư "}
+        title={<h2>Thêm dịch vụ mới chung cư </h2>}
         visible={addServiceGeneral}
         onCancel={() => {
           setAddServiceGeneral(false);
@@ -470,102 +471,104 @@ function Service(props) {
           </Button>,
         ]}
       >
-        <Form
-          form={formAddSerivce}
-          onFinish={onFinishAddService}
-          onFinishFailed={onFinishAddServiceFail}
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 30 }}
-          layout="horizontal"
-          initialValues={{ size: componentSize }}
-          size={"default"}
-          id="add-service"
-        >
-          <Form.Item
-            className="form-item"
-            name="service_id"
-            labelCol={{ span: 24 }}
-            label={
-              <span>
-                <b>Tên dịch vụ: </b>
-              </span>
-            }
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng chọn tên dịch vụ",
-              },
-            ]}
+        <Card title="Thông tin dịch vụ" className="card">
+          <Form
+            form={formAddSerivce}
+            onFinish={onFinishAddService}
+            onFinishFailed={onFinishAddServiceFail}
+            labelCol={{ span: 5 }}
+            wrapperCol={{ span: 30 }}
+            layout="horizontal"
+            initialValues={{ size: componentSize }}
+            size={"default"}
+            id="add-service"
           >
-            <Select placeholder="Chọn dịch vụ" optionFilterProp="children">
-              {listServiceName.map((obj, index) => {
-                return <Select.Option value={obj.id}>{obj.service_show_name}</Select.Option>;
-              })}
-            </Select>
-          </Form.Item>
-          <Form.Item
-            className="form-item"
-            name="general_service_price"
-            labelCol={{ span: 24 }}
-            label={
-              <span>
-                <b>Đơn giá (VND): </b>
-              </span>
-            }
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng nhập giá dịch vụ",
-              },
-            ]}
-          >
-            <InputNumber
-              placeholder="Nhập giá dịch vụ"
-              // defaultValue={0}
-              formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-              parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
-              style={{ width: "100%" }}
-              min={0}
-            />
-          </Form.Item>
-          <Form.Item
-            className="form-item"
-            name="general_service_type"
-            labelCol={{ span: 24 }}
-            label={
-              <span>
-                <b>Cách tính giá dịch vụ: </b>
-              </span>
-            }
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng chọn cách tính giá dịch vụ",
-              },
-            ]}
-          >
-            <Select placeholder="Chọn cách tính giá dịch vụ" optionFilterProp="children">
-              {serviceCalCuMethod.map((obj, index) => {
-                return <Select.Option value={obj.id}>{obj.service_type_name}</Select.Option>;
-              })}
-            </Select>
-          </Form.Item>
-          <Form.Item
-            className="form-item"
-            name="note"
-            labelCol={{ span: 24 }}
-            label={
-              <span>
-                <b>Ghi chú: </b>
-              </span>
-            }
-          >
-            <TextArea className="text-area" rows={5} placeholder="Ghi chú"></TextArea>
-          </Form.Item>
-        </Form>
+            <Form.Item
+              className="form-item"
+              name="service_id"
+              labelCol={{ span: 24 }}
+              label={
+                <span>
+                  <b>Tên dịch vụ: </b>
+                </span>
+              }
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng chọn tên dịch vụ",
+                },
+              ]}
+            >
+              <Select placeholder="Chọn dịch vụ" optionFilterProp="children">
+                {listServiceName.map((obj, index) => {
+                  return <Select.Option value={obj.id}>{obj.service_show_name}</Select.Option>;
+                })}
+              </Select>
+            </Form.Item>
+            <Form.Item
+              className="form-item"
+              name="general_service_price"
+              labelCol={{ span: 24 }}
+              label={
+                <span>
+                  <b>Đơn giá (VND): </b>
+                </span>
+              }
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng nhập giá dịch vụ",
+                },
+              ]}
+            >
+              <InputNumber
+                placeholder="Nhập giá dịch vụ"
+                // defaultValue={0}
+                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
+                style={{ width: "100%" }}
+                min={0}
+              />
+            </Form.Item>
+            <Form.Item
+              className="form-item"
+              name="general_service_type"
+              labelCol={{ span: 24 }}
+              label={
+                <span>
+                  <b>Cách tính giá dịch vụ: </b>
+                </span>
+              }
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng chọn cách tính giá dịch vụ",
+                },
+              ]}
+            >
+              <Select placeholder="Chọn cách tính giá dịch vụ" optionFilterProp="children">
+                {serviceCalCuMethod.map((obj, index) => {
+                  return <Select.Option value={obj.id}>{obj.service_type_name}</Select.Option>;
+                })}
+              </Select>
+            </Form.Item>
+            <Form.Item
+              className="form-item"
+              name="note"
+              labelCol={{ span: 24 }}
+              label={
+                <span>
+                  <b>Ghi chú: </b>
+                </span>
+              }
+            >
+              <TextArea className="text-area" rows={5} placeholder="Ghi chú"></TextArea>
+            </Form.Item>
+          </Form>
+        </Card>
       </Modal>
       <Modal
-        title="Chỉnh sửa dịch vụ cho tòa nhà"
+        title={<h2>Chỉnh sửa dịch vụ cho tòa nhà</h2>}
         visible={editServiceGeneral}
         onCancel={() => {
           setEditServiceGeneral(false);
@@ -588,99 +591,101 @@ function Service(props) {
           </Button>,
         ]}
       >
-        <Form
-          form={formEditSerivce}
-          onFinish={onFinishEditService}
-          onFinishFailed={onFinishEditServiceFail}
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 30 }}
-          layout="horizontal"
-          initialValues={{ size: componentSize }}
-          size={"default"}
-          id="edit-service"
-        >
-          <Form.Item className="form-item" name="general_service_id" style={{ display: "none" }}></Form.Item>
-          <Form.Item
-            className="form-item"
-            name="service_id"
-            labelCol={{ span: 24 }}
-            label={
-              <span>
-                <b>Tên dịch vụ: </b>
-              </span>
-            }
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng nhập tên dịch vụ",
-              },
-            ]}
+        <Card title="Thông tin dịch vụ" className="card">
+          <Form
+            form={formEditSerivce}
+            onFinish={onFinishEditService}
+            onFinishFailed={onFinishEditServiceFail}
+            labelCol={{ span: 5 }}
+            wrapperCol={{ span: 30 }}
+            layout="horizontal"
+            initialValues={{ size: componentSize }}
+            size={"default"}
+            id="edit-service"
           >
-            <Select placeholder="Chọn dịch vụ" optionFilterProp="children">
-              {listServiceName.map((obj, index) => {
-                return <Select.Option value={obj.id}>{obj.service_show_name}</Select.Option>;
-              })}
-            </Select>
-          </Form.Item>
-          <Form.Item
-            className="form-item"
-            name="general_service_price"
-            labelCol={{ span: 24 }}
-            label={
-              <span>
-                <b>Đơn giá (VND): </b>
-              </span>
-            }
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng nhập giá dịch vụ",
-              },
-            ]}
-          >
-            <InputNumber
-              defaultValue={0}
-              formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-              parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
-              style={{ width: "100%" }}
-              min={0}
-            />
-          </Form.Item>
-          <Form.Item
-            className="form-item"
-            name="general_service_type"
-            labelCol={{ span: 24 }}
-            label={
-              <span>
-                <b>Cách tính giá dịch vụ: </b>
-              </span>
-            }
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng chọn cách tính giá dịch vụ",
-              },
-            ]}
-          >
-            <Select placeholder="Chọn cách tính giá dịch vụ" optionFilterProp="children">
-              {serviceCalCuMethod.map((obj, index) => {
-                return <Select.Option value={obj.id}>{obj.service_type_name}</Select.Option>;
-              })}
-            </Select>
-          </Form.Item>
-          <Form.Item
-            className="form-item"
-            name="note"
-            labelCol={{ span: 24 }}
-            label={
-              <span>
-                <b>Ghi chú: </b>
-              </span>
-            }
-          >
-            <TextArea className="text-area" rows={5} placeholder="Ghi chú"></TextArea>
-          </Form.Item>
-        </Form>
+            <Form.Item className="form-item" name="general_service_id" style={{ display: "none" }}></Form.Item>
+            <Form.Item
+              className="form-item"
+              name="service_id"
+              labelCol={{ span: 24 }}
+              label={
+                <span>
+                  <b>Tên dịch vụ: </b>
+                </span>
+              }
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng nhập tên dịch vụ",
+                },
+              ]}
+            >
+              <Select placeholder="Chọn dịch vụ" optionFilterProp="children">
+                {listServiceName.map((obj, index) => {
+                  return <Select.Option value={obj.id}>{obj.service_show_name}</Select.Option>;
+                })}
+              </Select>
+            </Form.Item>
+            <Form.Item
+              className="form-item"
+              name="general_service_price"
+              labelCol={{ span: 24 }}
+              label={
+                <span>
+                  <b>Đơn giá (VND): </b>
+                </span>
+              }
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng nhập giá dịch vụ",
+                },
+              ]}
+            >
+              <InputNumber
+                defaultValue={0}
+                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
+                style={{ width: "100%" }}
+                min={0}
+              />
+            </Form.Item>
+            <Form.Item
+              className="form-item"
+              name="general_service_type"
+              labelCol={{ span: 24 }}
+              label={
+                <span>
+                  <b>Cách tính giá dịch vụ: </b>
+                </span>
+              }
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng chọn cách tính giá dịch vụ",
+                },
+              ]}
+            >
+              <Select placeholder="Chọn cách tính giá dịch vụ" optionFilterProp="children">
+                {serviceCalCuMethod.map((obj, index) => {
+                  return <Select.Option value={obj.id}>{obj.service_type_name}</Select.Option>;
+                })}
+              </Select>
+            </Form.Item>
+            <Form.Item
+              className="form-item"
+              name="note"
+              labelCol={{ span: 24 }}
+              label={
+                <span>
+                  <b>Ghi chú: </b>
+                </span>
+              }
+            >
+              <TextArea className="text-area" rows={5} placeholder="Ghi chú"></TextArea>
+            </Form.Item>
+          </Form>
+        </Card>
       </Modal>
     </MainLayout>
   );
