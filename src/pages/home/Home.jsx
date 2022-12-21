@@ -83,16 +83,32 @@ const Home = () => {
   return (
     <div className="home">
       <MainLayout title="Trang chủ">
-        <Row>
+        <Row gutter={[16]}>
           <Col xs={12} lg={10} xl={7} span={7}>
             <Statistic
               className="statistic-style"
               title={
                 <>
-                  <a className="revenue-statistic" href="/invoice">Tổng số hóa đơn chưa thanh toán ( {moment().format('MM/YYYY')} )</a>
+                  <a className="revenue-statistic" href="/invoice">Tổng số hóa đơn chưa thanh toán ({moment().format('MM/YYYY')})</a>
                 </>
               }
               value={billNotPay.length}
+              valueStyle={{
+                color: "#cf1322",
+              }}
+            />
+          </Col>
+          <Col xs={12} lg={10} xl={7} span={7}>
+            <Statistic
+              className="statistic-style"
+              title={
+                <>
+                  <a className="revenue-statistic" href="/invoice">Tổng số tiền cần thu ({moment().format('MM/YYYY')})</a>
+                </>
+              }
+              value={new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
+                billNotPay?.map((invoice) => invoice.need_to_paid).reduce((pre, current) => pre + current, 0)
+              )}
               valueStyle={{
                 color: "#cf1322",
               }}
