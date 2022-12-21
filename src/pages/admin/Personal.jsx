@@ -76,7 +76,10 @@ function Personal(props) {
     address_more_detail: address_more_detail.trim(),
     deactivate: deactivate,
     roles: roles,
-    // password: password,
+    permission: localStorage
+      .getItem("permission")
+      ?.split(",")
+      ?.map((obj) => Number.parseInt(obj)),
   };
 
   const genderChange = (e) => {

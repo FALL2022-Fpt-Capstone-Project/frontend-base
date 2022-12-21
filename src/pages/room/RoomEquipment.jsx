@@ -1,5 +1,5 @@
 import "./room.scss";
-import { Form, Input, Select, Layout, Button, Row, Col, Table, Modal, Checkbox, notification, InputNumber } from "antd";
+import { Form, Input, Select, Button, Row, Col, Table, Modal, Checkbox, notification, InputNumber, Card } from "antd";
 import React, { useEffect, useState } from "react";
 import { PlusCircleOutlined, EditTwoTone, DeleteOutlined, FilterOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import axios from "../../api/axios";
@@ -20,6 +20,7 @@ const DELETE_ASSET = "manager/asset/room/delete";
 
 function RoomEquipment(data) {
   const { state } = useLocation();
+  // console.log(state[0]);
   const dataFilter = {
     id: [],
     asset_type: [],
@@ -29,6 +30,7 @@ function RoomEquipment(data) {
   const [searched, setSearched] = useState("");
   const [filterAssetType, setFilterAssetType] = useState([]);
   const [isEditAsset, setIsEditAsset] = useState(false);
+  const [dataAsset, setDataAsset] = useState([]);
   const [listAssetType, setListAssetType] = useState([]);
   const [assetStatus, setAssetStatus] = useState([]);
   const [addAssetInRoom, setAddAssetInRoom] = useState(false);
@@ -57,10 +59,13 @@ function RoomEquipment(data) {
       .get(LIST_ASSET_TYPE, {
         headers: {
           "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
           Authorization: `Bearer ${cookie}`,
         },
+        // withCredentials: true,
       })
       .then((res) => {
+        // console.log(res.data.data);
         setListAssetType(res.data.data);
         createAssetForm.setFieldsValue({
           asset_type_show_name: res.data.data?.find(
@@ -80,10 +85,13 @@ function RoomEquipment(data) {
       .get(ASSET_ROOM + state[0].room_id, {
         headers: {
           "Content-Type": "application/json",
+          // "Access-Control-Allow-Origin": "*",
           Authorization: `Bearer ${cookie}`,
         },
+        // withCredentials: true,
       })
       .then((res) => {
+        // console.log(res.data.data);
         setAssetRoom(res.data.data);
       })
       .catch((error) => {
@@ -123,6 +131,11 @@ function RoomEquipment(data) {
       filteredValue: filterAssetType.asset_type_show_name || null,
       onFilter: (value, record) => record.asset_type_show_name.indexOf(value) === 0,
     },
+    // {
+    //     title: "Ngày bàn giao",
+    //     dataIndex: "hand_over_date_delivery",
+    //     key: "asset_id",
+    // },
     {
       title: "Thao tác",
       key: "asset_id",
@@ -165,6 +178,8 @@ function RoomEquipment(data) {
   };
 
   const onDeleteAssetAPI = async (asset_id, asset_name) => {
+    // console.log(asset_id);
+    // let cookie = localStorage.getItem("Cookie");
     await axios
       .delete(DELETE_ASSET + "?roomAssetId=" + [asset_id], {
         headers: {
@@ -190,6 +205,7 @@ function RoomEquipment(data) {
   };
 
   const onDeleteListAssetAPI = async () => {
+    // console.log(listAssetId);
     let cookie = localStorage.getItem("Cookie");
     await axios
       .delete(DELETE_ASSET + "?roomAssetId=" + listAssetId, {
@@ -223,7 +239,9 @@ function RoomEquipment(data) {
       asset_type_id: dataAsset.asset_type_show_name,
       asset_quantity: dataAsset.hand_over_asset_quantity,
       room_id: state[0].room_id,
+      // hand_over_date_delivery: dataAsset?.hand_over_date_delivery?.format("DD-MM-YYYY"),
     };
+    // console.log(JSON.stringify([data]));
     await axios
       .post(ADD_ASSET, [data], {
         headers: {
@@ -232,6 +250,7 @@ function RoomEquipment(data) {
         },
       })
       .then((res) => {
+        // console.log(res.data.data);
         notification.success({
           message: "Thêm mới tài sản thành công",
           placement: "top",
@@ -245,6 +264,7 @@ function RoomEquipment(data) {
         });
       })
       .catch((error) => {
+        // console.log(error);
         notification.error({
           message: "Thêm mới tài sản thất bại",
           placement: "top",
@@ -258,6 +278,7 @@ function RoomEquipment(data) {
   };
 
   const editAssetFinish = async (dataAsset) => {
+    // console.log(dataAsset);
     const data = {
       room_asset_id: dataAsset.asset_id,
       asset_name: dataAsset.asset_name,
@@ -265,6 +286,7 @@ function RoomEquipment(data) {
       asset_quantity: dataAsset.hand_over_asset_quantity,
       room_id: state[0].room_id,
     };
+    // console.log(JSON.stringify([data]));
     await axios
       .put(UPDATE_ASSET, [data], {
         headers: {
@@ -301,6 +323,7 @@ function RoomEquipment(data) {
   };
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
+      // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
       setListAssetId(selectedRows.map((asset) => asset.asset_id));
     },
   };
@@ -451,6 +474,8 @@ function RoomEquipment(data) {
           <Button
             key="back"
             onClick={() => {
+              // setFormAddAsset(createAssetForm.getFieldsValue());
+              // setAddAssetInRoom(false)
               setAddAssetInRoom(false);
             }}
           >
@@ -461,85 +486,87 @@ function RoomEquipment(data) {
           </Button>,
         ]}
       >
-        <Form
-          form={createAssetForm}
-          onFinish={addAssetFinish}
-          onFinishFailed={addAssetFail}
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 30 }}
-          layout="horizontal"
-          initialValues={{ size: componentSize }}
-          onValuesChange={onFormLayoutChange}
-          size={"default"}
-          id="create-asset"
-        >
-          <Form.Item
-            className="form-item"
-            name="asset_name"
-            labelCol={{ span: 24 }}
-            label={
-              <span>
-                <b>Tên tài sản: </b>
-              </span>
-            }
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng nhập tên tài sản",
-                whitespace: true,
-              },
-            ]}
+        <Card title="Thông tin tài sản" className="card">
+          <Form
+            form={createAssetForm}
+            onFinish={addAssetFinish}
+            onFinishFailed={addAssetFail}
+            labelCol={{ span: 5 }}
+            wrapperCol={{ span: 30 }}
+            layout="horizontal"
+            initialValues={{ size: componentSize }}
+            onValuesChange={onFormLayoutChange}
+            size={"default"}
+            id="create-asset"
           >
-            <Input placeholder="Tên tài sản"></Input>
-          </Form.Item>
-          <Form.Item
-            className="form-item"
-            name="hand_over_asset_quantity"
-            labelCol={{ span: 24 }}
-            label={
-              <span>
-                <b>Số lượng: </b>
-              </span>
-            }
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng nhập số lượng",
-              },
-              {
-                pattern: new RegExp(/^[0-9]*$/),
-                message: "Vui lòng nhập số nguyên",
-              },
-            ]}
-          >
-            <InputNumber placeholder="Nhập số lượng tài sản" style={{ width: "100%" }} min={1} />
-          </Form.Item>
-          <Form.Item
-            className="form-item"
-            name="asset_type_show_name"
-            labelCol={{ span: 24 }}
-            label={
-              <span>
-                <b>Nhóm tài sản: </b>
-              </span>
-            }
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng chọn nhóm tài sản",
-              },
-            ]}
-          >
-            <Select placeholder="Chọn nhóm tài sản">
-              {listAssetType?.map((obj, index) => {
-                return <Select.Option value={obj.id}>{obj.asset_type_show_name}</Select.Option>;
-              })}
-            </Select>
-          </Form.Item>
-        </Form>
+            <Form.Item
+              className="form-item"
+              name="asset_name"
+              labelCol={{ span: 24 }}
+              label={
+                <span>
+                  <b>Tên tài sản: </b>
+                </span>
+              }
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng nhập tên tài sản",
+                  whitespace: true,
+                },
+              ]}
+            >
+              <Input placeholder="Tên tài sản"></Input>
+            </Form.Item>
+            <Form.Item
+              className="form-item"
+              name="hand_over_asset_quantity"
+              labelCol={{ span: 24 }}
+              label={
+                <span>
+                  <b>Số lượng: </b>
+                </span>
+              }
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng nhập số lượng",
+                },
+                {
+                  pattern: new RegExp(/^[0-9]*$/),
+                  message: "Vui lòng nhập số nguyên",
+                },
+              ]}
+            >
+              <InputNumber placeholder="Nhập số lượng tài sản" style={{ width: "100%" }} min={1} />
+            </Form.Item>
+            <Form.Item
+              className="form-item"
+              name="asset_type_show_name"
+              labelCol={{ span: 24 }}
+              label={
+                <span>
+                  <b>Nhóm tài sản: </b>
+                </span>
+              }
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng chọn nhóm tài sản",
+                },
+              ]}
+            >
+              <Select placeholder="Chọn nhóm tài sản">
+                {listAssetType?.map((obj, index) => {
+                  return <Select.Option value={obj.id}>{obj.asset_type_show_name}</Select.Option>;
+                })}
+              </Select>
+            </Form.Item>
+          </Form>
+        </Card>
       </Modal>
       <Modal
-        title="Chỉnh sửa tài sản trong phòng"
+        title={<h2>Chỉnh sửa tài sản trong phòng</h2>}
         visible={isEditAsset}
         onCancel={() => {
           setIsEditAsset(false);
@@ -562,83 +589,85 @@ function RoomEquipment(data) {
           </Button>,
         ]}
       >
-        <Form
-          form={editAssetForm}
-          onFinish={editAssetFinish}
-          onFinishFailed={editAssetFail}
-          labelCol={{ span: 5 }}
-          wrapperCol={{ span: 30 }}
-          layout="horizontal"
-          initialValues={{ size: componentSize }}
-          onValuesChange={onFormLayoutChange}
-          size={"default"}
-          id="edit-asset"
-        >
-          <Form.Item name="asset_id" style={{ display: "none" }}></Form.Item>
-          <Form.Item
-            className="form-item"
-            name="asset_name"
-            labelCol={{ span: 24 }}
-            label={
-              <span>
-                <b>Tên tài sản: </b>
-              </span>
-            }
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng nhập tên tài sản",
-                whitespace: true,
-              },
-            ]}
+        <Card title="Thông tin tài sản" className="card">
+          <Form
+            form={editAssetForm}
+            onFinish={editAssetFinish}
+            onFinishFailed={editAssetFail}
+            labelCol={{ span: 5 }}
+            wrapperCol={{ span: 30 }}
+            layout="horizontal"
+            initialValues={{ size: componentSize }}
+            onValuesChange={onFormLayoutChange}
+            size={"default"}
+            id="edit-asset"
           >
-            <Input placeholder="Tên tài sản"></Input>
-          </Form.Item>
-          <Form.Item
-            className="form-item"
-            name="hand_over_asset_quantity"
-            labelCol={{ span: 24 }}
-            label={
-              <span>
-                <b>Số lượng: </b>
-              </span>
-            }
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng nhập số lượng",
-              },
-              {
-                pattern: new RegExp(/^[0-9]*$/),
-                message: "Vui lòng nhập số nguyên",
-              },
-            ]}
-          >
-            <InputNumber style={{ width: "100%" }} min={1} />
-          </Form.Item>
-          <Form.Item
-            className="form-item"
-            name="asset_type_show_name"
-            labelCol={{ span: 24 }}
-            label={
-              <span>
-                <b>Nhóm tài sản: </b>
-              </span>
-            }
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng chọn nhóm tài sản",
-              },
-            ]}
-          >
-            <Select placeholder={"Nhóm tài sản"}>
-              {listAssetType?.map((obj, index) => {
-                return <Select.Option value={obj.id}>{obj.asset_type_show_name}</Select.Option>;
-              })}
-            </Select>
-          </Form.Item>
-        </Form>
+            <Form.Item name="asset_id" style={{ display: "none" }}></Form.Item>
+            <Form.Item
+              className="form-item"
+              name="asset_name"
+              labelCol={{ span: 24 }}
+              label={
+                <span>
+                  <b>Tên tài sản: </b>
+                </span>
+              }
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng nhập tên tài sản",
+                  whitespace: true,
+                },
+              ]}
+            >
+              <Input placeholder="Tên tài sản"></Input>
+            </Form.Item>
+            <Form.Item
+              className="form-item"
+              name="hand_over_asset_quantity"
+              labelCol={{ span: 24 }}
+              label={
+                <span>
+                  <b>Số lượng: </b>
+                </span>
+              }
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng nhập số lượng",
+                },
+                {
+                  pattern: new RegExp(/^[0-9]*$/),
+                  message: "Vui lòng nhập số nguyên",
+                },
+              ]}
+            >
+              <InputNumber style={{ width: "100%" }} min={1} />
+            </Form.Item>
+            <Form.Item
+              className="form-item"
+              name="asset_type_show_name"
+              labelCol={{ span: 24 }}
+              label={
+                <span>
+                  <b>Nhóm tài sản: </b>
+                </span>
+              }
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng chọn nhóm tài sản",
+                },
+              ]}
+            >
+              <Select placeholder={"Nhóm tài sản"}>
+                {listAssetType?.map((obj, index) => {
+                  return <Select.Option value={obj.id}>{obj.asset_type_show_name}</Select.Option>;
+                })}
+              </Select>
+            </Form.Item>
+          </Form>
+        </Card>
       </Modal>
       <AddMultiEquipment
         reload={reloadData}
@@ -648,6 +677,7 @@ function RoomEquipment(data) {
         roomId={state[0].room_id}
       />
     </MainLayout>
+    // </Spin>
   );
 }
 
