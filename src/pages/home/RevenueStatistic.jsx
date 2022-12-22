@@ -39,7 +39,7 @@ const RevenueStatistic = () => {
       },
       title: {
         display: true,
-        text: "Doanh thu " + selectYear + " (VNĐ)",
+        text: "Biểu đồ doanh thu " + selectYear + " (VNĐ)",
         font: {
           size: 21,
         },

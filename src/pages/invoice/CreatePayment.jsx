@@ -28,9 +28,7 @@ const CreatePayment = ({ visible, close, groupName, setFlag, groupId }) => {
   const dateCreateChange = (date, dateString) => {
     setDateCreate(dateString);
   };
-  const disabledDate = (current) => {
-    return current && current < date_create_format;
-  };
+
   const handleCreateInvoice = async (value) => {
     const invoice = {
       group_id: groupId,
@@ -153,7 +151,7 @@ const CreatePayment = ({ visible, close, groupName, setFlag, groupId }) => {
                     onChange={dateCreateChange}
                     value={date_create_format}
                     placeholder="Nhập ngày tạo hoá đơn"
-                    disabledDate={disabledDate}
+                    format="DD-MM-YYYY"
                   />
                 </Form.Item>
               </Col>
