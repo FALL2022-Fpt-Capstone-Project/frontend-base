@@ -161,13 +161,14 @@ const PreviewAddAutoInvoice = ({ visible, close, state }) => {
     setPaymentTerm(state?.paymentTerm);
   }, [state?.paymentTerm]);
   const dateCreateChange = (date, dateString) => {
-    setDateCreate(dateString);
+    let [day1, month1, year1] = dateString[0].split("-");
+    let date1 = `${year1}-${month1}-${day1}`;
+    setDateCreate(date1);
   };
   const paymentTermChange = (date, dateString) => {
-    setPaymentTerm(dateString);
-  };
-  const disabledDate = (current) => {
-    return current && current < date_create_format;
+    let [day1, month1, year1] = dateString[0].split("-");
+    let date2 = `${year1}-${month1}-${day1}`;
+    setPaymentTerm(date2);
   };
   const columnsNotBilled = [
     {
@@ -384,7 +385,6 @@ const PreviewAddAutoInvoice = ({ visible, close, state }) => {
                     onChange={dateCreateChange}
                     value={date_create_format}
                     placeholder="Nhập ngày tạo hoá đơn"
-                    disabledDate={disabledDate}
                     format="DD-MM-YYYY"
                   />
                 </Form.Item>
@@ -406,12 +406,7 @@ const PreviewAddAutoInvoice = ({ visible, close, state }) => {
                     },
                   ]}
                 >
-                  <DatePicker
-                    placeholder="Nhập hạn đóng tiền"
-                    onChange={paymentTermChange}
-                    disabledDate={disabledDate}
-                    format="DD-MM-YYYY"
-                  />
+                  <DatePicker placeholder="Nhập hạn đóng tiền" onChange={paymentTermChange} format="DD-MM-YYYY" />
                 </Form.Item>
               </Col>
             </Row>
@@ -431,8 +426,8 @@ const PreviewAddAutoInvoice = ({ visible, close, state }) => {
                     pagination={{ pageSize: 5 }}
                     // loading={loading}
                   />
-                  <Row justify="start">
-                    <p>Tổng tiền tất cả hóa đơn:</p>
+                  <Row justify="start" style={{ fontSize: "18px" }}>
+                    <b>Tổng tiền tất cả hóa đơn:</b>
                     <p className="total-all-invoice">
                       {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
                         listInvoiceGenerate
