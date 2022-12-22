@@ -17,24 +17,25 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
   const [listService, setListService] = useState();
   const [vehiPrice, setVehiPrice] = useState(0);
   const [internetPrice, setInternetPrice] = useState(0);
+  const [cleanPrice, setCleanPrice] = useState(0);
+  const [otherPrice, setOtherPrice] = useState(0);
   const [newWater, setNewWater] = useState();
   const [newElec, setNewElec] = useState();
-  const [vehiMonth, setVehiMonth] = useState(1);
-  const [internetMonth, setInternetMonth] = useState(1);
-  const [cleanMonth, setCleanMonth] = useState(1);
-  const [vehiPeople, setVehiPeople] = useState(1);
-  const [internetPeople, setInternetPeople] = useState(1);
-  const [cleanPeople, setCleanPeople] = useState(1);
+  const [vehiMonth, setVehiMonth] = useState();
+  const [waterMonth, setWaterMonth] = useState();
+  const [internetMonth, setInternetMonth] = useState();
+  const [cleanMonth, setCleanMonth] = useState();
+  const [otherMonth, setOtherMonth] = useState();
   const [water, setWater] = useState();
   const [elec, setElec] = useState();
   const [vehi, setVehi] = useState();
   const [internet, setInternet] = useState();
   const [clean, setClean] = useState();
+  const [other, setOther] = useState();
   const [dateCreate, setDateCreate] = useState();
   const [paymentTerm, setPaymentTerm] = useState();
   const [form] = Form.useForm();
   let cookie = localStorage.getItem("Cookie");
-  const reload = () => window.location.reload();
 
   let day = moment().date();
   let month = moment().month();
@@ -69,27 +70,82 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
         .then((res) => {
           console.log(res);
           form.setFieldsValue({
-            old_elec: res.data.data.list_general_service?.find((electric) => electric.service_name === "electric")
-              .hand_over_general_service_index,
-            new_elec: res.data.data.list_general_service?.find((electric) => electric.service_name === "electric")
-              .hand_over_general_service_index,
-            old_water: res.data.data.list_general_service?.find((water) => water.service_name === "water")
-              .hand_over_general_service_index,
-            new_water: res.data.data.list_general_service?.find((water) => water.service_name === "water")
-              .hand_over_general_service_index,
+            old_elec:
+              res.data.data?.list_general_service?.filter((electric) => electric.service_name === "electric").length > 0
+                ? res.data.data.list_general_service?.find((electric) => electric.service_name === "electric")
+                    .hand_over_general_service_index
+                : null,
+            new_elec:
+              res.data.data?.list_general_service?.filter((electric) => electric.service_name === "electric").length > 0
+                ? res.data.data.list_general_service?.find((electric) => electric.service_name === "electric")
+                    .hand_over_general_service_index
+                : null,
+            old_water:
+              res.data.data?.list_general_service?.filter((water) => water.service_name === "water").length > 0
+                ? res.data.data.list_general_service?.find((vehicles) => vehicles.service_name === "water")
+                    .hand_over_general_service_index
+                : null,
+            new_water:
+              res.data.data?.list_general_service?.filter((water) => water.service_name === "water").length > 0
+                ? res.data.data.list_general_service?.find((water) => water.service_name === "water")
+                    .hand_over_general_service_index
+                : null,
+            waterMonth:
+              res.data.data?.list_general_service?.filter((water) => water.service_name === "water").length > 0
+                ? res.data.data.list_general_service?.find((water) => water.service_name === "water")
+                    .hand_over_general_service_index
+                : null,
             vehiMonth:
-              res.data.data?.list_general_service?.find((vehicles) => vehicles.service_name === "vehicles")
-                .hand_over_general_service_index !== undefined
+              res.data.data?.list_general_service?.filter((vehicles) => vehicles.service_name === "vehicles").length > 0
                 ? res.data.data.list_general_service?.find((vehicles) => vehicles.service_name === "vehicles")
                     .hand_over_general_service_index
                 : null,
             internetMonth:
-              res.data.data?.list_general_service?.find((internet) => internet.service_name === "internet")
-                .hand_over_general_service_index !== undefined
+              res.data.data?.list_general_service?.filter((internet) => internet.service_name === "internet").length > 0
                 ? res.data.data.list_general_service?.find((internet) => internet.service_name === "internet")
                     .hand_over_general_service_index
                 : null,
+            cleanMonth:
+              res.data.data?.list_general_service?.filter((clean) => clean.service_name === "cleaning").length > 0
+                ? res.data.data.list_general_service?.find((clean) => clean.service_name === "cleaning")
+                    .hand_over_general_service_index
+                : null,
+            otherMonth:
+              res.data.data?.list_general_service?.filter((clean) => clean.service_name === "other").length > 0
+                ? res.data.data.list_general_service?.find((clean) => clean.service_name === "other")
+                    .hand_over_general_service_index
+                : null,
           });
+          setVehiMonth(
+            res.data.data?.list_general_service?.filter((vehicles) => vehicles.service_name === "vehicles").length > 0
+              ? res.data.data.list_general_service?.find((vehicles) => vehicles.service_name === "vehicles")
+                  .hand_over_general_service_index
+              : null
+          );
+          setWaterMonth(
+            res.data.data?.list_general_service?.filter((water) => water.service_name === "water").length > 0
+              ? res.data.data.list_general_service?.find((water) => water.service_name === "water")
+                  .hand_over_general_service_index
+              : null
+          );
+          setInternetMonth(
+            res.data.data?.list_general_service?.filter((internet) => internet.service_name === "internet").length > 0
+              ? res.data.data.list_general_service?.find((internet) => internet.service_name === "internet")
+                  .hand_over_general_service_index
+              : null
+          );
+          setCleanMonth(
+            res.data.data?.list_general_service?.filter((clean) => clean.service_name === "cleaning").length > 0
+              ? res.data.data.list_general_service?.find((clean) => clean.service_name === "cleaning")
+                  .hand_over_general_service_index
+              : null
+          );
+          setOtherMonth(
+            res.data.data?.list_general_service?.filter((clean) => clean.service_name === "other").length > 0
+              ? res.data.data.list_general_service?.find((clean) => clean.service_name === "other")
+                  .hand_over_general_service_index
+              : null
+          );
           setRoomId(res.data.data.room_id);
           setRoomName(res.data.data.room_name);
           setRoomPrice(res.data.data.room_price);
@@ -105,8 +161,8 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
           );
         });
     }
-  }, [cookie, id, form, visible]);
-
+  }, [visible]);
+  console.log(vehiMonth);
   const handleCreateInvoice = async (value) => {
     const invoice = [
       {
@@ -118,36 +174,36 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
         service_bill: service_bill,
       },
     ];
-    const response = await axios
-      .post(ADD_INVOICE_URL, invoice, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${cookie}`,
-        },
-      })
-      .then((res) => {
-        notification.success({
-          message: "Thêm mới hoá đơn thành công",
-          duration: 3,
-          placement: "top",
-        });
-        close(false);
-        setFlag(true);
+    // const response = await axios
+    //   .post(ADD_INVOICE_URL, invoice, {
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       Authorization: `Bearer ${cookie}`,
+    //     },
+    //   })
+    //   .then((res) => {
+    //     notification.success({
+    //       message: "Thêm mới hoá đơn thành công",
+    //       duration: 3,
+    //       placement: "top",
+    //     });
+    //     close(false);
+    //     setFlag(true);
 
-        setTimeout(() => {
-          setFlag(false);
-        }, "500");
-        console.log(res);
-      })
-      .catch((e) => {
-        notification.error({
-          message: "Thêm mới hoá đơn thất bại",
-          description: "Vui lòng kiểm tra lại thông tin và thử lại.",
-          duration: 3,
-          placement: "top",
-        });
-      });
-    setFlag(false);
+    //     setTimeout(() => {
+    //       setFlag(false);
+    //     }, "500");
+    //     console.log(res);
+    //   })
+    //   .catch((e) => {
+    //     notification.error({
+    //       message: "Thêm mới hoá đơn thất bại",
+    //       description: "Vui lòng kiểm tra lại thông tin và thử lại.",
+    //       duration: 3,
+    //       placement: "top",
+    //     });
+    //   });
+    // setFlag(false);
     // console.log(JSON.stringify(response?.data));
     console.log(invoice);
   };
@@ -170,20 +226,29 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
   const vehiPeopleChange = (value) => {
     setVehiMonth(value);
   };
+  const waterMonthChange = (value) => {
+    setWaterMonth(value);
+  };
+  const waterPeopleChange = (value) => {
+    setWaterMonth(value);
+  };
   const internetPeopleChange = (value) => {
     setInternetMonth(value);
   };
   const cleanPeopleChange = (value) => {
     setCleanMonth(value);
   };
+  const otherMonthChange = (value) => {
+    setOtherMonth(value);
+  };
+  const otherPeopleChange = (value) => {
+    setOtherMonth(value);
+  };
   const dateCreateChange = (date, dateString) => {
     setDateCreate(dateString);
   };
   const paymentTermChange = (date, dateString) => {
     setPaymentTerm(dateString);
-  };
-  const disabledDate = (current) => {
-    return current && current < date_create_format;
   };
   const serviceArray = listService;
   let results = [];
@@ -216,6 +281,56 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
       )?.service_type_id;
       setWaterMoney(serviceTotalMoney);
 
+      setWater({
+        service_id: serviceId,
+        service_type: serviceType,
+        service_price: servicePrice,
+        service_index: serviceIndex,
+        service_total_money: serviceTotalMoney,
+      });
+    }
+    if (serviceArray?.some((water) => water?.service_name === "water" && water.service_type_name === "Tháng")) {
+      servicePrice = serviceArray.find(
+        (water) => water?.service_name === "water" && water.service_type_name === "Tháng"
+      )?.service_price;
+      serviceIndex = waterMonth;
+      serviceTotalMoney =
+        serviceArray.find((water) => water?.service_name === "water" && water.service_type_name === "Tháng")
+          ?.service_price * serviceIndex;
+      serviceId = serviceArray.find(
+        (water) => water?.service_name === "water" && water.service_type_name === "Tháng"
+      )?.service_id;
+
+      serviceType = serviceArray.find(
+        (water) => water?.service_name === "water" && water.service_type_name === "Tháng"
+      )?.service_type_id;
+      setWaterMoney(serviceTotalMoney);
+      setWaterMonth(serviceIndex);
+      setWater({
+        service_id: serviceId,
+        service_type: serviceType,
+        service_price: servicePrice,
+        service_index: serviceIndex,
+        service_total_money: serviceTotalMoney,
+      });
+    }
+    if (serviceArray?.some((water) => water?.service_name === "water" && water.service_type_name === "Người")) {
+      servicePrice = serviceArray.find(
+        (water) => water?.service_name === "water" && water.service_type_name === "Người"
+      )?.service_price;
+      serviceIndex = waterMonth;
+      serviceTotalMoney =
+        serviceArray.find((water) => water?.service_name === "water" && water.service_type_name === "Người")
+          ?.service_price * serviceIndex;
+      serviceId = serviceArray.find(
+        (water) => water?.service_name === "water" && water.service_type_name === "Người"
+      )?.service_id;
+
+      serviceType = serviceArray.find(
+        (water) => water?.service_name === "water" && water.service_type_name === "Người"
+      )?.service_type_id;
+      setWaterMoney(serviceTotalMoney);
+      setWaterMonth(serviceIndex);
       setWater({
         service_id: serviceId,
         service_type: serviceType,
@@ -263,9 +378,7 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
       servicePrice = serviceArray.find(
         (vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Tháng"
       )?.service_price;
-      serviceIndex = serviceArray.find(
-        (vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Tháng"
-      )?.hand_over_general_service_index;
+      serviceIndex = vehiMonth;
       serviceTotalMoney =
         serviceArray.find((vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Tháng")
           ?.service_price * serviceIndex;
@@ -277,6 +390,7 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
         (vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Tháng"
       )?.service_type_id;
       setVehiPrice(servicePrice);
+      setVehiMonth(serviceIndex);
       setVehi({
         service_id: serviceId,
         service_type: serviceType,
@@ -291,9 +405,7 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
       servicePrice = serviceArray.find(
         (vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Người"
       )?.service_price;
-      serviceIndex = serviceArray.find(
-        (vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Người"
-      )?.hand_over_general_service_index;
+      serviceIndex = vehiMonth;
       serviceTotalMoney =
         serviceArray.find((vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Người")
           ?.service_price * serviceIndex;
@@ -305,6 +417,7 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
         (vehicles) => vehicles?.service_name === "vehicles" && vehicles.service_type_name === "Người"
       )?.service_type_id;
       setVehiPrice(servicePrice);
+      setVehiMonth(serviceIndex);
       setVehi({
         service_id: serviceId,
         service_type: serviceType,
@@ -319,9 +432,7 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
       servicePrice = serviceArray.find(
         (internet) => internet?.service_name === "internet" && internet.service_type_name === "Tháng"
       )?.service_price;
-      serviceIndex = serviceArray.find(
-        (internet) => internet?.service_name === "internet" && internet.service_type_name === "Tháng"
-      )?.hand_over_general_service_index;
+      serviceIndex = internetMonth;
       serviceTotalMoney =
         serviceArray.find((internet) => internet?.service_name === "internet" && internet.service_type_name === "Tháng")
           ?.service_price * serviceIndex;
@@ -333,6 +444,7 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
         (internet) => internet?.service_name === "internet" && internet.service_type_name === "Tháng"
       )?.service_type_id;
       setInternetPrice(servicePrice);
+      setInternetMonth(serviceIndex);
       setInternet({
         service_id: serviceId,
         service_type: serviceType,
@@ -341,12 +453,145 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
         service_total_money: serviceTotalMoney,
       });
     }
+    if (
+      serviceArray?.some((internet) => internet?.service_name === "internet" && internet.service_type_name === "Người")
+    ) {
+      servicePrice = serviceArray.find(
+        (internet) => internet?.service_name === "internet" && internet.service_type_name === "Người"
+      )?.service_price;
+      serviceIndex = internetMonth;
+      serviceTotalMoney =
+        serviceArray.find((internet) => internet?.service_name === "internet" && internet.service_type_name === "Người")
+          ?.service_price * serviceIndex;
+      serviceId = serviceArray.find(
+        (internet) => internet?.service_name === "internet" && internet.service_type_name === "Người"
+      )?.service_id;
+
+      serviceType = serviceArray.find(
+        (internet) => internet?.service_name === "internet" && internet.service_type_name === "Người"
+      )?.service_type_id;
+      setInternetPrice(servicePrice);
+      setInternetMonth(serviceIndex);
+      setInternet({
+        service_id: serviceId,
+        service_type: serviceType,
+        service_price: servicePrice,
+        service_index: serviceIndex,
+        service_total_money: serviceTotalMoney,
+      });
+    }
+    if (serviceArray?.some((clean) => clean?.service_name === "cleaning" && clean.service_type_name === "Tháng")) {
+      servicePrice = serviceArray.find(
+        (clean) => clean?.service_name === "cleaning" && clean.service_type_name === "Tháng"
+      )?.service_price;
+      serviceIndex = cleanMonth;
+      serviceTotalMoney =
+        serviceArray.find((clean) => clean?.service_name === "cleaning" && clean.service_type_name === "Tháng")
+          ?.service_price * serviceIndex;
+      serviceId = serviceArray.find(
+        (clean) => clean?.service_name === "cleaning" && clean.service_type_name === "Tháng"
+      )?.service_id;
+
+      serviceType = serviceArray.find(
+        (clean) => clean?.service_name === "cleaning" && clean.service_type_name === "Tháng"
+      )?.service_type_id;
+      setCleanPrice(servicePrice);
+      setCleanMonth(serviceIndex);
+      setClean({
+        service_id: serviceId,
+        service_type: serviceType,
+        service_price: servicePrice,
+        service_index: serviceIndex,
+        service_total_money: serviceTotalMoney,
+      });
+    }
+    if (serviceArray?.some((clean) => clean?.service_name === "cleaning" && clean.service_type_name === "Người")) {
+      servicePrice = serviceArray.find(
+        (clean) => clean?.service_name === "cleaning" && clean.service_type_name === "Người"
+      )?.service_price;
+      serviceIndex = cleanMonth;
+      serviceTotalMoney =
+        serviceArray.find((clean) => clean?.service_name === "cleaning" && clean.service_type_name === "Người")
+          ?.service_price * serviceIndex;
+      serviceId = serviceArray.find(
+        (clean) => clean?.service_name === "cleaning" && clean.service_type_name === "Người"
+      )?.service_id;
+
+      serviceType = serviceArray.find(
+        (clean) => clean?.service_name === "cleaning" && clean.service_type_name === "Người"
+      )?.service_type_id;
+      setCleanPrice(servicePrice);
+      setCleanMonth(serviceIndex);
+      setClean({
+        service_id: serviceId,
+        service_type: serviceType,
+        service_price: servicePrice,
+        service_index: serviceIndex,
+        service_total_money: serviceTotalMoney,
+      });
+    }
+    if (serviceArray?.some((other) => other?.service_name === "other" && other.service_type_name === "Tháng")) {
+      servicePrice = serviceArray.find(
+        (other) => other?.service_name === "other" && other.service_type_name === "Tháng"
+      )?.service_price;
+      serviceIndex = otherMonth;
+      serviceTotalMoney =
+        serviceArray.find((other) => other?.service_name === "other" && other.service_type_name === "Tháng")
+          ?.service_price * serviceIndex;
+      serviceId = serviceArray.find(
+        (other) => other?.service_name === "other" && other.service_type_name === "Tháng"
+      )?.service_id;
+
+      serviceType = serviceArray.find(
+        (other) => other?.service_name === "other" && other.service_type_name === "Tháng"
+      )?.service_type_id;
+      setOtherPrice(servicePrice);
+      setOtherMonth(serviceIndex);
+      setOther({
+        service_id: serviceId,
+        service_type: serviceType,
+        service_price: servicePrice,
+        service_index: serviceIndex,
+        service_total_money: serviceTotalMoney,
+      });
+    }
+    if (serviceArray?.some((other) => other?.service_name === "other" && other.service_type_name === "Người")) {
+      servicePrice = serviceArray.find(
+        (other) => other?.service_name === "other" && other.service_type_name === "Người"
+      )?.service_price;
+      serviceIndex = otherMonth;
+      serviceTotalMoney =
+        serviceArray.find((other) => other?.service_name === "other" && other.service_type_name === "Người")
+          ?.service_price * serviceIndex;
+      serviceId = serviceArray.find(
+        (other) => other?.service_name === "other" && other.service_type_name === "Người"
+      )?.service_id;
+
+      serviceType = serviceArray.find(
+        (other) => other?.service_name === "other" && other.service_type_name === "Người"
+      )?.service_type_id;
+      setOtherPrice(servicePrice);
+      setOtherMonth(serviceIndex);
+      setOther({
+        service_id: serviceId,
+        service_type: serviceType,
+        service_price: servicePrice,
+        service_index: serviceIndex,
+        service_total_money: serviceTotalMoney,
+      });
+    }
   }, [serviceArray, newWater, newElec]);
-  results?.push(elec, water, vehi, internet);
+  results?.push(elec, water, vehi, internet, other, clean);
   const service_bill = results.filter((element) => {
     return element !== undefined;
   });
-  let serviceTotalMoney = internetPrice * internetMonth + vehiPrice * vehiMonth + electMoney + waterMoney;
+  let serviceTotalMoney =
+    internetPrice * internetMonth +
+    vehiPrice * vehiMonth +
+    electMoney +
+    waterMoney +
+    otherPrice * otherMonth +
+    cleanMonth * cleanPrice;
   let totalMoney = serviceTotalMoney + roomPrice;
   return (
     <>
@@ -419,7 +664,7 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
                     onChange={dateCreateChange}
                     value={date_create_format}
                     placeholder="Nhập ngày tạo hoá đơn"
-                    disabledDate={disabledDate}
+                    format="DD-MM-YYYY"
                   />
                 </Form.Item>
               </Col>
@@ -440,11 +685,7 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
                     },
                   ]}
                 >
-                  <DatePicker
-                    onChange={paymentTermChange}
-                    placeholder="Nhập hạn đóng tiền"
-                    disabledDate={disabledDate}
-                  />
+                  <DatePicker onChange={paymentTermChange} placeholder="Nhập hạn đóng tiền" format="DD-MM-YYYY" />
                 </Form.Item>
               </Col>
             </Row>
@@ -568,6 +809,50 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
                           </Col>
                         </Row>
                       </Card>
+                    ) : obj.service_type_name === "Tháng" && obj.service_name === "water" ? (
+                      <Card className="card card-service" title={obj.service_show_name}>
+                        <Row>
+                          <Col span={10}>
+                            <Form.Item name="waterMonth">
+                              <InputNumber
+                                onChange={waterMonthChange}
+                                defaultValue={obj.hand_over_general_service_index}
+                                addonAfter="Tháng"
+                                min={1}
+                                max={12}
+                              />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col span={10}>
+                            <span>Giá: </span>
+                            <b>{obj.service_price?.toLocaleString("vn") + " đ"}</b>
+                          </Col>
+                        </Row>
+                      </Card>
+                    ) : obj.service_type_name === "Người" && obj.service_name === "water" ? (
+                      <Card className="card card-service" title={obj.service_show_name}>
+                        <Row>
+                          <Col span={10}>
+                            <Form.Item name="waterMonth">
+                              <InputNumber
+                                onChange={waterPeopleChange}
+                                defaultValue={obj.hand_over_general_service_index}
+                                addonAfter="Người"
+                                min={1}
+                                max={12}
+                              />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col span={10}>
+                            <span>Giá: </span>
+                            <b>{obj.service_price?.toLocaleString("vn") + " đ"}</b>
+                          </Col>
+                        </Row>
+                      </Card>
                     ) : obj.service_type_name === "Tháng" && obj.service_name === "vehicles" ? (
                       <Card className="card card-service" title={obj.service_show_name}>
                         <Row>
@@ -616,7 +901,7 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
                       <Card className="card card-service" title={obj.service_show_name}>
                         <Row>
                           <Col span={10}>
-                            <Form.Item name="internetMonth">
+                            <Form.Item name="cleanMonth">
                               <InputNumber
                                 onChange={cleanMonthChange}
                                 defaultValue={obj.hand_over_general_service_index}
@@ -678,9 +963,51 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
                       <Card className="card card-service" title={obj.service_show_name}>
                         <Row>
                           <Col span={10}>
-                            <Form.Item name="internetMonth">
+                            <Form.Item name="cleanMonth">
                               <InputNumber
                                 onChange={cleanPeopleChange}
+                                defaultValue={obj.hand_over_general_service_index}
+                                addonAfter="Người"
+                                min={obj.hand_over_general_service_index}
+                              />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col span={10}>
+                            <span>Giá: </span>
+                            <b>{obj.service_price?.toLocaleString("vn") + " đ"}</b>
+                          </Col>
+                        </Row>
+                      </Card>
+                    ) : obj.service_type_name === "Người" && obj.service_name === "other" ? (
+                      <Card className="card card-service" title={obj.service_show_name}>
+                        <Row>
+                          <Col span={10}>
+                            <Form.Item name="otherMonth">
+                              <InputNumber
+                                onChange={otherPeopleChange}
+                                defaultValue={obj.hand_over_general_service_index}
+                                addonAfter="Người"
+                                min={obj.hand_over_general_service_index}
+                              />
+                            </Form.Item>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col span={10}>
+                            <span>Giá: </span>
+                            <b>{obj.service_price?.toLocaleString("vn") + " đ"}</b>
+                          </Col>
+                        </Row>
+                      </Card>
+                    ) : obj.service_type_name === "Tháng" && obj.service_name === "other" ? (
+                      <Card className="card card-service" title={obj.service_show_name}>
+                        <Row>
+                          <Col span={10}>
+                            <Form.Item name="otherMonth">
+                              <InputNumber
+                                onChange={otherMonthChange}
                                 defaultValue={obj.hand_over_general_service_index}
                                 addonAfter="Người"
                                 min={obj.hand_over_general_service_index}

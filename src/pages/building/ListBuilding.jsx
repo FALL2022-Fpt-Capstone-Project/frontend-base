@@ -45,7 +45,6 @@ const ListBuilding = () => {
         })
         .then((res) => {
           setDataSource(res.data.data.list_group_contracted.concat(res.data.data.list_group_non_contracted));
-          console.log(res.data.data.list_group_contracted.concat(res.data.data.list_group_non_contracted));
         })
         .catch((error) => {
           console.log(error);
@@ -71,7 +70,6 @@ const ListBuilding = () => {
           },
         })
         .then((res) => {
-          console.log(res.data.data);
           setBuildingCity(res.data.data);
         })
         .catch((error) => {
@@ -92,7 +90,6 @@ const ListBuilding = () => {
         },
       })
       .then((res) => {
-        console.log(res);
         notification.success({
           message: "Xoá chung cư thành công",
           duration: 3,
@@ -119,22 +116,7 @@ const ListBuilding = () => {
   const cityChange = (value, option) => {
     setBuildingCityId(value);
     setBuildingName(option.children);
-    // console.log(option);
   };
-
-  // const buildingDetail = async (id) => {
-  //   await axios
-  //     .get(`manager/group/${id}`, {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${cookie}`,
-  //       },
-  //     })
-  //     .then((res) => {
-  //       setDataDetailBuilding(res.data.data)
-  //     });
-  // };
-
   return (
     <div>
       <Row>
@@ -167,7 +149,7 @@ const ListBuilding = () => {
                 padding: "10px 0",
               }}
               onChange={cityChange}
-            // options={optionsCity}
+              // options={optionsCity}
             >
               <Select.Option value="">Tất cả thành phố</Select.Option>
               {optionsCity?.map((obj, index) => {
@@ -200,6 +182,7 @@ const ListBuilding = () => {
       </Row>
       <Table
         bordered
+        scroll={{ x: 1500 }}
         dataSource={dataSource}
         columns={[
           {
@@ -290,9 +273,7 @@ const ListBuilding = () => {
                       className="icon"
                       onClick={() => {
                         setDataDetailBuilding(record);
-                        // buildingDetail(record.group_id);
                         setDetailBuilding(true);
-                        // onClickDetailBuilding(record.group_id)
                       }}
                     />
                   </Tooltip>
@@ -307,9 +288,7 @@ const ListBuilding = () => {
                       className="icon"
                       onClick={() => {
                         setDataDetailBuilding(record);
-                        // buildingDetail(record.group_id);
                         setDetailBuilding(true);
-                        // onClickDetailBuilding(record.group_id);
                       }}
                     />
                   </Tooltip>

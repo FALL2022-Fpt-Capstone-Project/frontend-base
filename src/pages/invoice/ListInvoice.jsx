@@ -6,13 +6,14 @@ import axios from "../../api/axios";
 import ListHistoryInvoice from "./ListHistoryInvoice";
 import CreateInvoice from "./CreateInvoice";
 import { Link } from "react-router-dom";
+import moment from "moment";
 const { Search } = Input;
 const LIST_BUILDING_FILTER = "manager/group/all";
 const ListInvoice = () => {
   const [historyInvoice, setHistoryInvoice] = useState(false);
   const [loading, setLoading] = useState(false);
   const [createInvoice, setCreateInvoice] = useState(false);
-  const [building, setBuilding] = useState(null);
+  const [building, setBuilding] = useState("");
   const [textSearch, setTextSearch] = useState("");
   const [id, setId] = useState();
   const onClickCreateInvoice = (id) => {
@@ -29,12 +30,13 @@ const ListInvoice = () => {
   const [buildingFilter, setBuildingFilter] = useState("");
   const [dataSource, setDataSource] = useState([]);
   const [flag, setFlag] = useState(false);
-  const [paymentCycle, setPaymentCycle] = useState(0);
+  const [paymentCycle, setPaymentCycle] = useState();
   const getListInvoice = async () => {
     setLoading(true);
     const response = await axios
-      .get(`manager/bill/room/list/${building}`, {
+      .get(`manager/bill/room/list`, {
         params: {
+          groupId: building,
           paymentCycle: paymentCycle,
         },
         headers: {
@@ -55,6 +57,16 @@ const ListInvoice = () => {
     console.log(building, paymentCycle);
     getListInvoice();
   }, [building, paymentCycle]);
+  let day = moment().date();
+  let payment15 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+  let payment30 = [16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
+  useEffect(() => {
+    if (payment15.includes(day)) {
+      setPaymentCycle(15);
+    } else if (payment30.includes(day)) {
+      setPaymentCycle(30);
+    }
+  }, []);
   useEffect(() => {
     if (flag) {
       getListInvoice();
@@ -100,12 +112,9 @@ const ListInvoice = () => {
   ];
   const paymentCycleChange = (value) => {
     setPaymentCycle(value);
-    console.log(value);
   };
   const buildingChange = (value, option) => {
     setBuilding(value);
-    // setPaymentCycle(0);
-    console.log(value);
   };
   const customizeRenderEmpty = () => (
     <div style={{ textAlign: "center" }}>
@@ -136,7 +145,7 @@ const ListInvoice = () => {
             </Row>
             <Row>
               <Select
-                defaultValue={0}
+                defaultValue={paymentCycle}
                 options={optionPayment}
                 placeholder="Chọn kỳ thanh toán"
                 onChange={paymentCycleChange}

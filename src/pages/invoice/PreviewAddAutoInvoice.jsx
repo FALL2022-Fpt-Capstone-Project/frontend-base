@@ -1,5 +1,5 @@
 import { Button, Card, Col, DatePicker, Form, Modal, notification, Row, Table } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import axios from "../../api/axios";
@@ -18,7 +18,6 @@ const PreviewAddAutoInvoice = ({ visible, close, state }) => {
       return { ...obj, key: index };
     });
   }
-  console.log(listInvoiceGenerate);
   const [form] = Form.useForm();
   let cookie = localStorage.getItem("Cookie");
   let date_create_format = moment(state?.dateCreate, "YYYY-MM-DD");
@@ -28,7 +27,12 @@ const PreviewAddAutoInvoice = ({ visible, close, state }) => {
     date_create_invoice: date_create_format,
     payment_term: payment_term_format,
   };
-
+  useEffect(() => {
+    setDateCreate(state?.dateCreate);
+  }, [state?.dateCreate]);
+  useEffect(() => {
+    setPaymentTerm(state?.paymentTerm);
+  }, [state?.paymentTerm]);
   const dateCreateChange = (date, dateString) => {
     setDateCreate(dateString);
   };
@@ -50,6 +54,9 @@ const PreviewAddAutoInvoice = ({ visible, close, state }) => {
     {
       title: "Tiền phòng",
       dataIndex: "room_price",
+      render: (value) => {
+        return value.toLocaleString("vn") + " đ";
+      },
     },
 
     {
@@ -78,6 +85,7 @@ const PreviewAddAutoInvoice = ({ visible, close, state }) => {
         let cleanPrice = 0;
         let vehiclesPrice = 0;
         let internetPrice = 0;
+        let otherPrice = 0;
         let total = 0;
 
         if (
@@ -167,7 +175,7 @@ const PreviewAddAutoInvoice = ({ visible, close, state }) => {
           )?.service_price;
         } else if (
           record.list_general_service.some(
-            (vehicles) => vehicles?.service_name === "cleaning" && vehicles.service_type_name === "Người"
+            (cleaning) => cleaning?.service_name === "cleaning" && cleaning.service_type_name === "Người"
           )
         ) {
           cleanPrice =
@@ -175,8 +183,26 @@ const PreviewAddAutoInvoice = ({ visible, close, state }) => {
               (cleaning) => cleaning?.service_name === "cleaning" && cleaning.service_type_name === "Người"
             )?.service_price * record.total_renter;
         }
+        if (
+          record.list_general_service.some(
+            (other) => other?.service_name === "other" && other.service_type_name === "Tháng"
+          )
+        ) {
+          otherPrice = record.list_general_service.find(
+            (other) => other?.service_name === "other" && other.service_type_name === "Tháng"
+          )?.service_price;
+        } else if (
+          record.list_general_service.some(
+            (other) => other?.service_name === "other" && other.service_type_name === "Người"
+          )
+        ) {
+          otherPrice =
+            record.list_general_service.find(
+              (other) => other?.service_name === "other" && other.service_type_name === "Người"
+            )?.service_price * record.total_renter;
+        }
 
-        total = waterPrice + elecPrice + cleanPrice + vehiclesPrice + internetPrice + record.room_price;
+        total = waterPrice + elecPrice + cleanPrice + vehiclesPrice + internetPrice + otherPrice + record.room_price;
         return (
           <>
             <b>{total.toLocaleString("vn") + " đ"}</b>
@@ -275,6 +301,7 @@ const PreviewAddAutoInvoice = ({ visible, close, state }) => {
           duration: 3,
           placement: "top",
         });
+        close(false);
         setTimeout(() => {
           navigate("/invoice");
         }, 1000);
@@ -289,7 +316,6 @@ const PreviewAddAutoInvoice = ({ visible, close, state }) => {
         });
         console.log(e);
       });
-    console.log(JSON.stringify(response?.data));
     console.log(listPreview);
     console.log(finalListPreview);
   };
@@ -362,6 +388,7 @@ const PreviewAddAutoInvoice = ({ visible, close, state }) => {
                     value={date_create_format}
                     placeholder="Nhập ngày tạo hoá đơn"
                     disabledDate={disabledDate}
+                    format="DD-MM-YYYY"
                   />
                 </Form.Item>
               </Col>
@@ -386,6 +413,7 @@ const PreviewAddAutoInvoice = ({ visible, close, state }) => {
                     placeholder="Nhập hạn đóng tiền"
                     onChange={paymentTermChange}
                     disabledDate={disabledDate}
+                    format="DD-MM-YYYY"
                   />
                 </Form.Item>
               </Col>

@@ -9,9 +9,6 @@ const UpdateBuilding = ({ visible, close, id }) => {
 
   const [group_name, setBuildingName] = useState("");
   const [building_address_city, setBuildingCity] = useState("");
-  const [room_area, setRoomArea] = useState("");
-  const [room_limited_people, setRoomPeople] = useState("");
-  const [room_price, setRoomRate] = useState("");
 
   const [address_city, setCity] = useState("");
   const [address_district, setDistrict] = useState("");
@@ -38,33 +35,22 @@ const UpdateBuilding = ({ visible, close, id }) => {
       .then((res) => {
         form.setFieldsValue({
           building_name: res.data.data?.group_name,
-          room_rate: res.data.data?.list_rooms[0].room_price,
-          room_people: res.data.data?.list_rooms[0].room_limit_people,
           building_address_more_detail: res.data.data?.address.address_more_details,
           city: res.data.data?.address.address_city,
           district: res.data.data?.address.address_district,
           ward: res.data.data?.address.address_wards,
-          room_area: res.data?.data.list_rooms[0].room_area,
           note: res.data.data?.description,
         });
         setBuildingName(res.data.data?.group_name);
-        setRoomPeople(res.data.data?.list_rooms[0].room_limit_people);
-        setRoomArea(res.data?.data.list_rooms[0].room_area);
         setBuildingAddress(res.data.data?.address.address_more_details);
-        setRoomRate(res.data.data?.list_rooms[0].room_price);
         setCity(res.data.data?.address.address_city);
         setDistrict(res.data.data?.address.address_district);
         setWard(res.data.data?.address.address_wards);
         setNote(res.data.data?.description);
-        // console.log(res.data.data?.address.address_more_detail);
-        // console.log(res);
       });
   }, [id]);
   const data = {
     group_name: group_name,
-    room_limited_people: room_limited_people,
-    room_price: room_price,
-    room_area: room_area,
     address_city: address_city,
     address_district: address_district,
     address_ward: address_ward,
@@ -180,15 +166,6 @@ const UpdateBuilding = ({ visible, close, id }) => {
   const wardChange = (value, option) => {
     setWard(option.label);
   };
-  const roomPeopleChange = (value) => {
-    setRoomPeople(value);
-  };
-  const roomAreaChange = (value) => {
-    setRoomArea(value);
-  };
-  const roomRateChange = (value) => {
-    setRoomRate(value);
-  };
   const reload = () => window.location.reload();
   return (
     <>
@@ -250,83 +227,6 @@ const UpdateBuilding = ({ visible, close, id }) => {
                 >
                   <Input onChange={(e) => setBuildingName(e.target.value)} placeholder="Nhập tên chung cư" />
                 </Form.Item>
-
-                <Form.Item
-                  className="form-item"
-                  name="room_rate"
-                  labelCol={{ span: 24 }}
-                  label={
-                    <span>
-                      <b>Giá phòng chung: </b>
-                    </span>
-                  }
-                  rules={[
-                    {
-                      required: true,
-                      message: "Vui lòng nhập giá phòng",
-                    },
-                  ]}
-                >
-                  <InputNumber
-                    placeholder="Nhập giá phòng"
-                    controls={false}
-                    addonAfter="VNĐ"
-                    defaultValue={0}
-                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                    parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
-                    style={{ width: "100%" }}
-                    min={0}
-                    onChange={roomRateChange}
-                  />
-                </Form.Item>
-                <Form.Item
-                  className="form-item"
-                  name="room_people"
-                  labelCol={{ span: 24 }}
-                  label={
-                    <span>
-                      <b>Số lượng người tối đa / phòng: </b>
-                    </span>
-                  }
-                  rules={[
-                    {
-                      required: true,
-                      message: "Vui lòng nhập số lượng",
-                    },
-                  ]}
-                >
-                  <InputNumber
-                    addonAfter="Người"
-                    style={{ width: "100%" }}
-                    controls={false}
-                    placeholder="Nhập số lượng người tối đa của phòng"
-                    onChange={roomPeopleChange}
-                  />
-                </Form.Item>
-                <Form.Item
-                  className="form-item"
-                  name="room_area"
-                  labelCol={{ span: 24 }}
-                  label={
-                    <span>
-                      <b>Diện tích (m2): </b>
-                    </span>
-                  }
-                  rules={[
-                    {
-                      required: true,
-                      message: "Vui lòng nhập diện tích phòng",
-                    },
-                  ]}
-                >
-                  <InputNumber
-                    style={{ width: "100%" }}
-                    addonAfter="m2"
-                    controls={false}
-                    placeholder="Nhập diện tích phòng"
-                    onChange={roomAreaChange}
-                  />
-                </Form.Item>
                 <Form.Item
                   name="city"
                   labelCol={{ span: 24 }}
@@ -382,12 +282,19 @@ const UpdateBuilding = ({ visible, close, id }) => {
                     filterOption={(input, option) =>
                       (option?.label?.toLowerCase().trim() ?? "").includes(input?.toLowerCase().trim())
                     }
-                    options={building_address_district === undefined ? [] : [...building_address_district?.map(obj => {
-                      return { label: obj.name, value: obj.code }
-                    }), {
-                      label: 'Chọn Quận/Huyện',
-                      value: ""
-                    },]}
+                    options={
+                      building_address_district === undefined
+                        ? []
+                        : [
+                            ...building_address_district?.map((obj) => {
+                              return { label: obj.name, value: obj.code };
+                            }),
+                            {
+                              label: "Chọn Quận/Huyện",
+                              value: "",
+                            },
+                          ]
+                    }
                   >
                     {/* <Select.Option value="">Chọn Quận/Huyện</Select.Option>
                     {building_address_district?.map((obj, index) => {
@@ -425,12 +332,19 @@ const UpdateBuilding = ({ visible, close, id }) => {
                     filterOption={(input, option) =>
                       (option?.label?.toLowerCase().trim() ?? "").includes(input?.toLowerCase().trim())
                     }
-                    options={building_address_wards === undefined ? [] : [...building_address_wards?.map(obj => {
-                      return { label: obj.name, value: obj.code }
-                    }), {
-                      label: 'Chọn Phường/Xã',
-                      value: ""
-                    },]}
+                    options={
+                      building_address_wards === undefined
+                        ? []
+                        : [
+                            ...building_address_wards?.map((obj) => {
+                              return { label: obj.name, value: obj.code };
+                            }),
+                            {
+                              label: "Chọn Phường/Xã",
+                              value: "",
+                            },
+                          ]
+                    }
                   >
                     {/* <Select.Option value="">Chọn Phường/Xã</Select.Option>
                     {building_address_wards?.map((obj, index) => {
@@ -451,15 +365,6 @@ const UpdateBuilding = ({ visible, close, id }) => {
                       <b>Địa chỉ chi tiết: </b>
                     </span>
                   }
-                // rules={[
-                //   {
-                //     message: "Vui lòng nhập địa chỉ!",
-                //   },
-                //   {
-                //     required: true,
-                //     message: "Vui lòng nhập địa chỉ!",
-                //   },
-                // ]}
                 >
                   <Input onChange={(e) => setBuildingAddress(e.target.value)} placeholder="Nhập địa chỉ chi tiết" />
                 </Form.Item>
