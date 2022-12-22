@@ -12,15 +12,14 @@ import {
   Table,
   Tabs,
   Tag,
-  Tooltip,
 } from "antd";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { InboxOutlined, ArrowLeftOutlined, ExclamationCircleFilled, EyeOutlined } from "@ant-design/icons";
+import { InboxOutlined } from "@ant-design/icons";
 import axios from "../../api/axios";
 import moment from "moment";
 import "./invoice.scss";
 import MainLayout from "../../components/layout/MainLayout";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import PreviewAddAutoInvoice from "./PreviewAddAutoInvoice";
 const LIST_BUILDING_FILTER = "manager/group/all";
 const LIST_INVOICE_ADD_AUTO = "manager/bill/room/bill-status";
@@ -79,7 +78,7 @@ const EditableCell = ({ title, editable, children, dataIndex, record, handleSave
           },
         ]}
       >
-        <InputNumber ref={inputRef} onPressEnter={save} onBlur={save} />
+        <InputNumber ref={inputRef} onPressEnter={save} onBlur={save} style={{ width: "100%" }} />
       </Form.Item>
     ) : (
       <div
@@ -111,7 +110,6 @@ const AddAutoInvoice = () => {
   const [dateCreate, setDateCreate] = useState();
 
   const [form] = Form.useForm();
-  const navigate = useNavigate();
   let cookie = localStorage.getItem("Cookie");
   useEffect(() => {
     const getBuildingFilter = async () => {
@@ -125,7 +123,6 @@ const AddAutoInvoice = () => {
         })
         .then((res) => {
           setBuildingFilter(res.data.data.list_group_contracted);
-          console.log(res);
         })
         .catch((error) => {
           console.log(error);
@@ -151,7 +148,6 @@ const AddAutoInvoice = () => {
         })
         .then((res) => {
           setDataSource(res.data.data);
-          console.log(res);
         })
         .catch((error) => {
           console.log(error);
@@ -186,8 +182,6 @@ const AddAutoInvoice = () => {
       .then((res) => {
         setPreviewInvoice(true);
         setPrevieState({ selectedRows, dateCreate, paymentTerm });
-        // navigate("preview", { state: { selectedRows, dateCreate, paymentTerm } });
-        console.log(res);
       })
       .catch((e) => {
         notification.error({
@@ -197,7 +191,6 @@ const AddAutoInvoice = () => {
           placement: "top",
         });
       });
-    console.log(selectedRows);
   };
   const dayPayment = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30];
   const options = [];
@@ -241,26 +234,24 @@ const AddAutoInvoice = () => {
     setPaymentTerm(date_payment);
   }, [date_payment]);
   const dateCreateChange = (date, dateString) => {
-    setDateCreate(dateString);
+    let [day1, month1, year1] = dateString.split("-");
+    let date1 = `${year1}-${month1}-${day1}`;
+    setDateCreate(date1);
   };
   const paymentTermChange = (date, dateString) => {
-    setPaymentTerm(dateString);
+    let [day1, month1, year1] = dateString.split("-");
+    let date2 = `${year1}-${month1}-${day1}`;
+    setPaymentTerm(date2);
   };
-  const disabledDate = (current) => {
-    return current && current < date_create_format;
-  };
-
   const buildingChange = (value, option) => {
     setBuilding(value);
     setBuildingName(option.label);
-    console.log(value);
   };
   const paymentCycleChange = (value) => {
     setPaymentCycle(value);
   };
 
   const onSelectChange = (newSelectedRowKeys, selectedRows) => {
-    console.log("selectedRowKeys changed: ", selectedRows);
     setSelectedRowKeys(newSelectedRowKeys);
     setSelectedRows(selectedRows);
   };
@@ -281,9 +272,16 @@ const AddAutoInvoice = () => {
     {
       title: "Tiền phòng",
       dataIndex: "room_price",
-      render: (value) => {
-        return value.toLocaleString("vn") + " đ";
-      },
+      editable: true,
+      render: (text, record, index) => (
+        <InputNumber
+          min={record.room_old_electric_index}
+          style={{ width: "100%" }}
+          value={text}
+          formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+          parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
+        />
+      ),
     },
 
     {
@@ -293,7 +291,7 @@ const AddAutoInvoice = () => {
     {
       title: "Số điện mới",
       dataIndex: "room_current_electric_index",
-      width: "10%",
+      width: "11%",
       editable: true,
       render: (text, record, index) => (
         <InputNumber min={record.room_old_electric_index} style={{ width: "100%" }} value={text} />
@@ -306,7 +304,7 @@ const AddAutoInvoice = () => {
     {
       title: "Số nước mới",
       dataIndex: "room_current_water_index",
-      width: "10%",
+      width: "11%",
       editable: true,
       render: (text, record, index) => (
         <InputNumber min={record.room_old_water_index} style={{ width: "100%" }} value={text} />
@@ -345,6 +343,7 @@ const AddAutoInvoice = () => {
         let cleanPrice = 0;
         let vehiclesPrice = 0;
         let internetPrice = 0;
+        let otherPrice = 0;
         let total = 0;
 
         if (
@@ -434,7 +433,7 @@ const AddAutoInvoice = () => {
           )?.service_price;
         } else if (
           record.list_general_service.some(
-            (vehicles) => vehicles?.service_name === "cleaning" && vehicles.service_type_name === "Người"
+            (cleaning) => cleaning?.service_name === "cleaning" && cleaning.service_type_name === "Người"
           )
         ) {
           cleanPrice =
@@ -442,26 +441,29 @@ const AddAutoInvoice = () => {
               (cleaning) => cleaning?.service_name === "cleaning" && cleaning.service_type_name === "Người"
             )?.service_price * record.total_renter;
         }
+        if (
+          record.list_general_service.some(
+            (other) => other?.service_name === "other" && other.service_type_name === "Tháng"
+          )
+        ) {
+          otherPrice = record.list_general_service.find(
+            (other) => other?.service_name === "other" && other.service_type_name === "Tháng"
+          )?.service_price;
+        } else if (
+          record.list_general_service.some(
+            (other) => other?.service_name === "other" && other.service_type_name === "Người"
+          )
+        ) {
+          otherPrice =
+            record.list_general_service.find(
+              (other) => other?.service_name === "other" && other.service_type_name === "Người"
+            )?.service_price * record.total_renter;
+        }
 
-        total = waterPrice + elecPrice + cleanPrice + vehiclesPrice + internetPrice + record.room_price;
+        total = waterPrice + elecPrice + cleanPrice + vehiclesPrice + internetPrice + otherPrice + record.room_price;
         return (
           <>
             <b>{total.toLocaleString("vn") + " đ"}</b>
-          </>
-        );
-      },
-    },
-    {
-      title: "Thao tác",
-      dataIndex: "action",
-      render: (_, record) => {
-        return (
-          <>
-            <Tooltip title="Xem hoá đơn">
-              <Link target="_blank" to="/detail-invoice">
-                <EyeOutlined className="icon" />
-              </Link>
-            </Tooltip>
           </>
         );
       },
@@ -476,7 +478,13 @@ const AddAutoInvoice = () => {
       title: "Tầng",
       dataIndex: "room_floor",
     },
-
+    {
+      title: "Tiền phòng",
+      dataIndex: "room_price",
+      render: (value) => {
+        return value.toLocaleString("vn") + " đ";
+      },
+    },
     {
       title: "Số điện cũ",
       dataIndex: "room_old_electric_index",
@@ -573,7 +581,7 @@ const AddAutoInvoice = () => {
         }
         button={
           <Link to="/invoice">
-            <Button type="primary" icon={<ArrowLeftOutlined />} size="middle" className="button-add">
+            <Button type="primary" size="middle" className="button-add">
               Quay lại quản lý hoá đơn
             </Button>
           </Link>
@@ -585,7 +593,7 @@ const AddAutoInvoice = () => {
           // onFinishFailed={onFinishFail}
           layout="horizontal"
           size={"default"}
-          id="createInvoice"
+          id="previewInvoice"
           initialValues={initValues}
         >
           <Card className="card">
@@ -626,7 +634,7 @@ const AddAutoInvoice = () => {
                     onChange={dateCreateChange}
                     value={date_create_format}
                     placeholder="Nhập ngày tạo hoá đơn"
-                    disabledDate={disabledDate}
+                    format="DD-MM-YYYY"
                   />
                 </Form.Item>
               </Col>
@@ -647,11 +655,7 @@ const AddAutoInvoice = () => {
                     },
                   ]}
                 >
-                  <DatePicker
-                    onChange={paymentTermChange}
-                    placeholder="Nhập hạn đóng tiền"
-                    disabledDate={disabledDate}
-                  />
+                  <DatePicker onChange={paymentTermChange} placeholder="Nhập hạn đóng tiền" format="DD-MM-YYYY" />
                 </Form.Item>
               </Col>
             </Row>
@@ -702,7 +706,7 @@ const AddAutoInvoice = () => {
                         className="btn-add-invoice"
                         htmlType="submit"
                         key="submit"
-                        form="createInvoice"
+                        form="previewInvoice"
                         onClick={handlerPreview}
                         type="primary"
                         size="middle"
@@ -714,7 +718,7 @@ const AddAutoInvoice = () => {
                         className="btn-add-invoice"
                         htmlType="submit"
                         key="submit"
-                        form="createInvoice"
+                        form="previewInvoice"
                         type="primary"
                         size="middle"
                         disabled

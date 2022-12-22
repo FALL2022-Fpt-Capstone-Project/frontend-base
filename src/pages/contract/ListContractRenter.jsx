@@ -382,7 +382,7 @@ const ListContractRenter = () => {
       <Table
         bordered
         dataSource={dataSource}
-        scroll={{ x: 1500, y: 600 }}
+        scroll={{ x: 1500 }}
         columns={[
           {
             title: "Tên khách thuê",

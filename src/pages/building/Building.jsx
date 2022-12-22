@@ -1,13 +1,10 @@
 import React, { useState } from "react";
-import Sidebar from "../../components/sidebar/Sidebar";
 import "./building.scss";
 import { PlusCircleOutlined } from "@ant-design/icons";
-import { Button, Divider, Layout, Modal } from "antd";
+import { Button } from "antd";
 import CreateBuilding from "./CreateBuilding";
 import ListBuilding from "./ListBuilding";
-import Breadcrumbs from "../../components/BreadCrumb ";
 import MainLayout from "../../components/layout/MainLayout";
-const { Content, Sider, Header } = Layout;
 const Building = () => {
   const [createBuilding, setCreateBuilding] = useState(false);
   const onClickCreateBuilding = () => {

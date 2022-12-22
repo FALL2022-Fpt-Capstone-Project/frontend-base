@@ -1,6 +1,7 @@
 import { Button, Card, Col, DatePicker, Form, Modal, notification, Row, Table } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "./invoice.scss";
 import moment from "moment";
 import axios from "../../api/axios";
 const ADD_INVOICE_URL = "manager/bill/room/create";
@@ -11,73 +12,19 @@ const PreviewAddAutoInvoice = ({ visible, close, state }) => {
   const [paymentTerm, setPaymentTerm] = useState(state?.paymentTerm);
   const [dateCreate, setDateCreate] = useState(state?.dateCreate);
 
-  console.log(state);
   let listInvoiceGenerate;
   if (state !== undefined) {
-    listInvoiceGenerate = state.selectedRows?.map((obj, index) => {
-      return { ...obj, key: index };
-    });
-  }
-  console.log(listInvoiceGenerate);
-  const [form] = Form.useForm();
-  let cookie = localStorage.getItem("Cookie");
-  let date_create_format = moment(state?.dateCreate, "YYYY-MM-DD");
-  let payment_term_format = moment(state?.paymentTerm, "YYYY-MM-DD");
-
-  const initValues = {
-    date_create_invoice: date_create_format,
-    payment_term: payment_term_format,
-  };
-
-  const dateCreateChange = (date, dateString) => {
-    setDateCreate(dateString);
-  };
-  const paymentTermChange = (date, dateString) => {
-    setPaymentTerm(dateString);
-  };
-  const disabledDate = (current) => {
-    return current && current < date_create_format;
-  };
-  const columnsNotBilled = [
-    {
-      title: "Tên phòng",
-      dataIndex: "room_name",
-    },
-    {
-      title: "Tầng",
-      dataIndex: "room_floor",
-    },
-    {
-      title: "Tiền phòng",
-      dataIndex: "room_price",
-    },
-
-    {
-      title: "Số điện cũ",
-      dataIndex: "room_old_electric_index",
-    },
-    {
-      title: "Số điện mới",
-      dataIndex: "room_current_electric_index",
-    },
-    {
-      title: "Số nước cũ",
-      dataIndex: "room_old_water_index",
-    },
-    {
-      title: "Số nước mới",
-      dataIndex: "room_current_water_index",
-    },
-    {
-      title: "Tổng cộng",
-      dataIndex: "total_money",
-      width: "11%",
-      render: (text, record, index) => {
+    listInvoiceGenerate = state.selectedRows
+      ?.map((obj, index) => {
+        return { ...obj, key: index };
+      })
+      ?.map((record) => {
         let waterPrice = 0;
         let elecPrice = 0;
         let cleanPrice = 0;
         let vehiclesPrice = 0;
         let internetPrice = 0;
+        let otherPrice = 0;
         let total = 0;
 
         if (
@@ -167,7 +114,7 @@ const PreviewAddAutoInvoice = ({ visible, close, state }) => {
           )?.service_price;
         } else if (
           record.list_general_service.some(
-            (vehicles) => vehicles?.service_name === "cleaning" && vehicles.service_type_name === "Người"
+            (cleaning) => cleaning?.service_name === "cleaning" && cleaning.service_type_name === "Người"
           )
         ) {
           cleanPrice =
@@ -175,13 +122,93 @@ const PreviewAddAutoInvoice = ({ visible, close, state }) => {
               (cleaning) => cleaning?.service_name === "cleaning" && cleaning.service_type_name === "Người"
             )?.service_price * record.total_renter;
         }
+        if (
+          record.list_general_service.some(
+            (other) => other?.service_name === "other" && other.service_type_name === "Tháng"
+          )
+        ) {
+          otherPrice = record.list_general_service.find(
+            (other) => other?.service_name === "other" && other.service_type_name === "Tháng"
+          )?.service_price;
+        } else if (
+          record.list_general_service.some(
+            (other) => other?.service_name === "other" && other.service_type_name === "Người"
+          )
+        ) {
+          otherPrice =
+            record.list_general_service.find(
+              (other) => other?.service_name === "other" && other.service_type_name === "Người"
+            )?.service_price * record.total_renter;
+        }
 
-        total = waterPrice + elecPrice + cleanPrice + vehiclesPrice + internetPrice + record.room_price;
-        return (
-          <>
-            <b>{total.toLocaleString("vn") + " đ"}</b>
-          </>
-        );
+        total = waterPrice + elecPrice + cleanPrice + vehiclesPrice + internetPrice + otherPrice + record.room_price;
+        return { ...record, total_money: total };
+      });
+  }
+  const [form] = Form.useForm();
+  let cookie = localStorage.getItem("Cookie");
+  let date_create_format = moment(state?.dateCreate, "YYYY-MM-DD");
+  let payment_term_format = moment(state?.paymentTerm, "YYYY-MM-DD");
+
+  const initValues = {
+    date_create_invoice: date_create_format,
+    payment_term: payment_term_format,
+  };
+  useEffect(() => {
+    setDateCreate(state?.dateCreate);
+  }, [state?.dateCreate]);
+  useEffect(() => {
+    setPaymentTerm(state?.paymentTerm);
+  }, [state?.paymentTerm]);
+  const dateCreateChange = (date, dateString) => {
+    let [day1, month1, year1] = dateString[0].split("-");
+    let date1 = `${year1}-${month1}-${day1}`;
+    setDateCreate(date1);
+  };
+  const paymentTermChange = (date, dateString) => {
+    let [day1, month1, year1] = dateString[0].split("-");
+    let date2 = `${year1}-${month1}-${day1}`;
+    setPaymentTerm(date2);
+  };
+  const columnsNotBilled = [
+    {
+      title: "Tên phòng",
+      dataIndex: "room_name",
+    },
+    {
+      title: "Tầng",
+      dataIndex: "room_floor",
+    },
+    {
+      title: "Tiền phòng",
+      dataIndex: "room_price",
+      render: (value) => {
+        return value.toLocaleString("vn") + " đ";
+      },
+    },
+
+    {
+      title: "Số điện cũ",
+      dataIndex: "room_old_electric_index",
+    },
+    {
+      title: "Số điện mới",
+      dataIndex: "room_current_electric_index",
+    },
+    {
+      title: "Số nước cũ",
+      dataIndex: "room_old_water_index",
+    },
+    {
+      title: "Số nước mới",
+      dataIndex: "room_current_water_index",
+    },
+    {
+      title: "Tổng cộng",
+      dataIndex: "total_money",
+      width: "11%",
+      render: (record) => {
+        return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(record);
       },
     },
   ];
@@ -275,10 +302,10 @@ const PreviewAddAutoInvoice = ({ visible, close, state }) => {
           duration: 3,
           placement: "top",
         });
+        close(false);
         setTimeout(() => {
           navigate("/invoice");
         }, 1000);
-        console.log(res);
       })
       .catch((e) => {
         notification.error({
@@ -289,9 +316,6 @@ const PreviewAddAutoInvoice = ({ visible, close, state }) => {
         });
         console.log(e);
       });
-    console.log(JSON.stringify(response?.data));
-    console.log(listPreview);
-    console.log(finalListPreview);
   };
   form.setFieldsValue({ items: listInvoiceGenerate });
   return (
@@ -361,7 +385,7 @@ const PreviewAddAutoInvoice = ({ visible, close, state }) => {
                     onChange={dateCreateChange}
                     value={date_create_format}
                     placeholder="Nhập ngày tạo hoá đơn"
-                    disabledDate={disabledDate}
+                    format="DD-MM-YYYY"
                   />
                 </Form.Item>
               </Col>
@@ -382,11 +406,7 @@ const PreviewAddAutoInvoice = ({ visible, close, state }) => {
                     },
                   ]}
                 >
-                  <DatePicker
-                    placeholder="Nhập hạn đóng tiền"
-                    onChange={paymentTermChange}
-                    disabledDate={disabledDate}
-                  />
+                  <DatePicker placeholder="Nhập hạn đóng tiền" onChange={paymentTermChange} format="DD-MM-YYYY" />
                 </Form.Item>
               </Col>
             </Row>
@@ -406,6 +426,16 @@ const PreviewAddAutoInvoice = ({ visible, close, state }) => {
                     pagination={{ pageSize: 5 }}
                     // loading={loading}
                   />
+                  <Row justify="start" style={{ fontSize: "18px" }}>
+                    <b>Tổng tiền tất cả hóa đơn:</b>
+                    <p className="total-all-invoice">
+                      {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
+                        listInvoiceGenerate
+                          ?.map((invoice) => invoice.total_money)
+                          .reduce((pre, current) => pre + current, 0)
+                      )}
+                    </p>
+                  </Row>
                 </Form.Item>
               </Col>
             </Row>
