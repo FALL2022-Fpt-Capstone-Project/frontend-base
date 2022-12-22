@@ -304,10 +304,10 @@ function AddMemInRoom(data) {
           <Button
             href="/room"
             type="primary"
-            icon={<ArrowLeftOutlined />}
+            // icon={<ArrowLeftOutlined />}
             style={{ marginRight: 5, float: "right", marginBottom: 20 }}
           >
-            Danh sách phòng
+            Quay lại quản lý phòng
           </Button>
         </Col>
       </Row>

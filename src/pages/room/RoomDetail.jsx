@@ -18,7 +18,7 @@ const memeber = {
 };
 
 function RoomDetail({ visible, close, data, dataAsset, assetType }) {
-  console.log(data);
+  // console.log(data);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState("");
   const [filterAssetType, setFilterAssetType] = useState([]);

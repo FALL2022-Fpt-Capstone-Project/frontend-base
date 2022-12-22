@@ -30,7 +30,6 @@ function RoomEquipment(data) {
   const [searched, setSearched] = useState("");
   const [filterAssetType, setFilterAssetType] = useState([]);
   const [isEditAsset, setIsEditAsset] = useState(false);
-  const [dataAsset, setDataAsset] = useState([]);
   const [listAssetType, setListAssetType] = useState([]);
   const [assetStatus, setAssetStatus] = useState([]);
   const [addAssetInRoom, setAddAssetInRoom] = useState(false);
@@ -341,9 +340,9 @@ function RoomEquipment(data) {
             type="primary"
             size="default"
             style={{ marginBottom: "1%", marginLeft: "1%", float: "right" }}
-            icon={<ArrowLeftOutlined style={textSize} />}
+          // icon={<ArrowLeftOutlined style={textSize} />}
           >
-            Danh sách phòng
+            Quay lại quản lý phòng
           </Button>
         </Col>
       </Row>

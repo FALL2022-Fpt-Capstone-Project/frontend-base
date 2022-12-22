@@ -61,7 +61,7 @@ const fontSizeIcon = {
 
 const EditContractRenter = () => {
   const { state } = useLocation();
-  console.log(state);
+
   const dateFormatList = ["DD-MM-YYYY", "YYYY-MM-DD"];
   const defaultAddAsset = {
     dateOfDelivery: moment(),
@@ -158,7 +158,7 @@ const EditContractRenter = () => {
         },
       })
       .then((res) => {
-        console.log(res.data.data);
+
         const listRoom = res.data.data?.list_room?.filter(
           (data) => data.room_floor === res.data.data?.room.room_floor && data.contract_id === null
         );
@@ -294,7 +294,6 @@ const EditContractRenter = () => {
           <>
             <EditTwoTone
               onClick={() => {
-                console.log(record);
                 record.asset_id < 0 ? setDisableEditAsset(false) : setDisableEditAsset(true);
                 setIsEditAsset(true);
                 editAssetForm.setFieldsValue({
@@ -330,7 +329,6 @@ const EditContractRenter = () => {
   };
 
   const onDeleteAssetAPI = async (asset_id, asset_name) => {
-    console.log(asset_id);
     await axios
       .delete(DELETE_ASSET + "?roomAssetId=" + [asset_id], {
         headers: {
@@ -475,7 +473,6 @@ const EditContractRenter = () => {
     },
   ];
   const onFinishAddMem = async (dataMem) => {
-    console.log(dataContractById);
     if (dataContractById?.list_renter?.length < dataContractById?.room?.room_limit_people) {
       const data = {
         ...dataMem,
@@ -649,7 +646,7 @@ const EditContractRenter = () => {
     listServiceOfBuilding.push({
       service_id: dataContractById.list_hand_over_general_service.map((obj, index) => obj.service_id),
     });
-    console.log(dataContractById);
+
     const list_general_service = listServiceOfBuilding
       .map((obj, index) => {
         return {
@@ -687,7 +684,7 @@ const EditContractRenter = () => {
         };
       }),
     };
-    console.log(JSON.stringify(data));
+
     await axios
       .put(UPDATE_CONTRACT_RENTER + state.contract_id, data, {
         headers: {
@@ -759,7 +756,6 @@ const EditContractRenter = () => {
   };
 
   const getAssetRoom = async () => {
-    console.log(state.room_id);
     setLoading(true);
     await axios
       .get(ASSET_ROOM + state.room_id, {
@@ -778,7 +774,6 @@ const EditContractRenter = () => {
   };
 
   const editAssetFinish = async (dataAsset) => {
-    console.log(dataAsset);
     const data = {
       room_asset_id: dataAsset.asset_id,
       asset_name: dataAsset.asset_name,
@@ -878,7 +873,6 @@ const EditContractRenter = () => {
         setVisibleSubmit(true);
       }
     } catch (e) {
-      console.log(e);
       notification.error({
         message: "Không thể chuyển qua bước tiếp theo",
         description: "Vui lòng điền đủ thông tin hợp đồng",
@@ -887,7 +881,7 @@ const EditContractRenter = () => {
       });
     }
   };
-  console.log(dataContractById);
+
   return (
     <Spin size="large" spinning={loading}>
       <MainLayout title="Cập nhật hợp đồng cho thuê">
@@ -895,10 +889,10 @@ const EditContractRenter = () => {
           <Button
             href="/contract-renter"
             type="primary"
-            icon={<ArrowLeftOutlined />}
+            // icon={<ArrowLeftOutlined />}
             style={{ marginRight: 5, float: "right" }}
           >
-            Danh sách hợp đồng
+            Quay lại danh sách hợp đồng
           </Button>
         </div>
         <Form
@@ -1529,12 +1523,12 @@ const EditContractRenter = () => {
                                 String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
                                   ? "Nhập chỉ số"
                                   : "Số " +
-                                    obj.service_type_name +
-                                    " / " +
-                                    obj.service_price.toLocaleString("vn-VN", {
-                                      style: "currency",
-                                      currency: "VND",
-                                    })
+                                  obj.service_type_name +
+                                  " / " +
+                                  obj.service_price.toLocaleString("vn-VN", {
+                                    style: "currency",
+                                    currency: "VND",
+                                  })
                               }
                               addonAfter={
                                 String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())

@@ -367,11 +367,11 @@ const EditContractBuilding = () => {
         <Button
           href="/contract-apartment"
           type="primary"
-          icon={<ArrowLeftOutlined />}
+          // icon={<ArrowLeftOutlined />}
           // style={{ marginRight: 5, float: "right" }}
           className="button-back"
         >
-          Danh sách hợp đồng
+          Quay lại danh sách hợp đồng
         </Button>
       </div>
       <Form

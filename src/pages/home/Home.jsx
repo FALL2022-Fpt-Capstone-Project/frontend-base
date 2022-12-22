@@ -93,9 +93,9 @@ const Home = () => {
                 </>
               }
               value={billNotPay.length}
-              valueStyle={{
-                color: "#cf1322",
-              }}
+              valueStyle={
+                billNotPay.length === 0 ? { color: 'rgba(53, 162, 235)' } : { color: "#cf1322" }
+              }
             />
           </Col>
           <Col xs={12} lg={10} xl={7} span={7}>
@@ -109,20 +109,17 @@ const Home = () => {
               value={new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
                 billNotPay?.map((invoice) => invoice.need_to_paid).reduce((pre, current) => pre + current, 0)
               )}
-              valueStyle={{
-                color: "#cf1322",
-              }}
+              valueStyle={billNotPay.length === 0 ? { color: 'rgba(53, 162, 235)' } : { color: "#cf1322" }}
             />
           </Col>
         </Row>
-
-        <Row gutter={[16]}>
-          <Col span={12}>
+        <Row className="margin-bottom" gutter={[16]}>
+          <Col className="margin-bottom" xs={24} xl={12} span={12}>
             <Card bordered className="card card-height-100">
               <RoomStatus dataGroup={dataApartmentGroup} dataChart />
             </Card>
           </Col>
-          <Col span={12}>
+          <Col className="margin-bottom" xs={24} xl={12} span={12}>
             <Card bordered className="card card-height-100">
               <Row>
                 <Col span={24}>
@@ -132,8 +129,7 @@ const Home = () => {
             </Card>
           </Col>
         </Row>
-        <Divider />
-        <Row>
+        <Row className="margin-bottom">
           <Col span={24}>
             <Card bordered className="card">
               <ContractStatistic />

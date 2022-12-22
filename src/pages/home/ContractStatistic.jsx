@@ -70,6 +70,10 @@ const ContractStatistic = () => {
 
     return (
         <>
+            <div className='title-bottom-contract'>
+                <span className="title-margin-right">Tổng số hợp đồng đã lập: <b style={{ color: 'rgba(53, 162, 235)' }}>{contractRenter?.total_all_created}</b></span>
+                <span className="title-margin-right">Tổng số hợp đồng đã kết thúc: <b style={{ color: '#cf1322' }}>{contractRenter?.total_all_ended}</b></span>
+            </div>
             <Row>
                 <Col span={24}>
                     <span className="statistic-time-title">Chọn năm: </span>
@@ -86,7 +90,7 @@ const ContractStatistic = () => {
                     />
                 </Col>
             </Row>
-            <Row className="margin-top-bottom">
+            {/* <Row className="margin-top-bottom">
                 <Col>
                     <Statistic
                         title={
@@ -113,10 +117,8 @@ const ContractStatistic = () => {
                         }}
                     />
                 </Col>
-            </Row>
-            <div className="bar-chart">
-                <Bar options={options} data={data} />
-            </div>
+            </Row> */}
+            <Bar height={100} options={options} data={data} />
             <Button icon={<ArrowRightOutlined />} href="/contract-renter" className="margin-top-bottom" type='primary' class>Quản lý hợp đồng cho thuê</Button>
         </>
     )
