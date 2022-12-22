@@ -124,7 +124,6 @@ const AddAutoInvoice = () => {
         })
         .then((res) => {
           setBuildingFilter(res.data.data.list_group_contracted);
-          console.log(res);
         })
         .catch((error) => {
           console.log(error);
@@ -150,7 +149,6 @@ const AddAutoInvoice = () => {
         })
         .then((res) => {
           setDataSource(res.data.data);
-          console.log(res);
         })
         .catch((error) => {
           console.log(error);
@@ -185,8 +183,6 @@ const AddAutoInvoice = () => {
       .then((res) => {
         setPreviewInvoice(true);
         setPrevieState({ selectedRows, dateCreate, paymentTerm });
-        // navigate("preview", { state: { selectedRows, dateCreate, paymentTerm } });
-        console.log(res);
       })
       .catch((e) => {
         notification.error({
@@ -196,7 +192,6 @@ const AddAutoInvoice = () => {
           placement: "top",
         });
       });
-    console.log(selectedRows);
   };
   const dayPayment = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30];
   const options = [];
@@ -252,14 +247,12 @@ const AddAutoInvoice = () => {
   const buildingChange = (value, option) => {
     setBuilding(value);
     setBuildingName(option.label);
-    console.log(value);
   };
   const paymentCycleChange = (value) => {
     setPaymentCycle(value);
   };
 
   const onSelectChange = (newSelectedRowKeys, selectedRows) => {
-    console.log("selectedRowKeys changed: ", selectedRows);
     setSelectedRowKeys(newSelectedRowKeys);
     setSelectedRows(selectedRows);
   };

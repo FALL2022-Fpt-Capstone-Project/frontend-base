@@ -68,7 +68,6 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
           },
         })
         .then((res) => {
-          console.log(res);
           form.setFieldsValue({
             old_elec:
               res.data.data?.list_general_service?.filter((electric) => electric.service_name === "electric").length > 0
@@ -162,7 +161,6 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
         });
     }
   }, [visible]);
-  console.log(vehiMonth);
   const handleCreateInvoice = async (value) => {
     const invoice = [
       {
@@ -174,38 +172,36 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
         service_bill: service_bill,
       },
     ];
-    // const response = await axios
-    //   .post(ADD_INVOICE_URL, invoice, {
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //       Authorization: `Bearer ${cookie}`,
-    //     },
-    //   })
-    //   .then((res) => {
-    //     notification.success({
-    //       message: "Thêm mới hoá đơn thành công",
-    //       duration: 3,
-    //       placement: "top",
-    //     });
-    //     close(false);
-    //     setFlag(true);
+    const response = await axios
+      .post(ADD_INVOICE_URL, invoice, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookie}`,
+        },
+      })
+      .then((res) => {
+        notification.success({
+          message: "Thêm mới hoá đơn thành công",
+          duration: 3,
+          placement: "top",
+        });
+        close(false);
+        setFlag(true);
 
-    //     setTimeout(() => {
-    //       setFlag(false);
-    //     }, "500");
-    //     console.log(res);
-    //   })
-    //   .catch((e) => {
-    //     notification.error({
-    //       message: "Thêm mới hoá đơn thất bại",
-    //       description: "Vui lòng kiểm tra lại thông tin và thử lại.",
-    //       duration: 3,
-    //       placement: "top",
-    //     });
-    //   });
-    // setFlag(false);
-    // console.log(JSON.stringify(response?.data));
-    console.log(invoice);
+        setTimeout(() => {
+          setFlag(false);
+        }, "500");
+      })
+      .catch((e) => {
+        notification.error({
+          message: "Thêm mới hoá đơn thất bại",
+          description: "Vui lòng kiểm tra lại thông tin và thử lại.",
+          duration: 3,
+          placement: "top",
+        });
+      });
+    setFlag(false);
+    // console.log(invoice);
   };
 
   const newWaterChange = (value) => {

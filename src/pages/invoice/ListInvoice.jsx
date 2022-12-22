@@ -46,7 +46,6 @@ const ListInvoice = () => {
       })
       .then((res) => {
         setDataSource(res.data.data);
-        console.log(res);
       })
       .catch((error) => {
         console.log(error);
