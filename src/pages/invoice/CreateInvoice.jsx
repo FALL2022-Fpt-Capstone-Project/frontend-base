@@ -68,6 +68,7 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
           },
         })
         .then((res) => {
+          console.log(res);
           form.setFieldsValue({
             old_elec:
               res.data.data?.list_general_service?.filter((electric) => electric.service_name === "electric").length > 0
@@ -191,6 +192,7 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
         setTimeout(() => {
           setFlag(false);
         }, "500");
+        console.log(res);
       })
       .catch((e) => {
         notification.error({
@@ -199,9 +201,10 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
           duration: 3,
           placement: "top",
         });
+        console.log(e);
       });
     setFlag(false);
-    // console.log(invoice);
+    console.log(invoice);
   };
 
   const newWaterChange = (value) => {
@@ -241,10 +244,14 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
     setOtherMonth(value);
   };
   const dateCreateChange = (date, dateString) => {
-    setDateCreate(dateString);
+    let [day1, month1, year1] = dateString[0].split("-");
+    let date1 = `${year1}-${month1}-${day1}`;
+    setDateCreate(date1);
   };
   const paymentTermChange = (date, dateString) => {
-    setPaymentTerm(dateString);
+    let [day1, month1, year1] = dateString[0].split("-");
+    let date2 = `${year1}-${month1}-${day1}`;
+    setPaymentTerm(date2);
   };
   const serviceArray = listService;
   let results = [];

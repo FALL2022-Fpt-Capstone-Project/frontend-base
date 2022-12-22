@@ -12,15 +12,14 @@ import {
   Table,
   Tabs,
   Tag,
-  Tooltip,
 } from "antd";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { InboxOutlined, ArrowLeftOutlined, ExclamationCircleFilled, EyeOutlined } from "@ant-design/icons";
+import { InboxOutlined } from "@ant-design/icons";
 import axios from "../../api/axios";
 import moment from "moment";
 import "./invoice.scss";
 import MainLayout from "../../components/layout/MainLayout";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import PreviewAddAutoInvoice from "./PreviewAddAutoInvoice";
 const LIST_BUILDING_FILTER = "manager/group/all";
 const LIST_INVOICE_ADD_AUTO = "manager/bill/room/bill-status";
@@ -235,15 +234,15 @@ const AddAutoInvoice = () => {
     setPaymentTerm(date_payment);
   }, [date_payment]);
   const dateCreateChange = (date, dateString) => {
-    setDateCreate(dateString);
+    let [day1, month1, year1] = dateString.split("-");
+    let date1 = `${year1}-${month1}-${day1}`;
+    setDateCreate(date1);
   };
   const paymentTermChange = (date, dateString) => {
-    setPaymentTerm(dateString);
+    let [day1, month1, year1] = dateString.split("-");
+    let date2 = `${year1}-${month1}-${day1}`;
+    setPaymentTerm(date2);
   };
-  const disabledDate = (current) => {
-    return current && current < date_create_format;
-  };
-
   const buildingChange = (value, option) => {
     setBuilding(value);
     setBuildingName(option.label);
@@ -273,9 +272,16 @@ const AddAutoInvoice = () => {
     {
       title: "Tiền phòng",
       dataIndex: "room_price",
-      render: (value) => {
-        return value.toLocaleString("vn") + " đ";
-      },
+      editable: true,
+      render: (text, record, index) => (
+        <InputNumber
+          min={record.room_old_electric_index}
+          style={{ width: "100%" }}
+          value={text}
+          formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+          parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
+        />
+      ),
     },
 
     {
@@ -285,7 +291,7 @@ const AddAutoInvoice = () => {
     {
       title: "Số điện mới",
       dataIndex: "room_current_electric_index",
-      width: "10%",
+      width: "11%",
       editable: true,
       render: (text, record, index) => (
         <InputNumber min={record.room_old_electric_index} style={{ width: "100%" }} value={text} />
@@ -298,7 +304,7 @@ const AddAutoInvoice = () => {
     {
       title: "Số nước mới",
       dataIndex: "room_current_water_index",
-      width: "10%",
+      width: "11%",
       editable: true,
       render: (text, record, index) => (
         <InputNumber min={record.room_old_water_index} style={{ width: "100%" }} value={text} />
@@ -628,7 +634,6 @@ const AddAutoInvoice = () => {
                     onChange={dateCreateChange}
                     value={date_create_format}
                     placeholder="Nhập ngày tạo hoá đơn"
-                    disabledDate={disabledDate}
                     format="DD-MM-YYYY"
                   />
                 </Form.Item>
@@ -650,12 +655,7 @@ const AddAutoInvoice = () => {
                     },
                   ]}
                 >
-                  <DatePicker
-                    onChange={paymentTermChange}
-                    placeholder="Nhập hạn đóng tiền"
-                    disabledDate={disabledDate}
-                    format="DD-MM-YYYY"
-                  />
+                  <DatePicker onChange={paymentTermChange} placeholder="Nhập hạn đóng tiền" format="DD-MM-YYYY" />
                 </Form.Item>
               </Col>
             </Row>

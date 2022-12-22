@@ -13,7 +13,7 @@ import {
   Modal,
   notification,
 } from "antd";
-import { InboxOutlined, DeleteOutlined, PlusCircleOutlined, EyeOutlined } from "@ant-design/icons";
+import { InboxOutlined, DeleteOutlined, PlusCircleOutlined } from "@ant-design/icons";
 
 import axios from "../../api/axios";
 import CreatePayment from "./CreatePayment";
@@ -23,11 +23,12 @@ const LIST_BUILDING_FILTER = "manager/group/all";
 const ListPayment = () => {
   let cookie = localStorage.getItem("Cookie");
   const [buildingFilter, setBuildingFilter] = useState("");
-  const [building, setBuilding] = useState(null);
+  const [building, setBuilding] = useState("");
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
   const [createPaymentInvoice, setCreatePaymentInvoice] = useState(false);
   const [groupName, setGroupName] = useState();
+  const [dateFilter, setDateFilter] = useState("");
   const [flag, setFlag] = useState(false);
   const onClickCreatePaymentInvoice = () => {
     setCreatePaymentInvoice(true);
@@ -36,6 +37,9 @@ const ListPayment = () => {
     setLoading(true);
     const response = await axios
       .get(`manager/bill/money-source/out?groupId=${building}`, {
+        params: {
+          time: dateFilter,
+        },
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${cookie}`,
@@ -43,8 +47,6 @@ const ListPayment = () => {
       })
       .then((res) => {
         setDataSource(res.data.data);
-        setGroupName(res.data.data[0].group_name);
-        console.log(res);
       })
       .catch((error) => {
         console.log(error);
@@ -53,8 +55,9 @@ const ListPayment = () => {
   };
   useEffect(() => {
     console.log(building);
+    console.log(dateFilter);
     getListInvoice();
-  }, [building]);
+  }, [building, dateFilter]);
   useEffect(() => {
     if (flag) {
       getListInvoice();
@@ -112,14 +115,20 @@ const ListPayment = () => {
       value: buildingFilter[i].group_id,
     });
   }
-  const buildingChange = (value) => {
+  const buildingChange = (value, option) => {
     setBuilding(value);
+    setGroupName(option.label);
   };
-  console.log(building);
+  const dateFilterChange = (date, dateString) => {
+    let [month1, year1] = dateString.split("-");
+    let date1 = `${year1}-${month1}`;
+    setDateFilter(date1);
+  };
+  console.log(dateFilter);
   const customizeRenderEmpty = () => (
     <div style={{ textAlign: "center" }}>
       <InboxOutlined style={{ fontSize: 70 }} />
-      <p style={{ fontSize: 20 }}>Vui lòng lựa chọn chung cư để hiển thị dữ liệu hoá đơn chi</p>
+      <p style={{ fontSize: 20 }}>Không có dữ liệu</p>
     </div>
   );
   const getFullDate = (date) => {
@@ -149,12 +158,12 @@ const ListPayment = () => {
               <h4>Tìm kiếm hoá đơn theo thời gian</h4>
             </Row>
             <Row>
-              <DatePicker picker="month" placeholder="Chọn thời gian" format={"MM/YYYY"} />
+              <DatePicker picker="month" placeholder="Chọn thời gian" format={"MM-YYYY"} onChange={dateFilterChange} />
             </Row>
           </Col>
           <Col xs={24} lg={4} offset={10} style={{ marginTop: "15px" }}>
             <Button
-              disabled={building === null ? true : false}
+              disabled={building === "" ? true : false}
               type="primary"
               icon={<PlusCircleOutlined />}
               size="middle"
@@ -198,6 +207,10 @@ const ListPayment = () => {
               render: (value) => {
                 return value.toLocaleString("vn") + " đ";
               },
+            },
+            {
+              title: "Ghi chú",
+              dataIndex: "note",
             },
             {
               title: "Ngày lập hoá đơn",
