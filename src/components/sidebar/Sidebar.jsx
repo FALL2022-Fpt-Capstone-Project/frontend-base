@@ -24,7 +24,7 @@ const Sidebar = () => {
   const location = useLocation();
   useEffect(() => {
     if (location.pathname.includes("/room/equipment")) {
-      setContractApartmentLink("/room/equipment");
+      setRoomLink("/room/equipment");
     }
   }, [location.pathname]);
 

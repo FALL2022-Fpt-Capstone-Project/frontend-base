@@ -273,7 +273,7 @@ const CreateContractRenter = () => {
       })
       .catch((error) => {});
   };
-  console.log(dataOldRenter);
+ 
   const filterRenter = async (groupId) => {
     setLoading(true);
     await axios
@@ -848,10 +848,10 @@ const CreateContractRenter = () => {
         <Button
           href="/contract-renter"
           type="primary"
-          icon={<ArrowLeftOutlined />}
+          // icon={<ArrowLeftOutlined />}
           style={{ marginRight: 5, float: "right" }}
         >
-          Danh sách hợp đồng
+          Quay lại danh sách hợp đồng
         </Button>
       </div>
       <Form

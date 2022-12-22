@@ -34,7 +34,7 @@ const RoomStatus = ({ dataGroup }) => {
     useEffect(() => {
         getRoomStatus();
     }, []);
-    
+
     const getRoomStatus = async (groupId = null) => {
         await axios
             .get(ROOM_STATUS, {
@@ -70,6 +70,10 @@ const RoomStatus = ({ dataGroup }) => {
 
     return (
         <>
+            <div className='title-bottom'>
+                <span className="title-margin-right">Tổng số phòng đã thuê: <b style={{ color: 'rgba(53, 162, 235)' }}>{roomStatus?.total_rented_room}</b></span>
+                <span className="title-margin-right">Tổng số phòng còn trống: <b style={{ color: '#cf1322' }}>{roomStatus?.total_empty_room}</b></span>
+            </div>
             <Row>
                 <Select
                     defaultValue={""}
@@ -91,20 +95,10 @@ const RoomStatus = ({ dataGroup }) => {
                     }}
                 />
             </Row>
-            <Row>
-                <Col span={12}>
-                    <Pie data={data} options={options} />
-                </Col>
-                <Col className='text-Center' span={12}>
-                    <Row>
-                        <Col span={24}>
-                            <p className="statistic-time-title">Tổng số phòng đã thuê: <b>{roomStatus?.total_rented_room}</b></p>
-                            <p className="statistic-time-title">Tổng số phòng còn trống: <b>{roomStatus?.total_empty_room}</b></p>
-                            <Button icon={<ArrowRightOutlined />} href="/room" type='primary'>Quản lý phòng</Button>
-                        </Col>
-                    </Row>
-                </Col>
-            </Row>
+            <div style={{ width: '100%', height: '330px', display: 'flex', justifyContent: 'center' }}>
+                <Pie data={data} options={options} />
+            </div>
+            <Button icon={<ArrowRightOutlined />} href="/room" type='primary'>Quản lý phòng</Button>
         </>
     )
 };

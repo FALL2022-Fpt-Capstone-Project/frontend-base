@@ -328,7 +328,7 @@ const CreateContractBuilding = () => {
       <div style={{ overflow: "auto" }}>
         <Link to="/contract-apartment">
           <Button type="primary" style={{ marginRight: 5, float: "right" }} className="button-back">
-            Danh sách hợp đồng
+            Quay lại danh sách hợp đồng
           </Button>
         </Link>
       </div>

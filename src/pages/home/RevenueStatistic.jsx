@@ -1,11 +1,28 @@
 import React, { useEffect, useState } from "react";
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
-import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { Line } from "react-chartjs-2";
 import { Col, DatePicker, Row } from "antd";
 import moment from "moment";
 import axios from "../../api/axios";
 const GET_REVENUE = "manager/statistical/chart/revenue";
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 
 
@@ -26,7 +43,8 @@ const RevenueStatistic = () => {
         data: revenue?.map(obj => {
           return obj?.revenue
         }),
-        backgroundColor: "rgba(53, 162, 235)",
+        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+        borderColor: 'rgb(53, 162, 235)',
       },
     ],
   };
@@ -84,9 +102,14 @@ const RevenueStatistic = () => {
             }}
           />
         </Col>
-        <div className="bar-chart">
-          <Bar options={options} data={data} />
-        </div>
+        <Line height={150} options={options} data={data} />
+        <span className="revenue-current-month">Doanh thu tháng {moment().format('MM') + "/" + selectYear}:
+          <b style={revenue?.find(obj => obj.month === Number.parseInt(moment().format('MM')))?.revenue < 0 ? { color: '#CD5C5C' } : { color: '#008000' }}>
+            {" " + new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
+              revenue?.find(obj => obj.month === Number.parseInt(moment().format('MM')))?.revenue
+            ) + " "}
+          </b>
+        </span>
       </Row>
     </>
   )
