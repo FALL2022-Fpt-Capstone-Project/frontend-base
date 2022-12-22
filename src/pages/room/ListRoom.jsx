@@ -363,7 +363,7 @@ function ListRoom(props) {
     setLoading(false);
   };
 
-  const getRoomInfor = async (group_id = "", sortRoom = "", roomFloor = "", roomStatus = []) => {
+  const getRoomInfor = async (group_id = "", sortRoom = "", roomFloor = "", roomStatus = [], room_id = "") => {
     setLoading(true);
     await axios
       .get(ROOM_INFOR, {
@@ -373,26 +373,33 @@ function ListRoom(props) {
         },
       })
       .then((res) => {
-        let room_data =
-          group_id === undefined || group_id === ""
+        let room_data = [];
+        if (room_id !== "") {
+          room_data = room_id === undefined || room_id === ""
+            ? res.data.data
+            : res.data.data?.filter((room, index) => room.room_id === room_id);
+
+        } else {
+          room_data = group_id === undefined || group_id === ""
             ? res.data.data
             : res.data.data?.filter((room, index) => room.group_id === group_id);
 
-        room_data =
-          typeof sortRoom == "boolean"
-            ? room_data.sort((a, b) => (sortRoom ? a.room_price - b.room_price : b.room_price - a.room_price))
-            : room_data;
+          room_data =
+            typeof sortRoom == "boolean"
+              ? room_data.sort((a, b) => (sortRoom ? a.room_price - b.room_price : b.room_price - a.room_price))
+              : room_data;
 
-        room_data =
-          roomStatus.length === 1
-            ? room_data.filter((room) =>
-              roomStatus[0] ? Number.isInteger(room.contract_id) : room.contract_id === null
-            )
-            : room_data;
+          room_data =
+            roomStatus.length === 1
+              ? room_data.filter((room) =>
+                roomStatus[0] ? Number.isInteger(room.contract_id) : room.contract_id === null
+              )
+              : room_data;
 
-        room_data = Number.isInteger(roomFloor)
-          ? room_data?.filter((room) => room.room_floor === roomFloor)
-          : room_data;
+          room_data = Number.isInteger(roomFloor)
+            ? room_data?.filter((room) => room.room_floor === roomFloor)
+            : room_data;
+        }
 
         setGroupRoom((pre) => {
           return {
@@ -408,7 +415,7 @@ function ListRoom(props) {
             ?.map((obj, index) => obj.room_price)
             ?.reduce((previousValue, currentValue) => previousValue + currentValue, 0)
         );
-        setRoomInfor(room_data);
+        setRoomInfor(res.data.data);
       })
       .catch((error) => {
         console.log(error);
@@ -598,17 +605,28 @@ function ListRoom(props) {
             </Row>
             <Tree
               onSelect={(e) => {
-                console.log(e);
+                setSearchRoom("");
                 if (e.length === 0) {
                   getRoomInfor();
                   formFilter.setFieldsValue({
-                    roomGroup: ""
+                    roomGroup: "",
+                    roomFloor: ""
                   });
                 } else {
-                  getRoomInfor(Number.parseInt(e));
-                  formFilter.setFieldsValue({
-                    roomGroup: Number.parseInt(e)
-                  });
+                  const group_id = Number.parseInt(e[0].split('-')[0]);
+                  const room_floor = e[0].split('-')[1] === undefined ? "" : Number.parseInt(e[0].split('-')[1]);
+
+                  if (e[0].split('-')[2] !== undefined) {
+                    const room = roomInfor.filter(obj => obj.room_id === Number.parseInt(e[0].split('-')[2]))[0];
+                    setSearchRoom(room.room_name);
+                    getRoomInfor(group_id, "", room_floor, [], room.room_id);
+                  } else {
+                    getRoomInfor(group_id, "", room_floor);
+                    formFilter.setFieldsValue({
+                      roomGroup: group_id,
+                      roomFloor: room_floor,
+                    });
+                  }
                 }
               }}
               showIcon
