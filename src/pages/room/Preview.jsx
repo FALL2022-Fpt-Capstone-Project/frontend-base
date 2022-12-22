@@ -123,7 +123,7 @@ function Preview(props) {
       }
     },
     getCheckboxProps: (record) => ({
-      disabled: record.roomStatus === true,
+      disabled: record.is_duplicate === true,
     }),
   };
 
@@ -259,8 +259,8 @@ function Preview(props) {
                 {list_rooms?.filter((u, y) => u.is_duplicate === true && u.room_floor === pre).length === 0
                   ? ""
                   : " Có " +
-                    list_rooms?.filter((u, y) => u.is_duplicate === true && u.room_floor === pre).length +
-                    " phòng đã tồn tại"}
+                  list_rooms?.filter((u, y) => u.is_duplicate === true && u.room_floor === pre).length +
+                  " phòng đã tồn tại"}
               </span>
             </>
           ),

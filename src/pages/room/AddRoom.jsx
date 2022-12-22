@@ -189,7 +189,7 @@ function AddRoom({ reRender, visible, close, data, assetType }) {
           .concat(e.list_additional_asset),
       },
     ];
-    console.log(JSON.stringify(data));
+    // console.log(JSON.stringify(data));
     await axios
       .post(ADD_ROOM, data, {
         headers: {
@@ -287,7 +287,7 @@ function AddRoom({ reRender, visible, close, data, assetType }) {
     selectedRowKeys,
     onChange: (selectedRowKeys, selectedRows) => {
       setSelectedRowKeys(selectedRowKeys);
-      console.log(`selectedRowKeys: ${selectedRowKeys}`, "selectedRows: ", selectedRows);
+      // console.log(`selectedRowKeys: ${selectedRowKeys}`, "selectedRows: ", selectedRows);
       setAssetDefaultSelect(selectedRows);
     },
   };

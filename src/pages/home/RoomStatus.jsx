@@ -34,7 +34,7 @@ const RoomStatus = ({ dataGroup }) => {
     useEffect(() => {
         getRoomStatus();
     }, []);
-    
+
     const getRoomStatus = async (groupId = null) => {
         await axios
             .get(ROOM_STATUS, {
@@ -92,10 +92,10 @@ const RoomStatus = ({ dataGroup }) => {
                 />
             </Row>
             <Row>
-                <Col span={12}>
+                <Col span={14}>
                     <Pie data={data} options={options} />
                 </Col>
-                <Col className='text-Center' span={12}>
+                <Col className='text-Center' span={10}>
                     <Row>
                         <Col span={24}>
                             <p className="statistic-time-title">Tổng số phòng đã thuê: <b>{roomStatus?.total_rented_room}</b></p>

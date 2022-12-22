@@ -241,9 +241,10 @@ function Service(props) {
         apartmentGroupById(groupIdSelect);
       })
       .catch((error) => {
+        console.log(error);
         notification.error({
           message: "Thêm mới dịch vụ thất bại",
-          description: "Vui lòng kiểm tra lại thông tin dịch vụ",
+          description: error.response.data.meta.message,
           placement: "top",
           duration: 3,
         });
