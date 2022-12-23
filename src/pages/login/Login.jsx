@@ -62,6 +62,7 @@ const Login = () => {
         setPwd("");
         getUserName(id, accessToken);
         console.log(res);
+        setLoading(false);
       })
       .catch((err) => {
         if (err.response?.status === 403) {
@@ -80,8 +81,9 @@ const Login = () => {
           });
         }
         console.log(err);
+        setLoading(false);
       });
-    setLoading(false);
+
   };
 
   // setAuth({ user_name, password, roles, accessToken, id });
