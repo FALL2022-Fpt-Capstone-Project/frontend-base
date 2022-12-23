@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -26,21 +26,22 @@ ChartJS.register(
 
 
 
-const RevenueStatistic = () => {
+const RevenueStatistic = ({ dataRevenue = [] }) => {
   let cookie = localStorage.getItem("Cookie");
   const [selectYear, setSelectYear] = useState(moment().format('YYYY'));
   const [revenue, setRevenue] = useState([]);
-  useEffect(() => {
-    getRevenue();
-  }, []);
 
   const data = {
-    labels: revenue?.map(obj => {
+    labels: revenue?.length === 0 ? dataRevenue?.map(obj => {
+      return 'Tháng ' + obj?.month
+    }) : revenue?.map(obj => {
       return 'Tháng ' + obj?.month
     }),
     datasets: [
       {
-        data: revenue?.map(obj => {
+        data: revenue?.length === 0 ? dataRevenue?.map(obj => {
+          return obj?.revenue
+        }) : revenue?.map(obj => {
           return obj?.revenue
         }),
         backgroundColor: 'rgba(53, 162, 235, 0.5)',
@@ -84,6 +85,7 @@ const RevenueStatistic = () => {
         console.log(error);
       });
   };
+
   return (
     <>
       <Row>
@@ -103,13 +105,20 @@ const RevenueStatistic = () => {
           />
         </Col>
         <Line height={150} options={options} data={data} />
-        <span className="revenue-current-month">Doanh thu tháng {moment().format('MM') + "/" + selectYear}:
+        {/* <span className="revenue-current-month">Doanh thu tháng {moment().format('MM') + "/" + selectYear}:
           <b style={revenue?.find(obj => obj.month === Number.parseInt(moment().format('MM')))?.revenue < 0 ? { color: '#CD5C5C' } : { color: '#008000' }}>
             {" " + new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
               revenue?.find(obj => obj.month === Number.parseInt(moment().format('MM')))?.revenue
             ) + " "}
           </b>
-        </span>
+          <br />
+          Tổng doanh thu năm {selectYear}:
+          <b style={revenue?.map(obj => obj.revenue)?.reduce((pre, current) => pre + current, 0) < 0 ? { color: '#CD5C5C' } : { color: '#008000' }}>
+            {" " + new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
+              revenue?.map(obj => obj.revenue)?.reduce((pre, current) => pre + current, 0)
+            ) + " "}
+          </b>
+        </span> */}
       </Row>
     </>
   )
