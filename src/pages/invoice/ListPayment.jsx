@@ -124,7 +124,6 @@ const ListPayment = () => {
     let date1 = `${year1}-${month1}`;
     setDateFilter(date1);
   };
-  console.log(dateFilter);
   const customizeRenderEmpty = () => (
     <div style={{ textAlign: "center" }}>
       <InboxOutlined style={{ fontSize: 70 }} />
@@ -140,20 +139,34 @@ const ListPayment = () => {
     <div className="list-invoice">
       <div className="list-invoice-search">
         <Row>
-          <Col xs={24} lg={5}>
+          <Col xs={24} lg={6}>
             <Row>
               <h4>Chọn chung cư để xem hoá đơn chi</h4>
             </Row>
             <Row>
               <Select
-                options={options}
+                defaultValue={""}
                 placeholder="Chọn chung cư"
+                showSearch
+                filterOption={(input, option) =>
+                  (option?.label ?? "").toLowerCase().includes(input.trim().toLowerCase())
+                }
+                style={{ width: "100%", marginBottom: "5%" }}
                 onChange={buildingChange}
                 className="add-auto-filter"
-              ></Select>
+              >
+                <Select.Option value="">Tất cả chung cư</Select.Option>
+                {options?.map((obj, index) => {
+                  return (
+                    <>
+                      <Select.Option value={obj.value}>{obj.label}</Select.Option>
+                    </>
+                  );
+                })}
+              </Select>
             </Row>
           </Col>
-          <Col xs={24} lg={5}>
+          <Col xs={24} lg={6} offset={1}>
             <Row>
               <h4>Tìm kiếm hoá đơn theo thời gian</h4>
             </Row>
@@ -161,7 +174,7 @@ const ListPayment = () => {
               <DatePicker picker="month" placeholder="Chọn thời gian" format={"MM-YYYY"} onChange={dateFilterChange} />
             </Row>
           </Col>
-          <Col xs={24} lg={4} offset={10} style={{ marginTop: "15px" }}>
+          <Col xs={24} lg={4} offset={7} style={{ marginTop: "15px" }}>
             <Button
               disabled={building === "" ? true : false}
               type="primary"

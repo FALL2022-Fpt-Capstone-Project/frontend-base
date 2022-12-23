@@ -22,7 +22,6 @@ const DetailStaff = ({ visible, close, id }) => {
         })
         .then((res) => {
           setUser(res.data.data);
-          console.log(res);
         })
         .catch((e) => {
           console.log(e);

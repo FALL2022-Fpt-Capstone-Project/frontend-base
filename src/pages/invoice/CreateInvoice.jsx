@@ -244,12 +244,12 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
     setOtherMonth(value);
   };
   const dateCreateChange = (date, dateString) => {
-    let [day1, month1, year1] = dateString[0].split("-");
+    let [day1, month1, year1] = dateString.split("-");
     let date1 = `${year1}-${month1}-${day1}`;
     setDateCreate(date1);
   };
   const paymentTermChange = (date, dateString) => {
-    let [day1, month1, year1] = dateString[0].split("-");
+    let [day1, month1, year1] = dateString.split("-");
     let date2 = `${year1}-${month1}-${day1}`;
     setPaymentTerm(date2);
   };

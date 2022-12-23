@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Col, Input, notification, Popconfirm, Row, Select, Spin, Table, Tag, Tooltip } from "antd";
 import "./building.scss";
 import axios from "../../api/axios";
-import { DeleteOutlined, EditOutlined, EyeOutlined, AuditOutlined, ContainerOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
 import DetailBuilding from "./DetailBuilding";
 import UpdateBuilding from "./UpdateBuilding";
 const { Search } = Input;
@@ -45,6 +45,7 @@ const ListBuilding = () => {
         })
         .then((res) => {
           setDataSource(res.data.data.list_group_contracted.concat(res.data.data.list_group_non_contracted));
+          console.log(res);
         })
         .catch((error) => {
           console.log(error);
@@ -81,7 +82,6 @@ const ListBuilding = () => {
 
   const reload = () => window.location.reload();
   const handleDeleteBuilding = (id) => {
-    console.log(id);
     const response = axios
       .delete(`manager/group/delete/${id}`, {
         headers: {
@@ -97,7 +97,7 @@ const ListBuilding = () => {
         reload();
       })
       .catch((e) => {
-        console.log(e.request);
+        console.log(e);
         notification.error({
           message: "Xoá chung cư thất bại",
           description: "Vui lòng thử lại.",
@@ -112,7 +112,6 @@ const ListBuilding = () => {
       value: building_address_city[i].id,
     });
   }
-  console.log(building_address_city);
   const cityChange = (value, option) => {
     setBuildingCityId(value);
     setBuildingName(option.children);
@@ -164,12 +163,12 @@ const ListBuilding = () => {
         </Col>
         <Col span={8}>
           <Row>
-            <span>Tìm kiếm theo địa chỉ chi tiết</span>
+            <span>Tìm kiếm theo địa chỉ</span>
           </Row>
           <Row>
             <Search
               placeholder="Tìm kiếm theo địa chỉ"
-              style={{ width: 400, padding: "10px 0" }}
+              style={{ width: 300, padding: "10px 0" }}
               onSearch={(value) => {
                 setAddressSearch(value);
               }}
@@ -232,7 +231,9 @@ const ListBuilding = () => {
             render: (_, record) => {
               return (
                 <>
-                  <p>{record.address.address_more_details}</p>
+                  <p>
+                    {record.address.address_wards}, {record.address.address_district}, {record.address.address_city}
+                  </p>
                 </>
               );
             },

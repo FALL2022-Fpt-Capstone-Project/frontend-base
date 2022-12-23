@@ -70,7 +70,6 @@ const CreateStaff = ({ visible, close }) => {
         console.log(e);
       });
 
-    // console.log(JSON.stringify(response?.data));
     console.log(employee);
   };
   const genderChange = (e) => {

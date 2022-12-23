@@ -192,7 +192,7 @@ const AddAutoInvoice = () => {
         });
       });
   };
-  const dayPayment = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30];
+
   const options = [];
   for (let i = 0; i < buildingFilter.length; i++) {
     options.push({
@@ -201,20 +201,7 @@ const AddAutoInvoice = () => {
       key: i + 1,
     });
   }
-  const optionPayment = [
-    {
-      label: "Tất cả các kỳ",
-      value: 0,
-    },
-    {
-      label: "Kỳ 15",
-      value: 15,
-    },
-    {
-      label: "Kỳ 30",
-      value: 30,
-    },
-  ];
+
   let day = moment().date();
   let month = moment().month();
   let year = moment().year();
@@ -243,14 +230,19 @@ const AddAutoInvoice = () => {
     let date2 = `${year1}-${month1}-${day1}`;
     setPaymentTerm(date2);
   };
+  let payment15 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+  let payment30 = [16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
+  useEffect(() => {
+    if (payment15.includes(day)) {
+      setPaymentCycle(15);
+    } else if (payment30.includes(day)) {
+      setPaymentCycle(30);
+    }
+  }, []);
   const buildingChange = (value, option) => {
     setBuilding(value);
     setBuildingName(option.label);
   };
-  const paymentCycleChange = (value) => {
-    setPaymentCycle(value);
-  };
-
   const onSelectChange = (newSelectedRowKeys, selectedRows) => {
     setSelectedRowKeys(newSelectedRowKeys);
     setSelectedRows(selectedRows);

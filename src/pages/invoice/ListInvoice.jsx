@@ -131,14 +131,28 @@ const ListInvoice = () => {
             </Row>
             <Row>
               <Select
-                options={options}
+                defaultValue={""}
                 placeholder="Chọn chung cư"
+                showSearch
+                filterOption={(input, option) =>
+                  (option?.label ?? "").toLowerCase().includes(input.trim().toLowerCase())
+                }
+                style={{ width: "100%", marginBottom: "5%" }}
                 onChange={buildingChange}
                 className="add-auto-filter"
-              ></Select>
+              >
+                <Select.Option value="">Tất cả chung cư</Select.Option>
+                {options?.map((obj, index) => {
+                  return (
+                    <>
+                      <Select.Option value={obj.value}>{obj.label}</Select.Option>
+                    </>
+                  );
+                })}
+              </Select>
             </Row>
           </Col>
-          <Col xs={24} lg={5}>
+          <Col xs={24} lg={5} offset={1}>
             <Row>
               <h4>Lựa chọn kỳ thanh toán</h4>
             </Row>
@@ -152,7 +166,7 @@ const ListInvoice = () => {
               ></Select>
             </Row>
           </Col>
-          <Col xs={24} lg={5}>
+          <Col xs={24} lg={5} offset={1}>
             <Row>
               <h4>Tìm kiếm theo tên phòng</h4>
             </Row>
@@ -169,7 +183,7 @@ const ListInvoice = () => {
               />
             </Row>
           </Col>
-          <Col xs={24} lg={4} offset={5} style={{ marginTop: "15px" }}>
+          <Col xs={24} lg={4} offset={3} style={{ marginTop: "15px" }}>
             <Link to="/invoice/create-invoice-auto">
               <Button type="primary" icon={<PlusCircleOutlined />} size="middle" className="button-add">
                 Tạo mới nhanh hoá đơn thu
@@ -189,6 +203,7 @@ const ListInvoice = () => {
             {
               title: "Tên chung cư",
               dataIndex: "group_name",
+              key: "Tên chung cư",
             },
             {
               title: "Tên phòng",
@@ -197,6 +212,7 @@ const ListInvoice = () => {
               onFilter: (value, record) => {
                 return String(record.room_name).toLowerCase()?.includes(value.toLowerCase());
               },
+              key: "Tên phòng",
             },
             // {
             //   title: "Người đại diện",
@@ -209,15 +225,18 @@ const ListInvoice = () => {
             {
               title: "Chu kỳ thanh toán",
               dataIndex: "payment_circle",
+              key: "Chu kỳ thanh toán",
             },
             {
               title: "Số điện",
               dataIndex: "current_electric_index",
+              key: "Số điện",
             },
 
             {
               title: "Số nước",
               dataIndex: "current_water_index",
+              key: "Số nước",
             },
 
             {
@@ -226,10 +245,13 @@ const ListInvoice = () => {
               render: (value) => {
                 return value.toLocaleString("vn") + " đ";
               },
+              key: "Tiền phòng",
             },
             {
               title: "Trạng thái hoá đơn",
               dataIndex: "is_all_paid",
+              key: "Trạng thái hoá đơn",
+
               render: (_, record) => {
                 let status;
                 if (record.is_all_paid === false) {
@@ -251,6 +273,8 @@ const ListInvoice = () => {
             {
               title: "Thao tác",
               dataIndex: "action",
+              key: "Thao tác",
+
               render: (_, record) => {
                 return (
                   <>
