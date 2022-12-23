@@ -119,7 +119,7 @@ const ContractStatistic = () => {
                 </Col>
             </Row> */}
             <Bar height={100} options={options} data={data} />
-            <Button icon={<ArrowRightOutlined />} href="/contract-renter" className="margin-top-bottom" type='primary' class>Quản lý hợp đồng cho thuê</Button>
+            <Button icon={<ArrowRightOutlined />} href="/contract-renter" className="margin-top-bottom" type='primary'>Quản lý hợp đồng cho thuê</Button>
         </>
     )
 };
