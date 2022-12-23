@@ -34,6 +34,11 @@ const DetailInvoice = () => {
         console.log(e);
       });
   }, []);
+  const getFullDate = (date) => {
+    const dateAndTime = date.split(" ");
+
+    return dateAndTime[0].split("-").reverse().join("-");
+  };
   return (
     <div className="detail-invoice">
       {loading && (
@@ -128,7 +133,7 @@ const DetailInvoice = () => {
             </Row>
             <Row>
               <p>
-                Vui lòng thanh toán đúng hạn trước ngày <b>26-12-2022</b>
+                Vui lòng thanh toán đúng hạn trước ngày <b>{getFullDate(data.payment_term)}</b>
               </p>
             </Row>
           </div>

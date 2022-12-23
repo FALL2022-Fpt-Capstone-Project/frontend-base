@@ -11,7 +11,6 @@ import {
   Checkbox,
   notification,
   AutoComplete,
-  Space,
   Table,
 } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
@@ -146,7 +145,6 @@ const CreateBuilding = ({ visible, close, data }) => {
         },
       })
       .then((res) => {
-        console.log(res);
         notification.success({
           message: "Thêm mới chung cư thành công",
           duration: 3,
@@ -164,7 +162,6 @@ const CreateBuilding = ({ visible, close, data }) => {
           placement: "top",
         });
       });
-    console.log(JSON.stringify(response?.data));
     console.log(building);
   };
 
@@ -197,7 +194,6 @@ const CreateBuilding = ({ visible, close, data }) => {
         })
         .then((res) => {
           setListAssetTypeName(res.data.data);
-          // console.log(res.data.data);
         })
         .catch((error) => {
           console.log(error);
@@ -216,7 +212,6 @@ const CreateBuilding = ({ visible, close, data }) => {
         })
         .then((res) => {
           setListAssetName(res.data.data);
-          console.log(res.data.data);
         })
         .catch((error) => {
           console.log(error);
@@ -224,7 +219,6 @@ const CreateBuilding = ({ visible, close, data }) => {
     };
     getListAssetBasic();
   }, []);
-  // console.log(listAssetName.length);
   for (let i = 0; i < listAssetName?.length; i++) {
     Object.assign(listAssetName[i], { key: i });
   }
@@ -410,9 +404,7 @@ const CreateBuilding = ({ visible, close, data }) => {
   const list_asset = [];
 
   const rowSelection = {
-    // ...selectedRowKeys,
     onChange: (selectedRowKeys, selectedRows) => {
-      console.log(`selectedRowKeys: ${selectedRowKeys}`, "selectedRows: ", selectedRows);
       setAsset(selectedRows);
     },
   };
@@ -712,14 +704,20 @@ const CreateBuilding = ({ visible, close, data }) => {
                     filterOption={(input, option) =>
                       (option?.label?.toLowerCase().trim() ?? "").includes(input?.toLowerCase().trim())
                     }
-                    options={building_address_district === undefined ? [] : [...building_address_district?.map(obj => {
-                      return { label: obj.name, value: obj.code }
-                    }), {
-                      label: 'Chọn Quận/Huyện',
-                      value: ""
-                    },]}
-                  >
-                  </Select>
+                    options={
+                      building_address_district === undefined
+                        ? []
+                        : [
+                            ...building_address_district?.map((obj) => {
+                              return { label: obj.name, value: obj.code };
+                            }),
+                            {
+                              label: "Chọn Quận/Huyện",
+                              value: "",
+                            },
+                          ]
+                    }
+                  ></Select>
                 </Form.Item>
                 <Form.Item
                   name="ward"
@@ -747,14 +745,20 @@ const CreateBuilding = ({ visible, close, data }) => {
                     filterOption={(input, option) =>
                       (option?.label?.toLowerCase().trim() ?? "").includes(input?.toLowerCase().trim())
                     }
-                    options={building_address_wards === undefined ? [] : [...building_address_wards?.map(obj => {
-                      return { label: obj.name, value: obj.code }
-                    }), {
-                      label: 'Chọn Phường/Xã',
-                      value: ""
-                    },]}
-                  >
-                  </Select>
+                    options={
+                      building_address_wards === undefined
+                        ? []
+                        : [
+                            ...building_address_wards?.map((obj) => {
+                              return { label: obj.name, value: obj.code };
+                            }),
+                            {
+                              label: "Chọn Phường/Xã",
+                              value: "",
+                            },
+                          ]
+                    }
+                  ></Select>
                 </Form.Item>
 
                 <Form.Item
@@ -765,15 +769,15 @@ const CreateBuilding = ({ visible, close, data }) => {
                       <b>Địa chỉ chi tiết: </b>
                     </span>
                   }
-                // rules={[
-                //   {
-                //     message: "Vui lòng nhập địa chỉ!",
-                //   },
-                //   {
-                //     required: true,
-                //     message: "Vui lòng nhập địa chỉ!",
-                //   },
-                // ]}
+                  // rules={[
+                  //   {
+                  //     message: "Vui lòng nhập địa chỉ!",
+                  //   },
+                  //   {
+                  //     required: true,
+                  //     message: "Vui lòng nhập địa chỉ!",
+                  //   },
+                  // ]}
                 >
                   <Input onChange={(e) => setBuildingAddress(e.target.value)} placeholder="Nhập địa chỉ chi tiết" />
                 </Form.Item>
@@ -1070,7 +1074,7 @@ const CreateBuilding = ({ visible, close, data }) => {
                                   width: "100%",
                                 }}
                                 defaultValue="Chọn nhóm tài sản"
-                              // onChange={internetChange}
+                                // onChange={internetChange}
                               >
                                 {listAssetTypeName?.map((obj, index) => {
                                   return (

@@ -23,7 +23,6 @@ const ListContractRenterAlmostExpired = ({ duration }) => {
         })
         .then((res) => {
           setDataSource(res.data.data);
-          console.log(res);
         })
         .catch((error) => {
           console.log(error);
@@ -45,7 +44,6 @@ const ListContractRenterAlmostExpired = ({ duration }) => {
         })
         .then((res) => {
           setBuildingFilter(res.data.data.list_group_contracted);
-          console.log(res);
         })
         .catch((error) => {
           console.log(error);

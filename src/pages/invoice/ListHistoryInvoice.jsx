@@ -1,20 +1,13 @@
-import { Button, Col, Form, Input, Row, Table, Tooltip, Tag, Modal, Popconfirm } from "antd";
+import { Button, Col, Form, Row, Table, Tooltip, Tag, Modal, Popconfirm, DatePicker } from "antd";
 import React, { useEffect, useState } from "react";
-import {
-  EditOutlined,
-  SearchOutlined,
-  DollarCircleOutlined,
-  EyeOutlined,
-  UndoOutlined,
-  DeleteOutlined,
-} from "@ant-design/icons";
+import { DollarCircleOutlined, EyeOutlined, DeleteOutlined } from "@ant-design/icons";
 import "./listHistoryInvoice.scss";
 import { Link } from "react-router-dom";
 import axios from "../../api/axios";
 const ListHistoryInvoice = ({ visible, close, roomId, setFlag }) => {
   const [loading, setLoading] = useState(false);
   const [roomName, setRoomName] = useState();
-
+  const [dateFilter, setDateFilter] = useState("");
   const [form] = Form.useForm();
   let cookie = localStorage.getItem("Cookie");
   const [dataSource, setDataSource] = useState([]);
@@ -23,6 +16,9 @@ const ListHistoryInvoice = ({ visible, close, roomId, setFlag }) => {
     setLoading(true);
     const response = await axios
       .get(`manager/bill/room/history/${roomId}`, {
+        params: {
+          time: dateFilter,
+        },
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${cookie}`,
@@ -39,9 +35,12 @@ const ListHistoryInvoice = ({ visible, close, roomId, setFlag }) => {
   };
   useEffect(() => {
     if (visible) {
+      console.log(dateFilter);
       getListInvoice();
+    } else {
+      setDateFilter("");
     }
-  }, [visible]);
+  }, [visible, dateFilter]);
 
   const handlerPayInvoice = async (id) => {
     setLoading(true);
@@ -104,9 +103,13 @@ const ListHistoryInvoice = ({ visible, close, roomId, setFlag }) => {
 
     return dateAndTime[0].split("-").reverse().join("-");
   };
+  const dateFilterChange = (date, dateString) => {
+    let [month1, year1] = dateString.split("-");
+    let date1 = `${year1}-${month1}`;
+    setDateFilter(date1);
+  };
   return (
     <div className="list-history-invoice">
-      <div className="list-history-invoice-search"></div>
       <Modal
         title={<h2>Lịch sử hoá đơn phòng {roomName}</h2>}
         open={visible}
@@ -132,6 +135,24 @@ const ListHistoryInvoice = ({ visible, close, roomId, setFlag }) => {
           </>,
         ]}
       >
+        <div className="list-history-invoice-search">
+          <Row>
+            <Col xs={24} lg={6}>
+              <Row>
+                <h4>Tìm kiếm hoá đơn theo thời gian tạo</h4>
+              </Row>
+              <Row>
+                <DatePicker
+                  picker="month"
+                  placeholder="Chọn thời gian"
+                  format={"MM-YYYY"}
+                  onChange={dateFilterChange}
+                />
+              </Row>
+            </Col>
+          </Row>
+        </div>
+
         <Table
           bordered
           dataSource={dataSource}

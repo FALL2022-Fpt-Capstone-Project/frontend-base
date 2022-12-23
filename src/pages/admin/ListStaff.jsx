@@ -65,7 +65,6 @@ const ListStaff = () => {
       })
       .then((res) => {
         setDataSource(res.data.data.filter((data) => data.role_name === "ROLE_STAFF"));
-        console.log(res);
       })
       .catch((error) => {
         console.log(error);
@@ -109,7 +108,6 @@ const ListStaff = () => {
       })
       .then((res) => {
         setDataSource(res.data.data.filter((data) => data.role_name === "ROLE_STAFF"));
-        console.log(res);
       })
       .catch((error) => {
         console.log(error);
@@ -159,7 +157,6 @@ const ListStaff = () => {
       })
       .then((res) => {
         setDataSource(res.data.data.filter((data) => data.role_name === "ROLE_STAFF"));
-        console.log(res);
       })
       .catch((error) => {
         console.log(error);
@@ -193,7 +190,7 @@ const ListStaff = () => {
             >
               <Row gutter={[16]} style={{ marginBottom: "20px" }}>
                 <Row span={8}>
-                  <Form.Item name="full_name" style={{ width: "500px", marginBottom: 0 }}>
+                  <Form.Item name="full_name" style={{ width: "400px", marginBottom: 0 }}>
                     <Col className="gutter-row" span={24} style={{ marginBottom: "15px" }}>
                       <Row>
                         <label htmlFor="" style={{ marginBottom: "10px" }}>
@@ -205,7 +202,7 @@ const ListStaff = () => {
                       </Row>
                     </Col>
                   </Form.Item>
-                  <Form.Item name="user_name" style={{ width: "500px" }}>
+                  <Form.Item name="user_name" style={{ width: "400px" }}>
                     <Col className="gutter-row" span={24}>
                       <Row>
                         <label htmlFor="" style={{ marginBottom: "10px" }}>
@@ -217,7 +214,7 @@ const ListStaff = () => {
                       </Row>
                     </Col>
                   </Form.Item>
-                  <Form.Item name="phone_number" style={{ width: "500px" }}>
+                  <Form.Item name="phone_number" style={{ width: "400px" }}>
                     <Col className="gutter-row" span={24}>
                       <Row>
                         <label htmlFor="" style={{ marginBottom: "10px" }}>
@@ -231,7 +228,7 @@ const ListStaff = () => {
                   </Form.Item>
                 </Row>
                 <Row>
-                  <Form.Item name="date" style={{ width: "500px" }}>
+                  <Form.Item name="date" style={{ width: "400px" }}>
                     <Col className="gutter-row" span={24} style={{ marginBottom: "15px" }}>
                       <Row>
                         <label htmlFor="" style={{ marginBottom: "10px" }}>
@@ -243,7 +240,7 @@ const ListStaff = () => {
                       </Row>
                     </Col>
                   </Form.Item>
-                  <Form.Item name="deactive" style={{ width: "500px", marginTop: "30px" }}>
+                  <Form.Item name="deactive" style={{ width: "400px", marginTop: "30px" }}>
                     <Col className="gutter-row" span={24}>
                       <Switch onChange={deactiveChange} />{" "}
                       {deactive ? <span>Nhân viên đã nghỉ việc</span> : <span>Nhân viên đang làm việc</span>}

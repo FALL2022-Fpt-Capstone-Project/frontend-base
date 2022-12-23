@@ -1,10 +1,10 @@
-import { Form, Card, notification, Button, Modal, DatePicker, Col, Row, InputNumber } from "antd";
+import { Form, Card, notification, Button, Modal, DatePicker, Col, Row, InputNumber, Input } from "antd";
 import "./invoice.scss";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
 const ADD_INVOICE_URL = "manager/bill/money-source/out/add";
-
+const { TextArea } = Input;
 const CreatePayment = ({ visible, close, groupName, setFlag, groupId }) => {
   const [dateCreate, setDateCreate] = useState();
   const [groupMoney, setGroupMoney] = useState(0);
@@ -36,6 +36,7 @@ const CreatePayment = ({ visible, close, groupName, setFlag, groupId }) => {
       room_group_money: groupMoney,
       service_money: serviceMoney,
       other_money: otherMoney,
+      other_money_note: value.note,
     };
 
     const response = await axios
@@ -68,7 +69,6 @@ const CreatePayment = ({ visible, close, groupName, setFlag, groupId }) => {
         });
       });
     setFlag(false);
-    // console.log(JSON.stringify(response?.data));
     console.log(invoice);
   };
   const groupMoneyChange = (value) => {
@@ -229,6 +229,22 @@ const CreatePayment = ({ visible, close, groupName, setFlag, groupId }) => {
                     parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
                     min={0}
                   />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={12}>
+              <Col span={24}>
+                <Form.Item
+                  className="form-item"
+                  name="note"
+                  labelCol={{ span: 24 }}
+                  label={
+                    <span>
+                      <b>Ghi chú:</b>
+                    </span>
+                  }
+                >
+                  <TextArea rows={4} />
                 </Form.Item>
               </Col>
             </Row>
