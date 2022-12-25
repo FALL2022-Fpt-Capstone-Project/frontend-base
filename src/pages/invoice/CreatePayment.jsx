@@ -83,7 +83,6 @@ const CreatePayment = ({ visible, close, setFlag }) => {
         setTimeout(() => {
           setFlag(false);
         }, "500");
-        console.log(res);
       })
       .catch((e) => {
         notification.error({
@@ -94,7 +93,6 @@ const CreatePayment = ({ visible, close, setFlag }) => {
         });
       });
     setFlag(false);
-    console.log(invoice);
   };
   const options = [];
 

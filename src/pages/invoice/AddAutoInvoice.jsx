@@ -148,7 +148,6 @@ const AddAutoInvoice = () => {
         })
         .then((res) => {
           setDataSource(res.data.data);
-          console.log(res.data.data);
         })
         .catch((error) => {
           console.log(error);
