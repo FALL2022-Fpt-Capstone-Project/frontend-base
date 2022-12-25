@@ -7,7 +7,7 @@ const ADD_EMPLOYEE_URL = "manager/staff/add";
 const CreateStaff = ({ visible, close }) => {
   let cookie = localStorage.getItem("Cookie");
   const [gender, setGender] = useState("");
-  const [permission, setPermission] = useState([1, 2, 3, 4, 5, 6, 7]);
+  const [permission, setPermission] = useState([8]);
   const staffOptions = [
     {
       label: "Quản lý phòng",
