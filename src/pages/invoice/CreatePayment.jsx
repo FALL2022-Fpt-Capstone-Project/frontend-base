@@ -1,15 +1,19 @@
-import { Form, Card, notification, Button, Modal, DatePicker, Col, Row, InputNumber, Input } from "antd";
+import { Form, Card, notification, Button, Modal, DatePicker, Col, Row, InputNumber, Input, Select } from "antd";
 import "./invoice.scss";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
 const ADD_INVOICE_URL = "manager/bill/money-source/out/add";
+const LIST_BUILDING_FILTER = "manager/group/all";
 const { TextArea } = Input;
-const CreatePayment = ({ visible, close, groupName, setFlag, groupId }) => {
+const CreatePayment = ({ visible, close, setFlag }) => {
   const [dateCreate, setDateCreate] = useState();
   const [groupMoney, setGroupMoney] = useState(0);
   const [serviceMoney, setServiceMoney] = useState(0);
   const [otherMoney, setOtherMoney] = useState(0);
+  const [buildingFilter, setBuildingFilter] = useState("");
+  const [building, setBuilding] = useState("");
+  const [groupName, setGroupName] = useState();
   const [form] = Form.useForm();
   let cookie = localStorage.getItem("Cookie");
 
@@ -28,10 +32,31 @@ const CreatePayment = ({ visible, close, groupName, setFlag, groupId }) => {
   const dateCreateChange = (date, dateString) => {
     setDateCreate(dateString);
   };
+  useEffect(() => {
+    const getBuildingFilter = async () => {
+      const response = await axios
+        .get(LIST_BUILDING_FILTER, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cookie}`,
+          },
+        })
+        .then((res) => {
+          setBuildingFilter(res.data.data.list_group_contracted);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+    getBuildingFilter();
+  }, [cookie]);
 
   const handleCreateInvoice = async (value) => {
+    if (typeof value.note === "undefined") {
+      value.note = "";
+    }
     const invoice = {
-      group_id: groupId,
+      group_id: building,
       time: dateCreate,
       room_group_money: groupMoney,
       service_money: serviceMoney,
@@ -58,7 +83,6 @@ const CreatePayment = ({ visible, close, groupName, setFlag, groupId }) => {
         setTimeout(() => {
           setFlag(false);
         }, "500");
-        console.log(res);
       })
       .catch((e) => {
         notification.error({
@@ -69,7 +93,18 @@ const CreatePayment = ({ visible, close, groupName, setFlag, groupId }) => {
         });
       });
     setFlag(false);
-    console.log(invoice);
+  };
+  const options = [];
+
+  for (let i = 0; i < buildingFilter.length; i++) {
+    options.push({
+      label: buildingFilter[i].group_name,
+      value: buildingFilter[i].group_id,
+    });
+  }
+  const buildingChange = (value, option) => {
+    setBuilding(value);
+    setGroupName(option.label);
   };
   const groupMoneyChange = (value) => {
     setGroupMoney(value);
@@ -83,7 +118,7 @@ const CreatePayment = ({ visible, close, groupName, setFlag, groupId }) => {
   return (
     <>
       <Modal
-        title={<h2>Tạo hoá đơn chi cho {groupName}</h2>}
+        title={<h2>Tạo hoá đơn chi {groupName}</h2>}
         open={visible}
         destroyOnClose={true}
         afterClose={() => form.resetFields()}
@@ -131,6 +166,36 @@ const CreatePayment = ({ visible, close, groupName, setFlag, groupId }) => {
           <Card className="card">
             <Row>
               <Col span={12}>
+                <Form.Item
+                  className="form-item"
+                  name="groupId"
+                  labelCol={{ span: 24 }}
+                  label={
+                    <span>
+                      <b>Chọn chung cư:</b>
+                    </span>
+                  }
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng chọn chung cư để tạo hoá đơn!",
+                    },
+                  ]}
+                >
+                  <Select
+                    placeholder="Chọn chung cư"
+                    showSearch
+                    filterOption={(input, option) =>
+                      (option?.label ?? "").toLowerCase().includes(input.trim().toLowerCase())
+                    }
+                    style={{ width: "100%", marginBottom: "5%" }}
+                    onChange={buildingChange}
+                    className="add-auto-filter"
+                    options={options}
+                  ></Select>
+                </Form.Item>
+              </Col>
+              <Col span={11} offset={1}>
                 <Form.Item
                   className="form-item"
                   name="date_create_invoice"

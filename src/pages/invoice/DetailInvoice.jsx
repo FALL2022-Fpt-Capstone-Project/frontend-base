@@ -137,7 +137,7 @@ const DetailInvoice = () => {
               </p>
             </Row>
           </div>
-          <div className="note">
+          {/* <div className="note">
             <Row>
               <Col span={6} offset={6}>
                 <b>Người đại diện thu</b>
@@ -148,13 +148,13 @@ const DetailInvoice = () => {
             </Row>
             <Row>
               <Col span={6} offset={6}>
-                <p>{name}</p>
+                <p>{data.room_bill.created_name}</p>
               </Col>
               <Col span={6} offset={5}>
                 <p>{data.renter.renter_full_name}</p>
               </Col>
             </Row>
-          </div>
+          </div> */}
         </div>
       )}
     </div>

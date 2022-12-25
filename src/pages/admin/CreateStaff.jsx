@@ -39,7 +39,7 @@ const CreateStaff = ({ visible, close }) => {
       phone_number: value.phone_number.trim(),
       gender: value.gender,
       roles: "staff",
-      address_more_detail: value.address_more_detail.trim(),
+      address_more_detail: value.address_more_detail,
       permission: permission,
     };
     const response = await axios
@@ -70,7 +70,6 @@ const CreateStaff = ({ visible, close }) => {
         console.log(e);
       });
 
-    // console.log(JSON.stringify(response?.data));
     console.log(employee);
   };
   const genderChange = (e) => {

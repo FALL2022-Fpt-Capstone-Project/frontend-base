@@ -1,4 +1,4 @@
-import { Col, Input, Row, Table, Tooltip, Select, Tag, ConfigProvider, Button } from "antd";
+import { Col, Input, Row, Table, Tooltip, Select, Tag, ConfigProvider, Button, notification } from "antd";
 import React, { useEffect, useState } from "react";
 import { InboxOutlined, AccountBookOutlined, ProfileOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import "./listInvoice.scss";
@@ -30,7 +30,7 @@ const ListInvoice = () => {
   const [buildingFilter, setBuildingFilter] = useState("");
   const [dataSource, setDataSource] = useState([]);
   const [flag, setFlag] = useState(false);
-  const [paymentCycle, setPaymentCycle] = useState();
+  const [paymentCycle, setPaymentCycle] = useState(new Date().getDate() < 16 ? 15 : 30);
   const getListInvoice = async () => {
     setLoading(true);
     const response = await axios
@@ -49,6 +49,11 @@ const ListInvoice = () => {
       })
       .catch((error) => {
         console.log(error);
+        notification.error({
+          message: "Đã có lỗi xảy ra, vui lòng thử lại sau",
+          duration: 3,
+          placement: "top",
+        });
       });
     setLoading(false);
   };
@@ -56,16 +61,6 @@ const ListInvoice = () => {
     console.log(building, paymentCycle);
     getListInvoice();
   }, [building, paymentCycle]);
-  let day = moment().date();
-  let payment15 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
-  let payment30 = [16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
-  useEffect(() => {
-    if (payment15.includes(day)) {
-      setPaymentCycle(15);
-    } else if (payment30.includes(day)) {
-      setPaymentCycle(30);
-    }
-  }, []);
   useEffect(() => {
     if (flag) {
       getListInvoice();
@@ -131,14 +126,28 @@ const ListInvoice = () => {
             </Row>
             <Row>
               <Select
-                options={options}
+                defaultValue={""}
                 placeholder="Chọn chung cư"
+                showSearch
+                filterOption={(input, option) =>
+                  (option?.label ?? "").toLowerCase().includes(input.trim().toLowerCase())
+                }
+                style={{ width: "100%", marginBottom: "5%" }}
                 onChange={buildingChange}
                 className="add-auto-filter"
-              ></Select>
+              >
+                <Select.Option value="">Tất cả chung cư</Select.Option>
+                {options?.map((obj, index) => {
+                  return (
+                    <>
+                      <Select.Option value={obj.value}>{obj.label}</Select.Option>
+                    </>
+                  );
+                })}
+              </Select>
             </Row>
           </Col>
-          <Col xs={24} lg={5}>
+          <Col xs={24} lg={5} offset={1}>
             <Row>
               <h4>Lựa chọn kỳ thanh toán</h4>
             </Row>
@@ -152,7 +161,7 @@ const ListInvoice = () => {
               ></Select>
             </Row>
           </Col>
-          <Col xs={24} lg={5}>
+          <Col xs={24} lg={5} offset={1}>
             <Row>
               <h4>Tìm kiếm theo tên phòng</h4>
             </Row>
@@ -169,7 +178,7 @@ const ListInvoice = () => {
               />
             </Row>
           </Col>
-          <Col xs={24} lg={4} offset={5} style={{ marginTop: "15px" }}>
+          <Col xs={24} lg={4} offset={3} style={{ marginTop: "15px" }}>
             <Link to="/invoice/create-invoice-auto">
               <Button type="primary" icon={<PlusCircleOutlined />} size="middle" className="button-add">
                 Tạo mới nhanh hoá đơn thu
@@ -189,14 +198,16 @@ const ListInvoice = () => {
             {
               title: "Tên chung cư",
               dataIndex: "group_name",
+              key: "Tên chung cư",
             },
             {
               title: "Tên phòng",
               dataIndex: "room_name",
               filteredValue: [textSearch],
               onFilter: (value, record) => {
-                return String(record.room_name).toLowerCase()?.includes(value.toLowerCase());
+                return String(record.room_name).toLowerCase()?.includes(value.toLowerCase().trim());
               },
+              key: "Tên phòng",
             },
             // {
             //   title: "Người đại diện",
@@ -209,15 +220,18 @@ const ListInvoice = () => {
             {
               title: "Chu kỳ thanh toán",
               dataIndex: "payment_circle",
+              key: "Chu kỳ thanh toán",
             },
             {
               title: "Số điện",
               dataIndex: "current_electric_index",
+              key: "Số điện",
             },
 
             {
               title: "Số nước",
               dataIndex: "current_water_index",
+              key: "Số nước",
             },
 
             {
@@ -226,10 +240,13 @@ const ListInvoice = () => {
               render: (value) => {
                 return value.toLocaleString("vn") + " đ";
               },
+              key: "Tiền phòng",
             },
             {
               title: "Trạng thái hoá đơn",
               dataIndex: "is_all_paid",
+              key: "Trạng thái hoá đơn",
+
               render: (_, record) => {
                 let status;
                 if (record.is_all_paid === false) {
@@ -251,6 +268,8 @@ const ListInvoice = () => {
             {
               title: "Thao tác",
               dataIndex: "action",
+              key: "Thao tác",
+
               render: (_, record) => {
                 return (
                   <>
