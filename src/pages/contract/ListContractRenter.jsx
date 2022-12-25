@@ -500,7 +500,6 @@ const ListContractRenter = () => {
                       className="icon"
                       onClick={() => {
                         navigate("/contract-renter/edit", { state: record });
-                        // navigate(`/contract-renter/edit/${record.contract_id}/group/${record.group_id}`);
                       }}
                     />
                   </Tooltip>

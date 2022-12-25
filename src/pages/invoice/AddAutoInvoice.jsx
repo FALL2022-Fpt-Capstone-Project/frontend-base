@@ -148,7 +148,6 @@ const AddAutoInvoice = () => {
         })
         .then((res) => {
           setDataSource(res.data.data);
-          console.log(res.data.data);
         })
         .catch((error) => {
           console.log(error);
@@ -834,7 +833,6 @@ const AddAutoInvoice = () => {
         <Form
           form={form}
           onFinish={handlerPreview}
-          // onFinishFailed={onFinishFail}
           layout="horizontal"
           size={"default"}
           id="previewInvoice"
@@ -929,7 +927,6 @@ const AddAutoInvoice = () => {
                         <ConfigProvider renderEmpty={customizeRenderEmpty}>
                           <Table
                             bordered
-                            // dataSource={dataSource}
                             dataSource={dataSourceNotBilled}
                             scroll={{
                               x: 700,
@@ -978,7 +975,6 @@ const AddAutoInvoice = () => {
                         scroll={{
                           x: 700,
                         }}
-                        // dataSource={dataSource}
                         dataSource={dataSourceBilled}
                         columns={defaultColumnsBilled}
                         pagination={{ pageSize: 5 }}

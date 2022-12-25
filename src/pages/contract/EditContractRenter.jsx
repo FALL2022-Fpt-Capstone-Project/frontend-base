@@ -158,7 +158,6 @@ const EditContractRenter = () => {
         },
       })
       .then((res) => {
-
         const listRoom = res.data.data?.list_room?.filter(
           (data) => data.room_floor === res.data.data?.room.room_floor && data.contract_id === null
         );
@@ -886,12 +885,7 @@ const EditContractRenter = () => {
     <Spin size="large" spinning={loading}>
       <MainLayout title="Cập nhật hợp đồng cho thuê">
         <div style={{ overflow: "auto" }}>
-          <Button
-            href="/contract-renter"
-            type="primary"
-            // icon={<ArrowLeftOutlined />}
-            style={{ marginRight: 5, float: "right" }}
-          >
+          <Button href="/contract-renter" type="primary" style={{ marginRight: 5, float: "right" }}>
             Quay lại danh sách hợp đồng
           </Button>
         </div>
@@ -956,7 +950,6 @@ const EditContractRenter = () => {
                           </span>
                         }
                       >
-                        {/* <span><b>Tên khách thuê: </b></span> */}
                         <Input placeholder="Họ và tên khách thuê"></Input>
                       </Form.Item>
                       <Form.Item
@@ -1523,12 +1516,12 @@ const EditContractRenter = () => {
                                 String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())
                                   ? "Nhập chỉ số"
                                   : "Số " +
-                                  obj.service_type_name +
-                                  " / " +
-                                  obj.service_price.toLocaleString("vn-VN", {
-                                    style: "currency",
-                                    currency: "VND",
-                                  })
+                                    obj.service_type_name +
+                                    " / " +
+                                    obj.service_price.toLocaleString("vn-VN", {
+                                      style: "currency",
+                                      currency: "VND",
+                                    })
                               }
                               addonAfter={
                                 String(obj.service_type_name).toLowerCase()?.includes("Đồng hồ".toLowerCase())

@@ -273,7 +273,7 @@ const CreateContractRenter = () => {
       })
       .catch((error) => {});
   };
- 
+
   const filterRenter = async (groupId) => {
     setLoading(true);
     await axios
@@ -487,7 +487,6 @@ const CreateContractRenter = () => {
     } else if (form.getFieldsValue().renter_identity_card === e.identity_card.toLowerCase().trim()) {
       message.error("Số CMND đã trùng với người đại diện");
     } else {
-      console.log("out");
       if (dataMember.length < roomSelect?.room_limit_people - 1) {
         if (dataMember.find((mem) => mem.phone_number.toLowerCase().trim() === e.phone_number.toLowerCase().trim())) {
           if (
@@ -845,12 +844,7 @@ const CreateContractRenter = () => {
   return (
     <MainLayout title="Tạo mới hợp đồng cho thuê">
       <div style={{ overflow: "auto" }}>
-        <Button
-          href="/contract-renter"
-          type="primary"
-          // icon={<ArrowLeftOutlined />}
-          style={{ marginRight: 5, float: "right" }}
-        >
+        <Button href="/contract-renter" type="primary" style={{ marginRight: 5, float: "right" }}>
           Quay lại danh sách hợp đồng
         </Button>
       </div>
@@ -1228,12 +1222,6 @@ const CreateContractRenter = () => {
                           <b>Thời hạn hợp đồng (ít nhất 1 tháng): </b>
                         </span>
                       }
-                      // rules={[
-                      //   {
-                      //     required: true,
-                      //     message: "Vui lòng chọn thời hạn hợp đồng",
-                      //   },
-                      // ]}
                     >
                       <Select
                         placeholder="Thời hạn hợp đồng"

@@ -118,7 +118,6 @@ const ListStaff = () => {
         console.log(error);
       });
     setLoading(false);
-    console.log(data);
   };
   const deactiveChange = (value) => {
     setDeactive(value);

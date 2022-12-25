@@ -173,9 +173,7 @@ const CreateContractBuilding = () => {
           })
         );
       })
-      .catch((error) => {
-        // console.log(error);
-      });
+      .catch((error) => {});
     setLoading(false);
   };
 
@@ -194,9 +192,7 @@ const CreateContractBuilding = () => {
         const filterGroupId = mergeGroup?.filter((obj, index) => mapped.indexOf(obj.group_id) === index);
         setDataApartmentGroup(filterGroupId);
       })
-      .catch((error) => {
-        // console.log(error);
-      });
+      .catch((error) => {});
     setLoading(false);
   };
 
@@ -288,7 +284,6 @@ const CreateContractBuilding = () => {
     try {
       if (changeTab === "1") {
         await form.validateFields([
-          // "contract_name",
           "contract_payment_cycle",
           "owner_name",
           "owner_gender",

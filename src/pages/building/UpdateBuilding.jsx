@@ -86,7 +86,6 @@ const UpdateBuilding = ({ visible, close, id }) => {
           placement: "top",
         })
       );
-    console.log(data);
   }
   useEffect(() => {
     const getCity = async () => {
@@ -176,7 +175,6 @@ const UpdateBuilding = ({ visible, close, id }) => {
         afterClose={() => form.resetFields()}
         onOk={() => {
           close(false);
-          // reload();
         }}
         onCancel={() => {
           close(false);
@@ -195,15 +193,7 @@ const UpdateBuilding = ({ visible, close, id }) => {
           </Button>,
         ]}
       >
-        <Form
-          form={form}
-          onFinish={Update}
-          // onFinishFailed={onFinishFail}
-          layout="horizontal"
-          size={"default"}
-          id="updateBuilding"
-          autoComplete="off"
-        >
+        <Form form={form} onFinish={Update} layout="horizontal" size={"default"} id="updateBuilding" autoComplete="off">
           <Row gutter={24}>
             <Col span={24}>
               <Card className="card">
@@ -277,7 +267,6 @@ const UpdateBuilding = ({ visible, close, id }) => {
                     }}
                     disabled={disabledDistrict}
                     onChange={districtChange}
-                    // options={optionsDistrict}
                     showSearch
                     filterOption={(input, option) =>
                       (option?.label?.toLowerCase().trim() ?? "").includes(input?.toLowerCase().trim())
@@ -295,16 +284,7 @@ const UpdateBuilding = ({ visible, close, id }) => {
                             },
                           ]
                     }
-                  >
-                    {/* <Select.Option value="">Chọn Quận/Huyện</Select.Option>
-                    {building_address_district?.map((obj, index) => {
-                      return (
-                        <>
-                          <Select.Option value={obj.code}>{obj.name}</Select.Option>
-                        </>
-                      );
-                    })} */}
-                  </Select>
+                  ></Select>
                 </Form.Item>
                 <Form.Item
                   name="ward"
@@ -345,16 +325,7 @@ const UpdateBuilding = ({ visible, close, id }) => {
                             },
                           ]
                     }
-                  >
-                    {/* <Select.Option value="">Chọn Phường/Xã</Select.Option>
-                    {building_address_wards?.map((obj, index) => {
-                      return (
-                        <>
-                          <Select.Option value={obj.code}>{obj.name}</Select.Option>
-                        </>
-                      );
-                    })} */}
-                  </Select>
+                  ></Select>
                 </Form.Item>
 
                 <Form.Item

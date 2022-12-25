@@ -1,7 +1,7 @@
 import "./room.scss";
 import { Form, Input, Select, Button, Row, Col, Table, Modal, Checkbox, notification, InputNumber, Card } from "antd";
 import React, { useEffect, useState } from "react";
-import { PlusCircleOutlined, EditTwoTone, DeleteOutlined, FilterOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { PlusCircleOutlined, EditTwoTone, DeleteOutlined, FilterOutlined } from "@ant-design/icons";
 import axios from "../../api/axios";
 import { useLocation } from "react-router-dom";
 import AddMultiEquipment from "./AddMultiEquipment";
@@ -20,7 +20,6 @@ const DELETE_ASSET = "manager/asset/room/delete";
 
 function RoomEquipment(data) {
   const { state } = useLocation();
-  // console.log(state[0]);
   const dataFilter = {
     id: [],
     asset_type: [],
@@ -58,13 +57,10 @@ function RoomEquipment(data) {
       .get(LIST_ASSET_TYPE, {
         headers: {
           "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
           Authorization: `Bearer ${cookie}`,
         },
-        // withCredentials: true,
       })
       .then((res) => {
-        // console.log(res.data.data);
         setListAssetType(res.data.data);
         createAssetForm.setFieldsValue({
           asset_type_show_name: res.data.data?.find(
@@ -84,13 +80,10 @@ function RoomEquipment(data) {
       .get(ASSET_ROOM + state[0].room_id, {
         headers: {
           "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
           Authorization: `Bearer ${cookie}`,
         },
-        // withCredentials: true,
       })
       .then((res) => {
-        // console.log(res.data.data);
         setAssetRoom(res.data.data);
       })
       .catch((error) => {
@@ -130,11 +123,6 @@ function RoomEquipment(data) {
       filteredValue: filterAssetType.asset_type_show_name || null,
       onFilter: (value, record) => record.asset_type_show_name.indexOf(value) === 0,
     },
-    // {
-    //     title: "Ngày bàn giao",
-    //     dataIndex: "hand_over_date_delivery",
-    //     key: "asset_id",
-    // },
     {
       title: "Thao tác",
       key: "asset_id",
@@ -177,8 +165,6 @@ function RoomEquipment(data) {
   };
 
   const onDeleteAssetAPI = async (asset_id, asset_name) => {
-    // console.log(asset_id);
-    // let cookie = localStorage.getItem("Cookie");
     await axios
       .delete(DELETE_ASSET + "?roomAssetId=" + [asset_id], {
         headers: {
@@ -204,7 +190,6 @@ function RoomEquipment(data) {
   };
 
   const onDeleteListAssetAPI = async () => {
-    // console.log(listAssetId);
     let cookie = localStorage.getItem("Cookie");
     await axios
       .delete(DELETE_ASSET + "?roomAssetId=" + listAssetId, {
@@ -238,9 +223,7 @@ function RoomEquipment(data) {
       asset_type_id: dataAsset.asset_type_show_name,
       asset_quantity: dataAsset.hand_over_asset_quantity,
       room_id: state[0].room_id,
-      // hand_over_date_delivery: dataAsset?.hand_over_date_delivery?.format("DD-MM-YYYY"),
     };
-    // console.log(JSON.stringify([data]));
     await axios
       .post(ADD_ASSET, [data], {
         headers: {
@@ -249,7 +232,6 @@ function RoomEquipment(data) {
         },
       })
       .then((res) => {
-        // console.log(res.data.data);
         notification.success({
           message: "Thêm mới tài sản thành công",
           placement: "top",
@@ -263,7 +245,6 @@ function RoomEquipment(data) {
         });
       })
       .catch((error) => {
-        // console.log(error);
         notification.error({
           message: "Thêm mới tài sản thất bại",
           placement: "top",
@@ -277,7 +258,6 @@ function RoomEquipment(data) {
   };
 
   const editAssetFinish = async (dataAsset) => {
-    // console.log(dataAsset);
     const data = {
       room_asset_id: dataAsset.asset_id,
       asset_name: dataAsset.asset_name,
@@ -285,7 +265,6 @@ function RoomEquipment(data) {
       asset_quantity: dataAsset.hand_over_asset_quantity,
       room_id: state[0].room_id,
     };
-    // console.log(JSON.stringify([data]));
     await axios
       .put(UPDATE_ASSET, [data], {
         headers: {
@@ -322,7 +301,6 @@ function RoomEquipment(data) {
   };
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
-      // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
       setListAssetId(selectedRows.map((asset) => asset.asset_id));
     },
   };
@@ -340,7 +318,6 @@ function RoomEquipment(data) {
             type="primary"
             size="default"
             style={{ marginBottom: "1%", marginLeft: "1%", float: "right" }}
-          // icon={<ArrowLeftOutlined style={textSize} />}
           >
             Quay lại quản lý phòng
           </Button>
@@ -380,7 +357,6 @@ function RoomEquipment(data) {
                     return obj.asset_type_show_name;
                   })}
                   onChange={(checkedValues) => {
-                    // console.log(dataFilter.asset_type_show_name);
                     dataFilter.asset_type_show_name = checkedValues;
                     setFilterAssetType(dataFilter);
                   }}
@@ -473,8 +449,6 @@ function RoomEquipment(data) {
           <Button
             key="back"
             onClick={() => {
-              // setFormAddAsset(createAssetForm.getFieldsValue());
-              // setAddAssetInRoom(false)
               setAddAssetInRoom(false);
             }}
           >
@@ -676,7 +650,6 @@ function RoomEquipment(data) {
         roomId={state[0].room_id}
       />
     </MainLayout>
-    // </Spin>
   );
 }
 

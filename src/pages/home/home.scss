@@ -1,9 +1,8 @@
 .revenue-statistic {
   font-size: 18px;
   font-weight: bold;
-  // color: #868d96;
 }
-.statistic-detail{
+.statistic-detail {
   font-size: 16px;
   font-weight: 600;
   color: #3f4254;
@@ -66,24 +65,24 @@
 .tab-title {
   font-size: 18px;
 }
-.pie-chart{
+.pie-chart {
   height: auto;
   width: 100%;
 }
-.bar-chart{
+.bar-chart {
   height: auto;
   width: 100%;
 }
-.text-Center{
+.text-Center {
   align-items: center;
   display: flex;
 }
-.statistic-style{
-    background: #fff;
-    padding: 3%;
-    border: 1px solid #c0c0c0;
-    border-radius: 10px;
-    height: 100%;
+.statistic-style {
+  background: #fff;
+  padding: 3%;
+  border: 1px solid #c0c0c0;
+  border-radius: 10px;
+  height: 100%;
 }
 .chart-container {
   position: relative;
@@ -91,25 +90,25 @@
   height: 80vh;
   width: 80vw;
 }
-.margin-bottom{
+.margin-bottom {
   margin-bottom: 0.5%;
   margin-top: 0.5%;
 }
-.margin-bottom-statistic{
+.margin-bottom-statistic {
   margin-top: 1%;
-    margin-top: 1%;
+  margin-top: 1%;
 }
-.title-bottom{
+.title-bottom {
   margin-bottom: 3%;
 }
 .title-margin-right {
   font-size: 18px;
   margin-right: 3%;
 }
-.revenue-current-month{
-    padding-top: 3%;
-    font-size: 18px;
+.revenue-current-month {
+  padding-top: 3%;
+  font-size: 18px;
 }
-.title-bottom-contract{
+.title-bottom-contract {
   margin-bottom: 1.5%;
 }

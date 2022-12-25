@@ -69,8 +69,6 @@ const CreateStaff = ({ visible, close }) => {
         });
         console.log(e);
       });
-
-    console.log(employee);
   };
   const genderChange = (e) => {
     setGender(e.target.value);
@@ -106,14 +104,7 @@ const CreateStaff = ({ visible, close }) => {
           </Button>,
         ]}
       >
-        <Form
-          form={form}
-          onFinish={handleCreateEmployee}
-          // onFinishFailed={onFinishFail}
-          layout="horizontal"
-          size={"default"}
-          id="createStaff"
-        >
+        <Form form={form} onFinish={handleCreateEmployee} layout="horizontal" size={"default"} id="createStaff">
           <Card className="card">
             <Form.Item
               className="form-item"

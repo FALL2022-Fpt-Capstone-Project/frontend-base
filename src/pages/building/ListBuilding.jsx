@@ -50,7 +50,6 @@ const ListBuilding = () => {
           console.log(error);
           notification.error({
             message: "Đã có lỗi xảy ra, vui lòng thử lại sau",
-            // description: "Vui lòng kiểm tra lại thông tin và thử lại.",
             duration: 3,
             placement: "top",
           });
@@ -149,7 +148,6 @@ const ListBuilding = () => {
                 padding: "10px 0",
               }}
               onChange={cityChange}
-              // options={optionsCity}
             >
               <Select.Option value="">Tất cả thành phố</Select.Option>
               {optionsCity?.map((obj, index) => {

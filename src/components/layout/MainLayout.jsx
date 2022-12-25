@@ -72,15 +72,6 @@ const MainLayout = ({ children, button, title }) => {
                     </span>
                   </Space>
                 </Dropdown>{" "}
-                {/* <Avatar
-                  size={{
-                    xs: 24,
-                    sm: 32,
-                    md: 40,
-                    lg: 40,
-                  }}
-                  icon={<UserOutlined />}
-                /> */}
               </Col>
             </Row>
           </div>

@@ -89,13 +89,11 @@ function ListRoom(props) {
   const [listRoomId, setListRoomId] = useState([]);
   const [groupIdSelect, setGroupIdSelect] = useState("");
   const [increaseRoomPrice, setIncreaseRoomPrice] = useState(false);
-  // const [textCardGroup, setTextCardGroup] = useState("Danh sách phòng");
   const [room_status, setRoomStatus] = useState([]);
   const [dataRoomUpdate, setDataRoomUpdate] = useState();
   const [assetRoom, setAssetRoom] = useState([]);
   const [filterSave, setFilterSave] = useState();
   const [listAssetType, setListAssetType] = useState([]);
-
 
   let cookie = localStorage.getItem("Cookie");
   const navigate = useNavigate();
@@ -375,14 +373,15 @@ function ListRoom(props) {
       .then((res) => {
         let room_data = [];
         if (room_id !== "") {
-          room_data = room_id === undefined || room_id === ""
-            ? res.data.data
-            : res.data.data?.filter((room, index) => room.room_id === room_id);
-
+          room_data =
+            room_id === undefined || room_id === ""
+              ? res.data.data
+              : res.data.data?.filter((room, index) => room.room_id === room_id);
         } else {
-          room_data = group_id === undefined || group_id === ""
-            ? res.data.data
-            : res.data.data?.filter((room, index) => room.group_id === group_id);
+          room_data =
+            group_id === undefined || group_id === ""
+              ? res.data.data
+              : res.data.data?.filter((room, index) => room.group_id === group_id);
 
           room_data =
             typeof sortRoom == "boolean"
@@ -392,8 +391,8 @@ function ListRoom(props) {
           room_data =
             roomStatus.length === 1
               ? room_data.filter((room) =>
-                roomStatus[0] ? Number.isInteger(room.contract_id) : room.contract_id === null
-              )
+                  roomStatus[0] ? Number.isInteger(room.contract_id) : room.contract_id === null
+                )
               : room_data;
 
           room_data = Number.isInteger(roomFloor)
@@ -499,11 +498,6 @@ function ListRoom(props) {
     setFilterSave(e);
     setRoomStatus({ ...room_status, roomStatus: e.roomStatus });
     getRoomInfor(e.roomGroup, e.roomPrice, e.roomFloor, e.roomStatus);
-    // setTextCardGroup(
-    //   e.roomGroup === ""
-    //     ? "Danh sách phòng"
-    //     : "Danh sách phòng ( " + dataApartmentGroup?.find((group) => group.group_id === e.roomGroup).group_name + " )"
-    // );
   };
   const onFinishFailFilter = (e) => {
     console.log(e);
@@ -531,10 +525,8 @@ function ListRoom(props) {
       .get(ASSET_TYPE, {
         headers: {
           "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
           Authorization: `Bearer ${cookie}`,
         },
-        // withCredentials: true,
       })
       .then((res) => {
         setListAssetType(res.data.data);
@@ -555,7 +547,6 @@ function ListRoom(props) {
   };
 
   return (
-    // <Spin spinning={loading} size="large">
     <div
       className="site-layout-background"
       style={{
@@ -587,11 +578,7 @@ function ListRoom(props) {
       </Row>
       <Row gutter={[16]}>
         <Col xs={24} lg={24} xl={8} span={8}>
-          <Card
-            className="card-w100-h100"
-            title={<p className="text-card">Danh sách các chung cư</p>}
-            bordered={false}
-          >
+          <Card className="card-w100-h100" title={<p className="text-card">Danh sách các chung cư</p>} bordered={false}>
             <Row>
               <Tag color="success">Đã cho thuê hết</Tag>
               <Tag color="error">Đang trống</Tag>
@@ -610,14 +597,14 @@ function ListRoom(props) {
                   getRoomInfor();
                   formFilter.setFieldsValue({
                     roomGroup: "",
-                    roomFloor: ""
+                    roomFloor: "",
                   });
                 } else {
-                  const group_id = Number.parseInt(e[0].split('-')[0]);
-                  const room_floor = e[0].split('-')[1] === undefined ? "" : Number.parseInt(e[0].split('-')[1]);
+                  const group_id = Number.parseInt(e[0].split("-")[0]);
+                  const room_floor = e[0].split("-")[1] === undefined ? "" : Number.parseInt(e[0].split("-")[1]);
 
-                  if (e[0].split('-')[2] !== undefined) {
-                    const room = roomInfor.filter(obj => obj.room_id === Number.parseInt(e[0].split('-')[2]))[0];
+                  if (e[0].split("-")[2] !== undefined) {
+                    const room = roomInfor.filter((obj) => obj.room_id === Number.parseInt(e[0].split("-")[2]))[0];
                     setSearchRoom(room.room_name);
                     getRoomInfor(group_id, "", room_floor, [], room.room_id);
                   } else {
@@ -666,9 +653,7 @@ function ListRoom(props) {
                       <span style={textSize}>Tổng số tiền phòng (VND) </span>
                     </>
                   }
-                  value={new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
-                    totalRoomPrice
-                  )}
+                  value={new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(totalRoomPrice)}
                 />
               </Col>
             </Row>
@@ -817,7 +802,6 @@ function ListRoom(props) {
                               roomPrice: "",
                               roomStatus: [true, false],
                             });
-                            // setTextCardGroup("Danh sách phòng");
                           }}
                           icon={<UndoOutlined />}
                         >
@@ -858,8 +842,7 @@ function ListRoom(props) {
                   roomSquare: obj.room_area,
                   room_assets_list: obj.room_assets_list,
                   billCycle: groupRoom?.contracts?.find((o, i) => o.room_id === obj.room_id)?.contract_bill_cycle,
-                  paymentCycle: groupRoom?.contracts?.find((o, i) => o.room_id === obj.room_id)
-                    ?.contract_payment_cycle,
+                  paymentCycle: groupRoom?.contracts?.find((o, i) => o.room_id === obj.room_id)?.contract_payment_cycle,
                   durationContract: groupRoom?.contracts?.find((o, i) => o.room_id === obj.room_id)?.contract_term,
                   roomStatus: obj.contract_id !== null ? true : false,
                   room_limit_people: obj.room_limit_people,
@@ -939,7 +922,6 @@ function ListRoom(props) {
         data={dataApartmentGroup}
       />
     </div>
-    // </Spin>
   );
 }
 

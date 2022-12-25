@@ -75,12 +75,7 @@ const Sidebar = () => {
   return (
     <div>
       {role === "ROLE_ADMIN" ? (
-        <Menu
-          theme="dark"
-          defaultSelectedKeys={[window.location.pathname]}
-          // selectedKeys={[window.location.pathname]}
-          mode="inline"
-        >
+        <Menu theme="dark" defaultSelectedKeys={[window.location.pathname]} mode="inline">
           <Menu.Item key="/home">
             <DashboardOutlined />
             <span>Trang chủ</span>
@@ -129,12 +124,7 @@ const Sidebar = () => {
           </Menu.Item>
         </Menu>
       ) : (
-        <Menu
-          theme="dark"
-          defaultSelectedKeys={[window.location.pathname]}
-          // selectedKeys={[window.location.pathname]}
-          mode="inline"
-        >
+        <Menu theme="dark" defaultSelectedKeys={[window.location.pathname]} mode="inline">
           <Menu.Item key="/home">
             <DashboardOutlined />
             <span>Trang chủ</span>

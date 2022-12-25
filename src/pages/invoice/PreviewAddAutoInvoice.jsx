@@ -356,7 +356,6 @@ const PreviewAddAutoInvoice = ({ visible, close, state }) => {
         <Form
           form={form}
           onFinish={handleCreateInvoice}
-          // onFinishFailed={onFinishFail}
           layout="horizontal"
           size={"default"}
           id="createInvoice"
@@ -424,7 +423,6 @@ const PreviewAddAutoInvoice = ({ visible, close, state }) => {
                     }}
                     columns={columnsNotBilled}
                     pagination={{ pageSize: 5 }}
-                    // loading={loading}
                   />
                   <Row justify="start" style={{ fontSize: "18px" }}>
                     <b>Tổng tiền tất cả hóa đơn:</b>

@@ -33,7 +33,6 @@ const textSize = {
 };
 let optionFloor = [];
 function ViewContractBuilding({ openView, closeView, dataContract, dataAsset, loading }) {
-  // console.log(dataContract);
   const navigate = useNavigate();
   const [roomFloor, setRoomFloor] = useState("");
   const handleOk = () => {
@@ -75,8 +74,6 @@ function ViewContractBuilding({ openView, closeView, dataContract, dataAsset, lo
       render: (roomPrice) => {
         return <span>{new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(roomPrice)}</span>;
       },
-      // defaultSortOrder: 'ascend',
-      // sorter: (a, b) => a.roomPrice - b.roomPrice
     },
     {
       title: "Diện tích",

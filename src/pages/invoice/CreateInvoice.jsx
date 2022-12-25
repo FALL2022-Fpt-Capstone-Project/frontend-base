@@ -68,7 +68,6 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
           },
         })
         .then((res) => {
-          console.log(res);
           form.setFieldsValue({
             old_elec:
               res.data.data?.list_general_service?.filter((electric) => electric.service_name === "electric").length > 0
@@ -192,7 +191,6 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
         setTimeout(() => {
           setFlag(false);
         }, "500");
-        console.log(res);
       })
       .catch((e) => {
         notification.error({
@@ -204,7 +202,6 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
         console.log(e);
       });
     setFlag(false);
-    console.log(invoice);
   };
 
   const newWaterChange = (value) => {
@@ -637,7 +634,6 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
         <Form
           form={form}
           onFinish={handleCreateInvoice}
-          // onFinishFailed={onFinishFail}
           layout="horizontal"
           size={"default"}
           id="createInvoice"
