@@ -31,12 +31,10 @@ const memeber = {
 };
 
 function ViewContractRenter({ openView, closeView, dataContract, dataAsset, dataService, assetType }) {
-  // console.log(dataContract);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState("");
   const [filterAssetType, setFilterAssetType] = useState([]);
   const [assetStatus, setAssetStatus] = useState([]);
-  // const [dataApartmentGroup, setDataApartmentGroup] = useState([]);
 
   const navigate = useNavigate();
 
@@ -81,7 +79,7 @@ function ViewContractRenter({ openView, closeView, dataContract, dataAsset, data
       onFilter: (value, record) => record.asset_type_show_name.indexOf(value) === 0,
     },
   ];
-  
+
   const renterRepresent = dataContract?.list_renter?.find((obj, index) => obj.represent === true);
 
   return (

@@ -136,7 +136,6 @@ const EditContractBuilding = () => {
         const mergeGroup = res.data.data.list_group_non_contracted.concat(res.data.data.list_group_contracted);
         const mapped = mergeGroup?.map((obj, index) => obj.group_id);
         const filterGroupId = mergeGroup?.filter((obj, index) => mapped.indexOf(obj.group_id) === index);
-        // console.log(filterGroupId);
         setDataApartmentGroup(filterGroupId);
 
         const getRoomContracted = filterGroupId
@@ -225,10 +224,8 @@ const EditContractBuilding = () => {
       .put(UPDATE_CONTRACT_GROUP + state.contract_id, data, {
         headers: {
           "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
           Authorization: `Bearer ${cookie}`,
         },
-        // withCredentials: true,
       })
       .then((res) => {
         navigate("/contract-apartment");
@@ -255,7 +252,6 @@ const EditContractBuilding = () => {
     try {
       if (changeTab === "1") {
         await form.validateFields([
-          // "contract_name",
           "contract_payment_cycle",
           "owner_name",
           "owner_gender",
@@ -291,7 +287,6 @@ const EditContractBuilding = () => {
     }
   };
   const onChangeGroup = (e, data = []) => {
-    // console.log(e, data);
     const dataGroup = data;
     setDataApartmentGroupSelect(dataGroup.find((obj, index) => obj.group_id === e));
     const list_rooms = dataGroup
@@ -364,13 +359,7 @@ const EditContractBuilding = () => {
   return (
     <MainLayout title={"Cập nhật hợp đồng đi thuê"}>
       <div className="button-cover">
-        <Button
-          href="/contract-apartment"
-          type="primary"
-          // icon={<ArrowLeftOutlined />}
-          // style={{ marginRight: 5, float: "right" }}
-          className="button-back"
-        >
+        <Button href="/contract-apartment" type="primary" className="button-back">
           Quay lại danh sách hợp đồng
         </Button>
       </div>

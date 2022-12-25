@@ -34,7 +34,6 @@ const fontSizeIcon = {
 
 function AddMemInRoom(data) {
   const { state } = useLocation();
-  // const { room_id } = useParams();
   const [componentSize, setComponentSize] = useState("default");
   const [loading, setLoading] = useState(false);
   const [isEditMem, setIsEditMem] = useState(false);
@@ -64,11 +63,9 @@ function AddMemInRoom(data) {
       });
     setLoading(false);
   };
-  // console.log(contractRoom);
   const columnsMember = [
     {
       title: "Họ và tên",
-      // dataIndex: "name",
       key: "member_id",
       render: (record) => {
         return record.represent ? record.name + " (Người đại diện)" : record.name;
@@ -124,10 +121,6 @@ function AddMemInRoom(data) {
               });
             }}
           />
-          {/* <DeleteOutlined
-                        onClick={() => onDeleteMember(record)}
-                        style={{ fontSize: "120%", color: "red", marginLeft: 12 }}
-                    /> */}
           {record.represent ? (
             ""
           ) : (
@@ -147,8 +140,6 @@ function AddMemInRoom(data) {
       okText: "Xóa",
       cancelText: "Hủy",
       onOk: async () => {
-        // console.log(record.member_id);
-        // setLoading(true);
         await axios
           .delete(DELETE_RENTER + record.member_id, {
             headers: {
@@ -173,12 +164,10 @@ function AddMemInRoom(data) {
               duration: 2,
             });
           });
-        // setLoading(false);
       },
     });
   };
   const onFinishAddMem = async (dataMem) => {
-    // console.log(dataMem);
     if (contractRoom?.list_renter?.length < contractRoom?.room?.room_limit_people) {
       const data = {
         ...dataMem,
@@ -192,7 +181,6 @@ function AddMemInRoom(data) {
         address_more_detail: dataMem.address_more_detail,
         represent: false,
       };
-      // setLoading(true);
       await axios
         .post(ADD_RENTER, data, {
           headers: {
@@ -208,7 +196,6 @@ function AddMemInRoom(data) {
           });
           setIsAddMem(false);
           formAddMem.setFieldsValue({
-            // member_id: memberId,
             name: "",
             identity_card: "",
             phone_number: "",
@@ -224,7 +211,6 @@ function AddMemInRoom(data) {
             duration: 2,
           });
         });
-      // setLoading(false);
     } else {
       notification.error({
         message: "Số lượng người trong phòng tối đa",
@@ -255,7 +241,6 @@ function AddMemInRoom(data) {
       address_more_detail: dataMem.address_more_detail,
       represent: dataMem.represent,
     };
-    // console.log(JSON.stringify(data));
     setLoading(true);
     await axios
       .put(UPDATE_RENTER + dataMem.member_id, data, {
@@ -272,7 +257,6 @@ function AddMemInRoom(data) {
         });
         setIsEditMem(false);
         formEditMem.setFieldsValue({
-          // member_id: memberId,
           name: "",
           identity_card: "",
           phone_number: "",
@@ -301,24 +285,17 @@ function AddMemInRoom(data) {
     <MainLayout title="Danh sách thành viên trong phòng">
       <Row>
         <Col span={24}>
-          <Button
-            href="/room"
-            type="primary"
-            // icon={<ArrowLeftOutlined />}
-            style={{ marginRight: 5, float: "right", marginBottom: 20 }}
-          >
+          <Button href="/room" type="primary" style={{ marginRight: 5, float: "right", marginBottom: 20 }}>
             Quay lại quản lý phòng
           </Button>
         </Col>
       </Row>
       <Row>
         <Col span={23}>
-          {/* <Form.Item className="form-item" name="list_renter" labelCol={{ span: 24 }}> */}
           <h3>
             <b>Thông tin về thành viên phòng {contractRoom?.room_name}</b> (Số lượng:{" "}
             {contractRoom?.list_renter?.length}/{contractRoom?.room?.room_limit_people})
           </h3>
-          {/* </Form.Item> */}
         </Col>
         <Col span={1}>
           <PlusCircleOutlined
@@ -383,7 +360,6 @@ function AddMemInRoom(data) {
             size={"default"}
             id="add-member"
           >
-            {/* <Form.Item className="form-item" name="member_id" style={{ display: "none" }}></Form.Item> */}
             <Form.Item
               className="form-item"
               name="name"

@@ -99,7 +99,6 @@ function Service(props) {
       })
       .then((res) => {
         setListServiceName(res.data.data);
-        // console.log(res.data.data);
       })
       .catch((error) => {
         console.log(error);
@@ -116,7 +115,6 @@ function Service(props) {
       })
       .then((res) => {
         setServiceCalCuMethod(res.data.data);
-        // console.log(res.data.data);
       })
       .catch((error) => {
         console.log(error);
@@ -335,7 +333,6 @@ function Service(props) {
         apartmentGroupById(groupIdSelect);
       })
       .catch((error) => {
-        // console.log(error.response.data.data);
         notification.error({
           message: "Thêm mới nhanh dịch vụ thất bại",
           description: error.response.data.data,
@@ -379,14 +376,8 @@ function Service(props) {
           >
             Thêm mới
           </Button>
-          {/* <Button href="/service/setting" type="primary" style={{ marginBottom: '1%', float: 'right', marginRight: '1%' }}
-                                        onClick={onClickSettingService} icon={<SettingOutlined />}>
-                                        Thiết lập chung
-                                    </Button> */}
         </Col>
         <Col span={6} offset={4}>
-          {/* <Form form={selectDefault}> */}
-          {/* <Form.Item name="selectApartment"> */}
           <Select
             showSearch
             style={{
@@ -408,8 +399,6 @@ function Service(props) {
               return { value: obj.group_id, label: obj.group_name };
             })}
           />
-          {/* </Form.Item> */}
-          {/* </Form> */}
         </Col>
       </Row>
       <Row>
@@ -510,7 +499,6 @@ function Service(props) {
             >
               <InputNumber
                 placeholder="Nhập giá dịch vụ"
-                // defaultValue={0}
                 formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                 parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
                 style={{ width: "100%" }}

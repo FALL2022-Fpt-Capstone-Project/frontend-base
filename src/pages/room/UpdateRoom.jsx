@@ -12,7 +12,6 @@ let listFloor = [
 ];
 
 function UpdateRoom({ reRender, visible, close, data, dataUpdate, setDataUpdate }) {
-  // const reload = () => window.location.reload();
   const [formUpdateRoom] = Form.useForm();
   const [groupSelect, setGroupSelect] = useState([]);
   const [optionAutoComplete, setOptionAutoComplete] = useState([]);

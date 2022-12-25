@@ -105,7 +105,6 @@ function Preview(props) {
   const rowSelection = {
     selectedRowKeys,
     onChange: (selectedRowKeys, selectedRows) => {
-      console.log(filterSave);
       if (filterSave === undefined) {
         setRowSelected(selectedRows);
         setSelectedRowKeys(selectedRowKeys);
@@ -259,8 +258,8 @@ function Preview(props) {
                 {list_rooms?.filter((u, y) => u.is_duplicate === true && u.room_floor === pre).length === 0
                   ? ""
                   : " Có " +
-                  list_rooms?.filter((u, y) => u.is_duplicate === true && u.room_floor === pre).length +
-                  " phòng đã tồn tại"}
+                    list_rooms?.filter((u, y) => u.is_duplicate === true && u.room_floor === pre).length +
+                    " phòng đã tồn tại"}
               </span>
             </>
           ),

@@ -229,17 +229,6 @@ const ListHistoryInvoice = ({ visible, close, roomId, setFlag }) => {
                             <EyeOutlined className="icon" />
                           </Link>
                         </Tooltip>
-                        {/* <Tooltip title="Xoá hoá đơn">
-                          <Popconfirm
-                            title="Bạn có muốn xoá hoá đơn này không?"
-                            okText="Đồng ý"
-                            cancelText="Không"
-                            placement="topRight"
-                            onConfirm={() => handlerDeleteInvoice(record.id)}
-                          >
-                            <DeleteOutlined className="icon icon-delete" />
-                          </Popconfirm>
-                        </Tooltip> */}
                       </>
                     ) : (
                       <>

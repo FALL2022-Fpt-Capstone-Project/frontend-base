@@ -209,14 +209,6 @@ const ListInvoice = () => {
               },
               key: "Tên phòng",
             },
-            // {
-            //   title: "Người đại diện",
-            //   dataIndex: "represent_renter_name",
-            //   filteredValue: [textSearch],
-            //   onFilter: (value, record) => {
-            //     return String(record.represent_renter_name).toLowerCase()?.includes(value.toLowerCase());
-            //   },
-            // },
             {
               title: "Chu kỳ thanh toán",
               dataIndex: "payment_circle",

@@ -156,7 +156,6 @@ const CreatePayment = ({ visible, close, setFlag }) => {
         <Form
           form={form}
           onFinish={handleCreateInvoice}
-          // onFinishFailed={onFinishFail}
           layout="horizontal"
           size={"default"}
           id="createInvoice"

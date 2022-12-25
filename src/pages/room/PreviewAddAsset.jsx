@@ -199,7 +199,6 @@ function PreviewAddAsset({ visible, close, dataRoom }) {
   const rowSelectionAsset = {
     selectedRowKeys,
     onChange: (selectedRowKeys, selectedRows) => {
-      console.log(`selectedRowKeys: ${selectedRowKeys}`, "selectedRows: ", selectedRows);
       setAssetDefaultSelect(selectedRows);
       setSelectedRowKeys(selectedRowKeys);
     },
