@@ -73,7 +73,7 @@ function Personal(props) {
     user_name: user_name.trim(),
     phone_number: phone_number.trim(),
     gender: gender,
-    address_more_detail: address_more_detail.trim(),
+    address_more_detail: address_more_detail,
     deactivate: deactivate,
     roles: roles,
     permission: localStorage
