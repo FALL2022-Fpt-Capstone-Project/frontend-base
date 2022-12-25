@@ -11,7 +11,7 @@ const UpdateStaff = ({ visible, close, id }) => {
   const [password, setPassword] = useState("");
   const [gender, setGender] = useState("");
   const [deactivate, setDeactivate] = useState();
-  const [permission, setPermission] = useState([1, 2, 3, 4, 5, 6, 7]);
+  const [permission, setPermission] = useState([8]);
   const staffOptions = [
     {
       label: "Quản lý phòng",
