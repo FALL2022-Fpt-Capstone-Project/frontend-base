@@ -1,9 +1,12 @@
-.home {
-}
 .revenue-statistic {
   font-size: 18px;
   font-weight: bold;
-  color: #868d96;
+  // color: #868d96;
+}
+.statistic-detail{
+  font-size: 16px;
+  font-weight: 600;
+  color: #3f4254;
 }
 .card-revenue {
   width: 300px;
@@ -40,7 +43,8 @@
   font-weight: 600;
 }
 .statistic-time-title {
-  font-size: 16px;
+  font-size: 18px;
+  margin-right: 5px;
 }
 .select-w-100 {
   width: 100%;
@@ -79,5 +83,33 @@
     padding: 3%;
     border: 1px solid #c0c0c0;
     border-radius: 10px;
-    margin-bottom: 3%;
+    height: 100%;
+}
+.chart-container {
+  position: relative;
+  margin: auto;
+  height: 80vh;
+  width: 80vw;
+}
+.margin-bottom{
+  margin-bottom: 0.5%;
+  margin-top: 0.5%;
+}
+.margin-bottom-statistic{
+  margin-top: 1%;
+    margin-top: 1%;
+}
+.title-bottom{
+  margin-bottom: 3%;
+}
+.title-margin-right {
+  font-size: 18px;
+  margin-right: 3%;
+}
+.revenue-current-month{
+    padding-top: 3%;
+    font-size: 18px;
+}
+.title-bottom-contract{
+  margin-bottom: 1.5%;
 }

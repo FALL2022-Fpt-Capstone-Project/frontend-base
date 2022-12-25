@@ -30,7 +30,7 @@ const ListInvoice = () => {
   const [buildingFilter, setBuildingFilter] = useState("");
   const [dataSource, setDataSource] = useState([]);
   const [flag, setFlag] = useState(false);
-  const [paymentCycle, setPaymentCycle] = useState(moment().date() < 16 ? 15 : 30);
+  const [paymentCycle, setPaymentCycle] = useState(new Date().getDate() < 16 ? 15 : 30);
   const getListInvoice = async () => {
     setLoading(true);
     const response = await axios
@@ -205,7 +205,7 @@ const ListInvoice = () => {
               dataIndex: "room_name",
               filteredValue: [textSearch],
               onFilter: (value, record) => {
-                return String(record.room_name).toLowerCase()?.includes(value.toLowerCase());
+                return String(record.room_name).toLowerCase()?.includes(value.toLowerCase().trim());
               },
               key: "Tên phòng",
             },
