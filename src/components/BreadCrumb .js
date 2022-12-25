@@ -27,14 +27,11 @@ const breadcrumbNameMap = {
 const Breadcrumbs = ({ button }) => {
   const location = useLocation();
   const pathSnippets = location.pathname.split("/").filter((i) => i);
-  // console.log("pathSnippets: " + pathSnippets);
   const extraBreadcrumbItems = pathSnippets.map((_, index) => {
     const url = `/${pathSnippets.slice(0, index + 1).join("/")}`;
-    // console.log("url: " + url);
     return (
       <Breadcrumb.Item key={url} className="breadcrumb">
         <Link>{breadcrumbNameMap[url]}</Link>
-        {/* <span>{breadcrumbNameMap[url]}</span> */}
       </Breadcrumb.Item>
     );
   });

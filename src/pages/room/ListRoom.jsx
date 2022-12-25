@@ -89,7 +89,7 @@ function ListRoom(props) {
   const [listRoomId, setListRoomId] = useState([]);
   const [groupIdSelect, setGroupIdSelect] = useState("");
   const [increaseRoomPrice, setIncreaseRoomPrice] = useState(false);
-  const [textCardGroup, setTextCardGroup] = useState("Danh sách phòng");
+  // const [textCardGroup, setTextCardGroup] = useState("Danh sách phòng");
   const [room_status, setRoomStatus] = useState([]);
   const [dataRoomUpdate, setDataRoomUpdate] = useState();
   const [assetRoom, setAssetRoom] = useState([]);
@@ -224,7 +224,7 @@ function ListRoom(props) {
               </>
             )}
 
-            <Tooltip title="Thêm trang thiết bị trong phòng">
+            <Tooltip title="Trang thiết bị trong phòng">
               <BulbOutlined
                 onClick={() => {
                   navigate("equipment", { state: [record] });
@@ -499,11 +499,11 @@ function ListRoom(props) {
     setFilterSave(e);
     setRoomStatus({ ...room_status, roomStatus: e.roomStatus });
     getRoomInfor(e.roomGroup, e.roomPrice, e.roomFloor, e.roomStatus);
-    setTextCardGroup(
-      e.roomGroup === ""
-        ? "Danh sách phòng"
-        : "Danh sách phòng ( " + dataApartmentGroup?.find((group) => group.group_id === e.roomGroup).group_name + " )"
-    );
+    // setTextCardGroup(
+    //   e.roomGroup === ""
+    //     ? "Danh sách phòng"
+    //     : "Danh sách phòng ( " + dataApartmentGroup?.find((group) => group.group_id === e.roomGroup).group_name + " )"
+    // );
   };
   const onFinishFailFilter = (e) => {
     console.log(e);
@@ -637,7 +637,7 @@ function ListRoom(props) {
           </Card>
         </Col>
         <Col xs={24} lg={24} xl={16} span={16}>
-          <Card className="card-w100-h100" title={textCardGroup} bordered={false}>
+          <Card className="card-w100-h100" title={"Danh sách phòng"} bordered={false}>
             <Row style={{ marginBottom: "2%" }} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
               <Col span={8}>
                 <Statistic
@@ -817,6 +817,7 @@ function ListRoom(props) {
                               roomPrice: "",
                               roomStatus: [true, false],
                             });
+                            // setTextCardGroup("Danh sách phòng");
                           }}
                           icon={<UndoOutlined />}
                         >

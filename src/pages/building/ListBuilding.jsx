@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Col, Input, notification, Popconfirm, Row, Select, Spin, Table, Tag, Tooltip } from "antd";
+import { Col, Input, Modal, notification, Popconfirm, Row, Select, Spin, Table, Tag, Tooltip } from "antd";
 import "./building.scss";
 import axios from "../../api/axios";
-import { DeleteOutlined, EditOutlined, EyeOutlined, AuditOutlined, ContainerOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
 import DetailBuilding from "./DetailBuilding";
 import UpdateBuilding from "./UpdateBuilding";
 const { Search } = Input;
@@ -81,7 +81,6 @@ const ListBuilding = () => {
 
   const reload = () => window.location.reload();
   const handleDeleteBuilding = (id) => {
-    console.log(id);
     const response = axios
       .delete(`manager/group/delete/${id}`, {
         headers: {
@@ -93,15 +92,17 @@ const ListBuilding = () => {
         notification.success({
           message: "Xoá chung cư thành công",
           duration: 3,
+          placement: "top",
         });
         reload();
       })
       .catch((e) => {
-        console.log(e.request);
+        console.log(e);
         notification.error({
           message: "Xoá chung cư thất bại",
           description: "Vui lòng thử lại.",
           duration: 3,
+          placement: "top",
         });
       });
   };
@@ -112,7 +113,6 @@ const ListBuilding = () => {
       value: building_address_city[i].id,
     });
   }
-  console.log(building_address_city);
   const cityChange = (value, option) => {
     setBuildingCityId(value);
     setBuildingName(option.children);
@@ -164,12 +164,12 @@ const ListBuilding = () => {
         </Col>
         <Col span={8}>
           <Row>
-            <span>Tìm kiếm theo địa chỉ chi tiết</span>
+            <span>Tìm kiếm theo địa chỉ</span>
           </Row>
           <Row>
             <Search
               placeholder="Tìm kiếm theo địa chỉ"
-              style={{ width: 400, padding: "10px 0" }}
+              style={{ width: 300, padding: "10px 0" }}
               onSearch={(value) => {
                 setAddressSearch(value);
               }}
@@ -190,7 +190,7 @@ const ListBuilding = () => {
             dataIndex: "group_name",
             filteredValue: [textSearch],
             onFilter: (value, record) => {
-              return String(record.group_name).toLowerCase()?.includes(value.toLowerCase());
+              return String(record.group_name).toLowerCase()?.includes(value.toLowerCase().trim());
             },
             render: (_, record) => {
               return (
@@ -232,7 +232,9 @@ const ListBuilding = () => {
             render: (_, record) => {
               return (
                 <>
-                  <p>{record.address.address_more_details}</p>
+                  <p>
+                    {record.address.address_wards}, {record.address.address_district}, {record.address.address_city}
+                  </p>
                 </>
               );
             },
@@ -293,15 +295,19 @@ const ListBuilding = () => {
                     />
                   </Tooltip>
                   <Tooltip title="Xoá chung cư">
-                    <Popconfirm
-                      title="Bạn có muốn xoá chung cư này không?"
-                      okText="Đồng ý"
-                      cancelText="Không"
-                      placement="topRight"
-                      onConfirm={() => handleDeleteBuilding(record.group_id)}
-                    >
-                      <DeleteOutlined className="icon icon-delete" />
-                    </Popconfirm>
+                    <DeleteOutlined
+                      className="icon icon-delete"
+                      onClick={() => {
+                        Modal.confirm({
+                          title: `Bạn có chắc chắn muốn xóa hoá đơn này?`,
+                          okText: "Có",
+                          cancelText: "Hủy",
+                          onOk: () => {
+                            return handleDeleteBuilding(record.group_id);
+                          },
+                        });
+                      }}
+                    />
                   </Tooltip>
                 </>
               );

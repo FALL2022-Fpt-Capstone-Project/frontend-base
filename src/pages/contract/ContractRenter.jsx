@@ -91,7 +91,7 @@ const ContractRenter = () => {
         <div className="contract-statistic">
           <div className="contract-card">
             <Row>
-              <Col span={6}>
+              <Col lg={6} xs={24}>
                 <Card
                   title="Số lượng hợp đồng mới được mở"
                   style={{
@@ -106,7 +106,7 @@ const ContractRenter = () => {
                   </Button>
                 </Card>
               </Col>
-              <Col span={6}>
+              <Col lg={6} xs={24}>
                 <Card
                   title="Số lượng hợp đồng sắp hết hạn"
                   style={{
@@ -120,7 +120,7 @@ const ContractRenter = () => {
                   </Button>
                 </Card>
               </Col>
-              <Col span={6}>
+              <Col lg={6} xs={24}>
                 <Card
                   title="Số lượng hợp đồng đã kết thúc"
                   style={{
@@ -135,7 +135,7 @@ const ContractRenter = () => {
                   </Button>
                 </Card>
               </Col>
-              <Col span={6}>
+              <Col lg={6} xs={24}>
                 <label htmlFor="" style={{ margin: "55px 10px 0 20px", fontSize: "14px", display: "block" }}>
                   Chọn thời gian thống kê dữ liệu hợp đồng
                 </label>

@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
-import { ArrowRightOutlined } from "@ant-design/icons";
-import { Button, Col, Divider, Row, Select } from 'antd';
+import { Row, Select } from 'antd';
 import axios from '../../api/axios';
 const ROOM_STATUS = "manager/statistical/room/status";
 
@@ -28,12 +27,9 @@ const options = {
 
 
 
-const RoomStatus = ({ dataGroup }) => {
+const RoomStatus = ({ dataGroup, dataRoomStatus = [] }) => {
     let cookie = localStorage.getItem("Cookie");
     const [roomStatus, setRoomStatus] = useState([]);
-    useEffect(() => {
-        getRoomStatus();
-    }, []);
 
     const getRoomStatus = async (groupId = null) => {
         await axios
@@ -59,7 +55,7 @@ const RoomStatus = ({ dataGroup }) => {
         labels: ["Phòng còn trống", "Phòng đã thuê"],
         datasets: [
             {
-                data: [roomStatus?.total_empty_room, roomStatus?.total_rented_room],
+                data: roomStatus.length === 0 ? [dataRoomStatus?.total_empty_room, dataRoomStatus?.total_rented_room] : [roomStatus?.total_empty_room, roomStatus?.total_rented_room],
                 backgroundColor: ["rgba(255, 99, 132, 0.2)", "rgba(54, 162, 235, 0.2)"],
                 borderColor: ["rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)"],
                 borderWidth: 1,
@@ -70,10 +66,10 @@ const RoomStatus = ({ dataGroup }) => {
 
     return (
         <>
-            <div className='title-bottom'>
+            {/* <div className='title-bottom'>
                 <span className="title-margin-right">Tổng số phòng đã thuê: <b style={{ color: 'rgba(53, 162, 235)' }}>{roomStatus?.total_rented_room}</b></span>
                 <span className="title-margin-right">Tổng số phòng còn trống: <b style={{ color: '#cf1322' }}>{roomStatus?.total_empty_room}</b></span>
-            </div>
+            </div> */}
             <Row>
                 <Select
                     defaultValue={""}
@@ -98,7 +94,7 @@ const RoomStatus = ({ dataGroup }) => {
             <div style={{ width: '100%', height: '330px', display: 'flex', justifyContent: 'center' }}>
                 <Pie data={data} options={options} />
             </div>
-            <Button icon={<ArrowRightOutlined />} href="/room" type='primary'>Quản lý phòng</Button>
+            {/* <Button icon={<ArrowRightOutlined />} href="/room" type='primary'>Quản lý phòng</Button> */}
         </>
     )
 };

@@ -81,28 +81,7 @@ function ViewContractRenter({ openView, closeView, dataContract, dataAsset, data
       onFilter: (value, record) => record.asset_type_show_name.indexOf(value) === 0,
     },
   ];
-  // useEffect(() => {
-  //     apartmentGroup();
-  // }, []);
-
-  // const apartmentGroup = async () => {
-  //     setLoading(true);
-  //     let cookie = localStorage.getItem("Cookie");
-  //     await axios
-  //         .get(APARTMENT_DATA_GROUP, {
-  //             headers: {
-  //                 "Content-Type": "application/json",
-  //                 Authorization: `Bearer ${cookie}`,
-  //             },
-  //         })
-  //         .then((res) => {
-  //             setDataApartmentGroup(res.data.data.list_group_contracted.filter(group => group.group_id === dataContract.group_id)[0]);
-  //         })
-  //         .catch((error) => {
-  //             console.log(error);
-  //         });
-  //     setLoading(false);
-  // };
+  
   const renterRepresent = dataContract?.list_renter?.find((obj, index) => obj.represent === true);
 
   return (

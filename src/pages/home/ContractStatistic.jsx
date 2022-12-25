@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
 import { Bar } from "react-chartjs-2";
-import { Button, Col, DatePicker, Divider, Row, Statistic } from "antd";
+import { Button, Col, DatePicker, Row } from "antd";
 import { ArrowRightOutlined } from "@ant-design/icons";
 import moment from "moment";
 import axios from "../../api/axios";
 const GET_RENTER_CONTRACT = "manager/statistical/chart/room-contract";
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-
-const ContractStatistic = () => {
+const ContractStatistic = ({ dataContract = [] }) => {
     let cookie = localStorage.getItem("Cookie");
     const [contractRenter, setContractRenter] = useState([]);
     const [selectYear, setSelectYear] = useState(moment().format('YYYY'));
@@ -31,23 +30,23 @@ const ContractStatistic = () => {
         },
     };
     const data = {
-        labels: contractRenter?.list_by_month?.map(obj => { return "Tháng " + obj?.month }),
+        labels: contractRenter?.length === 0 ? dataContract?.list_by_month?.map(obj => { return "Tháng " + obj?.month }) :
+            contractRenter?.list_by_month?.map(obj => { return "Tháng " + obj?.month }),
         datasets: [
             {
                 label: 'Số hợp đồng đã lập',
-                data: contractRenter?.list_by_month?.map(obj => { return obj?.total_created }),
+                data: contractRenter?.length === 0 ? dataContract?.list_by_month?.map(obj => { return obj?.total_created }) :
+                    contractRenter?.list_by_month?.map(obj => { return obj?.total_created }),
                 backgroundColor: "rgba(53, 162, 235)",
             },
             {
                 label: 'Số hợp đồng đã kết thúc',
-                data: contractRenter?.list_by_month?.map(obj => { return obj?.total_ended }),
+                data: contractRenter?.length === 0 ? dataContract?.list_by_month?.map(obj => { return obj?.total_ended }) :
+                    contractRenter?.list_by_month?.map(obj => { return obj?.total_ended }),
                 backgroundColor: "rgba(255, 99, 132, 0.5)",
             },
         ],
     };
-    useEffect(() => {
-        getContractStatistic();
-    }, []);
 
     const getContractStatistic = async (year = moment()) => {
         await axios
@@ -70,10 +69,10 @@ const ContractStatistic = () => {
 
     return (
         <>
-            <div className='title-bottom-contract'>
+            {/* <div className='title-bottom-contract'>
                 <span className="title-margin-right">Tổng số hợp đồng đã lập: <b style={{ color: 'rgba(53, 162, 235)' }}>{contractRenter?.total_all_created}</b></span>
                 <span className="title-margin-right">Tổng số hợp đồng đã kết thúc: <b style={{ color: '#cf1322' }}>{contractRenter?.total_all_ended}</b></span>
-            </div>
+            </div> */}
             <Row>
                 <Col span={24}>
                     <span className="statistic-time-title">Chọn năm: </span>
@@ -119,7 +118,7 @@ const ContractStatistic = () => {
                 </Col>
             </Row> */}
             <Bar height={100} options={options} data={data} />
-            <Button icon={<ArrowRightOutlined />} href="/contract-renter" className="margin-top-bottom" type='primary' class>Quản lý hợp đồng cho thuê</Button>
+            {/* <Button icon={<ArrowRightOutlined />} href="/contract-renter" className="margin-top-bottom" type='primary'>Quản lý hợp đồng cho thuê</Button> */}
         </>
     )
 };

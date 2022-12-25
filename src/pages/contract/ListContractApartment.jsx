@@ -338,8 +338,7 @@ const ListContractApartment = () => {
             </Form>
           </Tabs.TabPane>
         </Tabs>
-        <Table loading={loading} dataSource={dataSource} scroll={{ x: 1600, y: 600 }} bordered>
-          {/* <Column width='10%' title="Tên hợp đồng" dataIndex="contract_name" key="key" /> */}
+        <Table loading={loading} dataSource={dataSource} scroll={{ x: 1600 }} bordered>
           <Column
             filteredValue={[textSearch]}
             onFilter={(value, record) => {

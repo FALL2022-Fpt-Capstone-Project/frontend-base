@@ -50,13 +50,10 @@ function Service(props) {
       .get(GET_SERVICE_GROUP_BY_ID + groupId, {
         headers: {
           "Content-Type": "application/json",
-          // "Access-Control-Allow-Origin": "*",
           Authorization: `Bearer ${cookie}`,
         },
-        // withCredentials: true,
       })
       .then((res) => {
-        // console.log(res.data.data);
         setDataApartmentServiceGeneral(res.data.data);
       })
       .catch((error) => {
@@ -85,9 +82,6 @@ function Service(props) {
         const mapped = mergeGroup?.map((obj, index) => obj.group_id);
         const filterGroupId = mergeGroup?.filter((obj, index) => mapped.indexOf(obj.group_id) === index);
         setDataApartmentGroup(filterGroupId);
-        // apartmentGroupById(res.data.data[0].group_id);
-        // selectDefault.setFieldsValue({ selectApartment: res.data.data[0].group_id });
-        // setGroupIdSelect(res.data.data[0].group_id);
       })
       .catch((error) => {
         console.log(error);
@@ -252,12 +246,6 @@ function Service(props) {
   };
   const onFinishAddServiceFail = (e) => {
     message.error("Vui lòng kiểm tra lại thông tin");
-    // notification.error({
-    //     message: "Thêm mới dịch vụ thất bại",
-    //     description: "Vui lòng kiểm tra lại thông tin dịch vụ",
-    //     placement: 'top',
-    //     duration: 3,
-    // });
   };
 
   const onFinishEditService = async (e) => {
@@ -269,10 +257,8 @@ function Service(props) {
         {
           headers: {
             "Content-Type": "application/json",
-            // "Access-Control-Allow-Origin": "*",
             Authorization: `Bearer ${cookie}`,
           },
-          // withCredentials: true,
         }
       )
       .then((res) => {

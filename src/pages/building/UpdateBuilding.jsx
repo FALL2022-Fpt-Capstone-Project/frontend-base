@@ -25,30 +25,32 @@ const UpdateBuilding = ({ visible, close, id }) => {
   let cookie = localStorage.getItem("Cookie");
   let roleInfo = localStorage.getItem("Role");
   useEffect(() => {
-    axios
-      .get(`manager/group/${id}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${cookie}`,
-        },
-      })
-      .then((res) => {
-        form.setFieldsValue({
-          building_name: res.data.data?.group_name,
-          building_address_more_detail: res.data.data?.address.address_more_details,
-          city: res.data.data?.address.address_city,
-          district: res.data.data?.address.address_district,
-          ward: res.data.data?.address.address_wards,
-          note: res.data.data?.description,
+    if (visible) {
+      axios
+        .get(`manager/group/${id}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${cookie}`,
+          },
+        })
+        .then((res) => {
+          form.setFieldsValue({
+            building_name: res.data.data?.group_name,
+            building_address_more_detail: res.data.data?.address.address_more_details,
+            city: res.data.data?.address.address_city,
+            district: res.data.data?.address.address_district,
+            ward: res.data.data?.address.address_wards,
+            note: res.data.data?.description,
+          });
+          setBuildingName(res.data.data?.group_name);
+          setBuildingAddress(res.data.data?.address.address_more_details);
+          setCity(res.data.data?.address.address_city);
+          setDistrict(res.data.data?.address.address_district);
+          setWard(res.data.data?.address.address_wards);
+          setNote(res.data.data?.description);
         });
-        setBuildingName(res.data.data?.group_name);
-        setBuildingAddress(res.data.data?.address.address_more_details);
-        setCity(res.data.data?.address.address_city);
-        setDistrict(res.data.data?.address.address_district);
-        setWard(res.data.data?.address.address_wards);
-        setNote(res.data.data?.description);
-      });
-  }, [id]);
+    }
+  }, [id, visible]);
   const data = {
     group_name: group_name,
     address_city: address_city,
@@ -151,13 +153,11 @@ const UpdateBuilding = ({ visible, close, id }) => {
     setBuildingDistrict([]);
     setBuildingCityId(value);
     setDisableDistrict(false);
-    // optionsDistrict = [];
     setDisableWard(true);
     form.setFieldsValue({ district: "", ward: "" });
     setCity(option.label);
   };
   const districtChange = (value, option) => {
-    console.log(value);
     setBuildingDistrictId(value);
     setDisableWard(false);
     form.setFieldsValue({ ward: "" });

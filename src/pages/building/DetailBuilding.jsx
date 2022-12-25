@@ -4,36 +4,7 @@ import axios from "../../api/axios";
 import React, { useEffect, useState } from "react";
 import "./building.scss";
 function DetailBuilding({ visible, close, data }) {
-  console.log(data);
-  // const [group_name, setGroupName] = useState();
-  // const [total_room, setTotalRoom] = useState();
-  // const [total_floor, setTotalFloor] = useState();
-  // const [service, setService] = useState();
-  // const [address_more_details, setAddress] = useState();
-  // const [dataSource, setDataSource] = useState();
   const [loading, setLoading] = useState(false);
-  // let cookie = localStorage.getItem("Cookie");
-  // useEffect(() => {
-  //   setLoading(true);
-  //   axios
-  //     .get(`manager/group/${id}`, {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${cookie}`,
-  //       },
-  //     })
-  //     .then((res) => {
-  //       console.log(res);
-  //       setGroupName(res.data.data.group_name);
-  //       setTotalRoom(res.data.data.total_room);
-  //       setTotalFloor(res.data.data.total_floor);
-  //       setService(res.data.data.list_general_service);
-  //       setAddress(res.data.data.address.address_more_details);
-  //       setDataSource(res.data.data.list_rooms);
-  //       setLoading(false);
-  //     });
-  // }, [id]);
-
   return (
     <div>
       <Modal
@@ -233,6 +204,6 @@ function DetailBuilding({ visible, close, data }) {
       </Modal>
     </div>
   );
-};
+}
 
 export default DetailBuilding;
