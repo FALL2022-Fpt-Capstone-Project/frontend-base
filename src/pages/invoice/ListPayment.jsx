@@ -17,8 +17,6 @@ import { InboxOutlined, DeleteOutlined, PlusCircleOutlined } from "@ant-design/i
 
 import axios from "../../api/axios";
 import CreatePayment from "./CreatePayment";
-import { Link } from "react-router-dom";
-
 const LIST_BUILDING_FILTER = "manager/group/all";
 const ListPayment = () => {
   let cookie = localStorage.getItem("Cookie");
@@ -50,6 +48,11 @@ const ListPayment = () => {
       })
       .catch((error) => {
         console.log(error);
+        notification.error({
+          message: "Đã có lỗi xảy ra, vui lòng thử lại sau",
+          duration: 3,
+          placement: "top",
+        });
       });
     setLoading(false);
   };
@@ -176,7 +179,6 @@ const ListPayment = () => {
           </Col>
           <Col xs={24} lg={4} offset={7} style={{ marginTop: "15px" }}>
             <Button
-              disabled={building === "" ? true : false}
               type="primary"
               icon={<PlusCircleOutlined />}
               size="middle"
@@ -271,7 +273,6 @@ const ListPayment = () => {
       <CreatePayment
         visible={createPaymentInvoice}
         close={setCreatePaymentInvoice}
-        groupName={groupName}
         groupId={building}
         setFlag={setFlag}
       />

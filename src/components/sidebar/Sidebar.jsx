@@ -70,7 +70,7 @@ const Sidebar = () => {
     }
   }, [location.pathname]);
 
-  let role = "ROLE_ADMIN";
+  let role = localStorage.getItem("Role");
 
   return (
     <div>

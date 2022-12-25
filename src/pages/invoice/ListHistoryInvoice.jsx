@@ -229,7 +229,7 @@ const ListHistoryInvoice = ({ visible, close, roomId, setFlag }) => {
                             <EyeOutlined className="icon" />
                           </Link>
                         </Tooltip>
-                        <Tooltip title="Xoá hoá đơn">
+                        {/* <Tooltip title="Xoá hoá đơn">
                           <Popconfirm
                             title="Bạn có muốn xoá hoá đơn này không?"
                             okText="Đồng ý"
@@ -239,7 +239,7 @@ const ListHistoryInvoice = ({ visible, close, roomId, setFlag }) => {
                           >
                             <DeleteOutlined className="icon icon-delete" />
                           </Popconfirm>
-                        </Tooltip>
+                        </Tooltip> */}
                       </>
                     ) : (
                       <>

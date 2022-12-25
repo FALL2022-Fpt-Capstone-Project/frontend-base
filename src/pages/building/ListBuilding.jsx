@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Col, Input, notification, Popconfirm, Row, Select, Spin, Table, Tag, Tooltip } from "antd";
+import { Col, Input, Modal, notification, Popconfirm, Row, Select, Spin, Table, Tag, Tooltip } from "antd";
 import "./building.scss";
 import axios from "../../api/axios";
 import { DeleteOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
@@ -45,7 +45,6 @@ const ListBuilding = () => {
         })
         .then((res) => {
           setDataSource(res.data.data.list_group_contracted.concat(res.data.data.list_group_non_contracted));
-          console.log(res);
         })
         .catch((error) => {
           console.log(error);
@@ -93,6 +92,7 @@ const ListBuilding = () => {
         notification.success({
           message: "Xoá chung cư thành công",
           duration: 3,
+          placement: "top",
         });
         reload();
       })
@@ -102,6 +102,7 @@ const ListBuilding = () => {
           message: "Xoá chung cư thất bại",
           description: "Vui lòng thử lại.",
           duration: 3,
+          placement: "top",
         });
       });
   };
@@ -189,7 +190,7 @@ const ListBuilding = () => {
             dataIndex: "group_name",
             filteredValue: [textSearch],
             onFilter: (value, record) => {
-              return String(record.group_name).toLowerCase()?.includes(value.toLowerCase());
+              return String(record.group_name).toLowerCase()?.includes(value.toLowerCase().trim());
             },
             render: (_, record) => {
               return (
@@ -294,15 +295,19 @@ const ListBuilding = () => {
                     />
                   </Tooltip>
                   <Tooltip title="Xoá chung cư">
-                    <Popconfirm
-                      title="Bạn có muốn xoá chung cư này không?"
-                      okText="Đồng ý"
-                      cancelText="Không"
-                      placement="topRight"
-                      onConfirm={() => handleDeleteBuilding(record.group_id)}
-                    >
-                      <DeleteOutlined className="icon icon-delete" />
-                    </Popconfirm>
+                    <DeleteOutlined
+                      className="icon icon-delete"
+                      onClick={() => {
+                        Modal.confirm({
+                          title: `Bạn có chắc chắn muốn xóa hoá đơn này?`,
+                          okText: "Có",
+                          cancelText: "Hủy",
+                          onOk: () => {
+                            return handleDeleteBuilding(record.group_id);
+                          },
+                        });
+                      }}
+                    />
                   </Tooltip>
                 </>
               );
