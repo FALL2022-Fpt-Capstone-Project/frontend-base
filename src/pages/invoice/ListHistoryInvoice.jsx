@@ -64,7 +64,7 @@ const ListHistoryInvoice = ({ visible, close, roomId, setFlag }) => {
       .catch((error) => {
         console.log(error);
       });
-    setFlag(false);
+    // setFlag(false);
 
     setLoading(false);
   };
@@ -93,7 +93,7 @@ const ListHistoryInvoice = ({ visible, close, roomId, setFlag }) => {
       .catch((error) => {
         console.log(error.response.data.data);
       });
-    setFlag(false);
+    // setFlag(false);
 
     setLoading(false);
   };

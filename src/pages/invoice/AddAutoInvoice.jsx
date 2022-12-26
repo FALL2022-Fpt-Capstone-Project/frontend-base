@@ -230,6 +230,9 @@ const AddAutoInvoice = () => {
     let date2 = `${year1}-${month1}-${day1}`;
     setPaymentTerm(date2);
   };
+  const disabledDate = (current) => {
+    return current && current < moment(dateCreate, "YYYY-MM-DD");
+  };
   const buildingChange = (value, option) => {
     setBuilding(value);
     setBuildingName(option.label);
@@ -897,7 +900,12 @@ const AddAutoInvoice = () => {
                     },
                   ]}
                 >
-                  <DatePicker onChange={paymentTermChange} placeholder="Nhập hạn đóng tiền" format="DD-MM-YYYY" />
+                  <DatePicker
+                    onChange={paymentTermChange}
+                    placeholder="Nhập hạn đóng tiền"
+                    format="DD-MM-YYYY"
+                    disabledDate={disabledDate}
+                  />
                 </Form.Item>
               </Col>
             </Row>
