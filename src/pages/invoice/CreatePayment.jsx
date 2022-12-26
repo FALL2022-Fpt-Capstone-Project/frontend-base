@@ -119,7 +119,7 @@ const CreatePayment = ({ visible, close, setFlag }) => {
   return (
     <>
       <Modal
-        title={<h2>Tạo hoá đơn chi {groupName}</h2>}
+        title={<h2>Tạo hoá đơn chi</h2>}
         open={visible}
         destroyOnClose={true}
         afterClose={() => form.resetFields()}
@@ -309,7 +309,7 @@ const CreatePayment = ({ visible, close, setFlag }) => {
                     </span>
                   }
                 >
-                  <TextArea rows={4} />
+                  <TextArea placeholder="Ghi chú" rows={4} />
                 </Form.Item>
               </Col>
             </Row>
