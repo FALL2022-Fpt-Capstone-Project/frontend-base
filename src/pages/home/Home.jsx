@@ -175,6 +175,31 @@ const Home = () => {
               title={
                 <>
                   <a className="revenue-statistic" href="/invoice">
+                    <SolutionOutlined /> Hợp đồng cho thuê ({moment().format("MM/YYYY")})
+                  </a>
+                  <Row>
+                    <span className="statistic-detail">
+                      Tổng số hợp đồng đã lập:
+                      <b>{" " + contractRenter?.total_all_created}</b>
+                    </span>
+                  </Row>
+                  <Row>
+                    <span className="statistic-detail">
+                      Tổng số hợp đồng đã kết thúc:
+                      <b>{" " + contractRenter?.total_all_ended}</b>
+                    </span>
+                  </Row>
+                </>
+              }
+              valueStyle={{ display: "none" }}
+            />
+          </Col>
+          <Col className="margin-bottom-statistic" xs={12} lg={12} xl={6} span={6}>
+            <Statistic
+              className="statistic-style"
+              title={
+                <>
+                  <a className="revenue-statistic" href="/invoice">
                     <ProfileOutlined /> Hóa đơn ({moment().format("MM/YYYY")})
                   </a>
                   <Row>
@@ -243,31 +268,6 @@ const Home = () => {
                           ) +
                           " "}
                       </b>
-                    </span>
-                  </Row>
-                </>
-              }
-              valueStyle={{ display: "none" }}
-            />
-          </Col>
-          <Col className="margin-bottom-statistic" xs={12} lg={12} xl={6} span={6}>
-            <Statistic
-              className="statistic-style"
-              title={
-                <>
-                  <a className="revenue-statistic" href="/invoice">
-                    <SolutionOutlined /> Hợp đồng cho thuê ({moment().format("MM/YYYY")})
-                  </a>
-                  <Row>
-                    <span className="statistic-detail">
-                      Tổng số hợp đồng đã lập:
-                      <b>{" " + contractRenter?.total_all_created}</b>
-                    </span>
-                  </Row>
-                  <Row>
-                    <span className="statistic-detail">
-                      Tổng số hợp đồng đã kết thúc:
-                      <b>{" " + contractRenter?.total_all_ended}</b>
                     </span>
                   </Row>
                 </>
