@@ -30,7 +30,9 @@ const CreatePayment = ({ visible, close, setFlag }) => {
     setDateCreate(date_create);
   }, [date_create]);
   const dateCreateChange = (date, dateString) => {
-    setDateCreate(dateString);
+    let [day1, month1, year1] = dateString.split("-");
+    let date1 = `${year1}-${month1}-${day1}`;
+    setDateCreate(date1);
   };
   useEffect(() => {
     const getBuildingFilter = async () => {
@@ -77,12 +79,12 @@ const CreatePayment = ({ visible, close, setFlag }) => {
           duration: 3,
           placement: "top",
         });
-        close(false);
         setFlag(true);
+        close(false);
 
         setTimeout(() => {
           setFlag(false);
-        }, "500");
+        }, "1000");
       })
       .catch((e) => {
         notification.error({
@@ -92,10 +94,9 @@ const CreatePayment = ({ visible, close, setFlag }) => {
           placement: "top",
         });
       });
-    setFlag(false);
+    // setFlag(false);
   };
   const options = [];
-
   for (let i = 0; i < buildingFilter.length; i++) {
     options.push({
       label: buildingFilter[i].group_name,
