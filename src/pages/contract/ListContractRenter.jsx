@@ -470,7 +470,7 @@ const ListContractRenter = () => {
             render: (_, record) => {
               return record.contract_is_disable === true ? (
                 <>
-                  <Tooltip title="Xem">
+                  <Tooltip title="Xem chi tiết">
                     <EyeOutlined
                       className="icon"
                       onClick={() => {
@@ -484,7 +484,7 @@ const ListContractRenter = () => {
                 </>
               ) : (
                 <>
-                  <Tooltip title="Xem">
+                  <Tooltip title="Xem chi tiết">
                     <EyeOutlined
                       className="icon"
                       onClick={() => {
@@ -495,7 +495,7 @@ const ListContractRenter = () => {
                       }}
                     />
                   </Tooltip>
-                  <Tooltip title="Chỉnh sửa">
+                  <Tooltip title="Chỉnh sửa hợp đồng">
                     <EditOutlined
                       className="icon"
                       onClick={() => {

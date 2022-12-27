@@ -149,7 +149,7 @@ const Home = () => {
               className="statistic-style"
               title={
                 <>
-                  <a className="revenue-statistic" href="/invoice">
+                  <a className="revenue-statistic" href="/room">
                     <HomeOutlined /> Trạng thái phòng
                   </a>
                   <Row>
@@ -174,7 +174,7 @@ const Home = () => {
               className="statistic-style"
               title={
                 <>
-                  <a className="revenue-statistic" href="/invoice">
+                  <a className="revenue-statistic" href="/contract-renter">
                     <SolutionOutlined /> Hợp đồng cho thuê ({moment().format("MM/YYYY")})
                   </a>
                   <Row>
@@ -231,7 +231,7 @@ const Home = () => {
               className="statistic-style"
               title={
                 <>
-                  <a className="revenue-statistic" href="/invoice">
+                  <a className="revenue-statistic" href="/home">
                     <DollarOutlined /> Doanh thu (VNĐ)
                   </a>
                   <Row>

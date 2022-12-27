@@ -456,7 +456,7 @@ function AddRoom({ reRender, visible, close, data, assetType }) {
                   rules={[
                     {
                       required: true,
-                      message: "Vui lòng nhập giá phòng",
+                      message: "Vui lòng nhập giá phòng lớn hơn 0",
                     },
                   ]}
                 >

@@ -58,7 +58,7 @@ const EditableCell = ({ title, editable, children, dataIndex, record, handleSave
         rules={[
           {
             required: true,
-            message: `Vui lòng nhập số lượng ${title}`,
+            message: `Vui lòng nhập ${title.toLowerCase()}`,
           },
         ]}
       >
@@ -336,7 +336,7 @@ function PreviewAddAsset({ visible, close, dataRoom }) {
                             rules={[
                               {
                                 required: true,
-                                message: "Vui lòng nhập số lượng",
+                                message: "Vui lòng nhập số lượng lớn hơn 0",
                               },
                               {
                                 pattern: new RegExp(/^[0-9]*$/),

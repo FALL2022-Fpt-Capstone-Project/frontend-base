@@ -503,7 +503,7 @@ function RoomEquipment(data) {
               rules={[
                 {
                   required: true,
-                  message: "Vui lòng nhập số lượng",
+                  message: "Vui lòng nhập số lượng lớn hơn 0",
                 },
                 {
                   pattern: new RegExp(/^[0-9]*$/),
@@ -607,7 +607,7 @@ function RoomEquipment(data) {
               rules={[
                 {
                   required: true,
-                  message: "Vui lòng nhập số lượng",
+                  message: "Vui lòng nhập số lượng lơn hơn 0",
                 },
                 {
                   pattern: new RegExp(/^[0-9]*$/),
