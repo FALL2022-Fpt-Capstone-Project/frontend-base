@@ -56,9 +56,9 @@ const CreateBuilding = ({ visible, close, data }) => {
   const [asset, setAsset] = useState([1, 2]);
   const [electric, setElectric] = useState(1);
   const [water, setWater] = useState(1);
-  const [park, setPark] = useState();
-  const [internet, setInternet] = useState();
-  const [clean, setClean] = useState();
+  const [park, setPark] = useState(2);
+  const [internet, setInternet] = useState(2);
+  const [clean, setClean] = useState(3);
   const [electricPrice, setElectricPrice] = useState(3500);
   const [waterPrice, setWaterPrice] = useState(30000);
   const [parkPrice, setParkPrice] = useState(0);
@@ -904,7 +904,6 @@ const CreateBuilding = ({ visible, close, data }) => {
                           }}
                           onChange={electricChange}
                         >
-                          <Select.Option value="">Chọn cách tính giá dịch vụ</Select.Option>
                           {serviceCalMethod?.map((obj, index) => {
                             return (
                               <>
@@ -924,7 +923,6 @@ const CreateBuilding = ({ visible, close, data }) => {
                           }}
                           onChange={waterChange}
                         >
-                          <Select.Option value="">Chọn cách tính giá dịch vụ</Select.Option>
                           {serviceCalMethod?.map((obj, index) => {
                             return (
                               <>
@@ -938,60 +936,78 @@ const CreateBuilding = ({ visible, close, data }) => {
                       </Row>
                       <Row>
                         <Select
-                          defaultValue={""}
+                          defaultValue={2}
                           style={{
                             width: "100%",
                           }}
                           onChange={parkChange}
                         >
-                          <Select.Option value="">Chọn cách tính giá dịch vụ</Select.Option>
-                          {serviceCalMethod?.map((obj, index) => {
-                            return (
-                              <>
-                                <Select.Option value={obj.id}>{obj.service_type_name}</Select.Option>
-                              </>
-                            );
-                          })}
+                          {serviceCalMethod
+                            ?.filter(function (img) {
+                              if (img.service_type_name === "Đồng hồ điện/nước") {
+                                return false;
+                              }
+                              return true;
+                            })
+                            .map((obj, index) => {
+                              return (
+                                <>
+                                  <Select.Option value={obj.id}>{obj.service_type_name}</Select.Option>
+                                </>
+                              );
+                            })}
                         </Select>
                         <br />
                         <br />
                       </Row>
                       <Row>
                         <Select
-                          defaultValue={""}
+                          defaultValue={2}
                           style={{
                             width: "100%",
                           }}
                           onChange={internetChange}
                         >
-                          <Select.Option value="">Chọn cách tính giá dịch vụ</Select.Option>
-                          {serviceCalMethod?.map((obj, index) => {
-                            return (
-                              <>
-                                <Select.Option value={obj.id}>{obj.service_type_name}</Select.Option>
-                              </>
-                            );
-                          })}
+                          {serviceCalMethod
+                            ?.filter(function (img) {
+                              if (img.service_type_name === "Đồng hồ điện/nước") {
+                                return false;
+                              }
+                              return true;
+                            })
+                            .map((obj, index) => {
+                              return (
+                                <>
+                                  <Select.Option value={obj.id}>{obj.service_type_name}</Select.Option>
+                                </>
+                              );
+                            })}
                         </Select>
                         <br />
                         <br />
                       </Row>
                       <Row>
                         <Select
-                          defaultValue={""}
+                          defaultValue={3}
                           style={{
                             width: "100%",
                           }}
                           onChange={cleanChange}
                         >
-                          <Select.Option value="">Chọn cách tính giá dịch vụ</Select.Option>
-                          {serviceCalMethod?.map((obj, index) => {
-                            return (
-                              <>
-                                <Select.Option value={obj.id}>{obj.service_type_name}</Select.Option>
-                              </>
-                            );
-                          })}
+                          {serviceCalMethod
+                            ?.filter(function (img) {
+                              if (img.service_type_name === "Đồng hồ điện/nước") {
+                                return false;
+                              }
+                              return true;
+                            })
+                            .map((obj, index) => {
+                              return (
+                                <>
+                                  <Select.Option value={obj.id}>{obj.service_type_name}</Select.Option>
+                                </>
+                              );
+                            })}
                         </Select>
                         <br />
                         <br />

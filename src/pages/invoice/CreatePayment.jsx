@@ -65,7 +65,7 @@ const CreatePayment = ({ visible, close, setFlag }) => {
       other_money: otherMoney,
       other_money_note: value.note,
     };
-
+    console.log(invoice);
     const response = await axios
       .post(ADD_INVOICE_URL, invoice, {
         headers: {
@@ -79,6 +79,9 @@ const CreatePayment = ({ visible, close, setFlag }) => {
           duration: 3,
           placement: "top",
         });
+        setOtherMoney(0);
+        setGroupMoney(0);
+        setServiceMoney(0);
         setFlag(true);
         close(false);
 
