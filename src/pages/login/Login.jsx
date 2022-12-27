@@ -28,7 +28,6 @@ const Login = () => {
         },
       })
       .then((res) => {
-        console.log("in");
         window.localStorage.setItem("name", res.data.data?.full_name);
         navigate("/home");
       })
@@ -61,7 +60,6 @@ const Login = () => {
         setUser("");
         setPwd("");
         getUserName(id, accessToken);
-        console.log(res);
         setLoading(false);
       })
       .catch((err) => {
@@ -83,10 +81,7 @@ const Login = () => {
         console.log(err);
         setLoading(false);
       });
-
   };
-
-  // setAuth({ user_name, password, roles, accessToken, id });
   return (
     <div className="login-page">
       <Spin size="large" spinning={loading}>

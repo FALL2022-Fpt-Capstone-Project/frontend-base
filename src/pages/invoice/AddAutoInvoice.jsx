@@ -230,6 +230,9 @@ const AddAutoInvoice = () => {
     let date2 = `${year1}-${month1}-${day1}`;
     setPaymentTerm(date2);
   };
+  const disabledDate = (current) => {
+    return current && current < moment(dateCreate, "YYYY-MM-DD");
+  };
   const buildingChange = (value, option) => {
     setBuilding(value);
     setBuildingName(option.label);
@@ -833,7 +836,6 @@ const AddAutoInvoice = () => {
         <Form
           form={form}
           onFinish={handlerPreview}
-          // onFinishFailed={onFinishFail}
           layout="horizontal"
           size={"default"}
           id="previewInvoice"
@@ -898,7 +900,12 @@ const AddAutoInvoice = () => {
                     },
                   ]}
                 >
-                  <DatePicker onChange={paymentTermChange} placeholder="Nhập hạn đóng tiền" format="DD-MM-YYYY" />
+                  <DatePicker
+                    onChange={paymentTermChange}
+                    placeholder="Nhập hạn đóng tiền"
+                    format="DD-MM-YYYY"
+                    disabledDate={disabledDate}
+                  />
                 </Form.Item>
               </Col>
             </Row>
@@ -928,7 +935,6 @@ const AddAutoInvoice = () => {
                         <ConfigProvider renderEmpty={customizeRenderEmpty}>
                           <Table
                             bordered
-                            // dataSource={dataSource}
                             dataSource={dataSourceNotBilled}
                             scroll={{
                               x: 700,
@@ -977,7 +983,6 @@ const AddAutoInvoice = () => {
                         scroll={{
                           x: 700,
                         }}
-                        // dataSource={dataSource}
                         dataSource={dataSourceBilled}
                         columns={defaultColumnsBilled}
                         pagination={{ pageSize: 5 }}

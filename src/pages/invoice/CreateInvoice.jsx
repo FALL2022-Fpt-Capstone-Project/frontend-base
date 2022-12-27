@@ -53,8 +53,10 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
     setRoomMonth(value);
   };
   useEffect(() => {
-    setDateCreate(date_create);
-  }, [date_create]);
+    if (visible) {
+      setDateCreate(date_create);
+    }
+  }, [date_create, visible]);
   useEffect(() => {
     setPaymentTerm(date_payment);
   }, [date_payment]);
@@ -201,7 +203,7 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
         });
         console.log(e);
       });
-    setFlag(false);
+    // setFlag(false);
   };
 
   const newWaterChange = (value) => {
@@ -239,6 +241,9 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
   };
   const otherPeopleChange = (value) => {
     setOtherMonth(value);
+  };
+  const disabledDate = (current) => {
+    return current && current < moment(dateCreate, "YYYY-MM-DD");
   };
   const dateCreateChange = (date, dateString) => {
     let [day1, month1, year1] = dateString.split("-");
@@ -634,7 +639,6 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
         <Form
           form={form}
           onFinish={handleCreateInvoice}
-          // onFinishFailed={onFinishFail}
           layout="horizontal"
           size={"default"}
           id="createInvoice"
@@ -685,7 +689,12 @@ const CreateInvoice = ({ visible, close, id, setFlag }) => {
                     },
                   ]}
                 >
-                  <DatePicker onChange={paymentTermChange} placeholder="Nhập hạn đóng tiền" format="DD-MM-YYYY" />
+                  <DatePicker
+                    onChange={paymentTermChange}
+                    placeholder="Nhập hạn đóng tiền"
+                    format="DD-MM-YYYY"
+                    disabledDate={disabledDate}
+                  />
                 </Form.Item>
               </Col>
             </Row>

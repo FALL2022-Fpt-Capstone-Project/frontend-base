@@ -11,7 +11,6 @@ const DetailInvoice = () => {
   let cookie = localStorage.getItem("Cookie");
   let name = localStorage.getItem("name");
   let id = parseInt(localStorage.getItem("invoice_id"), 10);
-  console.log(id);
   useEffect(() => {
     let dataTable = [];
     axios
@@ -22,12 +21,9 @@ const DetailInvoice = () => {
         },
       })
       .then((res) => {
-        console.log(res);
-        console.log(res.data.data.service_bill);
         setData(res.data.data);
         dataTable.push(res.data.data);
         setDatasource(dataTable);
-        console.log(dataTable);
         setLoading(true);
       })
       .catch((e) => {
@@ -137,24 +133,6 @@ const DetailInvoice = () => {
               </p>
             </Row>
           </div>
-          {/* <div className="note">
-            <Row>
-              <Col span={6} offset={6}>
-                <b>Người đại diện thu</b>
-              </Col>
-              <Col span={6} offset={6}>
-                <b>Khách thuê</b>
-              </Col>
-            </Row>
-            <Row>
-              <Col span={6} offset={6}>
-                <p>{data.room_bill.created_name}</p>
-              </Col>
-              <Col span={6} offset={5}>
-                <p>{data.renter.renter_full_name}</p>
-              </Col>
-            </Row>
-          </div> */}
         </div>
       )}
     </div>

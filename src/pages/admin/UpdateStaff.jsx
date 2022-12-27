@@ -11,7 +11,7 @@ const UpdateStaff = ({ visible, close, id }) => {
   const [password, setPassword] = useState("");
   const [gender, setGender] = useState("");
   const [deactivate, setDeactivate] = useState();
-  const [permission, setPermission] = useState([1, 2, 3, 4, 5, 6, 7]);
+  const [permission, setPermission] = useState([8]);
   const staffOptions = [
     {
       label: "Quản lý phòng",
@@ -67,7 +67,7 @@ const UpdateStaff = ({ visible, close, id }) => {
     user_name: user_name.trim(),
     phone_number: phone_number.trim(),
     gender: gender,
-    address_more_detail: address_more_detail.trim(),
+    address_more_detail: address_more_detail,
     deactivate: deactivate,
     roles: "staff",
     permission: permission,
@@ -81,7 +81,6 @@ const UpdateStaff = ({ visible, close, id }) => {
         },
       })
       .then((res) => {
-        // window.localStorage.setItem("name", data.full_name);
         notification.success({
           message: "Cập nhật thông tin nhân viên thành công",
           duration: 3,
@@ -100,7 +99,6 @@ const UpdateStaff = ({ visible, close, id }) => {
           placement: "top",
         })
       );
-    console.log(data);
   }
 
   const genderChange = (e) => {
@@ -141,7 +139,6 @@ const UpdateStaff = ({ visible, close, id }) => {
         <Form
           form={form}
           onFinish={Update}
-          // onFinishFailed={onFinishFail}
           layout="horizontal"
           size={"default"}
           name="UpdateStaff"

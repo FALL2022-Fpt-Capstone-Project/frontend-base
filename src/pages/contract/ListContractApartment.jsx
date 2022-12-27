@@ -412,7 +412,7 @@ const ListContractApartment = () => {
             render={(_, record) => {
               return record.contract_is_disable === true ? (
                 <>
-                  <Tooltip title="Xem">
+                  <Tooltip title="Xem chi tiết">
                     <EyeOutlined
                       style={{ fontSize: "20px", color: "#46a6ff", margin: "0 5px" }}
                       onClick={() => {
@@ -425,7 +425,7 @@ const ListContractApartment = () => {
                 </>
               ) : (
                 <>
-                  <Tooltip title="Xem">
+                  <Tooltip title="Xem chi tiết">
                     <EyeOutlined
                       style={{ fontSize: "20px", color: "#46a6ff", margin: "0 5px" }}
                       onClick={() => {
@@ -435,7 +435,7 @@ const ListContractApartment = () => {
                       }}
                     />
                   </Tooltip>
-                  <Tooltip title="Chỉnh sửa">
+                  <Tooltip title="Chỉnh sửa hợp đồng">
                     <EditOutlined
                       onClick={() => {
                         navigate("/contract-apartment/edit", { state: record });

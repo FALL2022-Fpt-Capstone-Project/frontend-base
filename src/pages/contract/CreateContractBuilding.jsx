@@ -173,9 +173,7 @@ const CreateContractBuilding = () => {
           })
         );
       })
-      .catch((error) => {
-        // console.log(error);
-      });
+      .catch((error) => {});
     setLoading(false);
   };
 
@@ -192,11 +190,13 @@ const CreateContractBuilding = () => {
         const mergeGroup = res.data.data.list_group_non_contracted.concat(res.data.data.list_group_contracted);
         const mapped = mergeGroup?.map((obj, index) => obj.group_id);
         const filterGroupId = mergeGroup?.filter((obj, index) => mapped.indexOf(obj.group_id) === index);
-        setDataApartmentGroup(filterGroupId);
+        setDataApartmentGroup(
+          filterGroupId?.filter(
+            (obj) => obj.list_rooms?.filter((room) => room.group_contract_id === null)?.length !== 0
+          )
+        );
       })
-      .catch((error) => {
-        // console.log(error);
-      });
+      .catch((error) => {});
     setLoading(false);
   };
 
@@ -288,7 +288,6 @@ const CreateContractBuilding = () => {
     try {
       if (changeTab === "1") {
         await form.validateFields([
-          // "contract_name",
           "contract_payment_cycle",
           "owner_name",
           "owner_gender",

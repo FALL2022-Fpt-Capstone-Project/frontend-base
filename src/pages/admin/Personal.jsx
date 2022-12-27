@@ -73,7 +73,7 @@ function Personal(props) {
     user_name: user_name.trim(),
     phone_number: phone_number.trim(),
     gender: gender,
-    address_more_detail: address_more_detail.trim(),
+    address_more_detail: address_more_detail,
     deactivate: deactivate,
     roles: roles,
     permission: localStorage
@@ -202,30 +202,6 @@ function Personal(props) {
                 >
                   <Input.Password onChange={(e) => setPassword(e.target.value)} placeholder="Nhập mật khẩu" />
                 </Form.Item>
-                {/* <Form.Item
-                                    className="form-item"
-                                    name="comfirmPassword"
-                                    labelCol={{ span: 24 }}
-                                    label={
-                                        <span>
-                                            <b>Nhập lại mật khẩu:</b>
-                                        </span>
-                                    }
-                                    dependencies={["password"]}
-                                    hasFeedback
-                                    rules={[
-                                        ({ getFieldValue }) => ({
-                                            validator(_, value) {
-                                                if (!value || getFieldValue("password") === value) {
-                                                    return Promise.resolve();
-                                                }
-                                                return Promise.reject(new Error("Mật khẩu không khớp!"));
-                                            },
-                                        }),
-                                    ]}
-                                >
-                                    <Input.Password placeholder="Nhập lại mật khẩu" />
-                                </Form.Item> */}
                 <Form.Item
                   className="form-item"
                   name="phone_number"

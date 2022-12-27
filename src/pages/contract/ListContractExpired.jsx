@@ -69,7 +69,7 @@ const ListContractExpired = ({ duration }) => {
     <div>
       <div>
         <Search
-          placeholder="Tìm kiếm theo tên hợp đồng, tên khách thuê"
+          placeholder="Tìm kiếm theo tên phòng, tên khách thuê, số điện thoại"
           style={{ marginBottom: 8, width: 400, padding: "10px 0" }}
           onSearch={(value) => {
             setTextSearch(value);

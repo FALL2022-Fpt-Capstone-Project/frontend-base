@@ -165,6 +165,9 @@ const PreviewAddAutoInvoice = ({ visible, close, state }) => {
     let date1 = `${year1}-${month1}-${day1}`;
     setDateCreate(date1);
   };
+  const disabledDate = (current) => {
+    return current && current < moment(dateCreate, "YYYY-MM-DD");
+  };
   const paymentTermChange = (date, dateString) => {
     let [day1, month1, year1] = dateString[0].split("-");
     let date2 = `${year1}-${month1}-${day1}`;
@@ -356,7 +359,6 @@ const PreviewAddAutoInvoice = ({ visible, close, state }) => {
         <Form
           form={form}
           onFinish={handleCreateInvoice}
-          // onFinishFailed={onFinishFail}
           layout="horizontal"
           size={"default"}
           id="createInvoice"
@@ -406,7 +408,12 @@ const PreviewAddAutoInvoice = ({ visible, close, state }) => {
                     },
                   ]}
                 >
-                  <DatePicker placeholder="Nhập hạn đóng tiền" onChange={paymentTermChange} format="DD-MM-YYYY" />
+                  <DatePicker
+                    placeholder="Nhập hạn đóng tiền"
+                    onChange={paymentTermChange}
+                    format="DD-MM-YYYY"
+                    disabledDate={disabledDate}
+                  />
                 </Form.Item>
               </Col>
             </Row>
@@ -424,7 +431,6 @@ const PreviewAddAutoInvoice = ({ visible, close, state }) => {
                     }}
                     columns={columnsNotBilled}
                     pagination={{ pageSize: 5 }}
-                    // loading={loading}
                   />
                   <Row justify="start" style={{ fontSize: "18px" }}>
                     <b>Tổng tiền tất cả hóa đơn:</b>

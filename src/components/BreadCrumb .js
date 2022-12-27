@@ -1,9 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
-import { Breadcrumb, Button } from "antd";
+import { Breadcrumb } from "antd";
 import "./breadcrumb.scss";
 
 const breadcrumbNameMap = {
-  // "/home": "Trang chủ",
   "/building": "Quản lý chung cư",
   "/room": "Quản lý phòng",
   "/room/member": "Danh sách thành viên trong phòng",

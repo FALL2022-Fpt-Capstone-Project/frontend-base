@@ -66,7 +66,6 @@ const CreateBuilding = ({ visible, close, data }) => {
   const [cleanPrice, setCleanPrice] = useState(0);
   const [listAssetName, setListAssetName] = useState();
   const [listAssetTypeName, setListAssetTypeName] = useState();
-  // const [selectedRowKeys, setSelectedRowKeys] = useState([0, 1]);
   let optionRoom = [];
   let optionFloor = [];
   for (let i = 1; i <= 10; i++) {
@@ -162,7 +161,6 @@ const CreateBuilding = ({ visible, close, data }) => {
           placement: "top",
         });
       });
-    console.log(building);
   };
 
   useEffect(() => {
@@ -336,7 +334,6 @@ const CreateBuilding = ({ visible, close, data }) => {
     setBuildingDistrict([]);
     setBuildingCityId(value);
     setDisableDistrict(false);
-    // optionsDistrict = [];
     setDisableWard(true);
     form.setFieldsValue({ district: "", ward: "" });
     setCity(option.label);
@@ -423,7 +420,6 @@ const CreateBuilding = ({ visible, close, data }) => {
         afterClose={() => form.resetFields()}
         onOk={() => {
           close(false);
-          // reload();
         }}
         onCancel={() => {
           close(false);
@@ -495,7 +491,6 @@ const CreateBuilding = ({ visible, close, data }) => {
                     filterOption={true}
                     onChange={(value) => setGroupName(value)}
                   />
-                  {/* <Input onChange={(e) => setGroupName(e.target.value)} placeholder="Nhập tên chung cư" /> */}
                 </Form.Item>
                 <Form.Item
                   name="building_total_floor"
@@ -514,7 +509,6 @@ const CreateBuilding = ({ visible, close, data }) => {
                 >
                   <InputNumber
                     placeholder="Nhập số lượng tầng của chung cư"
-                    // controls={false}
                     defaultValue={1}
                     formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                     parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
@@ -540,7 +534,6 @@ const CreateBuilding = ({ visible, close, data }) => {
                 >
                   <InputNumber
                     placeholder="Nhập số lượng phòng"
-                    // controls={false}
                     defaultValue={1}
                     formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                     parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
@@ -619,9 +612,11 @@ const CreateBuilding = ({ visible, close, data }) => {
                     addonAfter="Người"
                     style={{ width: "100%" }}
                     defaultValue={3}
-                    // controls={false}
                     placeholder="Nhập số lượng người tối đa của phòng"
                     onChange={roomPeopleChange}
+                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
+                    min={1}
                   />
                 </Form.Item>
                 <Form.Item
@@ -636,7 +631,7 @@ const CreateBuilding = ({ visible, close, data }) => {
                   rules={[
                     {
                       required: true,
-                      message: "Vui lòng nhập diện tích phòng!",
+                      message: "Vui lòng nhập diện tích phòng lớn hơn 0 nhỏ hơn 80 mét vuông!",
                     },
                   ]}
                 >
@@ -647,6 +642,10 @@ const CreateBuilding = ({ visible, close, data }) => {
                     placeholder="Nhập diện tích phòng"
                     onChange={roomAreaChange}
                     defaultValue={25}
+                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
+                    min={1}
+                    max={80}
                   />
                 </Form.Item>
                 <Form.Item
@@ -699,7 +698,6 @@ const CreateBuilding = ({ visible, close, data }) => {
                     }}
                     disabled={disabledDistrict}
                     onChange={districtChange}
-                    // options={optionsDistrict}
                     showSearch
                     filterOption={(input, option) =>
                       (option?.label?.toLowerCase().trim() ?? "").includes(input?.toLowerCase().trim())
@@ -769,15 +767,6 @@ const CreateBuilding = ({ visible, close, data }) => {
                       <b>Địa chỉ chi tiết: </b>
                     </span>
                   }
-                  // rules={[
-                  //   {
-                  //     message: "Vui lòng nhập địa chỉ!",
-                  //   },
-                  //   {
-                  //     required: true,
-                  //     message: "Vui lòng nhập địa chỉ!",
-                  //   },
-                  // ]}
                 >
                   <Input onChange={(e) => setBuildingAddress(e.target.value)} placeholder="Nhập địa chỉ chi tiết" />
                 </Form.Item>
@@ -807,7 +796,7 @@ const CreateBuilding = ({ visible, close, data }) => {
                           {listServiceName
                             ?.filter(function (img) {
                               if (img.service_show_name === "Khác") {
-                                return false; // skip
+                                return false;
                               }
                               return true;
                             })
@@ -1074,7 +1063,6 @@ const CreateBuilding = ({ visible, close, data }) => {
                                   width: "100%",
                                 }}
                                 defaultValue="Chọn nhóm tài sản"
-                                // onChange={internetChange}
                               >
                                 {listAssetTypeName?.map((obj, index) => {
                                   return (

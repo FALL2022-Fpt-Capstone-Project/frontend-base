@@ -60,7 +60,7 @@ function IncreaseRoomPrice({ reRender, visible, close, data }) {
   return (
     <>
       <Modal
-        title="Cập nhật giá phòng"
+        title={<h2>Cập nhật giá phòng</h2>}
         open={visible}
         onOk={() => {
           close(false);

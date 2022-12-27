@@ -1,18 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Col,
-  DatePicker,
-  Row,
-  Table,
-  Tooltip,
-  Select,
-  Tag,
-  ConfigProvider,
-  Popconfirm,
-  Button,
-  Modal,
-  notification,
-} from "antd";
+import { Col, DatePicker, Row, Table, Tooltip, Select, ConfigProvider, Button, Modal, notification } from "antd";
 import { InboxOutlined, DeleteOutlined, PlusCircleOutlined } from "@ant-design/icons";
 
 import axios from "../../api/axios";
@@ -27,7 +14,7 @@ const ListPayment = () => {
   const [createPaymentInvoice, setCreatePaymentInvoice] = useState(false);
   const [groupName, setGroupName] = useState();
   const [dateFilter, setDateFilter] = useState("");
-  const [flag, setFlag] = useState(false);
+  const [flag, setFlag] = useState();
   const onClickCreatePaymentInvoice = () => {
     setCreatePaymentInvoice(true);
   };
@@ -57,8 +44,6 @@ const ListPayment = () => {
     setLoading(false);
   };
   useEffect(() => {
-    console.log(building);
-    console.log(dateFilter);
     getListInvoice();
   }, [building, dateFilter]);
   useEffect(() => {

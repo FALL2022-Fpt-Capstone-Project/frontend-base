@@ -236,12 +236,12 @@ function AddRoomAuto({ visible, close, data }) {
                   rules={[
                     {
                       required: true,
-                      message: "Vui lòng nhập giá phòng",
+                      message: "Vui lòng nhập giá phòng chung lớn hơn 0",
                     },
                   ]}
                 >
                   <InputNumber
-                    placeholder="Nhập giá phòng"
+                    placeholder="Nhập giá phòng chung"
                     controls={false}
                     addonAfter="VNĐ"
                     formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}

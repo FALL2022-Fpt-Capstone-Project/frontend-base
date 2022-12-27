@@ -18,7 +18,6 @@ const memeber = {
 };
 
 function RoomDetail({ visible, close, data, dataAsset, assetType }) {
-  // console.log(data);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState("");
   const [filterAssetType, setFilterAssetType] = useState([]);
@@ -120,8 +119,8 @@ function RoomDetail({ visible, close, data, dataAsset, assetType }) {
                       <p>
                         {data?.roomDeposit
                           ? new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
-                            data?.roomDeposit
-                          )
+                              data?.roomDeposit
+                            )
                           : new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(0)}
                       </p>
                     </Col>
@@ -162,11 +161,11 @@ function RoomDetail({ visible, close, data, dataAsset, assetType }) {
                           ? data?.durationContract < 12
                             ? data?.durationContract + " tháng"
                             : data?.durationContract % 12 !== 0
-                              ? Math.floor(data?.durationContract / 12) +
+                            ? Math.floor(data?.durationContract / 12) +
                               " năm " +
                               (data?.durationContract % 12) +
                               " tháng"
-                              : Math.floor(data?.durationContract / 12) + " năm "
+                            : Math.floor(data?.durationContract / 12) + " năm "
                           : "Chưa vào ở"}{" "}
                       </p>
                     </Col>
@@ -176,7 +175,11 @@ function RoomDetail({ visible, close, data, dataAsset, assetType }) {
                       <h4>Ngày bắt đầu ở: </h4>
                     </Col>
                     <Col span={12}>
-                      <p>{data.startDate === undefined ? 'Chưa lập hợp đồng' : moment(data?.startDate).format("DD-MM-YYYY")}</p>
+                      <p>
+                        {data.startDate === undefined
+                          ? "Chưa lập hợp đồng"
+                          : moment(data?.startDate).format("DD-MM-YYYY")}
+                      </p>
                     </Col>
                   </Row>
                   <Row>
@@ -184,7 +187,9 @@ function RoomDetail({ visible, close, data, dataAsset, assetType }) {
                       <h4>Ngày kết thúc hợp đồng: </h4>
                     </Col>
                     <Col span={12}>
-                      <p>{data.endDate === undefined ? 'Chưa lập hợp đồng' : moment(data?.endDate).format("DD-MM-YYYY")}</p>
+                      <p>
+                        {data.endDate === undefined ? "Chưa lập hợp đồng" : moment(data?.endDate).format("DD-MM-YYYY")}
+                      </p>
                     </Col>
                   </Row>
                   <Row>

@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Card, Col, Row, Statistic } from "antd";
 import "./home.scss";
-import {
-  DollarOutlined,
-  SolutionOutlined,
-  ProfileOutlined,
-  HomeOutlined,
-} from "@ant-design/icons";
+import { DollarOutlined, SolutionOutlined, ProfileOutlined, HomeOutlined } from "@ant-design/icons";
 import RevenueStatistic from "./RevenueStatistic";
 import MainLayout from "../../components/layout/MainLayout";
 import axios from "../../api/axios";
@@ -61,10 +56,6 @@ const Home = () => {
         },
       })
       .then((res) => {
-        // console.log(res.data.data);
-        // const mergeGroup = res.data.data.list_group_non_contracted.concat(res.data.data.list_group_contracted);
-        // const mapped = mergeGroup?.map((obj, index) => obj.group_id);
-        // const filterGroupId = mergeGroup?.filter((obj, index) => mapped.indexOf(obj.group_id) === index);
         setDataApartmentGroup(res.data.data.list_group_contracted);
       })
       .catch((error) => {
@@ -72,7 +63,7 @@ const Home = () => {
       });
   };
 
-  const getBillNotPay = async (groupId = null, createdTime = moment().format('MM-YYYY')) => {
+  const getBillNotPay = async (groupId = null, createdTime = moment().format("MM-YYYY")) => {
     await axios
       .get(GET_ROOM_HISTORY, {
         params: {
@@ -86,7 +77,6 @@ const Home = () => {
       })
       .then((res) => {
         setBillNotPay(res.data.data);
-        // console.log(res.data.data);
       })
       .catch((error) => {
         console.log(error);
@@ -116,7 +106,7 @@ const Home = () => {
     await axios
       .get(GET_REVENUE, {
         params: {
-          year: year.format('YYYY'),
+          year: year.format("YYYY"),
         },
         headers: {
           "Content-Type": "application/json",
@@ -131,12 +121,11 @@ const Home = () => {
       });
   };
 
-
   const getContractStatistic = async (year = moment()) => {
     await axios
       .get(GET_RENTER_CONTRACT, {
         params: {
-          year: year.format('YYYY'),
+          year: year.format("YYYY"),
         },
         headers: {
           "Content-Type": "application/json",
@@ -160,26 +149,24 @@ const Home = () => {
               className="statistic-style"
               title={
                 <>
-                  <a className="revenue-statistic" href="/invoice"><HomeOutlined /> Trạng thái phòng</a>
+                  <a className="revenue-statistic" href="/room">
+                    <HomeOutlined /> Trạng thái phòng
+                  </a>
                   <Row>
                     <span className="statistic-detail">
                       Tổng số phòng đã thuê:
-                      <b>
-                        {" " + roomStatus?.total_rented_room}
-                      </b>
+                      <b>{" " + roomStatus?.total_rented_room}</b>
                     </span>
                   </Row>
                   <Row>
                     <span className="statistic-detail">
                       Tổng số phòng còn trống:
-                      <b>
-                        {" " + roomStatus?.total_empty_room}
-                      </b>
+                      <b>{" " + roomStatus?.total_empty_room}</b>
                     </span>
                   </Row>
                 </>
               }
-              valueStyle={{ display: 'none' }}
+              valueStyle={{ display: "none" }}
             />
           </Col>
           <Col className="margin-bottom-statistic" xs={12} lg={12} xl={6} span={6}>
@@ -187,86 +174,105 @@ const Home = () => {
               className="statistic-style"
               title={
                 <>
-                  <a className="revenue-statistic" href="/invoice"><ProfileOutlined /> Hóa đơn ({moment().format('MM/YYYY')})</a>
-                  <Row>
-                    <span className="statistic-detail">
-                      Tổng số hóa đơn chưa thanh toán:
-                      <b>
-                        {" " + billNotPay.length}
-                      </b>
-                    </span>
-                  </Row>
-                  <Row>
-                    <span className="statistic-detail">
-                      Tổng số tiền cần thu:
-                      <b style={billNotPay.length === 0 ? { color: 'rgb(0, 128, 0)' } : { color: "rgb(205, 92, 92)" }}>
-                        {" " + new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
-                          billNotPay?.map((invoice) => invoice.need_to_paid).reduce((pre, current) => pre + current, 0)
-                        )}
-                      </b>
-                    </span>
-                  </Row>
-                </>
-              }
-              valueStyle={{ display: 'none' }}
-            />
-          </Col>
-          <Col className="margin-bottom-statistic" xs={12} lg={12} xl={6} span={6}>
-            <Statistic
-              className="statistic-style"
-              title={
-                <>
-                  <a className="revenue-statistic" href="/invoice"><DollarOutlined /> Doanh thu (VNĐ)</a>
-                  <Row>
-                    <span className="statistic-detail">
-                      Doanh thu tháng {moment().format('MM/YYYY')}:
-                      <b style={revenue?.find(obj => obj.month === Number.parseInt(moment().format('MM')))?.revenue < 0 ? { color: '#CD5C5C' } : { color: '#008000' }}>
-                        {" " + new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
-                          revenue?.find(obj => obj.month === Number.parseInt(moment().format('MM')))?.revenue
-                        ) + " "}
-                      </b>
-                    </span>
-                  </Row>
-                  <Row>
-                    <span className="statistic-detail">
-                      Doanh thu năm {moment().format('YYYY')}:
-                      <b style={revenue?.map(obj => obj.revenue)?.reduce((pre, current) => pre + current, 0) < 0 ? { color: '#CD5C5C' } : { color: '#008000' }}>
-                        {" " + new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
-                          revenue?.map(obj => obj.revenue)?.reduce((pre, current) => pre + current, 0)
-                        ) + " "}
-                      </b>
-                    </span>
-                  </Row>
-                </>
-              }
-              valueStyle={{ display: 'none' }}
-            />
-          </Col>
-          <Col className="margin-bottom-statistic" xs={12} lg={12} xl={6} span={6}>
-            <Statistic
-              className="statistic-style"
-              title={
-                <>
-                  <a className="revenue-statistic" href="/invoice"><SolutionOutlined /> Hợp đồng cho thuê ({moment().format('MM/YYYY')})</a>
+                  <a className="revenue-statistic" href="/contract-renter">
+                    <SolutionOutlined /> Hợp đồng cho thuê ({moment().format("MM/YYYY")})
+                  </a>
                   <Row>
                     <span className="statistic-detail">
                       Tổng số hợp đồng đã lập:
-                      <b>
-                        {" " + contractRenter?.total_all_created}
-                      </b>
+                      <b>{" " + contractRenter?.total_all_created}</b>
                     </span>
                   </Row>
                   <Row>
                     <span className="statistic-detail">
                       Tổng số hợp đồng đã kết thúc:
-                      <b>
-                        {" " + contractRenter?.total_all_ended}
+                      <b>{" " + contractRenter?.total_all_ended}</b>
+                    </span>
+                  </Row>
+                </>
+              }
+              valueStyle={{ display: "none" }}
+            />
+          </Col>
+          <Col className="margin-bottom-statistic" xs={12} lg={12} xl={6} span={6}>
+            <Statistic
+              className="statistic-style"
+              title={
+                <>
+                  <a className="revenue-statistic" href="/invoice">
+                    <ProfileOutlined /> Hóa đơn ({moment().format("MM/YYYY")})
+                  </a>
+                  <Row>
+                    <span className="statistic-detail">
+                      Tổng số hóa đơn chưa thanh toán:
+                      <b>{" " + billNotPay.length}</b>
+                    </span>
+                  </Row>
+                  <Row>
+                    <span className="statistic-detail">
+                      Tổng số tiền cần thu:
+                      <b style={billNotPay.length === 0 ? { color: "rgb(0, 128, 0)" } : { color: "rgb(205, 92, 92)" }}>
+                        {" " +
+                          new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
+                            billNotPay
+                              ?.map((invoice) => invoice.need_to_paid)
+                              .reduce((pre, current) => pre + current, 0)
+                          )}
                       </b>
                     </span>
                   </Row>
                 </>
               }
-              valueStyle={{ display: 'none' }}
+              valueStyle={{ display: "none" }}
+            />
+          </Col>
+          <Col className="margin-bottom-statistic" xs={12} lg={12} xl={6} span={6}>
+            <Statistic
+              className="statistic-style"
+              title={
+                <>
+                  <a className="revenue-statistic" href="/home">
+                    <DollarOutlined /> Doanh thu (VNĐ)
+                  </a>
+                  <Row>
+                    <span className="statistic-detail">
+                      Doanh thu tháng {moment().format("MM/YYYY")}:
+                      <b
+                        style={
+                          revenue?.find((obj) => obj.month === Number.parseInt(moment().format("MM")))?.revenue < 0
+                            ? { color: "#CD5C5C" }
+                            : { color: "#008000" }
+                        }
+                      >
+                        {" " +
+                          new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
+                            revenue?.find((obj) => obj.month === Number.parseInt(moment().format("MM")))?.revenue
+                          ) +
+                          " "}
+                      </b>
+                    </span>
+                  </Row>
+                  <Row>
+                    <span className="statistic-detail">
+                      Doanh thu năm {moment().format("YYYY")}:
+                      <b
+                        style={
+                          revenue?.map((obj) => obj.revenue)?.reduce((pre, current) => pre + current, 0) < 0
+                            ? { color: "#CD5C5C" }
+                            : { color: "#008000" }
+                        }
+                      >
+                        {" " +
+                          new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(
+                            revenue?.map((obj) => obj.revenue)?.reduce((pre, current) => pre + current, 0)
+                          ) +
+                          " "}
+                      </b>
+                    </span>
+                  </Row>
+                </>
+              }
+              valueStyle={{ display: "none" }}
             />
           </Col>
         </Row>

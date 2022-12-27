@@ -189,7 +189,6 @@ function AddRoom({ reRender, visible, close, data, assetType }) {
           .concat(e.list_additional_asset),
       },
     ];
-    // console.log(JSON.stringify(data));
     await axios
       .post(ADD_ROOM, data, {
         headers: {
@@ -287,7 +286,6 @@ function AddRoom({ reRender, visible, close, data, assetType }) {
     selectedRowKeys,
     onChange: (selectedRowKeys, selectedRows) => {
       setSelectedRowKeys(selectedRowKeys);
-      // console.log(`selectedRowKeys: ${selectedRowKeys}`, "selectedRows: ", selectedRows);
       setAssetDefaultSelect(selectedRows);
     },
   };
@@ -458,7 +456,7 @@ function AddRoom({ reRender, visible, close, data, assetType }) {
                   rules={[
                     {
                       required: true,
-                      message: "Vui lòng nhập giá phòng",
+                      message: "Vui lòng nhập giá phòng lớn hơn 0",
                     },
                   ]}
                 >
