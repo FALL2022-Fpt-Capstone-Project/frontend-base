@@ -153,7 +153,9 @@ const ListBuilding = () => {
               {optionsCity?.map((obj, index) => {
                 return (
                   <>
-                    <Select.Option value={obj.value}>{obj.label}</Select.Option>
+                    <Select.Option key={index} value={obj.value}>
+                      {obj.label}
+                    </Select.Option>
                   </>
                 );
               })}
@@ -186,6 +188,7 @@ const ListBuilding = () => {
           {
             title: "Tên chung cư",
             dataIndex: "group_name",
+            key: "group_name",
             filteredValue: [textSearch],
             onFilter: (value, record) => {
               return String(record.group_name).toLowerCase()?.includes(value.toLowerCase().trim());
@@ -201,6 +204,7 @@ const ListBuilding = () => {
           {
             title: "Số lượng tầng",
             dataIndex: "total_floor",
+            key: "total_floor",
             render: (_, record) => {
               return (
                 <>
@@ -212,6 +216,7 @@ const ListBuilding = () => {
           {
             title: "Số lượng phòng",
             dataIndex: "total_room",
+            key: "total_room",
             render: (_, record) => {
               return (
                 <>
@@ -223,6 +228,7 @@ const ListBuilding = () => {
           {
             title: "Địa chỉ",
             dataIndex: "address",
+            key: "address",
             filteredValue: [addressSearch],
             onFilter: (value, record) => {
               return String(record.address.address_more_details).toLowerCase()?.includes(value.toLowerCase());
@@ -240,6 +246,7 @@ const ListBuilding = () => {
           {
             title: "Trạng thái chung cư",
             dataIndex: "contractIsDisable",
+            key: "contractIsDisable",
             render: (_, record) => {
               let status;
               if (record.group_contracted === true) {
@@ -261,10 +268,20 @@ const ListBuilding = () => {
           {
             title: "Mô tả",
             dataIndex: "description",
+            key: "description",
+            ellipsis: {
+              showTitle: false,
+            },
+            render: (description) => (
+              <Tooltip placement="topLeft" title={description}>
+                {description}
+              </Tooltip>
+            ),
           },
           {
             title: "Thao tác",
             dataIndex: "action",
+            key: "action",
             render: (_, record) => {
               return record.group_contracted ? (
                 <>

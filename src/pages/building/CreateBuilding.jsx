@@ -614,6 +614,9 @@ const CreateBuilding = ({ visible, close, data }) => {
                     defaultValue={3}
                     placeholder="Nhập số lượng người tối đa của phòng"
                     onChange={roomPeopleChange}
+                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
+                    min={1}
                   />
                 </Form.Item>
                 <Form.Item
@@ -628,7 +631,7 @@ const CreateBuilding = ({ visible, close, data }) => {
                   rules={[
                     {
                       required: true,
-                      message: "Vui lòng nhập diện tích phòng!",
+                      message: "Vui lòng nhập diện tích phòng lớn hơn 0 nhỏ hơn 80 mét vuông!",
                     },
                   ]}
                 >
@@ -639,6 +642,10 @@ const CreateBuilding = ({ visible, close, data }) => {
                     placeholder="Nhập diện tích phòng"
                     onChange={roomAreaChange}
                     defaultValue={25}
+                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    parser={(value) => value?.replace(/\$\s?|(,*)/g, "")}
+                    min={1}
+                    max={80}
                   />
                 </Form.Item>
                 <Form.Item
