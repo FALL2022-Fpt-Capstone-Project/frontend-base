@@ -158,6 +158,7 @@ const ContractRenter = () => {
         <ListContractRenter />
       </div>
       <Modal
+        destroyOnClose
         title={<h2>Số lượng hợp đồng mới được mở</h2>}
         width={1200}
         visible={isModalNewOpen}
@@ -172,6 +173,7 @@ const ContractRenter = () => {
         <ListContractRenterLatest duration={duration} />
       </Modal>
       <Modal
+        destroyOnClose
         title={<h2>Số lượng hợp đồng sắp hết hạn</h2>}
         width={1200}
         visible={isModalOldOpen}
@@ -187,6 +189,7 @@ const ContractRenter = () => {
       </Modal>
       <Modal
         title={<h2>Số lượng hợp đồng đã kết thúc</h2>}
+        destroyOnClose
         width={1200}
         visible={isModalEndOpen}
         onOk={() => setIsModalEndOpen(false)}
