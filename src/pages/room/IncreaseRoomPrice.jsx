@@ -136,7 +136,7 @@ function IncreaseRoomPrice({ reRender, visible, close, data }) {
                 },
               ]}
             >
-              <Radio.Group onChange={(e) => { }}>
+              <Radio.Group onChange={(e) => {}}>
                 <Radio value={true}>Tăng</Radio>
                 <Radio value={false}>Giảm</Radio>
               </Radio.Group>

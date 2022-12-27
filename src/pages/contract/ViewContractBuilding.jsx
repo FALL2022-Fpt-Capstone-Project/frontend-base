@@ -41,7 +41,7 @@ function ViewContractBuilding({ openView, closeView, dataContract, dataAsset, lo
   const handleCancel = () => {
     closeView(false);
   };
-  useEffect(() => { }, []);
+  useEffect(() => {}, []);
 
   if (dataContract.length !== 0) {
     optionFloor = [{ label: "Tất cả các tầng", value: "" }];
@@ -234,11 +234,11 @@ function ViewContractBuilding({ openView, closeView, dataContract, dataAsset, lo
                           {dataContract?.contract_term < 12
                             ? dataContract?.contract_term + " tháng"
                             : dataContract?.contract_term % 12 !== 0
-                              ? Math.floor(dataContract?.contract_term / 12) +
+                            ? Math.floor(dataContract?.contract_term / 12) +
                               " năm " +
                               (dataContract?.contract_term % 12) +
                               " tháng"
-                              : Math.floor(dataContract?.contract_term / 12) + " năm "}
+                            : Math.floor(dataContract?.contract_term / 12) + " năm "}
                         </p>
                       </Col>
                     </Row>

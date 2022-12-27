@@ -31,7 +31,7 @@ import {
   EditTwoTone,
   HomeOutlined,
   BulbOutlined,
-  InfoCircleTwoTone
+  InfoCircleTwoTone,
 } from "@ant-design/icons";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -169,22 +169,17 @@ function ListRoom(props) {
         return (
           <>
             <span>
-              {record.roomStatus
-                ?
-                <Tag color="success">Đã cho thuê</Tag>
-                :
-                <Tag color="error">Đang trống</Tag>
-              }
-              {
-                record.group_contract_id === null ? '' :
-                  <Tooltip placement="top" title={"Phòng đã đi thuê"}>
-                    <InfoCircleTwoTone style={iconSize} />
-                  </Tooltip>
-              }
+              {record.roomStatus ? <Tag color="success">Đã cho thuê</Tag> : <Tag color="error">Đang trống</Tag>}
+              {record.group_contract_id === null ? (
+                ""
+              ) : (
+                <Tooltip placement="top" title={"Phòng đã đi thuê"}>
+                  <InfoCircleTwoTone style={iconSize} />
+                </Tooltip>
+              )}
             </span>
-
           </>
-        )
+        );
       },
     },
     {
@@ -410,8 +405,8 @@ function ListRoom(props) {
           room_data =
             roomStatus.length === 1
               ? room_data.filter((room) =>
-                roomStatus[0] ? Number.isInteger(room.contract_id) : room.contract_id === null
-              )
+                  roomStatus[0] ? Number.isInteger(room.contract_id) : room.contract_id === null
+                )
               : room_data;
 
           room_data = Number.isInteger(roomFloor)
@@ -564,7 +559,7 @@ function ListRoom(props) {
     }
     getAllContract();
   };
-  console.log(groupRoom?.list_rooms?.map(obj => obj.group_contract_id));
+  console.log(groupRoom?.list_rooms?.map((obj) => obj.group_contract_id));
   return (
     <div
       className="site-layout-background"
