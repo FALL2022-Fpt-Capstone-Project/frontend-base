@@ -44,8 +44,6 @@ const ListPayment = () => {
     setLoading(false);
   };
   useEffect(() => {
-    console.log(building);
-    console.log(dateFilter);
     getListInvoice();
   }, [building, dateFilter]);
   useEffect(() => {
@@ -53,7 +51,6 @@ const ListPayment = () => {
       getListInvoice();
     }
   }, [flag]);
-  console.log(flag);
   useEffect(() => {
     const getBuildingFilter = async () => {
       const response = await axios

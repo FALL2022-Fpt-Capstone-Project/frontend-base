@@ -31,6 +31,7 @@ import {
   EditTwoTone,
   HomeOutlined,
   BulbOutlined,
+  InfoCircleTwoTone
 } from "@ant-design/icons";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -156,16 +157,34 @@ function ListRoom(props) {
     },
     {
       title: "Trạng thái",
-      dataIndex: "roomStatus",
-      key: "roomStatus",
+      key: "room_id",
       filters: [
         { text: "Đã cho thuê", value: true },
         { text: "Đang trống", value: false },
       ],
       filteredValue: room_status.roomStatus || null,
+      width: 150,
       onFilter: (value, record) => record.roomStatus === value,
-      render: (roomStatus) => {
-        return roomStatus ? <Tag color="success">Đã cho thuê</Tag> : <Tag color="error">Đang trống</Tag>;
+      render: (record) => {
+        return (
+          <>
+            <span>
+              {record.roomStatus
+                ?
+                <Tag color="success">Đã cho thuê</Tag>
+                :
+                <Tag color="error">Đang trống</Tag>
+              }
+              {
+                record.group_contract_id === null ? '' :
+                  <Tooltip placement="top" title={"Phòng đã đi thuê"}>
+                    <InfoCircleTwoTone style={iconSize} />
+                  </Tooltip>
+              }
+            </span>
+
+          </>
+        )
       },
     },
     {
@@ -391,8 +410,8 @@ function ListRoom(props) {
           room_data =
             roomStatus.length === 1
               ? room_data.filter((room) =>
-                  roomStatus[0] ? Number.isInteger(room.contract_id) : room.contract_id === null
-                )
+                roomStatus[0] ? Number.isInteger(room.contract_id) : room.contract_id === null
+              )
               : room_data;
 
           room_data = Number.isInteger(roomFloor)
@@ -545,7 +564,7 @@ function ListRoom(props) {
     }
     getAllContract();
   };
-
+  console.log(groupRoom?.list_rooms?.map(obj => obj.group_contract_id));
   return (
     <div
       className="site-layout-background"
@@ -830,6 +849,7 @@ function ListRoom(props) {
                   group_id: obj.group_id,
                   room_floor: obj.room_floor,
                   contract_id: groupRoom?.contracts?.find((o, i) => o.room_id === obj.room_id)?.contract_id,
+                  group_contract_id: obj.group_contract_id,
                   groupName: groupRoom?.group?.find((o, i) => o.group_id === obj.group_id)?.group_name,
                   roomName: obj.room_name,
                   roomFloor: obj.room_floor,

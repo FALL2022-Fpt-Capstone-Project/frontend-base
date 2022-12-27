@@ -58,7 +58,6 @@ const ListInvoice = () => {
     setLoading(false);
   };
   useEffect(() => {
-    console.log(building, paymentCycle);
     getListInvoice();
   }, [building, paymentCycle]);
   useEffect(() => {

@@ -60,7 +60,7 @@ function IncreaseRoomPrice({ reRender, visible, close, data }) {
   return (
     <>
       <Modal
-        title="Cập nhật giá phòng"
+        title={<h2>Cập nhật giá phòng</h2>}
         open={visible}
         onOk={() => {
           close(false);
@@ -136,7 +136,7 @@ function IncreaseRoomPrice({ reRender, visible, close, data }) {
                 },
               ]}
             >
-              <Radio.Group onChange={(e) => {}}>
+              <Radio.Group onChange={(e) => { }}>
                 <Radio value={true}>Tăng</Radio>
                 <Radio value={false}>Giảm</Radio>
               </Radio.Group>

@@ -41,7 +41,7 @@ function ViewContractBuilding({ openView, closeView, dataContract, dataAsset, lo
   const handleCancel = () => {
     closeView(false);
   };
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
 
   if (dataContract.length !== 0) {
     optionFloor = [{ label: "Tất cả các tầng", value: "" }];
@@ -88,7 +88,7 @@ function ViewContractBuilding({ openView, closeView, dataContract, dataAsset, lo
       dataIndex: "roomStatus",
       key: "roomStatus",
       render: (roomStatus) => {
-        return roomStatus ? <Tag color="success">Đã ký hợp đồng</Tag> : <Tag color="error">Chưa có hợp đồng</Tag>;
+        return roomStatus ? <Tag color="success">Đã có khách thuê</Tag> : <Tag color="error">Đang trống</Tag>;
       },
     },
   ];
@@ -234,11 +234,11 @@ function ViewContractBuilding({ openView, closeView, dataContract, dataAsset, lo
                           {dataContract?.contract_term < 12
                             ? dataContract?.contract_term + " tháng"
                             : dataContract?.contract_term % 12 !== 0
-                            ? Math.floor(dataContract?.contract_term / 12) +
+                              ? Math.floor(dataContract?.contract_term / 12) +
                               " năm " +
                               (dataContract?.contract_term % 12) +
                               " tháng"
-                            : Math.floor(dataContract?.contract_term / 12) + " năm "}
+                              : Math.floor(dataContract?.contract_term / 12) + " năm "}
                         </p>
                       </Col>
                     </Row>
@@ -377,7 +377,7 @@ function ViewContractBuilding({ openView, closeView, dataContract, dataAsset, lo
                   <Statistic
                     title={
                       <>
-                        <span style={textSize}>Phòng chưa có hợp đồng </span>
+                        <span style={textSize}>Số phòng đang trống </span>
                       </>
                     }
                     value={
@@ -391,7 +391,7 @@ function ViewContractBuilding({ openView, closeView, dataContract, dataAsset, lo
                   <Statistic
                     title={
                       <>
-                        <span style={textSize}>Phòng đã ký hợp đồng </span>
+                        <span style={textSize}>Số phòng đã có khách thuê </span>
                       </>
                     }
                     value={

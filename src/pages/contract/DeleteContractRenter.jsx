@@ -140,7 +140,7 @@ function DeleteContractRenter({ reload, openView, closeView, dataContract, dataI
               Kết thúc hợp đồng
             </Button>
             <p>
-              <i style={{ color: "red" }}>Bạn cần thanh toán hết hóa đơn trước khi kết thúc hợp đồng</i>
+              <i style={{ color: "red" }}>Bạn cần thanh toán tất cả hóa đơn trước khi kết thúc hợp đồng</i>
             </p>
           </div>
         </Modal>

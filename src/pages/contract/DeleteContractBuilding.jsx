@@ -18,7 +18,7 @@ function DeleteContractBuilding({ reload, openView, closeView, dataContract, dat
   const handleCancel = () => {
     closeView(false);
   };
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
   const columnInvoice = [
     {
       title: "Tên phòng",
@@ -155,7 +155,7 @@ function DeleteContractBuilding({ reload, openView, closeView, dataContract, dat
             Kết thúc hợp đồng
           </Button>
           <p>
-            <i style={{ color: "red" }}>Bạn cần thanh toán hết hóa đơn trước khi kết thúc hợp đồng</i>
+            <i style={{ color: "red" }}>Bạn cần thanh toán tất cả hóa đơn trước khi kết thúc hợp đồng, sau khi kết thúc các phòng đã thuê sẽ trở về trạng thái trống</i>
           </p>
         </Modal>
       </div>
